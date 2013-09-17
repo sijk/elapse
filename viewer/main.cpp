@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "dataproviderplugin.h"
+#include "plugin.h"
 #include <QApplication>
 #include <QDir>
 #include <QPluginLoader>
@@ -15,11 +15,10 @@ DataProvider *loadProvider()
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
         QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = loader.instance();
-        auto factory = qobject_cast<DataProviderFactoryInterface*>(plugin);
+        auto factory = qobject_cast<DataProviderInterface*>(plugin);
         if (factory) {
-            qDebug() << factory->keys();
-            QString first = factory->keys()[0];
-            provider = factory->create(first);
+            qDebug() << fileName << "::" << factory->keys();
+            provider = factory->create(factory->keys()[0]);
             if (provider) {
                 qDebug() << "Loaded" << loader.metaData()["className"].toString()
                          << "from" << fileName;
@@ -30,7 +29,7 @@ DataProvider *loadProvider()
         } else {
             auto iid = loader.metaData()["IID"].toString();
             auto cls = loader.metaData()["className"].toString();
-            if (iid != DataProviderFactoryInterface_iid)
+            if (iid != DataProviderInterface_iid)
                 qDebug() << cls << "from" << fileName << "has incomaptible IID" << iid;
             else
                 qDebug() << loader.errorString();
@@ -55,6 +54,6 @@ int main(int argc, char *argv[])
     QObject::connect(&w, SIGNAL(start()), d, SLOT(start()));
     QObject::connect(&w, SIGNAL(stop()), d, SLOT(stop()));
 
-    w.showPluginName(d);
+    w.showProviderName(d);
     return a.exec();
 }

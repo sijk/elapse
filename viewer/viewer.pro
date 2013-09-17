@@ -16,9 +16,8 @@ TARGET        = elapse
 TEMPLATE      = app
 
 SOURCES      += main.cpp \
-                mainwindow.cpp \
-                dataproviderplugin.cpp
+                mainwindow.cpp
 HEADERS      += mainwindow.h \
                 dataprovider.h \
-                dataproviderplugin.h
+                plugin.h
 FORMS        += mainwindow.ui

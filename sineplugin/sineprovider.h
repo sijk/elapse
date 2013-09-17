@@ -2,13 +2,13 @@
 #define SINEPROVIDER_H
 
 #include <QTimer>
-#include "dataproviderinterface.h"
+#include "dataprovider.h"
 
 class SineProvider : public DataProvider
 {
     Q_OBJECT
 public:
-    explicit SineProvider(QObject *parent = 0);
+    Q_INVOKABLE explicit SineProvider(QObject *parent = 0);
 
 public slots:
     void start();
@@ -20,7 +20,5 @@ private slots:
 private:
     QTimer t;
 };
-
-DEFAULT_DATA_PROVIDER_FACTORY(SineProvider)
 
 #endif // SINEPROVIDER_H

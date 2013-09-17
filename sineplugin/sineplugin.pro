@@ -17,9 +17,10 @@ DESTDIR         = ../plugins
 
 # Plugin-specific settings
 HEADERS         = tcpprovider.h \
-                  tcpproviderplugin.h \
+                  sineprovider.h \
                   dataprovider.h \
-                  dataproviderplugin.h
+                  sineplugin.h \
+                  plugin.h
 SOURCES         = tcpprovider.cpp \
-                  dataproviderplugin.cpp
-TARGET          = $$qtLibraryTarget(tcpdata)
+                  sineprovider.cpp
+TARGET          = $$qtLibraryTarget(sineplugin)

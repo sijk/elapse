@@ -6,5 +6,4 @@
 
 TEMPLATE    = subdirs
 SUBDIRS	    = viewer \
-              tcpdata \
-#              sinedata
+              sineplugin

@@ -22,7 +22,7 @@ signals:
 
 public slots:
     void onDataReady(double data);
-    void showPluginName(QObject *obj);
+    void showProviderName(QObject *obj);
 
 private slots:
     void on_pushButton_toggled(bool checked);

@@ -35,9 +35,9 @@ void MainWindow::onDataReady(double data)
     ui->plot->replot();
 }
 
-void MainWindow::showPluginName(QObject *obj)
+void MainWindow::showProviderName(QObject *obj)
 {
-    ui->pluginName->setText(QStringLiteral("Plugin: %1")
+    ui->pluginName->setText(QStringLiteral("Using %1")
                             .arg(obj->metaObject()->className()));
 }
 
