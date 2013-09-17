@@ -1,23 +1,25 @@
 #include "mainwindow.h"
-#include "dataproviderinterface.h"
+#include "dataproviderplugin.h"
 #include <QApplication>
 #include <QDir>
 #include <QPluginLoader>
 #include <QJsonObject>
 
-DataProviderPtr loadProvider()
+DataProvider *loadProvider()
 {
     QDir pluginsDir(qApp->applicationDirPath());
     pluginsDir.cd("plugins");
 
-    DataProviderPtr provider;
+    DataProvider *provider = 0;
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
         QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = loader.instance();
-        auto factory = qobject_cast<DataProviderFactory*>(plugin);
+        auto factory = qobject_cast<DataProviderFactoryInterface*>(plugin);
         if (factory) {
-            provider = factory->createProvider();
+            qDebug() << factory->keys();
+            QString first = factory->keys()[0];
+            provider = factory->create(first);
             if (provider) {
                 qDebug() << "Loaded" << loader.metaData()["className"].toString()
                          << "from" << fileName;
@@ -28,7 +30,7 @@ DataProviderPtr loadProvider()
         } else {
             auto iid = loader.metaData()["IID"].toString();
             auto cls = loader.metaData()["className"].toString();
-            if (iid != DataProviderFactory_iid)
+            if (iid != DataProviderFactoryInterface_iid)
                 qDebug() << cls << "from" << fileName << "has incomaptible IID" << iid;
             else
                 qDebug() << loader.errorString();
@@ -45,14 +47,14 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    DataProviderPtr d = loadProvider();
+    DataProvider *d = loadProvider();
     if (!d)
         return 1;
 
-    QObject::connect(d.data(), SIGNAL(dataReady(double)), &w, SLOT(onDataReady(double)));
-    QObject::connect(&w, SIGNAL(start()), d.data(), SLOT(start()));
-    QObject::connect(&w, SIGNAL(stop()), d.data(), SLOT(stop()));
+    QObject::connect(d, SIGNAL(dataReady(double)), &w, SLOT(onDataReady(double)));
+    QObject::connect(&w, SIGNAL(start()), d, SLOT(start()));
+    QObject::connect(&w, SIGNAL(stop()), d, SLOT(stop()));
 
-    w.showPluginName(d.data());
+    w.showPluginName(d);
     return a.exec();
 }

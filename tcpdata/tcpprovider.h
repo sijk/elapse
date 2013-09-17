@@ -2,13 +2,13 @@
 #define TCPPROVIDER_H
 
 #include <QtNetwork>
-#include "dataproviderinterface.h"
+#include "dataprovider.h"
 
 class TcpProvider : public DataProvider
 {
     Q_OBJECT
 public:
-    explicit TcpProvider(QObject *parent = 0);
+    Q_INVOKABLE explicit TcpProvider(QObject *parent = 0);
 
 public slots:
     void start();
@@ -21,7 +21,5 @@ private slots:
 private:
     QTcpSocket *sock;
 };
-
-DEFAULT_DATA_PROVIDER_FACTORY(TcpProvider)
 
 #endif // TCPPROVIDER_H

@@ -15,8 +15,10 @@ VPATH        += $$INTERFACE_DIR
 TARGET        = elapse
 TEMPLATE      = app
 
-SOURCES      += main.cpp\
-                mainwindow.cpp
-HEADERS      += mainwindow.h\
-                dataproviderinterface.h
+SOURCES      += main.cpp \
+                mainwindow.cpp \
+                dataproviderplugin.cpp
+HEADERS      += mainwindow.h \
+                dataprovider.h \
+                dataproviderplugin.h
 FORMS        += mainwindow.ui
