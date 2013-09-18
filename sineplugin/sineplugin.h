@@ -9,6 +9,7 @@ class SinePlugin : public DataProviderPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID DataProviderInterface_iid)
+    Q_CLASSINFO("description", "DataProviders that provide sine waves")
 protected:
     ClassList classes()
     {

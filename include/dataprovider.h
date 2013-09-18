@@ -17,4 +17,6 @@ public slots:
     virtual void stop() = 0;
 };
 
+#define DataProviderInterface_iid "org.nzbri.elapse.DataProviderInterface"
+
 #endif // DATAPROVIDER_H

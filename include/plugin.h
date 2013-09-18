@@ -1,5 +1,5 @@
-#ifndef DATAPROVIDERPLUGIN_H
-#define DATAPROVIDERPLUGIN_H
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
 #include <QtPlugin>
 #include <QStringList>
@@ -12,6 +12,8 @@ template<class T>
 class FactoryInterface
 {
 public:
+    virtual ~FactoryInterface() {}
+
     virtual QStringList keys() = 0;
     virtual T *create(const QString &key) = 0;
 };
@@ -22,6 +24,8 @@ template<class T>
 class BasePlugin : public FactoryInterface<T>
 {
 public:
+    virtual ~BasePlugin() {}
+
     QStringList keys();
     T *create(const QString &key);
 
@@ -54,7 +58,6 @@ T *BasePlugin<T>::create(const QString &key)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 typedef FactoryInterface<DataProvider> DataProviderInterface;
-#define DataProviderInterface_iid "org.nzbri.elapse.DataProviderInterface/1.0"
 Q_DECLARE_INTERFACE(DataProviderInterface, DataProviderInterface_iid)
 
 class DataProviderPlugin : public QObject, public BasePlugin<DataProvider>
@@ -63,4 +66,4 @@ class DataProviderPlugin : public QObject, public BasePlugin<DataProvider>
     Q_INTERFACES(DataProviderInterface)
 };
 
-#endif // DATAPROVIDERPLUGIN_H
+#endif // PLUGIN_H

@@ -1,59 +1,31 @@
 #include "mainwindow.h"
-#include "plugin.h"
+#include "pluginloader.h"
+#include "dataprovider.h"
 #include <QApplication>
-#include <QDir>
-#include <QPluginLoader>
-#include <QJsonObject>
-
-DataProvider *loadProvider()
-{
-    QDir pluginsDir(qApp->applicationDirPath());
-    pluginsDir.cd("plugins");
-
-    DataProvider *provider = 0;
-
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = loader.instance();
-        auto factory = qobject_cast<DataProviderInterface*>(plugin);
-        if (factory) {
-            qDebug() << fileName << "::" << factory->keys();
-            provider = factory->create(factory->keys()[0]);
-            if (provider) {
-                qDebug() << "Loaded" << loader.metaData()["className"].toString()
-                         << "from" << fileName;
-                break;
-            } else
-                qDebug() << "Error creating DataProvider from"
-                         << loader.metaData()["className"].toString();
-        } else {
-            auto iid = loader.metaData()["IID"].toString();
-            auto cls = loader.metaData()["className"].toString();
-            if (iid != DataProviderInterface_iid)
-                qDebug() << cls << "from" << fileName << "has incomaptible IID" << iid;
-            else
-                qDebug() << loader.errorString();
-        }
-    }
-
-    return provider;
-}
-
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    w.show();
+    PluginLoader loader;
+    QString providerKey = "SineProvider";
 
-    DataProvider *d = loadProvider();
-    if (!d)
+    if (!loader.keysForInterface(DataProviderInterface_iid).contains(providerKey)) {
+        qDebug() << providerKey << "not found";
         return 1;
+    }
 
-    QObject::connect(d, SIGNAL(dataReady(double)), &w, SLOT(onDataReady(double)));
-    QObject::connect(&w, SIGNAL(start()), d, SLOT(start()));
-    QObject::connect(&w, SIGNAL(stop()), d, SLOT(stop()));
+    QObject *provider = loader.create(providerKey);
+    if (!provider) {
+        qDebug() << "Loading failed";
+        return 1;
+    }
 
-    w.showProviderName(d);
+    QObject::connect(provider, SIGNAL(dataReady(double)), &w, SLOT(onDataReady(double)));
+    QObject::connect(&w, SIGNAL(start()), provider, SLOT(start()));
+    QObject::connect(&w, SIGNAL(stop()), provider, SLOT(stop()));
+
+    w.showProviderName(provider);
+    w.show();
     return a.exec();
 }

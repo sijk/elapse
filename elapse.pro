@@ -6,4 +6,5 @@
 
 TEMPLATE    = subdirs
 SUBDIRS	    = viewer \
-              sineplugin
+              sineplugin \
+              cosineplugin
