@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    QObject *provider = loader.create(providerKey);
+    DataProvider *provider = loader.create<DataProvider*>(providerKey);
     if (!provider) {
         qDebug() << "Loading failed";
         return 1;

@@ -29,6 +29,7 @@ public:
     QFileInfo fileForKey(const QString &key) const;
 
     QObject *create(const QString &key) const;
+    template<class T> T create(const QString &key) const;
 
     QDir searchPath() const;
 
@@ -44,5 +45,12 @@ private:
     QHash<QString,QJsonObject> pluginInfo;
     QHash<QString,QFileInfo> pluginFile;
 };
+
+
+template<class T>
+T PluginLoader::create(const QString &key) const
+{
+    return qobject_cast<T>(create(key));
+}
 
 #endif // PLUGINLOADER_H
