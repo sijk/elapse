@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <qwt_plot_curve.h>
+
+class PluginLoader;
+class QwtPlotCurve;
 
 namespace Ui {
 class MainWindow;
@@ -13,7 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(PluginLoader &loader, QWidget *parent = 0);
     ~MainWindow();
 
 signals:
@@ -22,14 +24,16 @@ signals:
 
 public slots:
     void onDataReady(double data);
-    void showProviderName(QObject *obj);
 
 private slots:
+    void showProviderKey(const QString &key);
     void on_pushButton_toggled(bool checked);
     void on_plotLength_valueChanged(int len);
+    void on_actionPlugins_triggered();
 
 private:
     Ui::MainWindow *ui;
+    PluginLoader &loader;
     int plotLength;
     QVector<double> x, y;
     QwtPlotCurve *curve;

@@ -1,10 +1,11 @@
 #include <QCoreApplication>
 #include <QPluginLoader>
+#include <QDebug>
 #include <QSet>
+#include <QStringList>
 #include "pluginloader.h"
 #include "plugin.h"
 
-#include <QDebug>
 
 /*!
  * \brief The GenericPlugin class is a sort of "pseudo base class" for all plugins.
@@ -14,18 +15,41 @@ class GenericPlugin : public QObject, public BasePlugin<QObject>
     Q_OBJECT
 };
 
+
 PluginLoader::PluginLoader(QObject *parent) :
     QObject(parent)
 {
-    search(QCoreApplication::instance()->applicationDirPath() + "/plugins");
+    setSearchPath(QCoreApplication::instance()->applicationDirPath()
+                  + "/plugins");
+}
+
+QFileInfoList PluginLoader::files() const
+{
+    QFileInfoList files;
+    foreach (const QFileInfo &file, pluginFile) {
+        if (!files.contains(file))
+            files.append(file);
+    }
+    return files;
 }
 
 QStringList PluginLoader::interfaces() const
 {
     QSet<QString> ifaces;
-    foreach (auto info, pluginInfo)
+    foreach (const QJsonObject &info, pluginInfo)
         ifaces.insert(info["IID"].toString());
     return ifaces.toList();
+}
+
+QFileInfoList PluginLoader::filesForInterface(const QString &iid) const
+{
+    QFileInfoList files;
+    foreach (const QString &key, pluginFile.keys()) {
+        QFileInfo file = pluginFile[key];
+        if (pluginInfo[key]["IID"] == iid && !files.contains(file))
+            files.append(file);
+    }
+    return files;
 }
 
 QStringList PluginLoader::keysForInterface(const QString &iid) const
@@ -38,30 +62,58 @@ QStringList PluginLoader::keysForInterface(const QString &iid) const
     return keys;
 }
 
-QObject *PluginLoader::create(const QString &key)
+QStringList PluginLoader::keysForFile(const QFileInfo &file) const
 {
-    QPluginLoader loader(pluginPath[key]);
+    return pluginFile.keys(file);
+}
+
+QJsonObject PluginLoader::infoForFile(const QFileInfo &file) const
+{
+    return pluginInfo[pluginFile.keys(file).first()];
+}
+
+QJsonObject PluginLoader::infoForKey(const QString &key) const
+{
+    return pluginInfo[key];
+}
+
+QFileInfo PluginLoader::fileForKey(const QString &key) const
+{
+    return pluginFile[key];
+}
+
+QObject *PluginLoader::create(const QString &key) const
+{
+    QPluginLoader loader(pluginFile[key].absoluteFilePath());
     auto factory = static_cast<GenericPlugin*>(loader.instance());
 
-    if (factory)
-        return factory->create(key);
+    if (factory) {
+        QObject *obj = factory->create(key);
+        if (obj) {
+            emit createdKey(key);
+        }
+        return obj;
+    }
 
     return 0;
 }
 
-void PluginLoader::search(QDir path)
+QDir PluginLoader::searchPath() const
 {
-    qDebug() << "Searching" << path.absolutePath();
-    foreach (QString fileName, path.entryList(QDir::Files)) {
-        qDebug() << "  Examining" << fileName;
+    return path;
+}
 
-        QPluginLoader loader(path.absoluteFilePath(fileName));
+void PluginLoader::setSearchPath(QDir path)
+{
+    this->path = path;
+    rescan();
+}
+
+void PluginLoader::rescan()
+{
+    foreach (QFileInfo file, path.entryInfoList(QDir::Files)) {
+        QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
-        QString iid = loader.metaData()["IID"].toString();
-        qDebug() << "    Name:" << loader.metaData()["className"].toString();
-        qDebug() << "    IID: " << iid;
-        qDebug() << "    Keys:";
-
         auto factory = static_cast<GenericPlugin*>(plugin);
         if (factory) {
             foreach (const QString &key, factory->keys()) {
@@ -72,9 +124,8 @@ void PluginLoader::search(QDir path)
                              << pluginInfo[key]["className"].toString();
                     continue;
                 }
-                qDebug() << "      " << key;
                 pluginInfo[key] = loader.metaData();
-                pluginPath[key] = path.absoluteFilePath(fileName);
+                pluginFile[key] = file;
             }
         }
         loader.unload();

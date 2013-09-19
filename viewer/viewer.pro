@@ -17,9 +17,12 @@ TEMPLATE      = app
 
 SOURCES      += main.cpp \
                 mainwindow.cpp \
-    pluginloader.cpp
+                pluginloader.cpp \
+                plugindialog.cpp
 HEADERS      += mainwindow.h \
                 dataprovider.h \
                 plugin.h \
-    pluginloader.h
-FORMS        += mainwindow.ui
+                pluginloader.h \
+                plugindialog.h
+FORMS        += mainwindow.ui \
+                plugindialog.ui

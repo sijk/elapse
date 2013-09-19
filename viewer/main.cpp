@@ -1,16 +1,20 @@
-#include "mainwindow.h"
+#include <QApplication>
 #include "pluginloader.h"
 #include "dataprovider.h"
-#include <QApplication>
+#include "mainwindow.h"
+
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
     PluginLoader loader;
+    MainWindow w(loader);
+
+    QString providerIID = DataProviderInterface_iid;
     QString providerKey = "SineProvider";
 
-    if (!loader.keysForInterface(DataProviderInterface_iid).contains(providerKey)) {
+    if (!loader.keysForInterface(providerIID).contains(providerKey)) {
         qDebug() << providerKey << "not found";
         return 1;
     }
@@ -21,11 +25,11 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    QObject::connect(provider, SIGNAL(dataReady(double)), &w, SLOT(onDataReady(double)));
+    QObject::connect(provider, SIGNAL(dataReady(double)),
+                     &w, SLOT(onDataReady(double)));
     QObject::connect(&w, SIGNAL(start()), provider, SLOT(start()));
     QObject::connect(&w, SIGNAL(stop()), provider, SLOT(stop()));
 
-    w.showProviderName(provider);
     w.show();
     return a.exec();
 }

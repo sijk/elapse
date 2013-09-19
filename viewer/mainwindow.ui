@@ -133,8 +133,10 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
+    <addaction name="separator"/>
+    <addaction name="actionPlugins"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -142,7 +144,12 @@
   </widget>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionPlugins">
+   <property name="text">
+    <string>&amp;Plugins</string>
    </property>
   </action>
  </widget>
