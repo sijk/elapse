@@ -3,7 +3,6 @@
 
 #include "plugin.h"
 #include "cosineprovider.h"
-#include "tcpprovider.h"
 
 class CosinePlugin : public DataProviderPlugin
 {
@@ -13,8 +12,7 @@ class CosinePlugin : public DataProviderPlugin
 protected:
     ClassList classes()
     {
-        return { CosineProvider::staticMetaObject,
-                 TcpProvider::staticMetaObject };
+        return { CosineProvider::staticMetaObject };
     }
 };
 

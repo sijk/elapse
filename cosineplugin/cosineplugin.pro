@@ -17,10 +17,8 @@ DESTDIR         = ../plugins
 
 # Plugin-specific settings
 HEADERS         = cosineprovider.h \
-                  tcpprovider.h \
                   dataprovider.h \
                   cosineplugin.h \
                   plugin.h
-SOURCES         = cosineprovider.cpp \
-                  tcpprovider.cpp
+SOURCES         = cosineprovider.cpp
 TARGET          = $$qtLibraryTarget(cosineplugin)
