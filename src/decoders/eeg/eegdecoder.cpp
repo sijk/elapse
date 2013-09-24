@@ -38,6 +38,19 @@ QDataStream &operator>>(QDataStream &stream, BigEndian24 &value)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+void checkSequenceNumber(const EegSample &sample)
+{
+    static quint32 prev_seqnum = 0;
+
+    int dropped = sample.seqnum - prev_seqnum - 1;
+    if (dropped)
+        qDebug() << "Dropped" << dropped << "samples";
+
+    prev_seqnum = sample.seqnum;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 
 EegDecoder::EegDecoder(QObject *parent) :
     SampleDecoder(parent)
@@ -84,6 +97,7 @@ void EegDecoder::onData(const QByteArray &data)
             sample.channel.append(parseVoltage(i, value.toS32()));
         }
 
+        checkSequenceNumber(sample);
         emit newSample(sample);
     }
 }

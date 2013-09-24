@@ -38,13 +38,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::onDataReady(const EegSample &sample)
 {
-    static quint64 prev_seqnum = 0;
-
-    int dropped = sample.seqnum - prev_seqnum - 1;
-    if (dropped)
-        qDebug() << "Dropped" << dropped << "samples";
-    prev_seqnum = sample.seqnum;
-
     y.pop_front();
     y.push_back(sample.channel[6]);
 
