@@ -11,14 +11,18 @@ DESTDIR       = ../../
 SOURCES      += main.cpp \
                 mainwindow.cpp \
                 plugindialog.cpp \
-                tcpclienteegdatasource.cpp
+                eegthread.cpp \
+                threadedtcpclienteegdatasource.cpp
+#                tcpclienteegdatasource.cpp
 #                udpeegdatasource.cpp
 HEADERS      += mainwindow.h \
                 plugindialog.h \
                 dataprovider.h \
                 datasource.h \
                 eegdecoder.h \
-                tcpclienteegdatasource.h
+                eegthread.h \
+                threadedtcpclienteegdatasource.h
+#                tcpclienteegdatasource.h
 #                udpeegdatasource.h
 FORMS        += mainwindow.ui \
                 plugindialog.ui

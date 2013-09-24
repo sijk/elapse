@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <qwt_plot_curve.h>
 #include "pluginloader.h"
 #include "plugindialog.h"
@@ -49,6 +50,15 @@ void MainWindow::onDataReady(const EegSample &sample)
 
     curve->setSamples(x, y);
     ui->plot->replot();
+}
+
+void MainWindow::onSourceError(const QString &message)
+{
+    bool wasBlocked = ui->pushButton->blockSignals(true);
+    ui->pushButton->setChecked(false);
+    ui->pushButton->blockSignals(wasBlocked);
+
+    QMessageBox::warning(this, "Error", message);
 }
 
 void MainWindow::on_pushButton_toggled(bool checked)

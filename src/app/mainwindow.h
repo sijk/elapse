@@ -25,6 +25,7 @@ signals:
 
 public slots:
     void onDataReady(const EegSample &sample);
+    void onSourceError(const QString &message);
 
 private slots:
     void on_pushButton_toggled(bool checked);
