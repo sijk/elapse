@@ -4,11 +4,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(PluginLoader &loader, QWidget *parent) :
+#include "sampletypes.h"
+
+#include <QDebug>
+
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     loader(loader),
-    plotLength(100),
+    plotLength(20),
     x(plotLength),
     y(plotLength),
     curve(new QwtPlotCurve)
@@ -20,11 +24,9 @@ MainWindow::MainWindow(PluginLoader &loader, QWidget *parent) :
         x[i] = i;
 
     curve->setSamples(x, y);
-    ui->plot->setAxisScale(0, -1, 1);
+    ui->plot->setAxisAutoScale(0);
     ui->plot->setAxisScale(1, 0, plotLength);
-
-    QObject::connect(&loader, SIGNAL(createdKey(QString)),
-                     this, SLOT(showProviderKey(QString)));
+    ui->plotLength->setValue(plotLength);
 }
 
 MainWindow::~MainWindow()
@@ -33,18 +35,20 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onDataReady(double data)
+void MainWindow::onDataReady(const EegSample &sample)
 {
+    static quint64 prev_seqnum = 0;
+
+    int dropped = sample.seqnum - prev_seqnum - 1;
+    if (dropped)
+        qDebug() << "Dropped" << dropped << "samples";
+    prev_seqnum = sample.seqnum;
+
     y.pop_front();
-    y.push_back(data);
+    y.push_back(sample.channel[6]);
 
     curve->setSamples(x, y);
     ui->plot->replot();
-}
-
-void MainWindow::showProviderKey(const QString &key)
-{
-    ui->pluginName->setText(QStringLiteral("Using %1").arg(key));
 }
 
 void MainWindow::on_pushButton_toggled(bool checked)

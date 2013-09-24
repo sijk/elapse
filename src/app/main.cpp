@@ -1,6 +1,7 @@
 #include <QApplication>
 #include "pluginloader.h"
-#include "dataprovider.h"
+#include "tcpclienteegdatasource.h"
+#include "eegdecoder.h"
 #include "mainwindow.h"
 
 #include <QDebug>
@@ -8,27 +9,19 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    PluginLoader loader;
-    MainWindow w(loader);
+    MainWindow w;
+    TcpClientEegDataSource source;
+    EegDecoder eegdec;
 
-    QString providerIID = DataProviderInterface_iid;
-    QString providerKey = "SineProvider";
+    eegdec.setGains({1,1,1,1,1,1,1,1});
+    eegdec.setVref(4.5e6);
 
-    if (!loader.keysForInterface(providerIID).contains(providerKey)) {
-        qDebug() << providerKey << "not found";
-        return 1;
-    }
-
-    DataProvider *provider = loader.create<DataProvider*>(providerKey);
-    if (!provider) {
-        qDebug() << "Loading failed";
-        return 1;
-    }
-
-    QObject::connect(provider, SIGNAL(dataReady(double)),
-                     &w, SLOT(onDataReady(double)));
-    QObject::connect(&w, SIGNAL(start()), provider, SLOT(start()));
-    QObject::connect(&w, SIGNAL(stop()), provider, SLOT(stop()));
+    QObject::connect(&source, SIGNAL(eegReady(QByteArray)),
+                     &eegdec, SLOT(onData(QByteArray)));
+    QObject::connect(&eegdec, SIGNAL(newSample(EegSample)),
+                     &w, SLOT(onDataReady(EegSample)));
+    QObject::connect(&w, SIGNAL(start()), &source, SLOT(start()));
+    QObject::connect(&w, SIGNAL(stop()), &source, SLOT(stop()));
 
     w.show();
     return a.exec();

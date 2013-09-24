@@ -5,6 +5,7 @@
 
 class PluginLoader;
 class QwtPlotCurve;
+class EegSample;
 
 namespace Ui {
 class MainWindow;
@@ -15,7 +16,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(PluginLoader &loader, QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 signals:
@@ -23,10 +24,9 @@ signals:
     void stop();
 
 public slots:
-    void onDataReady(double data);
+    void onDataReady(const EegSample &sample);
 
 private slots:
-    void showProviderKey(const QString &key);
     void on_pushButton_toggled(bool checked);
     void on_plotLength_valueChanged(int len);
     void on_actionPlugins_triggered();

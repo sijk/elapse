@@ -1,5 +1,6 @@
 TEMPLATE    = subdirs
 SUBDIRS	    = app \
-              pluginloader
+              pluginloader \
+              decoders
 
-app.depends += pluginloader
+app.depends += pluginloader decoders
