@@ -69,21 +69,23 @@ void EegDecoder::onData(const QByteArray &data)
     QDataStream stream(data);
     stream.setByteOrder(QDataStream::LittleEndian);
 
-    stream >> sample.seqnum;
-    stream >> sample.timestamp;
+    while (!stream.atEnd()) {
+        stream >> sample.seqnum;
+        stream >> sample.timestamp;
 
-    stream >> value;
-    status = value.toU32();
-    sample.loff_stat_p = (status >> 12) & 0xFF;
-    sample.loff_stat_n = (status >> 4) & 0xFF;
-    sample.gpio = status & 0x0F;
-
-    for (int i = 0; i < 8; i++) {
         stream >> value;
-        sample.channel.append(parseVoltage(i, value.toS32()));
-    }
+        status = value.toU32();
+        sample.loff_stat_p = (status >> 12) & 0xFF;
+        sample.loff_stat_n = (status >> 4) & 0xFF;
+        sample.gpio = status & 0x0F;
 
-    emit newSample(sample);
+        for (int i = 0; i < 8; i++) {
+            stream >> value;
+            sample.channel.append(parseVoltage(i, value.toS32()));
+        }
+
+        emit newSample(sample);
+    }
 }
 
 double EegDecoder::parseVoltage(int channel, double value) const
