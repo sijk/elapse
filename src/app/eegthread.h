@@ -13,7 +13,7 @@ public:
 
     void run();
 
-    void setHost(const QString &name, quint16 port);
+    void setHost(const QString &hostName, quint16 port);
 
 signals:
     void newData(const QByteArray &data);

@@ -17,21 +17,21 @@ void EegThread::run()
     QTcpSocket sock;
 
     mutex.lock();
-    QString serverName = hostName;
-    quint16 serverPort = port;
-    QString serverDesc = QStringLiteral(" [%2:%3]").arg(hostName).arg(port);
+    QString hostName = this->hostName;
+    quint16 port = this->port;
+    QString hostDesc = QStringLiteral(" [%2:%3]").arg(hostName).arg(port);
     mutex.unlock();
 
-    sock.connectToHost(serverName, serverPort);
+    sock.connectToHost(hostName, port);
     if (!sock.waitForConnected(1000)) {
-        emit error(sock.error(), sock.errorString() + serverDesc);
+        emit error(sock.error(), sock.errorString() + hostDesc);
         return;
     }
 
     while (!quit && sock.isOpen()) {
         while (!sock.bytesAvailable()) {
             if (!sock.waitForReadyRead(500)) {
-                emit error(sock.error(), sock.errorString() + serverDesc);
+                emit error(sock.error(), sock.errorString() + hostDesc);
                 sock.close();
                 return;
             }
@@ -46,10 +46,10 @@ void EegThread::run()
     sock.close();
 }
 
-void EegThread::setHost(const QString &name, quint16 port)
+void EegThread::setHost(const QString &hostName, quint16 port)
 {
     QMutexLocker locker(&mutex);
-    this->hostName = name;
+    this->hostName = hostName;
     this->port = port;
 }
 
