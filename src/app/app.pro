@@ -12,18 +12,12 @@ SOURCES      += main.cpp \
                 mainwindow.cpp \
                 plugindialog.cpp \
                 tcpclienteegdatasource.cpp
-#                eegthread.cpp \
-#                threadedtcpclienteegdatasource.cpp
-#                udpeegdatasource.cpp
 HEADERS      += mainwindow.h \
                 plugindialog.h \
-                dataprovider.h \
-                datasource.h \
-                eegdecoder.h \
                 tcpclienteegdatasource.h
-#                eegthread.h \
-#                threadedtcpclienteegdatasource.h
-#                udpeegdatasource.h
+HEADERS      += dataprovider.h \
+                eegdecoder.h \
+                datasource.h
 FORMS        += mainwindow.ui \
                 plugindialog.ui
 

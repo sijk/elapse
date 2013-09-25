@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     loader(loader),
-    plotLength(20),
+    plotLength(1000),
     x(plotLength),
     y(plotLength),
     curve(new QwtPlotCurve)
@@ -39,7 +39,7 @@ MainWindow::~MainWindow()
 void MainWindow::onDataReady(const EegSample &sample)
 {
     y.pop_front();
-    y.push_back(sample.channel[6]);
+    y.push_back(sample.channel[0]);
 
     curve->setSamples(x, y);
     ui->plot->replot();

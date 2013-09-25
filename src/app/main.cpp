@@ -14,16 +14,20 @@ int main(int argc, char *argv[])
     EegDecoder eegdec;
 
     source.setProperty("host", "overo.local");
-
     eegdec.setProperty("gain", 1);
     eegdec.setProperty("vref", 4.5e6);
 
+    // Connect EEG chain
     QObject::connect(&source, SIGNAL(eegReady(QByteArray)),
                      &eegdec, SLOT(onData(QByteArray)));
     QObject::connect(&eegdec, SIGNAL(newSample(EegSample)),
                      &w, SLOT(onDataReady(EegSample)));
+
+    // Connect controls
     QObject::connect(&w, SIGNAL(start()), &source, SLOT(start()));
     QObject::connect(&w, SIGNAL(stop()), &source, SLOT(stop()));
+
+    // Connect error handlers
     QObject::connect(&source, SIGNAL(error(QString)),
                      &w, SLOT(onSourceError(QString)));
 
