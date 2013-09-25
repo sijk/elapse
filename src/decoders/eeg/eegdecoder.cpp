@@ -53,11 +53,12 @@ void EegDecoder::onData(const QByteArray &data)
 {
     BigEndian24 value;
     quint32 status;
-    EegSample sample;
     QDataStream stream(data);
     stream.setByteOrder(QDataStream::LittleEndian);
 
     while (!stream.atEnd()) {
+        EegSample sample;
+
         stream >> sample.seqnum;
         stream >> sample.timestamp;
 
