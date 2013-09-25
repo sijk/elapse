@@ -11,12 +11,12 @@ ThreadedTcpClientEegDataSource::ThreadedTcpClientEegDataSource(QObject *parent) 
 
 void ThreadedTcpClientEegDataSource::start()
 {
-    eegThread.startReceiving();
+    eegThread.connect();
 }
 
 void ThreadedTcpClientEegDataSource::stop()
 {
-    eegThread.stopReceiving();
+    eegThread.disconnect();
 }
 
 void ThreadedTcpClientEegDataSource::setHost(const QString &host)

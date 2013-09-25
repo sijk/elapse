@@ -8,7 +8,7 @@ EegThread::EegThread(QObject *parent) :
 
 EegThread::~EegThread()
 {
-    stopReceiving();
+    disconnect();
     wait();
 }
 
@@ -53,7 +53,7 @@ void EegThread::setHost(const QString &hostName, quint16 port)
     this->port = port;
 }
 
-void EegThread::startReceiving()
+void EegThread::connect()
 {
     QMutexLocker locker(&mutex);
     if (!isRunning()) {
@@ -62,7 +62,7 @@ void EegThread::startReceiving()
     }
 }
 
-void EegThread::stopReceiving()
+void EegThread::disconnect()
 {
     QMutexLocker locker(&mutex);
     quit = true;

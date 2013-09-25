@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
     ThreadedTcpClientEegDataSource source;
     EegDecoder eegdec;
 
-    source.setHost("overo.local");
+    source.setProperty("host", "overo.local");
 
-    eegdec.setGains({1,1,1,1,1,1,1,1});
-    eegdec.setVref(4.5e6);
+    eegdec.setProperty("gain", 1);
+    eegdec.setProperty("vref", 4.5e6);
 
     QObject::connect(&source, SIGNAL(eegReady(QByteArray)),
                      &eegdec, SLOT(onData(QByteArray)));

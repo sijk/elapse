@@ -20,8 +20,8 @@ signals:
     void error(int socketError, const QString &message);
 
 public slots:
-    void startReceiving();
-    void stopReceiving();
+    void connect();
+    void disconnect();
 
 private:
     QString hostName;

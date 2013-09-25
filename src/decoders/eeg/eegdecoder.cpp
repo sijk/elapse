@@ -54,25 +54,8 @@ void checkSequenceNumber(const EegSample &sample)
 
 EegDecoder::EegDecoder(QObject *parent) :
     SampleDecoder(parent)
-{ }
-
-QList<quint8> EegDecoder::gains() const
-{ return _gains; }
-
-quint8 EegDecoder::gain(int channel) const
-{ return _gains[channel]; }
-
-double EegDecoder::vref() const
-{ return _vref; }
-
-void EegDecoder::setGains(const QList<quint8> &gains)
-{ _gains = gains; }
-
-void EegDecoder::setGain(int channel, quint8 gain)
-{ _gains[channel] = gain; }
-
-void EegDecoder::setVref(double vref)
-{ _vref = vref; }
+{
+}
 
 void EegDecoder::onData(const QByteArray &data)
 {
@@ -94,7 +77,7 @@ void EegDecoder::onData(const QByteArray &data)
 
         for (int i = 0; i < 8; i++) {
             stream >> value;
-            sample.channel.append(parseVoltage(i, value.toS32()));
+            sample.channel.append(toMicroVolts(value.toS32()));
         }
 
         checkSequenceNumber(sample);
@@ -102,7 +85,7 @@ void EegDecoder::onData(const QByteArray &data)
     }
 }
 
-double EegDecoder::parseVoltage(int channel, double value) const
+double EegDecoder::toMicroVolts(double reading) const
 {
-    return value / _gains[channel] * _vref / ((1 << 23) - 1);
+    return reading / _gain * _vref / ((1 << 23) - 1);
 }
