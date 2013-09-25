@@ -13,21 +13,13 @@
 struct BigEndian24
 {
     char bytes[3];
-    inline quint32 toU32() const;
-    inline qint32 toS32() const;
+    inline qint32 to32bit() const;
 };
 
-quint32 BigEndian24::toU32() const
+qint32 BigEndian24::to32bit() const
 {
-    return (bytes[0] << 16) | (bytes[1] << 8) | bytes[2];
-}
-
-qint32 BigEndian24::toS32() const
-{
-    if (bytes[0] & 0x80)
-        return (0xFF << 24) | toU32();
-    else
-        return toU32();
+    // Set the high 24 bits and then right shift to get correct sign extension
+    return ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8)) >> 8;
 }
 
 QDataStream &operator>>(QDataStream &stream, BigEndian24 &value)
@@ -70,14 +62,14 @@ void EegDecoder::onData(const QByteArray &data)
         stream >> sample.timestamp;
 
         stream >> value;
-        status = value.toU32();
+        status = value.to32bit();
         sample.loff_stat_p = (status >> 12) & 0xFF;
         sample.loff_stat_n = (status >> 4) & 0xFF;
         sample.gpio = status & 0x0F;
 
         for (int i = 0; i < 8; i++) {
             stream >> value;
-            sample.channel.append(toMicroVolts(value.toS32()));
+            sample.channel.append(toMicroVolts(value.to32bit()));
         }
 
         checkSequenceNumber(sample);
