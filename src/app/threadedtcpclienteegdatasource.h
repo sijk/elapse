@@ -12,9 +12,6 @@ class ThreadedTcpClientEegDataSource : public DataSource
 public:
     explicit ThreadedTcpClientEegDataSource(QObject *parent = 0);
 
-signals:
-    void error(const QString &message);
-
 public slots:
     void start();
     void stop();
@@ -26,7 +23,6 @@ private slots:
 
 private:
     EegThread eegThread;
-    QString _host;
 };
 
 #endif // THREADEDTCPCLIENTEEGDATASOURCE_H

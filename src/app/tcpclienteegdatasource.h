@@ -7,19 +7,10 @@
 class TcpClientEegDataSource : public DataSource
 {
     Q_OBJECT
-    Q_PROPERTY(QString host READ host WRITE setHost)
-    Q_PROPERTY(quint16 port READ port WRITE setPort)
-
 public:
     explicit TcpClientEegDataSource(QObject *parent = 0);
 
-    const QString &host() const;
-    quint16 port() const;
-
 public slots:
-    void setHost(const QString &host);
-    void setPort(quint16 port);
-
     void start();
     void stop();
 
@@ -29,7 +20,6 @@ private slots:
 
 private:
     QTcpSocket sock;
-    QString _host;
     quint16 _port;
 };
 

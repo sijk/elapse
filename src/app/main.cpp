@@ -1,6 +1,6 @@
 #include <QApplication>
 #include "pluginloader.h"
-#include "threadedtcpclienteegdatasource.h"
+#include "tcpclienteegdatasource.h"
 #include "eegdecoder.h"
 #include "mainwindow.h"
 
@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    ThreadedTcpClientEegDataSource source;
+    TcpClientEegDataSource source;
     EegDecoder eegdec;
 
     source.setProperty("host", "overo.local");
