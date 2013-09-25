@@ -1,10 +1,6 @@
-QT        = core testlib
-CONFIG   += testcase
-
-TARGET = tst_pluginloadertest
+include(../test.pri)
 
 SOURCES += tst_pluginloadertest.cpp
-
 
 LIBS += -L$$OUT_PWD/../../src/pluginloader/ -lpluginloader
 INCLUDEPATH += $$PWD/../../src/pluginloader
