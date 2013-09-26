@@ -10,7 +10,7 @@
 
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(PluginLoader &loader, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     loader(loader),

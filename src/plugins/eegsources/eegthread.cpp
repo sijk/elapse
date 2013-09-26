@@ -28,6 +28,8 @@ void EegThread::run()
         return;
     }
 
+    emit connected();
+
     while (!quit && sock.isOpen()) {
         while (!sock.bytesAvailable()) {
             if (!sock.waitForReadyRead(500)) {

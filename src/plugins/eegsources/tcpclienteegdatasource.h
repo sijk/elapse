@@ -8,7 +8,7 @@ class TcpClientEegDataSource : public DataSource
 {
     Q_OBJECT
 public:
-    explicit TcpClientEegDataSource(QObject *parent = 0);
+    Q_INVOKABLE explicit TcpClientEegDataSource(QObject *parent = 0);
 
 public slots:
     void start();

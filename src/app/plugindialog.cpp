@@ -34,6 +34,7 @@ PluginDialog::PluginDialog(PluginLoader &loader, QWidget *parent) :
             foreach (QString key, loader.keysForFile(file)) {
                 auto keyItem = new QTreeWidgetItem(fileItem);
                 keyItem->setText(0, key);
+                keyItem->setFirstColumnSpanned(true);
             }
         }
 

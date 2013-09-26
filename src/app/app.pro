@@ -1,6 +1,6 @@
 include(../../global.pri)
 
-QT           += core gui widgets network
+QT           += core gui widgets
 CONFIG       += qwt
 
 TARGET        = elapse
@@ -10,13 +10,9 @@ DESTDIR       = ../../
 
 SOURCES      += main.cpp \
                 mainwindow.cpp \
-                plugindialog.cpp \
-                tcpclienteegdatasource.cpp
+                plugindialog.cpp
 HEADERS      += mainwindow.h \
                 plugindialog.h \
-                tcpclienteegdatasource.h
-HEADERS      += dataprovider.h \
-                eegdecoder.h \
                 datasource.h
 FORMS        += mainwindow.ui \
                 plugindialog.ui

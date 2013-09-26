@@ -17,6 +17,7 @@ public:
 
 signals:
     void newData(const QByteArray &data);
+    void connected();
     void error(int socketError, const QString &message);
 
 public slots:

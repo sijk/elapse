@@ -10,7 +10,7 @@ class ThreadedTcpClientEegDataSource : public DataSource
     Q_PROPERTY(QString host MEMBER _host WRITE setHost)
 
 public:
-    explicit ThreadedTcpClientEegDataSource(QObject *parent = 0);
+    Q_INVOKABLE explicit ThreadedTcpClientEegDataSource(QObject *parent = 0);
 
 public slots:
     void start();

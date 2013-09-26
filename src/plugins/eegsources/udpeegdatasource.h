@@ -8,7 +8,7 @@ class UdpEegDataSource : public DataSource
 {
     Q_OBJECT
 public:
-    explicit UdpEegDataSource(QObject *parent = 0);
+    Q_INVOKABLE explicit UdpEegDataSource(QObject *parent = 0);
 
 public slots:
     void start();

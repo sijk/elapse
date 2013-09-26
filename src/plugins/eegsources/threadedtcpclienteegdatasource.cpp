@@ -5,6 +5,8 @@ ThreadedTcpClientEegDataSource::ThreadedTcpClientEegDataSource(QObject *parent) 
 {
     connect(&eegThread, SIGNAL(newData(QByteArray)),
             this, SIGNAL(eegReady(QByteArray)));
+    connect(&eegThread, SIGNAL(connected()),
+            this, SIGNAL(started()));
     connect(&eegThread, SIGNAL(error(int,QString)),
             this, SLOT(onEegError(int,QString)));
 }
