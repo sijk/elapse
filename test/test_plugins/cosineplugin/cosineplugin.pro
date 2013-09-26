@@ -1,10 +1,9 @@
-include(../../global.pri)
+include(../../../global.pri)
 
 # Generic plugin settings
 TEMPLATE        = lib
-QT             += network
 CONFIG         += plugin
-DESTDIR         = ../../plugins
+DESTDIR         = ../
 
 # Plugin-specific settings
 HEADERS         = cosineprovider.h \
@@ -13,3 +12,6 @@ HEADERS         = cosineprovider.h \
                   plugin.h
 SOURCES         = cosineprovider.cpp
 TARGET          = $$qtLibraryTarget(cosineplugin)
+
+INCLUDEPATH    += ..
+VPATH          += ..

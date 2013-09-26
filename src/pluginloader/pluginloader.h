@@ -50,7 +50,17 @@ private:
 template<class T>
 T PluginLoader::create(const QString &key) const
 {
-    return qobject_cast<T>(create(key));
+    // Need to block the createdKey signal because the type cast might fail.
+    // We're using const_cast so this method can still be const even though it
+    // modifies and then resets blockSignals().
+    PluginLoader *self = const_cast<PluginLoader*>(this);
+    bool wasBlocked = self->blockSignals(true);
+    T obj = qobject_cast<T>(create(key));
+    self->blockSignals(wasBlocked);
+
+    if (obj)
+        emit createdKey(key);
+    return obj;
 }
 
 #endif // PLUGINLOADER_H

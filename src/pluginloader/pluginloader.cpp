@@ -19,8 +19,7 @@ class GenericPlugin : public QObject, public BasePlugin<QObject>
 PluginLoader::PluginLoader(QObject *parent) :
     QObject(parent)
 {
-    setSearchPath(QCoreApplication::instance()->applicationDirPath()
-                  + "/plugins");
+    setSearchPath(qApp->applicationDirPath() + "/plugins");
 }
 
 QFileInfoList PluginLoader::files() const
@@ -89,9 +88,8 @@ QObject *PluginLoader::create(const QString &key) const
 
     if (factory) {
         QObject *obj = factory->create(key);
-        if (obj) {
+        if (obj)
             emit createdKey(key);
-        }
         return obj;
     }
 

@@ -1,10 +1,10 @@
-include(../../global.pri)
+include(../../../global.pri)
 
 # Generic plugin settings
 TEMPLATE        = lib
 QT             += network
 CONFIG         += plugin
-DESTDIR         = ../../plugins
+DESTDIR         = ../
 
 # Plugin-specific settings
 HEADERS         = tcpprovider.h \
@@ -15,3 +15,6 @@ HEADERS         = tcpprovider.h \
 SOURCES         = tcpprovider.cpp \
                   sineprovider.cpp
 TARGET          = $$qtLibraryTarget(sineplugin)
+
+INCLUDEPATH    += ..
+VPATH          += ..

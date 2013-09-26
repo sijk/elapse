@@ -3,7 +3,6 @@
 
 #include <QtPlugin>
 #include <QStringList>
-#include "dataprovider.h"
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -56,14 +55,5 @@ T *BasePlugin<T>::create(const QString &key)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-typedef FactoryInterface<DataProvider> DataProviderInterface;
-Q_DECLARE_INTERFACE(DataProviderInterface, DataProviderInterface_iid)
-
-class DataProviderPlugin : public QObject, public BasePlugin<DataProvider>
-{
-    Q_OBJECT
-    Q_INTERFACES(DataProviderInterface)
-};
 
 #endif // PLUGIN_H
