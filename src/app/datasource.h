@@ -18,6 +18,7 @@ signals:
     void eegReady(const QByteArray &data);
     void imuReady(const QByteArray &data);
 
+    void started();
     void error(const QString &message);
 
 public slots:

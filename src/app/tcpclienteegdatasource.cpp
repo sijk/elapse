@@ -7,6 +7,7 @@ TcpClientEegDataSource::TcpClientEegDataSource(QObject *parent) :
     connect(&sock, SIGNAL(readyRead()), this, SLOT(onDataReady()));
     connect(&sock, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(onError(QAbstractSocket::SocketError)));
+    connect(&sock, SIGNAL(connected()), this, SIGNAL(started()));
 }
 
 void TcpClientEegDataSource::start()

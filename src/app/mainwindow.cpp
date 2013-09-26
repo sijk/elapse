@@ -1,4 +1,5 @@
 #include <QMessageBox>
+#include <QMovie>
 #include <qwt_plot_curve.h>
 #include "pluginloader.h"
 #include "plugindialog.h"
@@ -16,7 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     plotLength(1000),
     x(plotLength),
     y(plotLength),
-    curve(new QwtPlotCurve)
+    curve(new QwtPlotCurve),
+    spinner(new QMovie(":/img/spinner.gif"))
 {
     ui->setupUi(this);
     curve->attach(ui->plot);
@@ -32,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    delete spinner;
     delete curve;
     delete ui;
 }
@@ -45,8 +48,15 @@ void MainWindow::onDataReady(const EegSample &sample)
     ui->plot->replot();
 }
 
+void MainWindow::onSourceStarted()
+{
+    hideSpinner();
+}
+
 void MainWindow::onSourceError(const QString &message)
 {
+    hideSpinner();
+
     bool wasBlocked = ui->pushButton->blockSignals(true);
     ui->pushButton->setChecked(false);
     ui->pushButton->blockSignals(wasBlocked);
@@ -56,6 +66,7 @@ void MainWindow::onSourceError(const QString &message)
 
 void MainWindow::on_pushButton_toggled(bool checked)
 {
+    if (checked) showSpinner();
     emit (checked ? start() : stop());
 }
 
@@ -80,4 +91,19 @@ void MainWindow::on_actionPlugins_triggered()
 {
     PluginDialog dialog(loader, this);
     dialog.exec();
+}
+
+void MainWindow::showSpinner()
+{
+    ui->pushButton->setEnabled(false);
+    ui->spinner->setMovie(spinner);
+    spinner->start();
+}
+
+void MainWindow::hideSpinner()
+{
+    spinner->stop();
+    ui->spinner->setText(" ");
+    ui->pushButton->setEnabled(true);
+    ui->pushButton->setFocus();
 }

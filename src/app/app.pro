@@ -20,6 +20,7 @@ HEADERS      += dataprovider.h \
                 datasource.h
 FORMS        += mainwindow.ui \
                 plugindialog.ui
+RESOURCES    += ../../elapse.qrc
 
 LIBS            += -L$$OUT_PWD/../pluginloader/ -lpluginloader
 INCLUDEPATH     += $$PWD/../pluginloader
