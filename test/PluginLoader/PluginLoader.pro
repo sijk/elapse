@@ -2,7 +2,7 @@ include(../test.pri)
 include(../../global.pri)
 
 SOURCES += tst_pluginloadertest.cpp
-HEADERS += dataprovider.h dataconsumer.h
+HEADERS += producer.h consumer.h
 
 INCLUDEPATH += ../test_plugins
 VPATH       += ../test_plugins

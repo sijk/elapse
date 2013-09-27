@@ -4,11 +4,11 @@
 #include "plugin.h"
 #include "loggerconsumer.h"
 
-class LoggerPlugin : public DataConsumerPlugin
+class LoggerPlugin : public ConsumerPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID DataConsumerInterface_iid)
-    Q_CLASSINFO("description", "DataConsumer that logs to stdout")
+    Q_PLUGIN_METADATA(IID ConsumerInterface_iid)
+    Q_CLASSINFO("description", "Consumer that logs to stdout")
 protected:
     ClassList classes()
     {

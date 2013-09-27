@@ -1,7 +1,7 @@
 #include <QtTest>
 #include "pluginloader.h"
-#include "dataprovider.h"
-#include "dataconsumer.h"
+#include "producer.h"
+#include "consumer.h"
 
 class PluginLoaderTest : public QObject
 {
@@ -13,18 +13,18 @@ private slots:
     void canSetSearchPath();
     void canFindPluginFiles();
     void canListInterfaces();
-    void listsCorrectFilesForDataProviderInterface();
-    void listsCorrectFilesForDataConsumerInterface();
-    void listsCorrectKeysForInterfaces();
-    void listsCorrectKeysForFiles();
+    void canListFilesForProducerInterface();
+    void canListFilesForConsumerInterface();
+    void canListKeysForInterfaces();
+    void canListKeysForFiles();
     void canGetInfoForFile_data();
     void canGetInfoForFile();
     void canGetInfoForKey_data();
     void canGetInfoForKey();
     void canGetFileForKey_data();
     void canGetFileForKey();
-    void canCreateDataProviderAndCast();
-    void canCreateDataProviderTemplated();
+    void canCreateProducerAndCast();
+    void canCreateProducerTemplated();
     void emitCreatedKeySignalOnSuccess();
     void emitCreatedKeySignalOnSuccessTemplated();
     void dontEmitCreatedKeySignalOnFailure();
@@ -75,47 +75,47 @@ void PluginLoaderTest::canListInterfaces()
 {
     QStringList ifaces = loader->interfaces();
     QCOMPARE(ifaces.size(), 2);
-    QVERIFY(ifaces.contains(DataProviderInterface_iid));
-    QVERIFY(ifaces.contains(DataConsumerInterface_iid));
+    QVERIFY(ifaces.contains(ProducerInterface_iid));
+    QVERIFY(ifaces.contains(ConsumerInterface_iid));
 }
 
-void PluginLoaderTest::listsCorrectFilesForDataProviderInterface()
+void PluginLoaderTest::canListFilesForProducerInterface()
 {
-    QFileInfoList files = loader->filesForInterface(DataProviderInterface_iid);
+    QFileInfoList files = loader->filesForInterface(ProducerInterface_iid);
     QVERIFY(files.contains(SINE_PLUGIN));
     QVERIFY(files.contains(COSINE_PLUGIN));
     QVERIFY(!files.contains(LOGGER_PLUGIN));
 }
 
-void PluginLoaderTest::listsCorrectFilesForDataConsumerInterface()
+void PluginLoaderTest::canListFilesForConsumerInterface()
 {
-    QFileInfoList files = loader->filesForInterface(DataConsumerInterface_iid);
+    QFileInfoList files = loader->filesForInterface(ConsumerInterface_iid);
     QVERIFY(!files.contains(SINE_PLUGIN));
     QVERIFY(!files.contains(COSINE_PLUGIN));
     QVERIFY(files.contains(LOGGER_PLUGIN));
 }
 
-void PluginLoaderTest::listsCorrectKeysForInterfaces()
+void PluginLoaderTest::canListKeysForInterfaces()
 {
-    QStringList keys = loader->keysForInterface(DataProviderInterface_iid);
+    QStringList keys = loader->keysForInterface(ProducerInterface_iid);
     QCOMPARE(keys.size(), 3);
-    QVERIFY(keys.contains("SineProvider"));
-    QVERIFY(keys.contains("TcpProvider"));
-    QVERIFY(keys.contains("CosineProvider"));
+    QVERIFY(keys.contains("SineProducer"));
+    QVERIFY(keys.contains("TcpProducer"));
+    QVERIFY(keys.contains("CosineProducer"));
 
-    keys = loader->keysForInterface(DataConsumerInterface_iid);
+    keys = loader->keysForInterface(ConsumerInterface_iid);
     QCOMPARE(keys, QStringList{"LoggerConsumer"});
 }
 
-void PluginLoaderTest::listsCorrectKeysForFiles()
+void PluginLoaderTest::canListKeysForFiles()
 {
     QStringList keys = loader->keysForFile(SINE_PLUGIN);
     QCOMPARE(keys.size(), 2);
-    QVERIFY(keys.contains("SineProvider"));
-    QVERIFY(keys.contains("TcpProvider"));
+    QVERIFY(keys.contains("SineProducer"));
+    QVERIFY(keys.contains("TcpProducer"));
 
     keys = loader->keysForFile(COSINE_PLUGIN);
-    QCOMPARE(keys, QStringList{"CosineProvider"});
+    QCOMPARE(keys, QStringList{"CosineProducer"});
 
     keys = loader->keysForFile(LOGGER_PLUGIN);
     QCOMPARE(keys, QStringList{"LoggerConsumer"});
@@ -126,9 +126,9 @@ void PluginLoaderTest::canGetInfoForFile_data()
     QTest::addColumn<QFileInfo>("file");
     QTest::addColumn<QString>("iid");
 
-    QTest::newRow("libsineplugin.so") << SINE_PLUGIN << DataProviderInterface_iid;
-    QTest::newRow("libcosineplugin.so") << COSINE_PLUGIN << DataProviderInterface_iid;
-    QTest::newRow("libloggerplugin.so") << LOGGER_PLUGIN << DataConsumerInterface_iid;
+    QTest::newRow("libsineplugin.so") << SINE_PLUGIN << ProducerInterface_iid;
+    QTest::newRow("libcosineplugin.so") << COSINE_PLUGIN << ProducerInterface_iid;
+    QTest::newRow("libloggerplugin.so") << LOGGER_PLUGIN << ConsumerInterface_iid;
 }
 
 void PluginLoaderTest::canGetInfoForFile()
@@ -143,10 +143,10 @@ void PluginLoaderTest::canGetInfoForKey_data()
     QTest::addColumn<QString>("key");
     QTest::addColumn<QString>("iid");
 
-    QTest::newRow("SineProvider") << "SineProvider" << DataProviderInterface_iid;
-    QTest::newRow("TcpProvider") << "TcpProvider" << DataProviderInterface_iid;
-    QTest::newRow("CosineProvider") << "CosineProvider" << DataProviderInterface_iid;
-    QTest::newRow("LoggerConsumer") << "LoggerConsumer" << DataConsumerInterface_iid;
+    QTest::newRow("SineProducer") << "SineProducer" << ProducerInterface_iid;
+    QTest::newRow("TcpProducer") << "TcpProducer" << ProducerInterface_iid;
+    QTest::newRow("CosineProducer") << "CosineProducer" << ProducerInterface_iid;
+    QTest::newRow("LoggerConsumer") << "LoggerConsumer" << ConsumerInterface_iid;
 }
 
 void PluginLoaderTest::canGetInfoForKey()
@@ -161,9 +161,9 @@ void PluginLoaderTest::canGetFileForKey_data()
     QTest::addColumn<QString>("key");
     QTest::addColumn<QFileInfo>("file");
 
-    QTest::newRow("SineProvider") << "SineProvider" << SINE_PLUGIN;
-    QTest::newRow("TcpProvider") << "TcpProvider" << SINE_PLUGIN;
-    QTest::newRow("CosineProvider") << "CosineProvider" << COSINE_PLUGIN;
+    QTest::newRow("SineProducer") << "SineProducer" << SINE_PLUGIN;
+    QTest::newRow("TcpProducer") << "TcpProducer" << SINE_PLUGIN;
+    QTest::newRow("CosineProducer") << "CosineProducer" << COSINE_PLUGIN;
     QTest::newRow("LoggerConsumer") << "LoggerConsumer" << LOGGER_PLUGIN;
 }
 
@@ -174,32 +174,32 @@ void PluginLoaderTest::canGetFileForKey()
     QCOMPARE(loader->fileForKey(key), file);
 }
 
-void PluginLoaderTest::canCreateDataProviderAndCast()
+void PluginLoaderTest::canCreateProducerAndCast()
 {
     QObject *provider = 0;
-    provider = loader->create("SineProvider");
+    provider = loader->create("SineProducer");
     QVERIFY(provider != 0);
-    QVERIFY(qobject_cast<DataProvider*>(provider) != 0);
-    QVERIFY(qobject_cast<DataConsumer*>(provider) == 0);
+    QVERIFY(qobject_cast<Producer*>(provider) != 0);
+    QVERIFY(qobject_cast<Consumer*>(provider) == 0);
     delete provider;
 }
 
-void PluginLoaderTest::canCreateDataProviderTemplated()
+void PluginLoaderTest::canCreateProducerTemplated()
 {
-    DataProvider *provider = 0;
-    provider = loader->create<DataProvider*>("SineProvider");
+    Producer *provider = 0;
+    provider = loader->create<Producer*>("SineProducer");
     QVERIFY(provider != 0);
     delete provider;
 
-    DataConsumer *consumer = 0;
-    consumer = loader->create<DataConsumer*>("SineProvider");
+    Consumer *consumer = 0;
+    consumer = loader->create<Consumer*>("SineProducer");
     QVERIFY(consumer == 0);
     delete consumer;
 }
 
 void PluginLoaderTest::emitCreatedKeySignalOnSuccess()
 {
-    QString key = "SineProvider";
+    QString key = "SineProducer";
     QSignalSpy spy(loader, SIGNAL(createdKey(QString)));
 
     QObject *provider = loader->create(key);
@@ -213,10 +213,10 @@ void PluginLoaderTest::emitCreatedKeySignalOnSuccess()
 
 void PluginLoaderTest::emitCreatedKeySignalOnSuccessTemplated()
 {
-    QString key = "SineProvider";
+    QString key = "SineProducer";
     QSignalSpy spy(loader, SIGNAL(createdKey(QString)));
 
-    DataProvider *provider = loader->create<DataProvider*>(key);
+    Producer *provider = loader->create<Producer*>(key);
 
     QVERIFY(provider != 0);
     QCOMPARE(spy.count(), 1);
@@ -236,8 +236,8 @@ void PluginLoaderTest::dontEmitCreatedKeySignalOnFailure()
 void PluginLoaderTest::dontEmitCreatedKeySignalOnFailureTemplated()
 {
     QSignalSpy spy(loader, SIGNAL(createdKey(QString)));
-    DataConsumer *consumer = loader->create<DataConsumer*>("SineProvider");
-    QCOMPARE(consumer, static_cast<DataConsumer*>(0));
+    Consumer *consumer = loader->create<Consumer*>("SineProducer");
+    QCOMPARE(consumer, static_cast<Consumer*>(0));
     QCOMPARE(spy.count(), 0);
 }
 

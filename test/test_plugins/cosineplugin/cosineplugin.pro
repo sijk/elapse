@@ -6,11 +6,11 @@ CONFIG         += plugin
 DESTDIR         = ../
 
 # Plugin-specific settings
-HEADERS         = cosineprovider.h \
-                  dataprovider.h \
+HEADERS         = cosineproducer.h \
+                  producer.h \
                   cosineplugin.h \
                   plugin.h
-SOURCES         = cosineprovider.cpp
+SOURCES         = cosineproducer.cpp
 TARGET          = $$qtLibraryTarget(cosineplugin)
 
 INCLUDEPATH    += ..

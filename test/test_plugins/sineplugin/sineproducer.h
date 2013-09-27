@@ -2,13 +2,13 @@
 #define SINEPROVIDER_H
 
 #include <QTimer>
-#include "dataprovider.h"
+#include "producer.h"
 
-class SineProvider : public DataProvider
+class SineProducer : public Producer
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit SineProvider(QObject *parent = 0);
+    Q_INVOKABLE explicit SineProducer(QObject *parent = 0);
 
 public slots:
     void start();

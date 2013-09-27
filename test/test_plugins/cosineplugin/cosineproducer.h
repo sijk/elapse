@@ -2,13 +2,13 @@
 #define COSINEPROVIDER_H
 
 #include <QTimer>
-#include "dataprovider.h"
+#include "producer.h"
 
-class CosineProvider : public DataProvider
+class CosineProducer : public Producer
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit CosineProvider(QObject *parent = 0);
+    Q_INVOKABLE explicit CosineProducer(QObject *parent = 0);
 
 public slots:
     void start();

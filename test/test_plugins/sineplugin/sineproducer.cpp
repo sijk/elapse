@@ -1,25 +1,25 @@
 #include <cmath>
-#include "sineprovider.h"
+#include "sineproducer.h"
 
-SineProvider::SineProvider(QObject *parent) :
-    DataProvider(parent),
+SineProducer::SineProducer(QObject *parent) :
+    Producer(parent),
     t(this)
 {
     connect(&t, SIGNAL(timeout()), this, SLOT(onTimer()));
 }
 
-void SineProvider::start()
+void SineProducer::start()
 {
     onTimer();
     t.start(40);
 }
 
-void SineProvider::stop()
+void SineProducer::stop()
 {
     t.stop();
 }
 
-void SineProvider::onTimer()
+void SineProducer::onTimer()
 {
     static double x;
     x = std::fmod(x + 0.1, 2 * M_PI);
