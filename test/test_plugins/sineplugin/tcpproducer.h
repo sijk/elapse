@@ -1,5 +1,5 @@
-#ifndef TCPPROVIDER_H
-#define TCPPROVIDER_H
+#ifndef TCPPRODUCER_H
+#define TCPPRODUCER_H
 
 #include <QtNetwork>
 #include "producer.h"
@@ -22,4 +22,4 @@ private:
     QTcpSocket *sock;
 };
 
-#endif // TCPPROVIDER_H
+#endif // TCPPRODUCER_H

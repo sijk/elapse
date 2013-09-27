@@ -1,5 +1,5 @@
-#ifndef TCPPROVIDERPLUGIN_H
-#define TCPPROVIDERPLUGIN_H
+#ifndef SINEPLUGIN_H
+#define SINEPLUGIN_H
 
 #include "plugin.h"
 #include "tcpproducer.h"
@@ -20,4 +20,4 @@ protected:
     }
 };
 
-#endif // TCPPROVIDERPLUGIN_H
+#endif // SINEPLUGIN_H

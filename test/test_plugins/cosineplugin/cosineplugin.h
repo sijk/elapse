@@ -1,5 +1,5 @@
-#ifndef COSINEPROVIDERPLUGIN_H
-#define COSINEPROVIDERPLUGIN_H
+#ifndef COSINEPLUGIN_H
+#define COSINEPLUGIN_H
 
 #include "plugin.h"
 #include "cosineproducer.h"
@@ -16,4 +16,4 @@ protected:
     }
 };
 
-#endif // COSINEPROVIDERPLUGIN_H
+#endif // COSINEPLUGIN_H
