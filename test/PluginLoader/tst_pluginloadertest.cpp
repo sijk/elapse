@@ -29,6 +29,7 @@ private slots:
     void emitCreatedKeySignalOnSuccessTemplated();
     void dontEmitCreatedKeySignalOnFailure();
     void dontEmitCreatedKeySignalOnFailureTemplated();
+    void changingSearchPathRemovesOldPlugins();
 
 private:
     PluginLoader *loader;
@@ -239,6 +240,16 @@ void PluginLoaderTest::dontEmitCreatedKeySignalOnFailureTemplated()
     Consumer *consumer = loader->create<Consumer*>("SineProducer");
     QCOMPARE(consumer, static_cast<Consumer*>(0));
     QCOMPARE(spy.count(), 0);
+}
+
+void PluginLoaderTest::changingSearchPathRemovesOldPlugins()
+{
+    QFileInfoList files = loader->files();
+    QCOMPARE(files.size(), 3);
+
+    loader->setSearchPath(qApp->applicationDirPath());
+    files = loader->files();
+    QCOMPARE(files.size(), 0);
 }
 
 

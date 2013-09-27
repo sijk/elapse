@@ -109,6 +109,9 @@ void PluginLoader::setSearchPath(QDir path)
 
 void PluginLoader::rescan()
 {
+    pluginInfo.clear();
+    pluginFile.clear();
+
     foreach (QFileInfo file, path.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
