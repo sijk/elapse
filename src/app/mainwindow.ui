@@ -44,17 +44,7 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0">
-       <item>
-        <widget class="QLabel" name="pluginName">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="margin">
-          <number>10</number>
-         </property>
-        </widget>
-       </item>
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
        <item>
         <spacer name="spacer">
          <property name="orientation">
@@ -134,7 +124,6 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionPlugins"/>
-    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
