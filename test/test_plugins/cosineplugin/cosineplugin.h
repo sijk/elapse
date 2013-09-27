@@ -1,7 +1,7 @@
 #ifndef COSINEPLUGIN_H
 #define COSINEPLUGIN_H
 
-#include "plugin.h"
+#include "test_plugins.h"
 #include "cosineproducer.h"
 
 class CosinePlugin : public ProducerPlugin

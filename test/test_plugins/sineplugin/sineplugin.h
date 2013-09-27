@@ -1,7 +1,7 @@
 #ifndef SINEPLUGIN_H
 #define SINEPLUGIN_H
 
-#include "plugin.h"
+#include "test_plugins.h"
 #include "tcpproducer.h"
 #include "sineproducer.h"
 

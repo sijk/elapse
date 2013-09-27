@@ -2,7 +2,6 @@
 #define DATACONSUMER_H
 
 #include <QObject>
-#include "plugin.h"
 
 class Consumer : public QObject
 {
@@ -14,16 +13,6 @@ public slots:
     virtual void onData(double data) = 0;
 };
 
-
 #define ConsumerInterface_iid "org.nzbri.elapse.test.ConsumerInterface"
-
-typedef FactoryInterface<Consumer> ConsumerInterface;
-Q_DECLARE_INTERFACE(ConsumerInterface, ConsumerInterface_iid)
-
-class ConsumerPlugin : public QObject, public BasePlugin<Consumer>
-{
-    Q_OBJECT
-    Q_INTERFACES(ConsumerInterface)
-};
 
 #endif // DATACONSUMER_H

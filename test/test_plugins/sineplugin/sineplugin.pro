@@ -11,7 +11,7 @@ HEADERS         = tcpproducer.h \
                   sineproducer.h \
                   producer.h \
                   sineplugin.h \
-                  plugin.h
+                  test_plugins.h
 SOURCES         = tcpproducer.cpp \
                   sineproducer.cpp
 TARGET          = $$qtLibraryTarget(sineplugin)

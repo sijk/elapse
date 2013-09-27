@@ -9,7 +9,7 @@ DESTDIR         = ../
 HEADERS         = loggerconsumer.h \
                   consumer.h \
                   loggerplugin.h \
-                  plugin.h
+                  test_plugins.h
 SOURCES         = loggerconsumer.cpp
 TARGET          = $$qtLibraryTarget(loggerplugin)
 
