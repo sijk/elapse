@@ -13,10 +13,10 @@ private slots:
     void canSetSearchPath();
     void canFindPluginFiles();
     void canListInterfaces();
-    void listsCorrectFilesForProducerInterface();
-    void listsCorrectFilesForConsumerInterface();
-    void listsCorrectKeysForInterfaces();
-    void listsCorrectKeysForFiles();
+    void canListFilesForProducerInterface();
+    void canListFilesForConsumerInterface();
+    void canListKeysForInterfaces();
+    void canListKeysForFiles();
     void canGetInfoForFile_data();
     void canGetInfoForFile();
     void canGetInfoForKey_data();
@@ -79,7 +79,7 @@ void PluginLoaderTest::canListInterfaces()
     QVERIFY(ifaces.contains(ConsumerInterface_iid));
 }
 
-void PluginLoaderTest::listsCorrectFilesForProducerInterface()
+void PluginLoaderTest::canListFilesForProducerInterface()
 {
     QFileInfoList files = loader->filesForInterface(ProducerInterface_iid);
     QVERIFY(files.contains(SINE_PLUGIN));
@@ -87,7 +87,7 @@ void PluginLoaderTest::listsCorrectFilesForProducerInterface()
     QVERIFY(!files.contains(LOGGER_PLUGIN));
 }
 
-void PluginLoaderTest::listsCorrectFilesForConsumerInterface()
+void PluginLoaderTest::canListFilesForConsumerInterface()
 {
     QFileInfoList files = loader->filesForInterface(ConsumerInterface_iid);
     QVERIFY(!files.contains(SINE_PLUGIN));
@@ -95,7 +95,7 @@ void PluginLoaderTest::listsCorrectFilesForConsumerInterface()
     QVERIFY(files.contains(LOGGER_PLUGIN));
 }
 
-void PluginLoaderTest::listsCorrectKeysForInterfaces()
+void PluginLoaderTest::canListKeysForInterfaces()
 {
     QStringList keys = loader->keysForInterface(ProducerInterface_iid);
     QCOMPARE(keys.size(), 3);
@@ -107,7 +107,7 @@ void PluginLoaderTest::listsCorrectKeysForInterfaces()
     QCOMPARE(keys, QStringList{"LoggerConsumer"});
 }
 
-void PluginLoaderTest::listsCorrectKeysForFiles()
+void PluginLoaderTest::canListKeysForFiles()
 {
     QStringList keys = loader->keysForFile(SINE_PLUGIN);
     QCOMPARE(keys.size(), 2);
