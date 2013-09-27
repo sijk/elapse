@@ -1,7 +1,7 @@
-#include "tcpprovider.h"
+#include "tcpproducer.h"
 
-TcpProvider::TcpProvider(QObject *parent) :
-    DataProvider(parent),
+TcpProducer::TcpProducer(QObject *parent) :
+    Producer(parent),
     sock(new QTcpSocket(this))
 {
     connect(sock, SIGNAL(readyRead()), this, SLOT(readData()));
@@ -9,17 +9,17 @@ TcpProvider::TcpProvider(QObject *parent) :
             this, SLOT(showError(QAbstractSocket::SocketError)));
 }
 
-void TcpProvider::start()
+void TcpProducer::start()
 {
     sock->connectToHost("localhost", 2468);
 }
 
-void TcpProvider::stop()
+void TcpProducer::stop()
 {
     sock->disconnectFromHost();
 }
 
-void TcpProvider::readData()
+void TcpProducer::readData()
 {
     double data;
 
@@ -30,7 +30,7 @@ void TcpProvider::readData()
     emit dataReady(data);
 }
 
-void TcpProvider::showError(QAbstractSocket::SocketError err)
+void TcpProducer::showError(QAbstractSocket::SocketError err)
 {
     Q_UNUSED(err);
     qDebug() << "SocketError:" << sock->errorString();

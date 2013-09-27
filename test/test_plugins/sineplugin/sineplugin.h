@@ -2,20 +2,20 @@
 #define TCPPROVIDERPLUGIN_H
 
 #include "plugin.h"
-#include "tcpprovider.h"
-#include "sineprovider.h"
+#include "tcpproducer.h"
+#include "sineproducer.h"
 
-class SinePlugin : public DataProviderPlugin
+class SinePlugin : public ProducerPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID DataProviderInterface_iid)
-    Q_CLASSINFO("description", "DataProviders that provide sine waves")
+    Q_PLUGIN_METADATA(IID ProducerInterface_iid)
+    Q_CLASSINFO("description", "Producers that provide sine waves")
 protected:
     ClassList classes()
     {
         return {
-            SineProvider::staticMetaObject,
-            TcpProvider::staticMetaObject
+            SineProducer::staticMetaObject,
+            TcpProducer::staticMetaObject
         };
     }
 };

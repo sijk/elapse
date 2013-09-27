@@ -7,13 +7,13 @@ CONFIG         += plugin
 DESTDIR         = ../
 
 # Plugin-specific settings
-HEADERS         = tcpprovider.h \
-                  sineprovider.h \
-                  dataprovider.h \
+HEADERS         = tcpproducer.h \
+                  sineproducer.h \
+                  producer.h \
                   sineplugin.h \
                   plugin.h
-SOURCES         = tcpprovider.cpp \
-                  sineprovider.cpp
+SOURCES         = tcpproducer.cpp \
+                  sineproducer.cpp
 TARGET          = $$qtLibraryTarget(sineplugin)
 
 INCLUDEPATH    += ..

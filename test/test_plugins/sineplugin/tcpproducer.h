@@ -2,13 +2,13 @@
 #define TCPPROVIDER_H
 
 #include <QtNetwork>
-#include "dataprovider.h"
+#include "producer.h"
 
-class TcpProvider : public DataProvider
+class TcpProducer : public Producer
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit TcpProvider(QObject *parent = 0);
+    Q_INVOKABLE explicit TcpProducer(QObject *parent = 0);
 
 public slots:
     void start();

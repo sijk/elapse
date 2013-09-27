@@ -2,9 +2,9 @@
 #define LOGGERCONSUMER_H
 
 #include <QTimer>
-#include "dataconsumer.h"
+#include "consumer.h"
 
-class LoggerConsumer : public DataConsumer
+class LoggerConsumer : public Consumer
 {
     Q_OBJECT
 public:

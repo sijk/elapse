@@ -2,17 +2,17 @@
 #define COSINEPROVIDERPLUGIN_H
 
 #include "plugin.h"
-#include "cosineprovider.h"
+#include "cosineproducer.h"
 
-class CosinePlugin : public DataProviderPlugin
+class CosinePlugin : public ProducerPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID DataProviderInterface_iid)
-    Q_CLASSINFO("description", "DataProviders that provide cosine waves")
+    Q_PLUGIN_METADATA(IID ProducerInterface_iid)
+    Q_CLASSINFO("description", "Producers that provide cosine waves")
 protected:
     ClassList classes()
     {
-        return { CosineProvider::staticMetaObject };
+        return { CosineProducer::staticMetaObject };
     }
 };
 

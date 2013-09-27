@@ -7,7 +7,7 @@ DESTDIR         = ../
 
 # Plugin-specific settings
 HEADERS         = loggerconsumer.h \
-                  dataconsumer.h \
+                  consumer.h \
                   loggerplugin.h \
                   plugin.h
 SOURCES         = loggerconsumer.cpp

@@ -2,7 +2,7 @@
 #include "loggerconsumer.h"
 
 LoggerConsumer::LoggerConsumer(QObject *parent) :
-    DataConsumer(parent)
+    Consumer(parent)
 {
 }
 

@@ -1,25 +1,25 @@
 #include <cmath>
-#include "cosineprovider.h"
+#include "cosineproducer.h"
 
-CosineProvider::CosineProvider(QObject *parent) :
-    DataProvider(parent),
+CosineProducer::CosineProducer(QObject *parent) :
+    Producer(parent),
     t(this)
 {
     connect(&t, SIGNAL(timeout()), this, SLOT(onTimer()));
 }
 
-void CosineProvider::start()
+void CosineProducer::start()
 {
     onTimer();
     t.start(40);
 }
 
-void CosineProvider::stop()
+void CosineProducer::stop()
 {
     t.stop();
 }
 
-void CosineProvider::onTimer()
+void CosineProducer::onTimer()
 {
     static double x;
     x = std::fmod(x + 0.1, 2 * M_PI);
