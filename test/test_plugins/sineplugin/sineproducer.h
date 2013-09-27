@@ -1,5 +1,5 @@
-#ifndef SINEPROVIDER_H
-#define SINEPROVIDER_H
+#ifndef SINEPRODUCER_H
+#define SINEPRODUCER_H
 
 #include <QTimer>
 #include "producer.h"
@@ -21,4 +21,4 @@ private:
     QTimer t;
 };
 
-#endif // SINEPROVIDER_H
+#endif // SINEPRODUCER_H

@@ -8,4 +8,4 @@ CONFIG  += staticlib
 
 SOURCES += pluginloader.cpp
 HEADERS += pluginloader.h \
-           plugin.h
+           plugin_base.h

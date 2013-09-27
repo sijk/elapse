@@ -1,5 +1,5 @@
-#ifndef COSINEPROVIDER_H
-#define COSINEPROVIDER_H
+#ifndef COSINEPRODUCER_H
+#define COSINEPRODUCER_H
 
 #include <QTimer>
 #include "producer.h"
@@ -21,4 +21,4 @@ private:
     QTimer t;
 };
 
-#endif // COSINEPROVIDER_H
+#endif // COSINEPRODUCER_H

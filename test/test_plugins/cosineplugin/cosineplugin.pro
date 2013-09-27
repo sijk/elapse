@@ -9,7 +9,7 @@ DESTDIR         = ../
 HEADERS         = cosineproducer.h \
                   producer.h \
                   cosineplugin.h \
-                  plugin.h
+                  test_plugins.h
 SOURCES         = cosineproducer.cpp
 TARGET          = $$qtLibraryTarget(cosineplugin)
 

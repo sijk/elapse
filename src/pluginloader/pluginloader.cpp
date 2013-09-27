@@ -4,7 +4,7 @@
 #include <QSet>
 #include <QStringList>
 #include "pluginloader.h"
-#include "plugin.h"
+#include "plugin_base.h"
 
 
 /*!

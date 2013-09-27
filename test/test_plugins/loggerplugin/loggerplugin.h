@@ -1,7 +1,7 @@
 #ifndef LOGGERCONSUMERPLUGIN_H
 #define LOGGERCONSUMERPLUGIN_H
 
-#include "plugin.h"
+#include "test_plugins.h"
 #include "loggerconsumer.h"
 
 class LoggerPlugin : public ConsumerPlugin

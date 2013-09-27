@@ -2,7 +2,6 @@
 #define DATAPROVIDER_H
 
 #include <QObject>
-#include "plugin.h"
 
 class Producer : public QObject
 {
@@ -18,16 +17,6 @@ public slots:
     virtual void stop() = 0;
 };
 
-
 #define ProducerInterface_iid "org.nzbri.elapse.test.ProducerInterface"
-
-typedef FactoryInterface<Producer> ProducerInterface;
-Q_DECLARE_INTERFACE(ProducerInterface, ProducerInterface_iid)
-
-class ProducerPlugin : public QObject, public BasePlugin<Producer>
-{
-    Q_OBJECT
-    Q_INTERFACES(ProducerInterface)
-};
 
 #endif // DATAPROVIDER_H
