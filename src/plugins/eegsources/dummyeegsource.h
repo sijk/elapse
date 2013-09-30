@@ -22,7 +22,6 @@ private:
     QTimer timer;
     quint32 seqnum;
     QByteArray chunk;
-    static const uint CHUNKSIZE;
 };
 
 #endif // DUMMYEEGSOURCE_H
