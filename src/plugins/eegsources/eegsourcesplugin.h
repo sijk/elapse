@@ -5,6 +5,7 @@
 #include "udpeegdatasource.h"
 #include "tcpclienteegdatasource.h"
 #include "threadedtcpclienteegdatasource.h"
+#include "dummyeegsource.h"
 
 class EegSourcesPlugin : public DataSourcePlugin
 {
@@ -16,7 +17,8 @@ protected:
         return {
             UdpEegDataSource::staticMetaObject,
             TcpClientEegDataSource::staticMetaObject,
-            ThreadedTcpClientEegDataSource::staticMetaObject
+            ThreadedTcpClientEegDataSource::staticMetaObject,
+            DummyEegSource::staticMetaObject
         };
     }
 };

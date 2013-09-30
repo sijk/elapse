@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     DataSource *source;
     EegDecoder eegdec;
 
-    source = loader.create<DataSource*>("TcpClientEegDataSource");
+    source = loader.create<DataSource*>("DummyEegSource");
     if (!source) {
         qDebug() << "Error loading DataSource";
         return 1;

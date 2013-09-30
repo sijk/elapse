@@ -11,11 +11,13 @@ HEADERS         = tcpclienteegdatasource.h \
                   udpeegdatasource.h \
                   threadedtcpclienteegdatasource.h \
                   eegthread.h \
+                  dummyeegsource.h \
                   datasource.h \
                   eegsourcesplugin.h \
                   plugin.h
 SOURCES         = tcpclienteegdatasource.cpp \
                   udpeegdatasource.cpp \
                   threadedtcpclienteegdatasource.cpp \
-                  eegthread.cpp
+                  eegthread.cpp \
+                  dummyeegsource.cpp
 TARGET          = $$qtLibraryTarget(eegsourcesplugin)
