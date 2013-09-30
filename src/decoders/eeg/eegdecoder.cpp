@@ -12,7 +12,7 @@
  */
 struct BigEndian24
 {
-    char bytes[3];
+    uchar bytes[3];
     inline qint32 to32bit() const;
 };
 
@@ -24,7 +24,7 @@ qint32 BigEndian24::to32bit() const
 
 QDataStream &operator>>(QDataStream &stream, BigEndian24 &value)
 {
-    stream.readRawData(value.bytes, 3);
+    stream.readRawData((char*)value.bytes, 3);
     return stream;
 }
 
