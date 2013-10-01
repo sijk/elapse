@@ -69,7 +69,7 @@ void DummyEegSource::appendSampleToChunk()
         double amplitude = 5e3;
         double period = SAMPLE_RATE;
         double omega = 2 * M_PI / period;
-        double phase = i * period / N_CHANNELS;
+        double phase = i * 2 * M_PI * period / N_CHANNELS;
         appendBE24(amplitude * std::sin(omega * seqnum - phase));
     }
 }
