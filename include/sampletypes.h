@@ -2,7 +2,7 @@
 #define SAMPLETYPES_H
 
 #include <QtGlobal>
-#include <QList>
+#include <QVector>
 
 struct Sample
 {
@@ -16,7 +16,7 @@ struct EegSample : Sample
     quint8 loff_stat_p;
     quint8 loff_stat_n;
     quint8 gpio;
-    QList<double> channel;
+    QVector<double> channel;
 };
 
 #endif // SAMPLETYPES_H
