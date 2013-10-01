@@ -1,6 +1,7 @@
 #include <QApplication>
 #include "pluginloader.h"
 #include "datasource.h"
+#include "eegfilesink.h"
 #include "eegdecoder.h"
 #include "mainwindow.h"
 
@@ -12,9 +13,10 @@ int main(int argc, char *argv[])
     PluginLoader loader;
     MainWindow w(loader);
     DataSource *source;
+    EegFileSink eegsink;
     EegDecoder eegdec;
 
-    source = loader.create<DataSource*>("DummyEegSource");
+    source = loader.create<DataSource*>("TcpClientEegDataSource");
     if (!source) {
         qDebug() << "Error loading DataSource";
         return 1;
@@ -29,6 +31,12 @@ int main(int argc, char *argv[])
                      &eegdec, SLOT(onData(QByteArray)));
     QObject::connect(&eegdec, SIGNAL(newSample(EegSample)),
                      &w, SLOT(onDataReady(EegSample)));
+
+    // Connect EEG file sink
+    QObject::connect(&w, SIGNAL(start()), &eegsink, SLOT(startRecording()));
+    QObject::connect(source, SIGNAL(eegReady(QByteArray)),
+                     &eegsink, SLOT(onData(QByteArray)));
+    QObject::connect(&w, SIGNAL(stop()), &eegsink, SLOT(stopRecording()));
 
     // Connect controls to source
     QObject::connect(&w, SIGNAL(start()), source, SLOT(start()));

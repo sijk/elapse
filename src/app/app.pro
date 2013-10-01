@@ -10,10 +10,12 @@ DESTDIR       = ../../
 
 SOURCES      += main.cpp \
                 mainwindow.cpp \
-                plugindialog.cpp
+                plugindialog.cpp \
+                eegfilesink.cpp
 HEADERS      += mainwindow.h \
                 plugindialog.h \
-                datasource.h
+                datasource.h \
+                eegfilesink.h
 FORMS        += mainwindow.ui \
                 plugindialog.ui
 RESOURCES    += ../../elapse.qrc
