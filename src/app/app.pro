@@ -27,3 +27,8 @@ LIBS            += -L$$OUT_PWD/../decoders/eeg/ -leegdecoder
 INCLUDEPATH     += $$PWD/../decoders/eeg
 DEPENDPATH      += $$PWD/../decoders/eeg
 PRE_TARGETDEPS  += $$OUT_PWD/../decoders/eeg/libeegdecoder.a
+
+LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
+INCLUDEPATH     += $$PWD/../stripchart
+DEPENDPATH      += $$PWD/../stripchart
+PRE_TARGETDEPS  += $$OUT_PWD/../stripchart/libstripchart.a

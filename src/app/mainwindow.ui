@@ -23,28 +23,12 @@
       <height>281</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
      <item>
-      <widget class="QwtPlot" name="plot">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="canvasBackground">
-        <brush brushstyle="SolidPattern">
-         <color alpha="255">
-          <red>255</red>
-          <green>255</green>
-          <blue>255</blue>
-         </color>
-        </brush>
-       </property>
-      </widget>
+      <widget class="StripChart" name="eegPlot" native="true"/>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
        <item>
         <spacer name="spacer">
          <property name="orientation">
@@ -57,29 +41,6 @@
           </size>
          </property>
         </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Plot length</string>
-         </property>
-         <property name="buddy">
-          <cstring>plotLength</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="plotLength">
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>5000</number>
-         </property>
-         <property name="value">
-          <number>100</number>
-         </property>
-        </widget>
        </item>
        <item>
         <widget class="QLabel" name="spinner">
@@ -142,15 +103,14 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>QwtPlot</class>
-   <extends>QFrame</extends>
-   <header>qwt_plot.h</header>
+   <class>StripChart</class>
+   <extends>QWidget</extends>
+   <header>stripchart.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>pushButton</tabstop>
-  <tabstop>plotLength</tabstop>
  </tabstops>
  <resources/>
  <connections>

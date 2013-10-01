@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 class PluginLoader;
-class QwtPlotCurve;
 class EegSample;
 class QMovie;
 
@@ -31,7 +30,6 @@ public slots:
 
 private slots:
     void on_pushButton_toggled(bool checked);
-    void on_plotLength_valueChanged(int len);
     void on_actionPlugins_triggered();
 
     void showSpinner();
@@ -40,9 +38,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     PluginLoader &loader;
-    int plotLength;
-    QVector<double> x, y;
-    QwtPlotCurve *curve;
     QMovie *spinner;
 };
 

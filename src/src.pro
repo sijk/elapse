@@ -2,6 +2,7 @@ TEMPLATE    = subdirs
 SUBDIRS	    = app \
               plugins \
               pluginloader \
-              decoders
+              decoders \
+              stripchart
 
-app.depends += plugins pluginloader decoders
+app.depends += plugins pluginloader decoders stripchart
