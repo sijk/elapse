@@ -29,6 +29,4 @@ protected:
     QString _host;
 };
 
-#define DataSourceInterface_iid "org.nzbri.elapse.DataSourceInterface"
-
 #endif // DATASOURCE_H

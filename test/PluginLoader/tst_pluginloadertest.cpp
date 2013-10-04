@@ -2,6 +2,7 @@
 #include "pluginloader.h"
 #include "producer.h"
 #include "consumer.h"
+#include "test_plugins.h"
 
 class PluginLoaderTest : public QObject
 {

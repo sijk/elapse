@@ -13,6 +13,4 @@ public slots:
     virtual void onData(double data) = 0;
 };
 
-#define ConsumerInterface_iid "org.nzbri.elapse.test.ConsumerInterface"
-
 #endif // DATACONSUMER_H

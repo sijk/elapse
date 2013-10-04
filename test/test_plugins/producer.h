@@ -17,6 +17,4 @@ public slots:
     virtual void stop() = 0;
 };
 
-#define ProducerInterface_iid "org.nzbri.elapse.test.ProducerInterface"
-
 #endif // DATAPROVIDER_H
