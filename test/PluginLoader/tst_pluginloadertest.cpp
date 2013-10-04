@@ -195,7 +195,6 @@ void PluginLoaderTest::canCreateProducerTemplated()
     Consumer *consumer = 0;
     consumer = loader->create<Consumer*>("SineProducer");
     QVERIFY(consumer == 0);
-    delete consumer;
 }
 
 void PluginLoaderTest::emitCreatedKeySignalOnSuccess()

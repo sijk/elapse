@@ -55,12 +55,18 @@ T PluginLoader::create(const QString &key) const
     // modifies and then resets blockSignals().
     PluginLoader *self = const_cast<PluginLoader*>(this);
     bool wasBlocked = self->blockSignals(true);
-    T obj = qobject_cast<T>(create(key));
+    QObject *obj = create(key);
     self->blockSignals(wasBlocked);
 
-    if (obj)
+    T typed_obj = qobject_cast<T>(obj);
+
+    if (typed_obj)
         emit createdKey(key);
-    return obj;
+    else
+        // Object was (possibly) created but the cast failed
+        delete obj;
+
+    return typed_obj;
 }
 
 #endif // PLUGINLOADER_H
