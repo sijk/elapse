@@ -1,34 +1,10 @@
 #include <QDataStream>
 #include "sampletypes.h"
+#include "util/bigendian24.h"
 #include "eegdecoder.h"
 
 #include <QDebug>
 
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/*
- * Helper class to parse 24-bit big-endian integers from a QDataStream.
- */
-struct BigEndian24
-{
-    uchar bytes[3];
-    inline qint32 to32bit() const;
-};
-
-qint32 BigEndian24::to32bit() const
-{
-    // Set the high 24 bits and then right shift to get correct sign extension
-    return ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8)) >> 8;
-}
-
-QDataStream &operator>>(QDataStream &stream, BigEndian24 &value)
-{
-    stream.readRawData((char*)value.bytes, 3);
-    return stream;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void checkSequenceNumber(const EegSample &sample)
 {
