@@ -43,13 +43,14 @@ void PluginLoaderTest::init()
     loader = new PluginLoader;
     loader->setSearchPath(qApp->applicationDirPath() + "/../test_plugins");
 
-    auto pluginPath = [&](const QString &fname) -> QFileInfo {
-        return loader->searchPath().absolutePath() + "/" + fname;
+    auto pluginPath = [&](const QString &name) -> QFileInfo {
+        QString libname("lib%1.so");
+        return loader->searchPath().absoluteFilePath(libname.arg(name));
     };
 
-    SINE_PLUGIN   = pluginPath("libsineplugin.so");
-    COSINE_PLUGIN = pluginPath("libcosineplugin.so");
-    LOGGER_PLUGIN = pluginPath("libloggerplugin.so");
+    SINE_PLUGIN   = pluginPath("sineplugin");
+    COSINE_PLUGIN = pluginPath("cosineplugin");
+    LOGGER_PLUGIN = pluginPath("loggerplugin");
 }
 
 void PluginLoaderTest::cleanup()
