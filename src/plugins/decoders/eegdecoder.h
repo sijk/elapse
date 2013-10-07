@@ -1,7 +1,7 @@
 #ifndef EEGDECODER_H
 #define EEGDECODER_H
 
-#include "../decoder.h"
+#include "decoder.h"
 
 class EegSample;
 
@@ -12,7 +12,7 @@ class EegDecoder : public SampleDecoder
     Q_PROPERTY(double vref MEMBER _vref)
 
 public:
-    explicit EegDecoder(QObject *parent = 0);
+    Q_INVOKABLE explicit EegDecoder(QObject *parent = 0);
 
 signals:
     void newSample(const EegSample &sample);

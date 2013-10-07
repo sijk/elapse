@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS	 = eegsources
+SUBDIRS	 = eegsources \
+           decoders

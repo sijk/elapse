@@ -24,13 +24,13 @@ int main(int argc, char *argv[])
 
 #if 0
     source->setProperty("host", "overo.local");
-    eegdec.setProperty("gain", 1);
-    eegdec.setProperty("vref", 4.5e6);
+    eegdec->setProperty("gain", 1);
+    eegdec->setProperty("vref", 4.5e6);
 
     // Connect EEG signal chain
     QObject::connect(source, SIGNAL(eegReady(QByteArray)),
-                     &eegdec, SLOT(onData(QByteArray)));
-    QObject::connect(&eegdec, SIGNAL(newSample(EegSample)),
+                     eegdec, SLOT(onData(QByteArray)));
+    QObject::connect(eegdec, SIGNAL(newSample(EegSample)),
                      &w, SLOT(onDataReady(EegSample)));
 
     // Connect EEG file sink

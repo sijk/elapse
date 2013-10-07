@@ -1,17 +1,21 @@
 #include <QVariant>
 #include "datasource.h"
-#include "eegdecoder.h"
+#include "decoder.h"
 #include "pluginloader.h"
 #include "pipeline.h"
 
 Pipeline::Pipeline(QObject *parent) :
     QObject(parent),
-    loader(new PluginLoader(this)),
-    decoder(new EegDecoder(this))
+    loader(new PluginLoader(this))
 {
     source = loader->create<DataSource*>("TcpClientEegDataSource");
     Q_ASSERT_X(source, "Pipeline", "Could not create DataSource");
     source->setObjectName("DataSource");
+    source->setParent(this);
+
+    decoder = loader->create<SampleDecoder*>("EegDecoder");
+    Q_ASSERT_X(source, "Pipeline", "Could not create EegDecoder");
+    source->setObjectName("EegDecoder");
     source->setParent(this);
 
     // Connect external signals
