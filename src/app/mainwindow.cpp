@@ -2,7 +2,6 @@
 #include <QMovie>
 #include "sampletypes.h"
 #include "util/signalblocker.h"
-#include "pluginloader.h"
 #include "plugindialog.h"
 #include "stripchart.h"
 #include "mainwindow.h"
@@ -10,7 +9,7 @@
 
 #include <QDebug>
 
-MainWindow::MainWindow(PluginLoader &loader, QWidget *parent) :
+MainWindow::MainWindow(PluginLoader *loader, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     loader(loader),

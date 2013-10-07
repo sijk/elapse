@@ -20,6 +20,11 @@ FORMS        += mainwindow.ui \
                 plugindialog.ui
 RESOURCES    += ../../elapse.qrc
 
+LIBS            += -L$$OUT_PWD/../pipeline/ -lpipeline
+INCLUDEPATH     += $$PWD/../pipeline
+DEPENDPATH      += $$PWD/../pipeline
+PRE_TARGETDEPS  += $$OUT_PWD/../pipeline/libpipeline.a
+
 LIBS            += -L$$OUT_PWD/../pluginloader/ -lpluginloader
 INCLUDEPATH     += $$PWD/../pluginloader
 DEPENDPATH      += $$PWD/../pluginloader

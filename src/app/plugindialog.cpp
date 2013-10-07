@@ -2,13 +2,13 @@
 #include "plugindialog.h"
 #include "ui_plugindialog.h"
 
-PluginDialog::PluginDialog(PluginLoader &loader, QWidget *parent) :
+PluginDialog::PluginDialog(PluginLoader *loader, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PluginDialog)
 {
     ui->setupUi(this);
 
-    foreach (QString iid, loader.interfaces()) {
+    foreach (QString iid, loader->interfaces()) {
         auto ifaceItem = new QTreeWidgetItem(ui->tree);
         ifaceItem->setText(0, iid);
         ui->tree->setItemExpanded(ifaceItem, true);
@@ -18,9 +18,9 @@ PluginDialog::PluginDialog(PluginLoader &loader, QWidget *parent) :
         boldFont.setBold(true);
         ifaceItem->setFont(0, boldFont);
 
-        foreach (QFileInfo file, loader.filesForInterface(iid)) {
+        foreach (QFileInfo file, loader->filesForInterface(iid)) {
             auto fileItem = new QTreeWidgetItem(ifaceItem);
-            QString plugin = loader.infoForFile(file)["className"].toString();
+            QString plugin = loader->infoForFile(file)["className"].toString();
             fileItem->setText(0, plugin);
             fileItem->setText(1, file.fileName());
             ui->tree->setItemExpanded(fileItem, true);
@@ -31,7 +31,7 @@ PluginDialog::PluginDialog(PluginLoader &loader, QWidget *parent) :
             fileItem->setFont(1, italicFont);
             fileItem->setForeground(1, QBrush(Qt::gray));
 
-            foreach (QString key, loader.keysForFile(file)) {
+            foreach (QString key, loader->keysForFile(file)) {
                 auto keyItem = new QTreeWidgetItem(fileItem);
                 keyItem->setText(0, key);
                 keyItem->setFirstColumnSpanned(true);

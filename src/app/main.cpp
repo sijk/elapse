@@ -1,8 +1,5 @@
 #include <QApplication>
-#include "pluginloader.h"
-#include "datasource.h"
-#include "eegfilesink.h"
-#include "eegdecoder.h"
+#include "pipeline.h"
 #include "mainwindow.h"
 
 #include <QDebug>
@@ -10,18 +7,22 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    PluginLoader loader;
-    MainWindow w(loader);
-    DataSource *source;
-    EegFileSink eegsink;
-    EegDecoder eegdec;
+    Pipeline pipeline;
+    MainWindow window(pipeline.pluginLoader());
 
-    source = loader.create<DataSource*>("TcpClientEegDataSource");
-    if (!source) {
-        qDebug() << "Error loading DataSource";
-        return 1;
-    }
+    pipeline.setElementProperty("DataSource", "host", "overo.local");
 
+    QObject::connect(&window,   SIGNAL(start()),
+                     &pipeline, SLOT(start()));
+    QObject::connect(&window,   SIGNAL(stop()),
+                     &pipeline, SLOT(stop()));
+
+    QObject::connect(&pipeline, SIGNAL(started()),
+                     &window,   SLOT(onSourceStarted()));
+    QObject::connect(&pipeline, SIGNAL(error(QString)),
+                     &window,   SLOT(onSourceError(QString)));
+
+#if 0
     source->setProperty("host", "overo.local");
     eegdec.setProperty("gain", 1);
     eegdec.setProperty("vref", 4.5e6);
@@ -47,7 +48,8 @@ int main(int argc, char *argv[])
                      &w, SLOT(onSourceError(QString)));
     QObject::connect(source, SIGNAL(started()),
                      &w, SLOT(onSourceStarted()));
+#endif
 
-    w.show();
+    window.show();
     return a.exec();
 }

@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(PluginLoader &loader, QWidget *parent = 0);
+    explicit MainWindow(PluginLoader *loader, QWidget *parent = 0);
     ~MainWindow();
 
 signals:
@@ -37,7 +37,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    PluginLoader &loader;
+    PluginLoader *loader;
     QMovie *spinner;
 };
 
