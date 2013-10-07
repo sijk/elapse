@@ -1,8 +1,11 @@
+include(../../global.pri)
 include(../test.pri)
 
-SOURCES += tst_eegdecoder.cpp
+SOURCES += tst_eegdecoder.cpp \
+           eegdecoder.cpp
 
-LIBS += -L$$OUT_PWD/../../src/decoders/eeg/ -leegdecoder
-INCLUDEPATH += $$PWD/../../src/decoders/eeg
-DEPENDPATH += $$PWD/../../src/decoders/eeg
-PRE_TARGETDEPS += $$OUT_PWD/../../src/decoders/eeg/libeegdecoder.a
+HEADERS += eegdecoder.h \
+           decoder.h
+
+INCLUDEPATH += ../../src/plugins/decoders
+VPATH += ../../src/plugins/decoders

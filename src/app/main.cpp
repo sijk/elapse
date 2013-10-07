@@ -1,8 +1,8 @@
 #include <QApplication>
 #include "pluginloader.h"
 #include "datasource.h"
+#include "decoder.h"
 #include "eegfilesink.h"
-#include "eegdecoder.h"
 #include "mainwindow.h"
 
 #include <QDebug>
@@ -13,23 +13,29 @@ int main(int argc, char *argv[])
     PluginLoader loader;
     MainWindow w(loader);
     DataSource *source;
+    SampleDecoder *eegdec;
     EegFileSink eegsink;
-    EegDecoder eegdec;
 
-    source = loader.create<DataSource*>("TcpClientEegDataSource");
+    source = loader.create<DataSource*>("DummyEegSource");
     if (!source) {
         qDebug() << "Error loading DataSource";
         return 1;
     }
 
+    eegdec = loader.create<SampleDecoder*>("EegDecoder");
+    if (!eegdec) {
+        qDebug() << "Error loading EegDecoder";
+        return 1;
+    }
+
     source->setProperty("host", "overo.local");
-    eegdec.setProperty("gain", 1);
-    eegdec.setProperty("vref", 4.5e6);
+    eegdec->setProperty("gain", 1);
+    eegdec->setProperty("vref", 4.5e6);
 
     // Connect EEG signal chain
     QObject::connect(source, SIGNAL(eegReady(QByteArray)),
-                     &eegdec, SLOT(onData(QByteArray)));
-    QObject::connect(&eegdec, SIGNAL(newSample(EegSample)),
+                     eegdec, SLOT(onData(QByteArray)));
+    QObject::connect(eegdec, SIGNAL(newSample(EegSample)),
                      &w, SLOT(onDataReady(EegSample)));
 
     // Connect EEG file sink
