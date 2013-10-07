@@ -1,6 +1,8 @@
 #ifndef PLUGINLOADER_H
 #define PLUGINLOADER_H
 
+#include "util/signalblocker.h"
+
 #include <QObject>
 #include <QDir>
 #include <QHash>
@@ -50,13 +52,16 @@ private:
 template<class T>
 T PluginLoader::create(const QString &key) const
 {
+    QObject *obj;
+
     // Need to block the createdKey signal because the type cast might fail.
     // We're using const_cast so this method can still be const even though it
     // modifies and then resets blockSignals().
     PluginLoader *self = const_cast<PluginLoader*>(this);
-    bool wasBlocked = self->blockSignals(true);
-    QObject *obj = create(key);
-    self->blockSignals(wasBlocked);
+    {
+        SignalBlocker block(self);
+        obj = create(key);
+    }
 
     T typed_obj = qobject_cast<T>(obj);
 

@@ -1,12 +1,12 @@
 #include <QMessageBox>
 #include <QMovie>
+#include "sampletypes.h"
+#include "util/signalblocker.h"
 #include "pluginloader.h"
 #include "plugindialog.h"
 #include "stripchart.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-#include "sampletypes.h"
 
 #include <QDebug>
 
@@ -39,9 +39,8 @@ void MainWindow::onSourceError(const QString &message)
 {
     hideSpinner();
 
-    bool wasBlocked = ui->pushButton->blockSignals(true);
+    SignalBlocker block(ui->pushButton);
     ui->pushButton->setChecked(false);
-    ui->pushButton->blockSignals(wasBlocked);
 
     QMessageBox::warning(this, "Error", message);
 }
