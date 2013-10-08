@@ -179,24 +179,24 @@ void PluginLoaderTest::canGetFileForKey()
 
 void PluginLoaderTest::canCreateProducerAndCast()
 {
-    QObject *provider = 0;
+    QObject *provider = nullptr;
     provider = loader->create("SineProducer");
-    QVERIFY(provider != 0);
-    QVERIFY(qobject_cast<Producer*>(provider) != 0);
-    QVERIFY(qobject_cast<Consumer*>(provider) == 0);
+    QVERIFY(provider != nullptr);
+    QVERIFY(qobject_cast<Producer*>(provider) != nullptr);
+    QVERIFY(qobject_cast<Consumer*>(provider) == nullptr);
     delete provider;
 }
 
 void PluginLoaderTest::canCreateProducerTemplated()
 {
-    Producer *provider = 0;
+    Producer *provider = nullptr;
     provider = loader->create<Producer*>("SineProducer");
-    QVERIFY(provider != 0);
+    QVERIFY(provider != nullptr);
     delete provider;
 
-    Consumer *consumer = 0;
+    Consumer *consumer = nullptr;
     consumer = loader->create<Consumer*>("SineProducer");
-    QVERIFY(consumer == 0);
+    QVERIFY(consumer == nullptr);
 }
 
 void PluginLoaderTest::emitCreatedKeySignalOnSuccess()
@@ -206,7 +206,7 @@ void PluginLoaderTest::emitCreatedKeySignalOnSuccess()
 
     QObject *provider = loader->create(key);
 
-    QVERIFY(provider != 0);
+    QVERIFY(provider != nullptr);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), key);
 
@@ -220,7 +220,7 @@ void PluginLoaderTest::emitCreatedKeySignalOnSuccessTemplated()
 
     Producer *provider = loader->create<Producer*>(key);
 
-    QVERIFY(provider != 0);
+    QVERIFY(provider != nullptr);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(spy.at(0).at(0).toString(), key);
 
@@ -231,7 +231,7 @@ void PluginLoaderTest::dontEmitCreatedKeySignalOnFailure()
 {
     QSignalSpy spy(loader, SIGNAL(createdKey(QString)));
     QObject *obj = loader->create("foo");
-    QCOMPARE(obj, static_cast<QObject*>(0));
+    QVERIFY(obj == nullptr);
     QCOMPARE(spy.count(), 0);
 }
 
@@ -239,7 +239,7 @@ void PluginLoaderTest::dontEmitCreatedKeySignalOnFailureTemplated()
 {
     QSignalSpy spy(loader, SIGNAL(createdKey(QString)));
     Consumer *consumer = loader->create<Consumer*>("SineProducer");
-    QCOMPARE(consumer, static_cast<Consumer*>(0));
+    QVERIFY(consumer == nullptr);
     QCOMPARE(spy.count(), 0);
 }
 

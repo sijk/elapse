@@ -7,7 +7,7 @@ class Producer : public QObject
 {
     Q_OBJECT
 public:
-    Producer(QObject *parent = 0) : QObject(parent) {}
+    Producer(QObject *parent = nullptr) : QObject(parent) {}
 
 signals:
     void dataReady(double data);

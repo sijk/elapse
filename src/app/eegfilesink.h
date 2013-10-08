@@ -9,7 +9,7 @@ class EegFileSink : public QObject
 {
     Q_OBJECT
 public:
-    explicit EegFileSink(QObject *parent = 0);
+    explicit EegFileSink(QObject *parent = nullptr);
     ~EegFileSink();
 
 signals:

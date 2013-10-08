@@ -8,7 +8,7 @@ class TcpProducer : public Producer
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit TcpProducer(QObject *parent = 0);
+    Q_INVOKABLE explicit TcpProducer(QObject *parent = nullptr);
 
 public slots:
     void start();
