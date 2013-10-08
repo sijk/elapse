@@ -12,7 +12,7 @@ class EegDecoder : public SampleDecoder
     Q_PROPERTY(double vref MEMBER _vref)
 
 public:
-    Q_INVOKABLE explicit EegDecoder(QObject *parent = 0);
+    Q_INVOKABLE explicit EegDecoder(QObject *parent = nullptr);
 
 signals:
     void newSample(const EegSample &sample);

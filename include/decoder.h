@@ -10,7 +10,7 @@ class SampleDecoder : public QObject
 {
     Q_OBJECT
 public:
-    explicit SampleDecoder(QObject *parent = 0) : QObject(parent) {}
+    explicit SampleDecoder(QObject *parent = nullptr) : QObject(parent) {}
     virtual ~SampleDecoder() {}
 
 signals:

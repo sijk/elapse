@@ -10,7 +10,7 @@ class DataSource : public QObject
     Q_PROPERTY(QString host MEMBER _host)
 
 public:
-    explicit DataSource(QObject *parent = 0) : QObject(parent) {}
+    explicit DataSource(QObject *parent = nullptr) : QObject(parent) {}
     virtual ~DataSource() {}
 
 signals:

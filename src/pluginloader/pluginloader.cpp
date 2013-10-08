@@ -93,7 +93,7 @@ QObject *PluginLoader::create(const QString &key) const
         return obj;
     }
 
-    return 0;
+    return nullptr;
 }
 
 QDir PluginLoader::searchPath() const

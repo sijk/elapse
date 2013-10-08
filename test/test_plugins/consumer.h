@@ -7,7 +7,7 @@ class Consumer : public QObject
 {
     Q_OBJECT
 public:
-    Consumer(QObject *parent = 0) : QObject(parent) {}
+    Consumer(QObject *parent = nullptr) : QObject(parent) {}
 
 public slots:
     virtual void onData(double data) = 0;

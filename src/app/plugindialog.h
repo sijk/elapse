@@ -14,7 +14,7 @@ class PluginDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PluginDialog(PluginLoader &loader, QWidget *parent = 0);
+    explicit PluginDialog(PluginLoader &loader, QWidget *parent = nullptr);
     ~PluginDialog();
 
 private:

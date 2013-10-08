@@ -8,7 +8,7 @@ class EegThread : public QThread
 {
     Q_OBJECT
 public:
-    explicit EegThread(QObject *parent = 0);
+    explicit EegThread(QObject *parent = nullptr);
     ~EegThread();
 
     void run();

@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(PluginLoader &loader, QWidget *parent = 0);
+    explicit MainWindow(PluginLoader &loader, QWidget *parent = nullptr);
     ~MainWindow();
 
 signals:

@@ -8,7 +8,7 @@ class DummyEegSource : public DataSource
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit DummyEegSource(QObject *parent = 0);
+    Q_INVOKABLE explicit DummyEegSource(QObject *parent = nullptr);
 
 public slots:
     void start();

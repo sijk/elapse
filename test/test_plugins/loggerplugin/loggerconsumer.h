@@ -8,7 +8,7 @@ class LoggerConsumer : public Consumer
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit LoggerConsumer(QObject *parent = 0);
+    Q_INVOKABLE explicit LoggerConsumer(QObject *parent = nullptr);
 
 public slots:
     void onData(double data);

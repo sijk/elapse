@@ -51,7 +51,7 @@ T *BasePlugin<T>::create(const QString &key)
             return qobject_cast<T*>(cls.newInstance());
         }
     }
-    return 0;
+    return nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * */

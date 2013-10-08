@@ -15,7 +15,7 @@ class StripChart : public QWidget
     Q_PROPERTY(double stripSpacing MEMBER _space)
 
 public:
-    explicit StripChart(QWidget *parent = 0);
+    explicit StripChart(QWidget *parent = nullptr);
     ~StripChart();
 
 public slots:

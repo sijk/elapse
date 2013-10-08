@@ -16,7 +16,7 @@ class PluginLoader : public QObject
     Q_PROPERTY(QDir searchPath READ searchPath WRITE setSearchPath)
 
 public:
-    explicit PluginLoader(QObject *parent = 0);
+    explicit PluginLoader(QObject *parent = nullptr);
 
     QFileInfoList files() const;
     QStringList interfaces() const;
