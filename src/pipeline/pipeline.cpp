@@ -18,13 +18,13 @@ Pipeline::Pipeline(QObject *parent) :
     decoders[EEG]->setObjectName("EegDecoder");
     decoders[EEG]->setParent(this);
 
-    // Connect external signals
-    connect(source, SIGNAL(started()), this, SIGNAL(started()));
-    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
-
     // Connect pipeline elements
     connect(source, SIGNAL(eegReady(QByteArray)),
             decoders[EEG], SLOT(onData(QByteArray)));
+
+    // Propagate signals from internal elements
+    connect(source, SIGNAL(started()), this, SIGNAL(started()));
+    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 }
 
 PluginLoader *Pipeline::pluginLoader() const
