@@ -4,6 +4,14 @@
 #include <QtGlobal>
 #include <QVector>
 
+
+enum SampleType
+{
+    EEG, VIDEO, IMU,
+    N_SAMPLE_TYPES
+};
+
+
 struct Sample
 {
     quint64 timestamp;
@@ -18,5 +26,6 @@ struct EegSample : Sample
     quint8 gpio;
     QVector<double> channel;
 };
+
 
 #endif // SAMPLETYPES_H

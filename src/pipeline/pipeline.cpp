@@ -13,10 +13,10 @@ Pipeline::Pipeline(QObject *parent) :
     source->setObjectName("DataSource");
     source->setParent(this);
 
-    decoder = loader->create<SampleDecoder*>("EegDecoder");
-    Q_ASSERT_X(source, "Pipeline", "Could not create EegDecoder");
-    source->setObjectName("EegDecoder");
-    source->setParent(this);
+    decoders[EEG] = loader->create<SampleDecoder*>("EegDecoder");
+    Q_ASSERT_X(decoders[EEG], "Pipeline", "Could not create EegDecoder");
+    decoders[EEG]->setObjectName("EegDecoder");
+    decoders[EEG]->setParent(this);
 
     // Connect external signals
     connect(source, SIGNAL(started()), this, SIGNAL(started()));
@@ -24,7 +24,7 @@ Pipeline::Pipeline(QObject *parent) :
 
     // Connect pipeline elements
     connect(source, SIGNAL(eegReady(QByteArray)),
-            decoder, SLOT(onData(QByteArray)));
+            decoders[EEG], SLOT(onData(QByteArray)));
 }
 
 PluginLoader *Pipeline::pluginLoader() const
@@ -33,8 +33,8 @@ PluginLoader *Pipeline::pluginLoader() const
 DataSource *Pipeline::dataSource() const
 { return source; }
 
-SampleDecoder *Pipeline::sampleDecoder() const
-{ return decoder; }
+SampleDecoder *Pipeline::sampleDecoder(SampleType sampleType) const
+{ return decoders[sampleType]; }
 
 bool Pipeline::setElementProperty(const QString &name, const char *prop,
                                   const QVariant &value)
