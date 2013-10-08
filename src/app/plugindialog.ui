@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Plugins</string>
   </property>
+  <property name="windowIcon">
+   <iconset theme="preferences-other"/>
+  </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>

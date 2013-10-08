@@ -90,11 +90,21 @@
    <addaction name="menuFile"/>
   </widget>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionPlugins">
+   <property name="icon">
+    <iconset theme="preferences-other">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>&amp;Plugins</string>
    </property>
