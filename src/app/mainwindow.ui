@@ -60,9 +60,6 @@
          <property name="text">
           <string>Capture</string>
          </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
       </layout>

@@ -2,7 +2,6 @@
 #include <QMessageBox>
 #include <QMovie>
 #include "sampletypes.h"
-#include "util/signalblocker.h"
 #include "pipeline.h"
 #include "plugindialog.h"
 #include "stripchart.h"
@@ -50,50 +49,49 @@ void MainWindow::on_actionPlugins_triggered()
     dialog.exec();
 }
 
-void MainWindow::showSpinner()
+void MainWindow::setShowSpinner(bool show)
 {
-    ui->pushButton->setEnabled(false);
-    ui->spinner->setMovie(spinner);
-    spinner->start();
-}
-
-void MainWindow::hideSpinner()
-{
-    spinner->stop();
-    ui->spinner->setText(" ");
-    ui->pushButton->setEnabled(true);
-    ui->pushButton->setFocus();
+    if (show) {
+        ui->spinner->setMovie(spinner);
+        spinner->start();
+    } else {
+        spinner->stop();
+        ui->spinner->setText(" ");
+    }
 }
 
 void MainWindow::buildStateMachine()
 {
     machine = new QStateMachine(this);
+    machine->setGlobalRestorePolicy(QState::RestoreProperties);
 
     auto idle = new QState(machine);
-    auto starting = new QState(machine);
-    auto running = new QState(machine);
+    auto active = new QState(machine);
+    auto starting = new QState(active);
+    auto running = new QState(active);
+
+    // Define state transitions
 
     machine->setInitialState(idle);
 
-    // Define state transitions
-    idle->addTransition(ui->pushButton, SIGNAL(toggled(bool)), starting);
+    idle->addTransition(ui->pushButton, SIGNAL(clicked()), active);
+
+    active->setInitialState(starting);
 
     starting->addTransition(pipeline, SIGNAL(started()), running);
-    starting->addTransition(pipeline, SIGNAL(error(QString)), idle);
 
-    running->addTransition(pipeline, SIGNAL(error(QString)), idle);
-    running->addTransition(ui->pushButton, SIGNAL(toggled(bool)), idle);
+    active->addTransition(pipeline, SIGNAL(error(QString)), idle);
+    active->addTransition(ui->pushButton, SIGNAL(clicked()), idle);
 
-    // Assign entry/exit handlers
-    connect(idle, SIGNAL(entered()), pipeline, SLOT(stop()));
-    connect(idle, &QState::entered, [&](){
-                SignalBlocker block(ui->pushButton);
-                ui->pushButton->setChecked(false);
-            });
+    // Assign entry/exit actions
 
-    connect(starting, SIGNAL(entered()), pipeline, SLOT(start()));
-    connect(starting, SIGNAL(entered()), this, SLOT(showSpinner()));
-    connect(starting, SIGNAL(exited()), this, SLOT(hideSpinner()));
+    connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
+    connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
+
+    starting->assignProperty(this, "showSpinner", true);
+    starting->assignProperty(ui->pushButton, "enabled", false);
+
+    running->assignProperty(ui->pushButton, "text", "Stop");
 
     machine->start();
 }
