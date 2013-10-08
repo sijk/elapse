@@ -2,6 +2,7 @@
 #include <QMovie>
 #include "sampletypes.h"
 #include "util/signalblocker.h"
+#include "pipeline.h"
 #include "plugindialog.h"
 #include "stripchart.h"
 #include "mainwindow.h"
@@ -9,17 +10,25 @@
 
 #include <QDebug>
 
-MainWindow::MainWindow(PluginLoader *loader, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    loader(loader),
-    spinner(new QMovie(":/img/spinner.gif"))
+    spinner(new QMovie(":/img/spinner.gif")),
+    pipeline(new Pipeline)
 {
     ui->setupUi(this);
+
+    pipeline->setElementProperty("DataSource", "host", "overo.local");
+
+    QObject::connect(pipeline,  SIGNAL(started()),
+                     this,      SLOT(hideSpinner()));
+    QObject::connect(pipeline,  SIGNAL(error(QString)),
+                     this,      SLOT(onPipelineError(QString)));
 }
 
 MainWindow::~MainWindow()
 {
+    delete pipeline;
     delete spinner;
     delete ui;
 }
@@ -29,12 +38,7 @@ void MainWindow::onDataReady(const EegSample &sample)
     ui->eegPlot->appendData(sample.channel);
 }
 
-void MainWindow::onSourceStarted()
-{
-    hideSpinner();
-}
-
-void MainWindow::onSourceError(const QString &message)
+void MainWindow::onPipelineError(const QString &message)
 {
     hideSpinner();
 
@@ -46,13 +50,17 @@ void MainWindow::onSourceError(const QString &message)
 
 void MainWindow::on_pushButton_toggled(bool checked)
 {
-    if (checked) showSpinner();
-    emit (checked ? start() : stop());
+    if (checked) {
+        showSpinner();
+        pipeline->start();
+    } else {
+        pipeline->stop();
+    }
 }
 
 void MainWindow::on_actionPlugins_triggered()
 {
-    PluginDialog dialog(loader, this);
+    PluginDialog dialog(pipeline->pluginLoader(), this);
     dialog.exec();
 }
 

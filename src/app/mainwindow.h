@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-class PluginLoader;
+class Pipeline;
 class EegSample;
 class QMovie;
 
@@ -16,19 +16,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(PluginLoader *loader, QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-signals:
-    void start();
-    void stop();
-
-public slots:
-    void onDataReady(const EegSample &sample);
-    void onSourceStarted();
-    void onSourceError(const QString &message);
-
 private slots:
+    void onDataReady(const EegSample &sample);
+    void onPipelineError(const QString &message);
+
     void on_pushButton_toggled(bool checked);
     void on_actionPlugins_triggered();
 
@@ -37,8 +31,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    PluginLoader *loader;
     QMovie *spinner;
+    Pipeline *pipeline;
 };
 
 #endif // MAINWINDOW_H
