@@ -5,6 +5,7 @@
 
 class Pipeline;
 class EegSample;
+class QStateMachine;
 class QMovie;
 
 namespace Ui {
@@ -21,17 +22,19 @@ public:
 
 private slots:
     void onDataReady(const EegSample &sample);
-    void onPipelineError(const QString &message);
+    void showErrorMessage(const QString &message);
 
-    void on_pushButton_toggled(bool checked);
     void on_actionPlugins_triggered();
 
     void showSpinner();
     void hideSpinner();
 
 private:
+    void buildStateMachine();
+
     Ui::MainWindow *ui;
     QMovie *spinner;
+    QStateMachine *machine;
     Pipeline *pipeline;
 };
 
