@@ -14,39 +14,40 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     spinner(new QMovie(":/img/spinner.gif")),
-    pipeline(new Pipeline)
+    pipeline(new Pipeline(this))
 {
     ui->setupUi(this);
+    QMetaObject::connectSlotsByName(this);
 
     pipeline->setElementProperty("DataSource", "host", "overo.local");
 
-    QObject::connect(pipeline,  SIGNAL(error(QString)),
-                     this,      SLOT(showErrorMessage(QString)));
+    connect(pipeline, SIGNAL(error(QString)),
+            this, SLOT(showErrorMessage(QString)));
 
     buildStateMachine();
 }
 
 MainWindow::~MainWindow()
 {
-    delete pipeline;
     delete spinner;
     delete ui;
 }
 
-void MainWindow::onDataReady(const EegSample &sample)
+void MainWindow::on_EegDecoder_newSample(const Sample &sample)
 {
-    ui->eegPlot->appendData(sample.values);
-}
-
-void MainWindow::showErrorMessage(const QString &message)
-{
-    QMessageBox::warning(this, "Error", message);
+    auto eeg = static_cast<const EegSample&>(sample);
+    ui->eegPlot->appendData(eeg.values);
 }
 
 void MainWindow::on_actionPlugins_triggered()
 {
     PluginDialog dialog(pipeline->pluginLoader(), this);
     dialog.exec();
+}
+
+void MainWindow::showErrorMessage(const QString &message)
+{
+    QMessageBox::warning(this, "Error", message);
 }
 
 bool MainWindow::showSpinner() const

@@ -14,9 +14,6 @@ class EegDecoder : public SampleDecoder
 public:
     Q_INVOKABLE explicit EegDecoder(QObject *parent = nullptr);
 
-signals:
-    void newSample(const EegSample &sample);
-
 public slots:
     void onData(const QByteArray &data);
 

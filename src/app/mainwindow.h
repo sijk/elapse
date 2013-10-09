@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 class Pipeline;
-class EegSample;
+class Sample;
 class QStateMachine;
 class QMovie;
 
@@ -22,11 +22,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void onDataReady(const EegSample &sample);
-    void showErrorMessage(const QString &message);
-
+    void on_EegDecoder_newSample(const Sample &sample);
     void on_actionPlugins_triggered();
 
+    void showErrorMessage(const QString &message);
     bool showSpinner() const;
     void showSpinner(bool show);
 
