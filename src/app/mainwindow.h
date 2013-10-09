@@ -15,7 +15,7 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    Q_PROPERTY(bool showSpinner WRITE setShowSpinner)
+    Q_PROPERTY(bool showSpinner READ showSpinner WRITE showSpinner)
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -27,7 +27,8 @@ private slots:
 
     void on_actionPlugins_triggered();
 
-    void setShowSpinner(bool show);
+    bool showSpinner() const;
+    void showSpinner(bool show);
 
 private:
     void buildStateMachine();

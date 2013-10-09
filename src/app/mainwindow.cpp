@@ -49,7 +49,12 @@ void MainWindow::on_actionPlugins_triggered()
     dialog.exec();
 }
 
-void MainWindow::setShowSpinner(bool show)
+bool MainWindow::showSpinner() const
+{
+    return spinner->state() == QMovie::Running;
+}
+
+void MainWindow::showSpinner(bool show)
 {
     if (show) {
         ui->spinner->setMovie(spinner);
