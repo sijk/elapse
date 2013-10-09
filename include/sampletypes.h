@@ -16,7 +16,7 @@ struct EegSample : Sample
     quint8 loff_stat_p;
     quint8 loff_stat_n;
     quint8 gpio;
-    QVector<double> channel;
+    QVector<double> values;
 };
 
 #endif // SAMPLETYPES_H

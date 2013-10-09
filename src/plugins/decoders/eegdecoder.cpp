@@ -46,7 +46,7 @@ void EegDecoder::onData(const QByteArray &data)
 
         for (int i = 0; i < 8; i++) {
             stream >> value;
-            sample.channel.append(toMicroVolts(value.to32bit()));
+            sample.values.append(toMicroVolts(value.to32bit()));
         }
 
         checkSequenceNumber(sample);
