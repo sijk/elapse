@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMetaObject::connectSlotsByName(this);
 
     pipeline->setElementProperty("DataSource", "host", "overo.local");
+    pipeline->setElementProperty("EegDecoder", "gain", 1);
+    pipeline->setElementProperty("EegDecoder", "vref", 4.5e6);
 
     connect(pipeline, SIGNAL(error(QString)),
             this, SLOT(showErrorMessage(QString)));

@@ -21,7 +21,9 @@ void checkSequenceNumber(const EegSample &sample)
 
 
 EegDecoder::EegDecoder(QObject *parent) :
-    SampleDecoder(parent)
+    SampleDecoder(parent),
+    _vref(0),
+    _gain(1)
 {
 }
 
