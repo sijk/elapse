@@ -35,7 +35,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onDataReady(const EegSample &sample)
 {
-    ui->eegPlot->appendData(sample.channel);
+    ui->eegPlot->appendData(sample.values);
 }
 
 void MainWindow::showErrorMessage(const QString &message)
