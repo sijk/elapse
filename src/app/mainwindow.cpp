@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     pipeline(new Pipeline(this))
 {
     ui->setupUi(this);
-    QMetaObject::connectSlotsByName(this);
 
     pipeline->setElementProperty("DataSource", "host", "overo.local");
     pipeline->setElementProperty("EegDecoder", "gain", 1);
