@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
     pipeline->setElementProperty("EegDecoder", "gain", 1);
     pipeline->setElementProperty("EegDecoder", "vref", 4.5e6);
 
+    ui->eegPlot->setNStrips(8);
+    ui->eegPlot->setNSamples(1000);
+    ui->eegPlot->setSpacing(6e3);
+
     connect(pipeline, SIGNAL(error(QString)),
             this, SLOT(showErrorMessage(QString)));
 
