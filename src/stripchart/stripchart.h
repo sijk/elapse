@@ -26,6 +26,7 @@ public slots:
     void setNStrips(uint n);
     void setNSamples(uint n);
     void setSpacing(double spacing);
+    void setSpacing(int spacing) { setSpacing(double(spacing)); }
 
 private slots:
     void redraw();
