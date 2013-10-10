@@ -2,6 +2,7 @@
 #include <cmath>
 #include <QDataStream>
 #include <QtEndian>
+#include <QTimer>
 #include "sampletypes.h"
 #include "dummyeegsource.h"
 
@@ -23,7 +24,7 @@ void DummyEegSource::start()
 {
     onTimer();
     timer.start(1e3 / SAMPLE_RATE);
-    emit started();
+    QTimer::singleShot(0, this, SIGNAL(started()));
 }
 
 void DummyEegSource::stop()
