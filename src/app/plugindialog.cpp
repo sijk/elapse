@@ -2,6 +2,13 @@
 #include "plugindialog.h"
 #include "ui_plugindialog.h"
 
+/*!
+ * \class PluginDialog
+ * \ingroup app
+ * \ingroup widgets
+ */
+
+
 PluginDialog::PluginDialog(PluginLoader *loader, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::PluginDialog)

@@ -1,0 +1,17 @@
+project = Elapse
+description = Real-time cognitive state monitoring
+
+headerdirs = ../include ../src
+sourcedirs = . ../include ../src
+
+sources.fileextensions = "*.cpp *.qdoc"
+headers.fileextensions = "*.h"
+
+outputdir      = $PWD/html
+outputformats  = HTML
+outputencoding = UTF-8
+sourceencoding = UTF-8
+
+include(html-template.qdocconf)
+include(qt-cpp-ignore.qdocconf)
+

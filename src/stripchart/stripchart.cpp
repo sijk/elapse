@@ -6,6 +6,12 @@
 #include "stripchart.h"
 
 
+/*!
+ * \class StripChart
+ * \ingroup widgets
+ */
+
+
 class StripChartScaleDraw : public QwtScaleDraw
 {
 public:

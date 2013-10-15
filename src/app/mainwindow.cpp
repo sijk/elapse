@@ -10,6 +10,22 @@
 
 #include <QDebug>
 
+/*!
+ * \class MainWindow
+ * \ingroup app
+ *
+ * \brief The MainWindow class provides the main window of the Elapse
+ *        application.
+ *
+ * It contains a Pipeline and a ServerProxy which provide all of the actual
+ * functionality of the application. It also provides a GUI for interacting with
+ * these objects and displaying the state of the signal processing elements.
+ */
+
+
+/*!
+ * Construct a MainWindow as a child of the given \a parent widget.
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -35,6 +51,9 @@ MainWindow::MainWindow(QWidget *parent) :
     buildStateMachine();
 }
 
+/*!
+ * Destroy this MainWindow.
+ */
 MainWindow::~MainWindow()
 {
     delete spinner;
@@ -58,6 +77,10 @@ void MainWindow::showErrorMessage(const QString &message)
     QMessageBox::warning(this, "Error", message);
 }
 
+/*!
+ * \property MainWindow::showSpinner
+ * \brief whether to hide/show the spinner animation.
+ */
 bool MainWindow::showSpinner() const
 {
     return spinner->state() == QMovie::Running;

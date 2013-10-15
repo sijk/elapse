@@ -1,0 +1,15 @@
+/*!
+    \enum SampleType
+    \ingroup pipeline
+*/
+
+/*!
+    \class Sample
+    \ingroup pipeline
+*/
+
+/*!
+    \class EegSample
+    \ingroup pipeline
+*/
+

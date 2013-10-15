@@ -8,6 +8,13 @@
 
 
 /*!
+ * \class PluginLoader
+ * \ingroup plugins-int
+ */
+
+
+/*
+ * \class GenericPlugin
  * \brief The GenericPlugin class is a sort of "pseudo base class" for all plugins.
  */
 class GenericPlugin : public QObject, public BasePlugin<QObject>

@@ -1,0 +1,29 @@
+/*!
+    \page plugin-api.html overview
+
+    \title Plugin API
+
+    This page will document the Elapse plugin API for implementing signal
+    processing and classification algorithms.
+
+    \section1 Plugin System Design
+
+    ...
+
+    \section1 Example Plugin
+
+    The following page gives a complete example of how to implement a plugin.
+
+    \section1 API Documentation
+
+    \list
+        \li \l{Plugin API reference}
+    \endlist
+*/
+
+/*!
+    \group plugins-ext
+    \title Plugin API Reference
+
+*/
+

@@ -6,6 +6,12 @@
 #include <QDebug>
 
 
+/*!
+ * \class EegDecoder
+ * \ingroup core-plugins
+ */
+
+
 void checkSequenceNumber(const EegSample &sample)
 {
     static quint32 prev_seqnum = 0;

@@ -1,0 +1,20 @@
+/*!
+    \typedef DataSourceInterface
+    \ingroup plugins-ext
+*/
+
+/*!
+    \class DataSourcePlugin
+    \ingroup plugins-ext
+*/
+
+/*!
+    \typedef SampleDecoderInterface
+    \ingroup plugins-ext
+*/
+
+/*!
+    \class SampleDecoderPlugin
+    \ingroup plugins-ext
+*/
+
