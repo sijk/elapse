@@ -1,10 +1,12 @@
 /*!
     \class FactoryInterface
     \ingroup plugins-int
+    \inmodule elapse-core
 */
 
 /*!
     \class BasePlugin
     \ingroup plugins-int
+    \inmodule elapse-core
 */
 

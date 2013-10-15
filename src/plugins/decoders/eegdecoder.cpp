@@ -9,6 +9,7 @@
 /*!
  * \class EegDecoder
  * \ingroup core-plugins
+ * \inmodule elapse-core
  */
 
 

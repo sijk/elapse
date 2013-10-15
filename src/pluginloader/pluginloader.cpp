@@ -10,6 +10,7 @@
 /*!
  * \class PluginLoader
  * \ingroup plugins-int
+ * \inmodule elapse-core
  */
 
 

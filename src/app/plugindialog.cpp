@@ -6,6 +6,7 @@
  * \class PluginDialog
  * \ingroup app
  * \ingroup widgets
+ * \inmodule elapse-core
  */
 
 

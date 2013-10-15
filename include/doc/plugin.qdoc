@@ -6,6 +6,7 @@
 /*!
     \class DataSourcePlugin
     \ingroup plugins-ext
+    \inmodule elapse-core
 */
 
 /*!
@@ -16,5 +17,6 @@
 /*!
     \class SampleDecoderPlugin
     \ingroup plugins-ext
+    \inmodule elapse-core
 */
 

@@ -9,6 +9,7 @@
 /*!
  * \class StripChart
  * \ingroup widgets
+ * \inmodule elapse-core
  */
 
 

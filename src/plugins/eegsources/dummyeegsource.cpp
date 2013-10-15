@@ -15,6 +15,7 @@
 /*!
  * \class DummyEegSource
  * \ingroup core-plugins
+ * \inmodule elapse-core
  */
 
 

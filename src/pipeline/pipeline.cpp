@@ -7,6 +7,7 @@
 /*!
  * \class Pipeline
  * \ingroup pipeline
+ * \inmodule elapse-core
  *
  * \brief The Pipeline class manages all of the signal processing elements.
  *

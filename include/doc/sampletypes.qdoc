@@ -6,10 +6,12 @@
 /*!
     \class Sample
     \ingroup pipeline
+    \inmodule elapse-core
 */
 
 /*!
     \class EegSample
     \ingroup pipeline
+    \inmodule elapse-core
 */
 

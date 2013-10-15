@@ -13,6 +13,7 @@
 /*!
  * \class MainWindow
  * \ingroup app
+ * \inmodule elapse-core
  *
  * \brief The MainWindow class provides the main window of the Elapse
  *        application.
