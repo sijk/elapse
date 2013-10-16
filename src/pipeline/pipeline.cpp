@@ -12,7 +12,7 @@
  * \brief The Pipeline class manages all of the signal processing elements.
  *
  * It has a PluginLoader for loading signal processing elements from
- * \l{Plugin API Documentation}{plugins} and it manages the connections between
+ * \l{Plugin API}{plugins} and it manages the connections between
  * these elements.
  */
 
