@@ -1,0 +1,11 @@
+/*!
+    \class SampleDecoder
+    \ingroup pipeline
+    \inmodule core
+
+    \brief The SampleDecoder class is the base class for elements that decode a
+    QByteArray to a Sample.
+
+    Each Pipeline has several SampleDecoders: one per SampleType.
+*/
+
