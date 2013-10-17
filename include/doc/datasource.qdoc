@@ -1,6 +1,6 @@
 /*!
     \class DataSource
-    \ingroup pipeline
+    \ingroup signal-pipeline
     \inmodule core
 
     \brief The DataSource class is the base class for elements that receive data

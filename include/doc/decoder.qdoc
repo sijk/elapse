@@ -1,6 +1,6 @@
 /*!
     \class SampleDecoder
-    \ingroup pipeline
+    \ingroup signal-pipeline
     \inmodule core
 
     \brief The SampleDecoder class is the base class for elements that decode a

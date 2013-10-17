@@ -25,7 +25,7 @@
         \li By module:
             \list
                 \li \l{Elapse application}{Core application}
-                \li \l{Pipeline}
+                \li \l{Signal pipeline}
                 \li \l{Core plugins}
                 \li \l{Internal plugin management}
                 \li \l{Plugin API reference}{External plugin API}
@@ -51,8 +51,8 @@
 */
 
 /*!
-    \group pipeline
-    \title Pipeline
+    \group signal-pipeline
+    \title Signal Pipeline
 
     These classes relate to the signal processing pipeline.
 */
@@ -62,7 +62,7 @@
     \title Core Plugins
 
     These classes provide default implementations for some 
-    \l{Pipeline}{pipeline elements}. 
+    \l{Signal Pipeline}{pipeline elements}.
 */
 
 /*!
