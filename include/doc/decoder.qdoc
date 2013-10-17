@@ -4,8 +4,30 @@
     \inmodule core
 
     \brief The SampleDecoder class is the base class for elements that decode a
-    QByteArray to a Sample.
+    QByteArray to one or more \l{Sample}s.
 
-    Each Pipeline has several SampleDecoders: one per SampleType.
+    Each \l{Pipeline} has several SampleDecoders: one per SampleType.
 */
 
+/*!
+    \fn SampleDecoder::SampleDecoder(QObject *parent)
+    Construct a new SampleDecoder as a child of the given \a parent.
+*/
+
+/*!
+    \fn SampleDecoder::~SampleDecoder()
+    Destroy this SampleDecoder.
+*/
+
+/*!
+    \fn SampleDecoder::newSample(const Sample &sample)
+    Emitted when a \a sample has been decoded.
+*/
+
+/*!
+    \fn SampleDecoder::onData(const QByteArray &data)
+    Executed when \a data is available for decoding. Classes that inherit from
+    SampleDecoder must implement this slot and ensure that newSample() is
+    emitted for every decoded sample. Note that there is not necessarily a
+    one-to-one mapping between the incoming \a data and outgoing \l{Sample}s.
+*/
