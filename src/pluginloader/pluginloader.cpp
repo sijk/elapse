@@ -8,7 +8,19 @@
 
 
 /*!
- * \brief The GenericPlugin class is a sort of "pseudo base class" for all plugins.
+ * \class PluginLoader
+ * \ingroup plugins-int
+ * \inmodule elapse-core
+ *
+ * \brief The PluginLoader class provides facilities for finding, loading, and
+ * querying plugins, and for instantiating objects provided by plugins.
+ */
+
+
+/*
+ * \class GenericPlugin
+ * \brief The GenericPlugin class is a sort of "pseudo base class" for all
+ * plugins.
  */
 class GenericPlugin : public QObject, public BasePlugin<QObject>
 {
@@ -16,12 +28,18 @@ class GenericPlugin : public QObject, public BasePlugin<QObject>
 };
 
 
+/*!
+ * Construct a new PluginLoader as a child of the given \a parent.
+ */
 PluginLoader::PluginLoader(QObject *parent) :
     QObject(parent)
 {
     setSearchPath(qApp->applicationDirPath() + "/plugins");
 }
 
+/*!
+ * \return the list of plugin files in the current searchPath().
+ */
 QFileInfoList PluginLoader::files() const
 {
     QFileInfoList files;
@@ -81,6 +99,10 @@ QFileInfo PluginLoader::fileForKey(const QString &key) const
     return pluginFile[key];
 }
 
+/*!
+ * Instantiate an object of the class corresponding to the given \a key.
+ * \return a pointer to this object.
+ */
 QObject *PluginLoader::create(const QString &key) const
 {
     QPluginLoader loader(pluginFile[key].absoluteFilePath());
@@ -96,6 +118,10 @@ QObject *PluginLoader::create(const QString &key) const
     return nullptr;
 }
 
+/*!
+ * \property searchPath
+ * \brief the directory in which to search for plugins.
+ */
 QDir PluginLoader::searchPath() const
 {
     return path;

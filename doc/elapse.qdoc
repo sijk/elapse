@@ -1,0 +1,98 @@
+/*!
+    \page index.html overview
+    \title Elapse developer documentation
+
+    \section1 You are here
+
+    This is the developer documentation for the Elapse client-side application.
+    You need to read this if you're hacking on the core application itself. If
+    you're wanting to develop plugins for signal processing/classification,
+    go and read the \l{plugin API} documentation instead. 
+
+    \section1 Overviews and Guides
+
+    The following pages describe the design of the core Elapse application.
+
+    \generatelist overviews
+
+    \section1 Building & Installing
+
+    ...
+
+    \section1 Code Documentation
+
+    \list
+        \li By module:
+            \list
+                \li \l{Elapse application}{Core application}
+                \li \l{Signal pipeline}
+                \li \l{Core plugins}
+                \li \l{Internal plugin management}
+                \li \l{Plugin API reference}{External plugin API}
+                \li \l{Widgets}
+            \endlist
+        \li \l{All classes}
+        \li \l{All functions}
+    \endlist
+
+    \section1 Licence Information
+
+    The core Elapse application is licensed under the terms of the ...
+    \legalese
+        ...
+    \endlegalese
+*/
+
+/*!
+    \group app
+    \title Elapse application
+
+    These classes relate to the core Elapse application.
+*/
+
+/*!
+    \group signal-pipeline
+    \title Signal Pipeline
+
+    These classes relate to the signal processing pipeline.
+*/
+
+/*!
+    \group core-plugins
+    \title Core Plugins
+
+    These classes provide default implementations for some 
+    \l{Signal Pipeline}{pipeline elements}.
+*/
+
+/*!
+    \group plugins-int
+    \title Internal Plugin Management
+
+    These classes enable the core application to search for and load plugins.
+    They also provide the base classes for the plugins themselves. 
+*/
+
+/*!
+    \group widgets
+    \title Widgets
+
+    These classes provide miscellaneous GUI widgets.
+*/
+
+/*!
+    \page classlist.html
+    \title All Classes
+
+    This is a list of all classes that are part of Elapse.
+
+    \generatelist annotatedclasses
+*/
+
+/*!
+    \page functionlist.html
+    \title All Functions
+
+    \generatelist functionindex
+*/
+

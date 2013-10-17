@@ -12,6 +12,13 @@
 #define N_CHANNELS      8
 
 
+/*!
+ * \class DummyEegSource
+ * \ingroup core-plugins
+ * \inmodule elapse-core
+ */
+
+
 DummyEegSource::DummyEegSource(QObject *parent) :
     DataSource(parent),
     seqnum(0)

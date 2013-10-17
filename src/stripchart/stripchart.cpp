@@ -6,6 +6,18 @@
 #include "stripchart.h"
 
 
+/*!
+ * \class StripChart
+ * \ingroup widgets
+ * \inmodule elapse-core
+ *
+ * \brief The StripChart class provides a generic stripchart widget for
+ * displaying time-series data.
+ *
+ * Redrawing is handled intelligently. TODO...
+ */
+
+
 class StripChartScaleDraw : public QwtScaleDraw
 {
 public:
@@ -21,6 +33,9 @@ private:
 };
 
 
+/*!
+ * Construct a new StripChart as a child of the given \a parent;
+ */
 StripChart::StripChart(QWidget *parent) :
     QWidget(parent),
     plot(new QwtPlot(parent)),
@@ -42,6 +57,9 @@ StripChart::StripChart(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(redraw()));
 }
 
+/*!
+ * Destroy this StripChart.
+ */
 StripChart::~StripChart()
 {
     delete timer;
@@ -84,6 +102,10 @@ void StripChart::createStrips()
     setSpacing(_spacing);
 }
 
+/*!
+ * Append \a data to the StripChart. The cardinality of the given \a data must
+ * be equal to nStrips.
+ */
 void StripChart::appendData(const QVector<double> &data)
 {
     Q_ASSERT(uint(data.size()) == _nStrips);
@@ -119,18 +141,30 @@ void StripChart::redraw()
     needs_redraw = false;
 }
 
+/*!
+ * \property StripChart::nStrips
+ * \brief the number of channels of data to display.
+ */
 void StripChart::setNStrips(uint n)
 {
     _nStrips = n;
     createStrips();
 }
 
+/*!
+ * \property StripChart::nSamples
+ * \brief the width of the StripChart in samples.
+ */
 void StripChart::setNSamples(uint n)
 {
     _nSamples = n;
     createStrips();
 }
 
+/*!
+ * \property StripChart::stripSpacing
+ * \brief the distance between adjacent strips.
+ */
 void StripChart::setSpacing(double spacing)
 {
     double delta = spacing - _spacing;
@@ -154,3 +188,8 @@ void StripChart::setSpacing(double spacing)
     needs_redraw = true;
     redraw();
 }
+
+/*!
+ * \property StripChart::rate
+ * \brief the number of milliseconds between plot redraws.
+ */
