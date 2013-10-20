@@ -5,4 +5,5 @@ SUBDIRS	    = app \
               pluginloader \
               stripchart
 
-app.depends += pipeline plugins pluginloader stripchart
+app.depends += pipeline plugins stripchart
+pipeline.depends += pluginloader
