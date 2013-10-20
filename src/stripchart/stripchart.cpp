@@ -64,16 +64,15 @@ StripChart::~StripChart()
 {
     delete timer;
     delete layout;
-    while (!lines.isEmpty())
-        delete lines.takeFirst();
+    qDeleteAll(lines);
     delete plot;
 }
 
 void StripChart::createStrips()
 {
     // Delete any existing lines
-    while (!lines.isEmpty())
-        delete lines.takeFirst();
+    qDeleteAll(lines);
+    lines.clear();
     ydata.clear();
 
     tdata.resize(_nSamples);
