@@ -25,10 +25,14 @@ public:
     QStandardItemModel *model() const;
 
 private:
-    QStandardItem *createInterfaceItem(const QString &iid);
+    QStandardItem *createElementItem(const QString &name);
     QStandardItem *createPluginItem(const QString &name, const QFileInfo &file);
-    QStandardItem *createImplementationItem(const QMetaObject &obj);
+    QStandardItem *createClassItem(const QMetaObject &obj);
     void attachViews();
+
+    static const QMetaObject *baseClass(const QMetaObject *obj);
+    static QStandardItem *childWithText(const QStandardItem *item,
+                                        const QString &name);
 
     QDir _path;
     QStandardItemModel *_model;

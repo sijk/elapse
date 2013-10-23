@@ -9,6 +9,6 @@ CONFIG  += staticlib
 SOURCES += pluginmanager.cpp
 
 HEADERS += pluginmanager.h \
-           plugin_base.h
+           plugin.h
 
 FORMS   += pluginmanager.ui

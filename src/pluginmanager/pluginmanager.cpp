@@ -12,12 +12,6 @@
 #include <QDebug>
 
 
-class GenericPlugin : public QObject, public FactoryInterface<QObject>
-{
-    Q_OBJECT
-};
-
-
 /* ========================================================================== */
 
 
@@ -123,23 +117,36 @@ void PluginManager::setSearchPath(QDir path)
     foreach (QFileInfo file, path.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
-        auto factory = static_cast<GenericPlugin*>(plugin);
+        if (!plugin) qDebug() << "loader instance is null";
+        auto factory = static_cast<Plugin*>(plugin);
 
         if (factory) {
-            QJsonObject metadata = loader.metaData();
-            QString iid = metadata["IID"].toString();
-            QString name = metadata["className"].toString();
-
-            auto ifaceItem = createInterfaceItem(iid);
-            rootItem->appendRow(ifaceItem);
-
-            auto pluginItem = createPluginItem(name, file);
-            ifaceItem->appendRow(pluginItem);
+            QString pluginName = loader.metaData()["className"].toString();
 
             foreach (const QMetaObject &obj, factory->classes()) {
-                auto implItem = createImplementationItem(obj);
-                pluginItem->appendRow(implItem);
+                QString elementName = baseClass(&obj)->className();
+
+                // Find or create element item
+                auto elementItem = childWithText(rootItem, elementName);
+                if (!elementItem) {
+                    elementItem = createElementItem(elementName);
+                    rootItem->appendRow(elementItem);
+                }
+
+                // Find or create plugin item
+                auto pluginItem = childWithText(elementItem, pluginName);
+                if (!pluginItem) {
+                    pluginItem = createPluginItem(pluginName, file);
+                    elementItem->appendRow(pluginItem);
+                }
+
+                // Create class item
+                auto classItem = createClassItem(obj);
+                pluginItem->appendRow(classItem);
             }
+        } else {
+            qDebug() << "factory cast to plugin failed";
+            qDebug() << loader.errorString();
         }
 
         loader.unload();
@@ -153,13 +160,9 @@ QStandardItemModel *PluginManager::model() const
     return _model;
 }
 
-QStandardItem *PluginManager::createInterfaceItem(const QString &iid)
+QStandardItem *PluginManager::createElementItem(const QString &name)
 {
-    auto iface = _model->findItems(iid);
-    if (!iface.isEmpty())
-        return iface.at(0);
-
-    auto item = new QStandardItem(iid);
+    auto item = new QStandardItem(name);
 
     QFont font;
     font.setBold(true);
@@ -188,7 +191,7 @@ QStandardItem *PluginManager::createPluginItem(const QString &name,
     return item;
 }
 
-QStandardItem *PluginManager::createImplementationItem(const QMetaObject &obj)
+QStandardItem *PluginManager::createClassItem(const QMetaObject &obj)
 {
     auto item = new QStandardItem(obj.className());
 
@@ -203,19 +206,40 @@ QStandardItem *PluginManager::createImplementationItem(const QMetaObject &obj)
     return item;
 }
 
+QStandardItem *PluginManager::childWithText(const QStandardItem *item,
+                                            const QString &name)
+{
+    for (int i = 0; i < item->rowCount(); i++) {
+        auto child = item->child(i);
+        if (child->text() == name)
+            return child;
+    }
+    return nullptr;
+}
+
+const QMetaObject *PluginManager::baseClass(const QMetaObject *obj)
+{
+    const QMetaObject *super = obj->superClass();
+    if (super && super != &QObject::staticMetaObject)
+        return baseClass(super);
+    return obj;
+}
+
 void PluginManager::attachViews()
 {
     auto setupTreeView = [this](QTreeView *tree, const QString &iid,
                                 const QString &sampleType = QString()) {
+        // Filter model by element type and sample type
         auto filteredModel = new PluginFilterProxyModel(iid, sampleType);
         filteredModel->setSourceModel(_model);
 
+        // Connect filtered model to view
         tree->setModel(filteredModel);
         // TODO: do this root item selection inside the proxy model
         tree->setRootIndex(tree->model()->index(0,0));
         tree->expandAll();
 
-        // Select the first implementation by default
+        // Select the first class by default
         tree->selectionModel()->select(tree->rootIndex().child(0,0).child(0,0),
                                        QItemSelectionModel::SelectCurrent);
 
@@ -227,12 +251,12 @@ void PluginManager::attachViews()
             });
     };
 
-    setupTreeView(ui->treeSource,       DataSourceInterface_iid);
-    setupTreeView(ui->treeDecoderEeg,   SampleDecoderInterface_iid,    "EEG");
-    setupTreeView(ui->treeDecoderVideo, SampleDecoderInterface_iid,    "VIDEO");
-    setupTreeView(ui->treeDecoderImu,   SampleDecoderInterface_iid,    "IMU");
-    setupTreeView(ui->treeFeatEeg,      FeatureExtractorInterface_iid, "EEG");
-    setupTreeView(ui->treeFeatVideo,    FeatureExtractorInterface_iid, "VIDEO");
-    setupTreeView(ui->treeFeatImu,      FeatureExtractorInterface_iid, "IMU");
-    setupTreeView(ui->treeClassifier,   ClassifierInterface_iid);
+    setupTreeView(ui->treeSource,       "DataSource");
+    setupTreeView(ui->treeDecoderEeg,   "SampleDecoder",    "EEG");
+    setupTreeView(ui->treeDecoderVideo, "SampleDecoder",    "VIDEO");
+    setupTreeView(ui->treeDecoderImu,   "SampleDecoder",    "IMU");
+    setupTreeView(ui->treeFeatEeg,      "FeatureExtractor", "EEG");
+    setupTreeView(ui->treeFeatVideo,    "FeatureExtractor", "VIDEO");
+    setupTreeView(ui->treeFeatImu,      "FeatureExtractor", "IMU");
+    setupTreeView(ui->treeClassifier,   "Classifier");
 }
