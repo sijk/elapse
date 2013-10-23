@@ -4,7 +4,7 @@
 #include <QObject>
 #include "sampletypes.h"
 
-class PluginLoader;
+//class PluginLoader;
 class DataSource;
 class SampleDecoder;
 
@@ -15,7 +15,7 @@ class Pipeline : public QObject
 public:
     explicit Pipeline(QObject *parent = 0);
 
-    PluginLoader *pluginLoader() const;
+//    PluginLoader *pluginLoader() const;
     DataSource *dataSource() const;
     SampleDecoder *sampleDecoder(SampleType sampleType) const;
 
@@ -32,7 +32,7 @@ public slots:
     void stop();
 
 private:
-    PluginLoader *loader;
+//    PluginLoader *loader;
     DataSource *source;
     SampleDecoder *decoders[N_SAMPLE_TYPES];
     // other decoders...

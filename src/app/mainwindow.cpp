@@ -69,8 +69,8 @@ void MainWindow::on_EegDecoder_newSample(const Sample &sample)
 
 void MainWindow::on_actionPlugins_triggered()
 {
-    PluginDialog dialog(pipeline->pluginLoader(), this);
-    dialog.exec();
+//    PluginDialog dialog(pipeline->pluginLoader(), this);
+//    dialog.exec();
 }
 
 void MainWindow::showErrorMessage(const QString &message)

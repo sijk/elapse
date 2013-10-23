@@ -1,7 +1,7 @@
 #include <QVariant>
 #include "datasource.h"
 #include "decoder.h"
-#include "pluginloader.h"
+//#include "pluginloader.h"
 #include "pipeline.h"
 
 /*!
@@ -21,35 +21,35 @@
  * Construct a new Pipeline as a child of the given \a parent.
  */
 Pipeline::Pipeline(QObject *parent) :
-    QObject(parent),
-    loader(new PluginLoader(this))
+    QObject(parent)//,
+//    loader(new PluginLoader(this))
 {
-    source = loader->create<DataSource*>("TcpClientEegDataSource");
-    Q_ASSERT_X(source, "Pipeline", "Could not create DataSource");
-    source->setObjectName("DataSource");
-    source->setParent(this);
+//    source = loader->create<DataSource*>("TcpClientEegDataSource");
+//    Q_ASSERT_X(source, "Pipeline", "Could not create DataSource");
+//    source->setObjectName("DataSource");
+//    source->setParent(this);
 
-    decoders[EEG] = loader->create<SampleDecoder*>("EegDecoder");
-    Q_ASSERT_X(decoders[EEG], "Pipeline", "Could not create EegDecoder");
-    decoders[EEG]->setObjectName("EegDecoder");
-    decoders[EEG]->setParent(this);
+//    decoders[EEG] = loader->create<SampleDecoder*>("EegDecoder");
+//    Q_ASSERT_X(decoders[EEG], "Pipeline", "Could not create EegDecoder");
+//    decoders[EEG]->setObjectName("EegDecoder");
+//    decoders[EEG]->setParent(this);
 
-    // Connect pipeline elements
-    connect(source, SIGNAL(eegReady(QByteArray)),
-            decoders[EEG], SLOT(onData(QByteArray)));
+//    // Connect pipeline elements
+//    connect(source, SIGNAL(eegReady(QByteArray)),
+//            decoders[EEG], SLOT(onData(QByteArray)));
 
-    // Propagate signals from internal elements
-    connect(source, SIGNAL(started()), this, SIGNAL(started()));
-    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
+//    // Propagate signals from internal elements
+//    connect(source, SIGNAL(started()), this, SIGNAL(started()));
+//    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 }
 
 /*!
  * \return the PluginLoader instance.
  */
-PluginLoader *Pipeline::pluginLoader() const
-{
-    return loader;
-}
+//PluginLoader *Pipeline::pluginLoader() const
+//{
+//    return loader;
+//}
 
 /*!
  * \return the DataSource instance.
