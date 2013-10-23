@@ -1,12 +1,18 @@
+#include <QCoreApplication>
+#include <QMetaClassInfo>
 #include <QJsonObject>
 #include <QPluginLoader>
-#include "plugin_base.h"
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
+#include "plugin.h"
+#include "sampletypes.h"
 #include "pluginmanager.h"
+#include "ui_pluginmanager.h"
 
 #include <QDebug>
 
 
-class GenericPlugin : public QObject, public BasePlugin<QObject>
+class GenericPlugin : public QObject, public FactoryInterface<QObject>
 {
     Q_OBJECT
 };
@@ -15,54 +21,94 @@ class GenericPlugin : public QObject, public BasePlugin<QObject>
 /* ========================================================================== */
 
 
-class ImplementationItem : public QStandardItem
+template<class T>
+struct ElementContainer
 {
-public:
-    ImplementationItem(const QString &key);
-    void setData(const QVariant &value, int role);
+    T dataSource;
+    T sampleDecoders[N_SAMPLE_TYPES];
+    T featureExtractors[N_SAMPLE_TYPES];
+    T classifier;
 };
 
-ImplementationItem::ImplementationItem(const QString &key) :
-    QStandardItem(key)
+
+enum PluginItemDataRole
 {
-    setCheckable(true);
-}
-
-void ImplementationItem::setData(const QVariant &value, int role)
-{
-    if (role != Qt::CheckStateRole)
-        return QStandardItem::setData(value, role);
-
-    if (!parent())
-        return QStandardItem::setData(value, role);
-
-    // Disallow un-checking items
-    if (value.toInt() != Qt::Checked)
-        return;
-
-    // Uncheck anything implementing the same interface as this
-    auto iface = parent()->parent();
-    for (int i = 0; i < iface->rowCount(); i++) {
-        auto plugin = iface->child(i);
-        for (int j = 0; j < plugin->rowCount(); j++) {
-            auto impl = plugin->child(j);
-            if (impl->checkState())
-                impl->QStandardItem::setData(Qt::Unchecked, Qt::CheckStateRole);
-        }
-    }
-
-    QStandardItem::setData(value, role);
-}
+    SAMPLETYPE_ROLE = Qt::UserRole,
+    FILEPATH_ROLE
+};
 
 
 /* ========================================================================== */
 
 
-PluginManager::PluginManager(QDir searchPath, QObject *parent) :
-    QObject(parent),
-    _model(new QStandardItemModel(this))
+class PluginFilterProxyModel : public QSortFilterProxyModel
 {
+    Q_OBJECT
+public:
+    PluginFilterProxyModel(const QString &acceptableInterface,
+                           const QString &acceptableSampleType,
+                           QObject *parent = nullptr);
+protected:
+    bool filterAcceptsRow(int srcRow, const QModelIndex &srcParent) const;
+
+private:
+    QString acceptableInterface;
+    QString acceptableSampleType;
+};
+
+PluginFilterProxyModel::PluginFilterProxyModel(const QString &iid,
+                                               const QString &sampleType,
+                                               QObject *parent) :
+    QSortFilterProxyModel(parent),
+    acceptableInterface(iid),
+    acceptableSampleType(sampleType)
+{
+}
+
+bool PluginFilterProxyModel::filterAcceptsRow(int srcRow,
+                                              const QModelIndex &srcParent) const
+{
+    QModelIndex index = sourceModel()->index(srcRow, 0, srcParent);
+    bool isInterfaceItem = index.parent() == QModelIndex();
+    bool isPluginItem = index.parent().parent() == QModelIndex();
+
+    // Only accept plugins implementing the given interface
+    if (isInterfaceItem)
+        return index.data().toString() == acceptableInterface;
+
+    if (isPluginItem)
+        return true;
+
+    // Exclude classes that explicitly don't work with the given sampleType
+    QString sampleType = index.data(SAMPLETYPE_ROLE).toString();
+    if (!acceptableSampleType.isEmpty() && !sampleType.isEmpty())
+        return sampleType == acceptableSampleType;
+
+    return true;
+}
+
+#include "pluginmanager.moc"
+
+
+/* ========================================================================== */
+
+
+PluginManager::PluginManager(QDir searchPath, QWidget *parent) :
+    QDialog(parent),
+    _model(new QStandardItemModel(this)),
+    ui(new Ui::PluginManager)
+{
+    ui->setupUi(this);
+
+    if (searchPath == QDir())
+        searchPath = QDir(qApp->applicationDirPath()).absoluteFilePath("plugins");
+
     setSearchPath(searchPath);
+}
+
+PluginManager::~PluginManager()
+{
+    delete ui;
 }
 
 void PluginManager::setSearchPath(QDir path)
@@ -90,18 +136,16 @@ void PluginManager::setSearchPath(QDir path)
             auto pluginItem = createPluginItem(name, file);
             ifaceItem->appendRow(pluginItem);
 
-            foreach (const QString &key, factory->keys()) {
-                auto implItem = new ImplementationItem(key);
+            foreach (const QMetaObject &obj, factory->classes()) {
+                auto implItem = createImplementationItem(obj);
                 pluginItem->appendRow(implItem);
             }
-
-            // Select the first implementation of each interface by default
-            if (ifaceItem->rowCount() == 1)
-                pluginItem->child(0)->setCheckState(Qt::Checked);
         }
 
         loader.unload();
     }
+
+    attachViews();
 }
 
 QStandardItemModel *PluginManager::model() const
@@ -121,6 +165,9 @@ QStandardItem *PluginManager::createInterfaceItem(const QString &iid)
     font.setBold(true);
     item->setFont(font);
 
+    item->setSelectable(false);
+    item->setEditable(false);
+
     return item;
 }
 
@@ -129,11 +176,63 @@ QStandardItem *PluginManager::createPluginItem(const QString &name,
 {
     auto item = new QStandardItem(name);
 
-    item->setData(file.absoluteFilePath());
+    item->setData(file.absoluteFilePath(), FILEPATH_ROLE);
 
     QFont font;
     font.setItalic(true);
     item->setFont(font);
 
+    item->setSelectable(false);
+    item->setEditable(false);
+
     return item;
+}
+
+QStandardItem *PluginManager::createImplementationItem(const QMetaObject &obj)
+{
+    auto item = new QStandardItem(obj.className());
+
+    int typeIdx = obj.indexOfClassInfo("SampleType");
+    if (typeIdx >= 0) {
+        QString sampleType = obj.classInfo(typeIdx).value();
+        item->setData(sampleType, SAMPLETYPE_ROLE);
+    }
+
+    item->setEditable(false);
+
+    return item;
+}
+
+void PluginManager::attachViews()
+{
+    auto setupTreeView = [this](QTreeView *tree, const QString &iid,
+                                const QString &sampleType = QString()) {
+        auto filteredModel = new PluginFilterProxyModel(iid, sampleType);
+        filteredModel->setSourceModel(_model);
+
+        tree->setModel(filteredModel);
+        // TODO: do this root item selection inside the proxy model
+        tree->setRootIndex(tree->model()->index(0,0));
+        tree->expandAll();
+
+        // Select the first implementation by default
+        tree->selectionModel()->select(tree->rootIndex().child(0,0).child(0,0),
+                                       QItemSelectionModel::SelectCurrent);
+
+        // Ensure that something is always selected from then on
+        connect(tree->selectionModel(), &QItemSelectionModel::selectionChanged,
+            [=](const QItemSelection &current, const QItemSelection &prev){
+                if (current.indexes().isEmpty() && !prev.indexes().isEmpty())
+                    tree->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent);
+            });
+    };
+
+    setupTreeView(ui->treeSource,       DataSourceInterface_iid);
+    setupTreeView(ui->treeDecoderEeg,   SampleDecoderInterface_iid,    "EEG");
+    setupTreeView(ui->treeDecoderVideo, SampleDecoderInterface_iid,    "VIDEO");
+    setupTreeView(ui->treeDecoderImu,   SampleDecoderInterface_iid,    "IMU");
+    setupTreeView(ui->treeFeatEeg,      FeatureExtractorInterface_iid, "EEG");
+    setupTreeView(ui->treeFeatVideo,    FeatureExtractorInterface_iid, "VIDEO");
+    setupTreeView(ui->treeFeatImu,      FeatureExtractorInterface_iid, "IMU");
+    setupTreeView(ui->treeClassifier,   ClassifierInterface_iid);
 }

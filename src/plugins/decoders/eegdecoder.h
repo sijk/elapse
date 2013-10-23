@@ -8,6 +8,7 @@ class EegSample;
 class EegDecoder : public SampleDecoder
 {
     Q_OBJECT
+    Q_CLASSINFO("SampleType", "EEG")
     Q_PROPERTY(quint8 gain MEMBER _gain)
     Q_PROPERTY(double vref MEMBER _vref)
 

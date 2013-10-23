@@ -1,16 +1,24 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
+#include <QDialog>
 #include <QDir>
-#include <QStandardItemModel>
 
-class PluginManager : public QObject
+class QStandardItem;
+class QStandardItemModel;
+
+namespace Ui {
+class PluginManager;
+}
+
+class PluginManager : public QDialog
 {
     Q_OBJECT
     Q_PROPERTY(QDir searchPath MEMBER _path WRITE setSearchPath)
 
 public:
-    explicit PluginManager(QDir searchPath, QObject *parent = 0);
+    explicit PluginManager(QDir searchPath = QDir(), QWidget *parent = 0);
+    ~PluginManager();
 
     void setSearchPath(QDir path);
 
@@ -19,9 +27,12 @@ public:
 private:
     QStandardItem *createInterfaceItem(const QString &iid);
     QStandardItem *createPluginItem(const QString &name, const QFileInfo &file);
+    QStandardItem *createImplementationItem(const QMetaObject &obj);
+    void attachViews();
 
     QDir _path;
     QStandardItemModel *_model;
+    Ui::PluginManager *ui;
 };
 
 #endif // PLUGINMANAGER_H
