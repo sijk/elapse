@@ -39,44 +39,45 @@ class PluginFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    PluginFilterProxyModel(const QString &acceptableInterface,
-                           const QString &acceptableSampleType,
+    PluginFilterProxyModel(const QString &elementType,
+                           const QString &sampleType,
                            QObject *parent = nullptr);
 protected:
-    bool filterAcceptsRow(int srcRow, const QModelIndex &srcParent) const;
+    bool filterAcceptsRow(int row, const QModelIndex &parent) const;
 
 private:
-    QString acceptableInterface;
-    QString acceptableSampleType;
+    QString desiredElementType;
+    QString desiredSampleType;
 };
 
-PluginFilterProxyModel::PluginFilterProxyModel(const QString &iid,
+
+PluginFilterProxyModel::PluginFilterProxyModel(const QString &elementType,
                                                const QString &sampleType,
                                                QObject *parent) :
     QSortFilterProxyModel(parent),
-    acceptableInterface(iid),
-    acceptableSampleType(sampleType)
+    desiredElementType(elementType),
+    desiredSampleType(sampleType)
 {
 }
 
-bool PluginFilterProxyModel::filterAcceptsRow(int srcRow,
-                                              const QModelIndex &srcParent) const
+bool PluginFilterProxyModel::filterAcceptsRow(int row,
+                                              const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(srcRow, 0, srcParent);
+    QModelIndex index = sourceModel()->index(row, 0, parent);
     bool isInterfaceItem = index.parent() == QModelIndex();
     bool isPluginItem = index.parent().parent() == QModelIndex();
 
     // Only accept plugins implementing the given interface
     if (isInterfaceItem)
-        return index.data().toString() == acceptableInterface;
+        return index.data().toString() == desiredElementType;
 
     if (isPluginItem)
         return true;
 
     // Exclude classes that explicitly don't work with the given sampleType
     QString sampleType = index.data(SAMPLETYPE_ROLE).toString();
-    if (!acceptableSampleType.isEmpty() && !sampleType.isEmpty())
-        return sampleType == acceptableSampleType;
+    if (!desiredSampleType.isEmpty() && !sampleType.isEmpty())
+        return sampleType == desiredSampleType;
 
     return true;
 }
@@ -117,7 +118,6 @@ void PluginManager::setSearchPath(QDir path)
     foreach (QFileInfo file, path.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
-        if (!plugin) qDebug() << "loader instance is null";
         auto factory = static_cast<Plugin*>(plugin);
 
         if (factory) {
@@ -145,7 +145,6 @@ void PluginManager::setSearchPath(QDir path)
                 pluginItem->appendRow(classItem);
             }
         } else {
-            qDebug() << "factory cast to plugin failed";
             qDebug() << loader.errorString();
         }
 
