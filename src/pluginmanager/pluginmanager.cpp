@@ -3,9 +3,10 @@
 #include <QJsonObject>
 #include <QPluginLoader>
 #include <QStandardItemModel>
-#include <QSortFilterProxyModel>
 #include "plugin.h"
 #include "sampletypes.h"
+#include "pluginfilterproxymodel.h"
+#include "pluginmanager_p.h"
 #include "pluginmanager.h"
 #include "ui_pluginmanager.h"
 
@@ -23,66 +24,6 @@ struct ElementContainer
     T featureExtractors[N_SAMPLE_TYPES];
     T classifier;
 };
-
-
-enum PluginItemDataRole
-{
-    SAMPLETYPE_ROLE = Qt::UserRole,
-    FILEPATH_ROLE
-};
-
-
-/* ========================================================================== */
-
-
-class PluginFilterProxyModel : public QSortFilterProxyModel
-{
-    Q_OBJECT
-public:
-    PluginFilterProxyModel(const QString &elementType,
-                           const QString &sampleType,
-                           QObject *parent = nullptr);
-protected:
-    bool filterAcceptsRow(int row, const QModelIndex &parent) const;
-
-private:
-    QString desiredElementType;
-    QString desiredSampleType;
-};
-
-
-PluginFilterProxyModel::PluginFilterProxyModel(const QString &elementType,
-                                               const QString &sampleType,
-                                               QObject *parent) :
-    QSortFilterProxyModel(parent),
-    desiredElementType(elementType),
-    desiredSampleType(sampleType)
-{
-}
-
-bool PluginFilterProxyModel::filterAcceptsRow(int row,
-                                              const QModelIndex &parent) const
-{
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    bool isInterfaceItem = index.parent() == QModelIndex();
-    bool isPluginItem = index.parent().parent() == QModelIndex();
-
-    // Only accept plugins implementing the given interface
-    if (isInterfaceItem)
-        return index.data().toString() == desiredElementType;
-
-    if (isPluginItem)
-        return true;
-
-    // Exclude classes that explicitly don't work with the given sampleType
-    QString sampleType = index.data(SAMPLETYPE_ROLE).toString();
-    if (!desiredSampleType.isEmpty() && !sampleType.isEmpty())
-        return sampleType == desiredSampleType;
-
-    return true;
-}
-
-#include "pluginmanager.moc"
 
 
 /* ========================================================================== */
