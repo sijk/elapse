@@ -2,8 +2,8 @@ TEMPLATE    = subdirs
 SUBDIRS	    = app \
               pipeline \
               plugins \
-              pluginloader \
+              pluginmanager \
               stripchart
 
 app.depends += pipeline plugins stripchart
-pipeline.depends += pluginloader
+app.depends += pluginmanager

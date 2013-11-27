@@ -1,7 +1,5 @@
 #include <QVariant>
-#include "datasource.h"
-#include "decoder.h"
-#include "pluginloader.h"
+#include "elements.h"
 #include "pipeline.h"
 
 /*!
@@ -9,11 +7,10 @@
  * \ingroup signal-pipeline
  * \inmodule elapse-core
  *
- * \brief The Pipeline class manages all of the signal processing elements.
+ * \brief The Pipeline class manages a set of signal processing elements.
  *
- * It has a PluginLoader for loading signal processing elements from
- * \l{Plugin API}{plugins} and it manages the connections between
- * these elements.
+ * It is responsible for managing the state of and connections between the
+ * elements in an ElementSet.
  */
 
 
@@ -22,60 +19,51 @@
  */
 Pipeline::Pipeline(QObject *parent) :
     QObject(parent),
-    loader(new PluginLoader(this))
+    _elements(nullptr)
 {
-    source = loader->create<DataSource*>("TcpClientEegDataSource");
-    Q_ASSERT_X(source, "Pipeline", "Could not create DataSource");
-    source->setObjectName("DataSource");
-    source->setParent(this);
-
-    decoders[EEG] = loader->create<SampleDecoder*>("EegDecoder");
-    Q_ASSERT_X(decoders[EEG], "Pipeline", "Could not create EegDecoder");
-    decoders[EEG]->setObjectName("EegDecoder");
-    decoders[EEG]->setParent(this);
-
-    // Connect pipeline elements
-    connect(source, SIGNAL(eegReady(QByteArray)),
-            decoders[EEG], SLOT(onData(QByteArray)));
-
-    // Propagate signals from internal elements
-    connect(source, SIGNAL(started()), this, SIGNAL(started()));
-    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 }
 
 /*!
- * \return the PluginLoader instance.
+ * Destroy this Pipeline and its ElementSet.
  */
-PluginLoader *Pipeline::pluginLoader() const
+Pipeline::~Pipeline()
 {
-    return loader;
+    if (_elements)
+        delete _elements;
 }
 
 /*!
- * \return the DataSource instance.
+ * \return the Pipeline's ElementSet.
  */
-DataSource *Pipeline::dataSource() const
+ElementSet *Pipeline::elements() const
 {
-    return source;
+    return _elements;
 }
 
 /*!
- * \return the SampleDecoder for the given \a sampleType.
+ * Provide a new set of elements to the Pipeline. The Pipeline takes ownership
+ * of the given ElementSet and will destroy it when it is no longer needed.
+ *
+ * This method also sets up the connections between the elements and propagates
+ * signals from elements to the Pipeline.
+ *
+ * Calling setElements() when the Pipeline already has an ElementSet will cause
+ * the existing set to be destroyed and replaced by the new one.
  */
-SampleDecoder *Pipeline::sampleDecoder(SampleType sampleType) const
+void Pipeline::setElements(ElementSet *newElements)
 {
-    return decoders[sampleType];
-}
+    if (_elements)
+        delete _elements;
 
-/*!
- * Set property \a prop of the element with objectName \a name to \a value.
- * \return whether the property was successfully set.
- */
-bool Pipeline::setElementProperty(const QString &name, const char *prop,
-                                  const QVariant &value)
-{
-    QObject *element = findChild<QObject*>(name);
-    return element && element->setProperty(prop, value);
+    _elements = newElements;
+
+    // Connect elements
+    connect(_elements->dataSource, SIGNAL(eegReady(QByteArray)),
+            _elements->sampleDecoders[EEG], SLOT(onData(QByteArray)));
+
+    // Propagate signals from elements
+    connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
+    connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));
 }
 
 /*!
@@ -83,7 +71,8 @@ bool Pipeline::setElementProperty(const QString &name, const char *prop,
  */
 void Pipeline::start()
 {
-    source->start();
+    Q_ASSERT(_elements);
+    _elements->dataSource->start();
 }
 
 /*!
@@ -91,7 +80,7 @@ void Pipeline::start()
  */
 void Pipeline::stop()
 {
-    source->stop();
+    _elements->dataSource->stop();
     emit stopped();
 }
 

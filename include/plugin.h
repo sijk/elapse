@@ -1,30 +1,24 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include "plugin_base.h"
-#include "datasource.h"
-#include "decoder.h"
+#include <QtPlugin>
 
 
-typedef FactoryInterface<DataSource> DataSourceInterface;
-#define DataSourceInterface_iid "org.nzbri.elapse.DataSourceInterface"
-Q_DECLARE_INTERFACE(DataSourceInterface, DataSourceInterface_iid)
-
-class DataSourcePlugin : public QObject, public BasePlugin<DataSource>
+class PluginInterface
 {
-    Q_OBJECT
-    Q_INTERFACES(DataSourceInterface)
+public:
+    typedef QList<QMetaObject> ClassList;
+    virtual ClassList classes() = 0;
 };
 
+#define PluginInterface_iid "org.nzbri.elapse.PluginInterface"
+Q_DECLARE_INTERFACE(PluginInterface, PluginInterface_iid)
 
-typedef FactoryInterface<SampleDecoder> SampleDecoderInterface;
-#define SampleDecoderInterface_iid "org.nzbri.elapse.SampleDecoderInterface"
-Q_DECLARE_INTERFACE(SampleDecoderInterface, SampleDecoderInterface_iid)
 
-class SampleDecoderPlugin : public QObject, public BasePlugin<SampleDecoder>
+class Plugin : public QObject, public PluginInterface
 {
     Q_OBJECT
-    Q_INTERFACES(SampleDecoderInterface)
+    Q_INTERFACES(PluginInterface)
 };
 
 

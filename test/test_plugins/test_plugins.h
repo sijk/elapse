@@ -5,21 +5,21 @@
 #include "producer.h"
 #include "consumer.h"
 
-typedef FactoryInterface<Producer> ProducerInterface;
+typedef PluginInterface<Producer> ProducerInterface;
 #define ProducerInterface_iid "org.nzbri.elapse.test.ProducerInterface"
 Q_DECLARE_INTERFACE(ProducerInterface, ProducerInterface_iid)
 
-class ProducerPlugin : public QObject, public BasePlugin<Producer>
+class ProducerPlugin : public QObject, public ProducerInterface
 {
     Q_OBJECT
     Q_INTERFACES(ProducerInterface)
 };
 
-typedef FactoryInterface<Consumer> ConsumerInterface;
+typedef PluginInterface<Consumer> ConsumerInterface;
 #define ConsumerInterface_iid "org.nzbri.elapse.test.ConsumerInterface"
 Q_DECLARE_INTERFACE(ConsumerInterface, ConsumerInterface_iid)
 
-class ConsumerPlugin : public QObject, public BasePlugin<Consumer>
+class ConsumerPlugin : public QObject, public ConsumerInterface
 {
     Q_OBJECT
     Q_INTERFACES(ConsumerInterface)

@@ -7,11 +7,11 @@
 #include "threadedtcpclienteegdatasource.h"
 #include "dummyeegsource.h"
 
-class EegSourcesPlugin : public DataSourcePlugin
+class EegSourcesPlugin : public Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID DataSourceInterface_iid)
-protected:
+    Q_PLUGIN_METADATA(IID PluginInterface_iid)
+public:
     ClassList classes()
     {
         return {

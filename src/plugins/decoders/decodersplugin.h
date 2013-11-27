@@ -4,11 +4,11 @@
 #include "plugin.h"
 #include "eegdecoder.h"
 
-class DecodersPlugin : public SampleDecoderPlugin
+class DecodersPlugin : public Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID SampleDecoderInterface_iid)
-protected:
+    Q_PLUGIN_METADATA(IID PluginInterface_iid)
+public:
     ClassList classes()
     {
         return {
