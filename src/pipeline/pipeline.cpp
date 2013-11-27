@@ -22,13 +22,6 @@ Pipeline::Pipeline(QObject *parent) :
     QObject(parent),
     _elements(nullptr)
 {
-//    // Connect pipeline elements
-//    connect(source, SIGNAL(eegReady(QByteArray)),
-//            decoders[EEG], SLOT(onData(QByteArray)));
-
-//    // Propagate signals from internal elements
-//    connect(source, SIGNAL(started()), this, SIGNAL(started()));
-//    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 }
 
 Pipeline::~Pipeline()
@@ -49,7 +42,13 @@ void Pipeline::setElements(ElementSet *newElements)
 
     _elements = newElements;
 
-    // TODO: Connect them all up...
+    // Connect elements
+    connect(_elements->dataSource, SIGNAL(eegReady(QByteArray)),
+            _elements->sampleDecoders[EEG], SLOT(onData(QByteArray)));
+
+    // Propagate signals from elements
+    connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
+    connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));
 }
 
 /*!
