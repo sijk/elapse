@@ -81,11 +81,38 @@ void PluginManager::loadPlugins()
     show();
 }
 
+template<class ElementType>
+ElementType loadSelected(QTreeView *tree)
+{
+    QModelIndexList idxs = tree->selectionModel()->selection().indexes();
+    Q_ASSERT(idxs.size() == 1);
+    QModelIndex index = idxs.at(0);
+
+    QString className(index.data().toString());
+    QString pluginPath(index.parent().data(FILEPATH_ROLE).toString());
+
+    QPluginLoader loader(pluginPath);
+    Plugin *plugin = static_cast<Plugin*>(loader.instance());
+
+    foreach (const QMetaObject &obj, plugin->classes()) {
+        if (obj.className() == className) {
+            QObject *instance = obj.newInstance();
+            ElementType element = qobject_cast<ElementType>(instance);
+            if (instance && !element)
+                delete instance;
+            return element;
+        }
+    }
+
+    return nullptr;
+}
+
 void PluginManager::loadSelectedElementsFromPlugins()
 {
-    ElementSet *elements = new ElementSet;
+    auto *elements = new ElementSet;
 
-    // Load plugin and instantiate selected class for each element
+    elements->dataSource            = loadSelected<DataSource*>(ui->treeSource);
+    elements->sampleDecoders[EEG]   = loadSelected<SampleDecoder*>(ui->treeDecoderEeg);
 
     emit pluginsLoaded(elements);
 }
@@ -157,10 +184,10 @@ const QMetaObject *PluginManager::baseClass(const QMetaObject *obj)
 
 void PluginManager::attachViews()
 {
-    auto setupTreeView = [this](QTreeView *tree, const QString &iid,
+    auto setupTreeView = [this](QTreeView *tree, const QString &elementType,
                                 const QString &sampleType = QString()) {
         // Filter model by element type and sample type
-        auto filteredModel = new PluginFilterProxyModel(iid, sampleType);
+        auto filteredModel = new PluginFilterProxyModel(elementType, sampleType);
         filteredModel->setSourceModel(model);
 
         // Connect filtered model to view
