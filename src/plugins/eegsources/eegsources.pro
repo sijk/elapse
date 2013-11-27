@@ -12,7 +12,7 @@ HEADERS         = tcpclienteegdatasource.h \
                   threadedtcpclienteegdatasource.h \
                   eegthread.h \
                   dummyeegsource.h \
-                  datasource.h \
+                  elements/datasource.h \
                   eegsourcesplugin.h \
                   plugin.h
 SOURCES         = tcpclienteegdatasource.cpp \

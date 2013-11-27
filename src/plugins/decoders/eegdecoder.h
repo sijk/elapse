@@ -1,7 +1,7 @@
 #ifndef EEGDECODER_H
 #define EEGDECODER_H
 
-#include "decoder.h"
+#include "elements/decoder.h"
 
 class EegSample;
 

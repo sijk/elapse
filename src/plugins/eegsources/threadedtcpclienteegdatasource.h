@@ -2,7 +2,7 @@
 #define THREADEDTCPCLIENTEEGDATASOURCE_H
 
 #include "eegthread.h"
-#include "datasource.h"
+#include "elements/datasource.h"
 
 class ThreadedTcpClientEegDataSource : public DataSource
 {

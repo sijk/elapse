@@ -2,7 +2,7 @@
 #define DUMMYEEGSOURCE_H
 
 #include <QTimer>
-#include "datasource.h"
+#include "elements/datasource.h"
 
 class DummyEegSource : public DataSource
 {

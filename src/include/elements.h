@@ -2,8 +2,8 @@
 #define ELEMENTS_H
 
 #include "sampletypes.h"
-#include "datasource.h"
-#include "decoder.h"
+#include "elements/datasource.h"
+#include "elements/decoder.h"
 class FeatureExtractor;
 class Classifier;
 

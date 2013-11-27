@@ -9,7 +9,7 @@ DESTDIR         = ../../../plugins/
 # Plugin-specific settings
 HEADERS         = eegdecoder.h \
                   decodersplugin.h \
-                  decoder.h \
+                  elements/decoder.h \
                   plugin.h
 SOURCES         = eegdecoder.cpp
 TARGET          = $$qtLibraryTarget(decodersplugin)

@@ -13,8 +13,7 @@ SOURCES      += main.cpp \
                 eegfilesink.cpp
 HEADERS      += mainwindow.h \
                 eegfilesink.h \
-                datasource.h \
-                decoder.h
+                elements.h
 FORMS        += mainwindow.ui
 RESOURCES    += ../../elapse.qrc
 

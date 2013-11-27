@@ -2,7 +2,7 @@
 #define TCPCLIENTEEGDATASOURCE_H
 
 #include <QTcpSocket>
-#include "datasource.h"
+#include "elements/datasource.h"
 
 class TcpClientEegDataSource : public DataSource
 {

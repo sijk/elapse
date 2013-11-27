@@ -2,7 +2,7 @@
 #define UDPEEGDATASOURCE_H
 
 #include <QUdpSocket>
-#include "datasource.h"
+#include "elements/datasource.h"
 
 class UdpEegDataSource : public DataSource
 {
