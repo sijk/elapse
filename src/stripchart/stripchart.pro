@@ -1,10 +1,7 @@
-include(../../global.pri)
+include(../staticlib.pri)
 
-TEMPLATE = lib
-CONFIG  += staticlib qwt
+CONFIG  += qwt
 QT      += widgets
-
-TARGET   = stripchart
 
 SOURCES += stripchart.cpp
 HEADERS += stripchart.h

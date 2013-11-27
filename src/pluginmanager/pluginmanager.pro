@@ -1,10 +1,6 @@
-include(../../global.pri)
+include(../staticlib.pri)
 
-TARGET   = pluginmanager
-
-QT       = core gui widgets
-TEMPLATE = lib
-CONFIG  += staticlib
+QT      += gui widgets
 
 SOURCES += pluginmanager.cpp \
            pluginfilterproxymodel.cpp

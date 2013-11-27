@@ -1,10 +1,4 @@
-include(../../global.pri)
-
-TARGET   = pipeline
-
-QT       = core
-TEMPLATE = lib
-CONFIG  += staticlib
+include(../staticlib.pri)
 
 SOURCES += pipeline.cpp
 HEADERS += pipeline.h
