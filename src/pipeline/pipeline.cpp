@@ -1,6 +1,5 @@
 #include <QVariant>
 #include "elements.h"
-//#include "pluginloader.h"
 #include "pipeline.h"
 
 /*!
@@ -22,18 +21,7 @@
 Pipeline::Pipeline(QObject *parent) :
     QObject(parent),
     _elements(nullptr)
-//    loader(new PluginLoader(this))
 {
-//    source = loader->create<DataSource*>("TcpClientEegDataSource");
-//    Q_ASSERT_X(source, "Pipeline", "Could not create DataSource");
-//    source->setObjectName("DataSource");
-//    source->setParent(this);
-
-//    decoders[EEG] = loader->create<SampleDecoder*>("EegDecoder");
-//    Q_ASSERT_X(decoders[EEG], "Pipeline", "Could not create EegDecoder");
-//    decoders[EEG]->setObjectName("EegDecoder");
-//    decoders[EEG]->setParent(this);
-
 //    // Connect pipeline elements
 //    connect(source, SIGNAL(eegReady(QByteArray)),
 //            decoders[EEG], SLOT(onData(QByteArray)));

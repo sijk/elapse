@@ -11,14 +11,11 @@ DESTDIR       = ../../
 SOURCES      += main.cpp \
                 mainwindow.cpp \
                 eegfilesink.cpp
-#                plugindialog.cpp \
 HEADERS      += mainwindow.h \
                 eegfilesink.h \
                 datasource.h \
                 decoder.h
-#                plugindialog.h \
-FORMS        += mainwindow.ui \
-                plugindialog.ui
+FORMS        += mainwindow.ui
 RESOURCES    += ../../elapse.qrc
 
 LIBS            += -L$$OUT_PWD/../pipeline/ -lpipeline
@@ -26,15 +23,10 @@ INCLUDEPATH     += $$PWD/../pipeline
 DEPENDPATH      += $$PWD/../pipeline
 PRE_TARGETDEPS  += $$OUT_PWD/../pipeline/libpipeline.a
 
-#LIBS            += -L$$OUT_PWD/../pluginloader/ -lpluginloader
-#INCLUDEPATH     += $$PWD/../pluginloader
-#DEPENDPATH      += $$PWD/../pluginloader
-#PRE_TARGETDEPS  += $$OUT_PWD/../pluginloader/libpluginloader.a
-
-LIBS             += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
-INCLUDEPATH      += $$PWD/../pluginmanager
-DEPENDPATH       += $$PWD/../pluginmanager
-PRE_TARGETDEPS   += $$OUT_PWD/../pluginmanager/libpluginmanager.a
+LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
+INCLUDEPATH     += $$PWD/../pluginmanager
+DEPENDPATH      += $$PWD/../pluginmanager
+PRE_TARGETDEPS  += $$OUT_PWD/../pluginmanager/libpluginmanager.a
 
 LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
 INCLUDEPATH     += $$PWD/../stripchart

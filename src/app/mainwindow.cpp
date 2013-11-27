@@ -3,7 +3,6 @@
 #include <QMovie>
 #include "elements.h"
 #include "pipeline.h"
-//#include "plugindialog.h"
 #include "pluginmanager.h"
 #include "stripchart.h"
 #include "mainwindow.h"
@@ -70,8 +69,6 @@ void MainWindow::onEegSample(const Sample &sample)
 
 void MainWindow::on_actionPlugins_triggered()
 {
-//    PluginDialog dialog(pipeline->pluginLoader(), this);
-//    dialog.exec();
     pluginManager->loadPlugins();
 }
 

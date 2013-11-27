@@ -3,7 +3,6 @@
 
 #include <QObject>
 
-//class PluginLoader;
 class ElementSet;
 
 
@@ -27,7 +26,6 @@ public slots:
     void stop();
 
 private:
-//    PluginLoader *loader;
     ElementSet *_elements;
 };
 
