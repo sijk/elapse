@@ -31,14 +31,14 @@ private slots:
     void loadSelectedElementsFromPlugins();
 
 private:
-    QStandardItem *createElementItem(const QString &name);
-    QStandardItem *createPluginItem(const QString &name, const QFileInfo &file);
-    QStandardItem *createClassItem(const QMetaObject &obj);
-    void attachViews();
-
+    static QStandardItem *createElementItem(const QString &name);
+    static QStandardItem *createPluginItem(const QString &name,
+                                           const QFileInfo &file);
+    static QStandardItem *createClassItem(const QMetaObject &obj);
     static const QMetaObject *baseClass(const QMetaObject *obj);
     static QStandardItem *childWithText(const QStandardItem *item,
                                         const QString &name);
+    void attachViews();
 
     QDir path;
     QStandardItemModel *model;
