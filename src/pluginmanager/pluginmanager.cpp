@@ -13,6 +13,21 @@
 #include <QDebug>
 
 
+/*!
+ * \class PluginManager
+ * \ingroup plugins-int
+ * \inmodule elapse-core
+ *
+ * \brief The PluginLoader class handles the finding and loading of plugins.
+ */
+
+
+/*!
+ * Construct a PluginManager as a child of the given \a parent.
+ *
+ * The default plugin search path is set to the "plugins" subdirectory of the
+ * directory containing the application executable.
+ */
 PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
     model(new QStandardItemModel(this)),
@@ -23,11 +38,17 @@ PluginManager::PluginManager(QWidget *parent) :
     connect(this, SIGNAL(accepted()), SLOT(loadSelectedElementsFromPlugins()));
 }
 
+/*!
+ * Destroy this PluginManager.
+ */
 PluginManager::~PluginManager()
 {
     delete ui;
 }
 
+/*!
+ * Set the plugin search path to \a newPath and scan that directory for plugins.
+ */
 void PluginManager::setSearchPath(QDir newPath)
 {
     if (newPath == path)
@@ -76,11 +97,23 @@ void PluginManager::setSearchPath(QDir newPath)
     attachViews();
 }
 
+/*!
+ * Show the Pluginmanager window, allowing the user to select the set of
+ * elements they would like to load from plugins.
+ */
 void PluginManager::loadPlugins()
 {
     show();
 }
 
+/*!
+ * Helper function for loadSelectedElementsFromPlugins(). Load the plugin
+ * containing the class that is selected in the given \a tree view and
+ * return an instance of that class.
+ *
+ * If the plugin cannot be loaded, the class cannot be instantiated, or casting
+ * the instance to the requested ElementType fails, a null pointer is returned.
+ */
 template<class ElementType>
 ElementType loadSelected(QTreeView *tree)
 {
@@ -93,6 +126,9 @@ ElementType loadSelected(QTreeView *tree)
 
     QPluginLoader loader(pluginPath);
     Plugin *plugin = static_cast<Plugin*>(loader.instance());
+
+    if (!plugin)
+        return nullptr;
 
     foreach (const QMetaObject &obj, plugin->classes()) {
         if (obj.className() == className) {
@@ -107,6 +143,14 @@ ElementType loadSelected(QTreeView *tree)
     return nullptr;
 }
 
+/*!
+ * Called when the PluginManager window is closed with OK. Create a new
+ * ElementSet and load the selected classes from plugins to populate it.
+ *
+ * Ownership of the ElementSet is transferred to the receiver of the
+ * pluginsLoaded() signal. This means that in order to prevent memory leaks
+ * there should be exactly one receiver connected to the pluginsLoaded() signal.
+ */
 void PluginManager::loadSelectedElementsFromPlugins()
 {
     auto *elements = new ElementSet;
@@ -114,9 +158,18 @@ void PluginManager::loadSelectedElementsFromPlugins()
     elements->dataSource            = loadSelected<DataSource*>(ui->treeSource);
     elements->sampleDecoders[EEG]   = loadSelected<SampleDecoder*>(ui->treeDecoderEeg);
 
+    if (!elements ||
+        !elements->dataSource ||
+        !elements->sampleDecoders[EEG])
+        return;
+
     emit pluginsLoaded(elements);
 }
 
+/*!
+ * Helper function for building the internal plugin model.
+ * \return a QStandardItem representing an element type with the given \a name.
+ */
 QStandardItem *PluginManager::createElementItem(const QString &name)
 {
     auto item = new QStandardItem(name);
@@ -131,6 +184,14 @@ QStandardItem *PluginManager::createElementItem(const QString &name)
     return item;
 }
 
+/*!
+ * Helper function for building the internal plugin model.
+ * \return a QStandardItem representing a plugin with the given \a name at the
+ * given \a file path.
+ *
+ * The absolute path to the plugin file is stored as item data with the role
+ * FILEPATH_ROLE.
+ */
 QStandardItem *PluginManager::createPluginItem(const QString &name,
                                                const QFileInfo &file)
 {
@@ -148,6 +209,13 @@ QStandardItem *PluginManager::createPluginItem(const QString &name,
     return item;
 }
 
+/*!
+ * Helper function for building the internal plugin model.
+ * \return a QStandardItem representing a class provided by a plugin.
+ *
+ * If the class provides a Q_CLASSINFO entry with the key "SampleType", the
+ * value of this entry is stored as item data with the role SAMPLETYPE_ROLE.
+ */
 QStandardItem *PluginManager::createClassItem(const QMetaObject &obj)
 {
     auto item = new QStandardItem(obj.className());
@@ -163,6 +231,9 @@ QStandardItem *PluginManager::createClassItem(const QMetaObject &obj)
     return item;
 }
 
+/*!
+ * \return the first child of the given \a item with text \a name, or NULL.
+ */
 QStandardItem *PluginManager::childWithText(const QStandardItem *item,
                                             const QString &name)
 {
@@ -174,6 +245,12 @@ QStandardItem *PluginManager::childWithText(const QStandardItem *item,
     return nullptr;
 }
 
+/*!
+ * \return the base class of \a obj just before QObject.
+ *
+ * For instance, if there was an inheritance hierarchy of QObject <- A <- B <- C
+ * then baseClass(C) == baseClass(B) == baseClass(A) == A.
+ */
 const QMetaObject *PluginManager::baseClass(const QMetaObject *obj)
 {
     const QMetaObject *super = obj->superClass();
@@ -182,6 +259,10 @@ const QMetaObject *PluginManager::baseClass(const QMetaObject *obj)
     return obj;
 }
 
+/*!
+ * Connect the QTreeViews in the PluginManager window to the corresponding parts
+ * of the internal plugin model.
+ */
 void PluginManager::attachViews()
 {
     auto setupTreeView = [this](QTreeView *tree, const QString &elementType,

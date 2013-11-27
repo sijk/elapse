@@ -7,11 +7,10 @@
  * \ingroup signal-pipeline
  * \inmodule elapse-core
  *
- * \brief The Pipeline class manages all of the signal processing elements.
+ * \brief The Pipeline class manages a set of signal processing elements.
  *
- * It has a PluginLoader for loading signal processing elements from
- * \l{Plugin API}{plugins} and it manages the connections between
- * these elements.
+ * It is responsible for managing the state of and connections between the
+ * elements in an ElementSet.
  */
 
 
@@ -24,17 +23,33 @@ Pipeline::Pipeline(QObject *parent) :
 {
 }
 
+/*!
+ * Destroy this Pipeline and its ElementSet.
+ */
 Pipeline::~Pipeline()
 {
     if (_elements)
         delete _elements;
 }
 
+/*!
+ * \return the Pipeline's ElementSet.
+ */
 ElementSet *Pipeline::elements() const
 {
     return _elements;
 }
 
+/*!
+ * Provide a new set of elements to the Pipeline. The Pipeline takes ownership
+ * of the given ElementSet and will destroy it when it is no longer needed.
+ *
+ * This method also sets up the connections between the elements and propagates
+ * signals from elements to the Pipeline.
+ *
+ * Calling setElements() when the Pipeline already has an ElementSet will cause
+ * the existing set to be destroyed and replaced by the new one.
+ */
 void Pipeline::setElements(ElementSet *newElements)
 {
     if (_elements)

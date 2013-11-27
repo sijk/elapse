@@ -18,9 +18,10 @@
  * \brief The MainWindow class provides the main window of the Elapse
  *        application.
  *
- * It contains a Pipeline and a ServerProxy which provide all of the actual
- * functionality of the application. It also provides a GUI for interacting with
- * these objects and displaying the state of the signal processing elements.
+ * It contains a Pipeline, a PluginManager, and a ServerProxy which provide all
+ * of the actual functionality of the application. It also provides a GUI for
+ * interacting with these objects and displaying the state of the signal
+ * processing elements.
  */
 
 
