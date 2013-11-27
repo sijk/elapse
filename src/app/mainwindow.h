@@ -4,6 +4,8 @@
 #include <QMainWindow>
 
 class Pipeline;
+class PluginManager;
+class ElementSet;
 class Sample;
 class QStateMachine;
 class QMovie;
@@ -22,8 +24,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_EegDecoder_newSample(const Sample &sample);
+    void onEegSample(const Sample &sample);
+
     void on_actionPlugins_triggered();
+    void setupPipeline(ElementSet *elements);
 
     void showErrorMessage(const QString &message);
     bool showSpinner() const;
@@ -35,6 +39,7 @@ private:
     Ui::MainWindow *ui;
     QMovie *spinner;
     QStateMachine *machine;
+    PluginManager *pluginManager;
     Pipeline *pipeline;
 };
 

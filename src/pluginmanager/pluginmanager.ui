@@ -283,5 +283,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>PluginManager</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>324</x>
+     <y>663</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>324</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

@@ -1,6 +1,5 @@
 #include <QVariant>
-#include "datasource.h"
-#include "decoder.h"
+#include "elements.h"
 //#include "pluginloader.h"
 #include "pipeline.h"
 
@@ -21,7 +20,8 @@
  * Construct a new Pipeline as a child of the given \a parent.
  */
 Pipeline::Pipeline(QObject *parent) :
-    QObject(parent)//,
+    QObject(parent),
+    _elements(nullptr)
 //    loader(new PluginLoader(this))
 {
 //    source = loader->create<DataSource*>("TcpClientEegDataSource");
@@ -43,39 +43,25 @@ Pipeline::Pipeline(QObject *parent) :
 //    connect(source, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 }
 
-/*!
- * \return the PluginLoader instance.
- */
-//PluginLoader *Pipeline::pluginLoader() const
-//{
-//    return loader;
-//}
-
-/*!
- * \return the DataSource instance.
- */
-DataSource *Pipeline::dataSource() const
+Pipeline::~Pipeline()
 {
-    return source;
+    if (_elements)
+        delete _elements;
 }
 
-/*!
- * \return the SampleDecoder for the given \a sampleType.
- */
-SampleDecoder *Pipeline::sampleDecoder(SampleType sampleType) const
+ElementSet *Pipeline::elements() const
 {
-    return decoders[sampleType];
+    return _elements;
 }
 
-/*!
- * Set property \a prop of the element with objectName \a name to \a value.
- * \return whether the property was successfully set.
- */
-bool Pipeline::setElementProperty(const QString &name, const char *prop,
-                                  const QVariant &value)
+void Pipeline::setElements(ElementSet *newElements)
 {
-    QObject *element = findChild<QObject*>(name);
-    return element && element->setProperty(prop, value);
+    if (_elements)
+        delete _elements;
+
+    _elements = newElements;
+
+    // TODO: Connect them all up...
 }
 
 /*!
@@ -83,7 +69,8 @@ bool Pipeline::setElementProperty(const QString &name, const char *prop,
  */
 void Pipeline::start()
 {
-    source->start();
+    Q_ASSERT(_elements);
+    _elements->dataSource->start();
 }
 
 /*!
@@ -91,7 +78,7 @@ void Pipeline::start()
  */
 void Pipeline::stop()
 {
-    source->stop();
+    _elements->dataSource->stop();
     emit stopped();
 }
 

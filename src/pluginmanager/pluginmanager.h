@@ -6,6 +6,7 @@
 
 class QStandardItem;
 class QStandardItemModel;
+class ElementSet;
 
 namespace Ui {
 class PluginManager;
@@ -17,12 +18,17 @@ class PluginManager : public QDialog
     Q_PROPERTY(QDir searchPath MEMBER _path WRITE setSearchPath)
 
 public:
-    explicit PluginManager(QDir searchPath = QDir(), QWidget *parent = 0);
+    explicit PluginManager(QWidget *parent = 0);
     ~PluginManager();
 
     void setSearchPath(QDir path);
+    void loadPlugins();
 
-    QStandardItemModel *model() const;
+signals:
+    void pluginsLoaded(ElementSet* elements);
+
+private slots:
+    void loadSelectedElementsFromPlugins();
 
 private:
     QStandardItem *createElementItem(const QString &name);

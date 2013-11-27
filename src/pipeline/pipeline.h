@@ -2,11 +2,9 @@
 #define PIPELINE_H
 
 #include <QObject>
-#include "sampletypes.h"
 
 //class PluginLoader;
-class DataSource;
-class SampleDecoder;
+class ElementSet;
 
 
 class Pipeline : public QObject
@@ -14,13 +12,10 @@ class Pipeline : public QObject
     Q_OBJECT
 public:
     explicit Pipeline(QObject *parent = 0);
+    ~Pipeline();
 
-//    PluginLoader *pluginLoader() const;
-    DataSource *dataSource() const;
-    SampleDecoder *sampleDecoder(SampleType sampleType) const;
-
-    bool setElementProperty(const QString &name, const char *prop,
-                            const QVariant &value);
+    ElementSet *elements() const;
+    void setElements(ElementSet *newElements);
 
 signals:
     void started();
@@ -33,11 +28,7 @@ public slots:
 
 private:
 //    PluginLoader *loader;
-    DataSource *source;
-    SampleDecoder *decoders[N_SAMPLE_TYPES];
-    // other decoders...
-    // feature extractors
-    // classifier
+    ElementSet *_elements;
 };
 
 

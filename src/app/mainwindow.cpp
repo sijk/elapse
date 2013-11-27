@@ -1,9 +1,10 @@
 #include <QStateMachine>
 #include <QMessageBox>
 #include <QMovie>
-#include "sampletypes.h"
+#include "elements.h"
 #include "pipeline.h"
-#include "plugindialog.h"
+//#include "plugindialog.h"
+#include "pluginmanager.h"
 #include "stripchart.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     spinner(new QMovie(":/img/spinner.gif")),
+    pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this))
 {
     ui->setupUi(this);
@@ -38,16 +40,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
 
-    pipeline->setElementProperty("DataSource", "host", "overo.local");
-    pipeline->setElementProperty("EegDecoder", "gain", 1);
-    pipeline->setElementProperty("EegDecoder", "vref", 4.5e6);
-
     ui->eegPlot->setNStrips(8);
     ui->eegPlot->setNSamples(1000);
     ui->spacingSlider->setValue(6e3);
 
     connect(pipeline, SIGNAL(error(QString)),
             this, SLOT(showErrorMessage(QString)));
+
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
+            SLOT(setupPipeline(ElementSet*)));
 
     buildStateMachine();
 }
@@ -61,7 +62,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_EegDecoder_newSample(const Sample &sample)
+void MainWindow::onEegSample(const Sample &sample)
 {
     auto eeg = static_cast<const EegSample&>(sample);
     ui->eegPlot->appendData(eeg.values);
@@ -71,6 +72,7 @@ void MainWindow::on_actionPlugins_triggered()
 {
 //    PluginDialog dialog(pipeline->pluginLoader(), this);
 //    dialog.exec();
+    pluginManager->loadPlugins();
 }
 
 void MainWindow::showErrorMessage(const QString &message)
@@ -132,4 +134,17 @@ void MainWindow::buildStateMachine()
     running->assignProperty(ui->pushButton, "text", "Stop");
 
     machine->start();
+}
+
+void MainWindow::setupPipeline(ElementSet *elements)
+{
+    Q_ASSERT(elements);
+    pipeline->setElements(elements);
+
+    elements->dataSource->setProperty("host", "overo.local");
+    elements->sampleDecoders[EEG]->setProperty("gain", 1);
+    elements->sampleDecoders[EEG]->setProperty("vref", 4.5e6);
+
+    connect(elements->sampleDecoders[EEG],
+            SIGNAL(newSample(Sample)), SLOT(onEegSample(Sample)));
 }

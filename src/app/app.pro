@@ -31,6 +31,11 @@ PRE_TARGETDEPS  += $$OUT_PWD/../pipeline/libpipeline.a
 #DEPENDPATH      += $$PWD/../pluginloader
 #PRE_TARGETDEPS  += $$OUT_PWD/../pluginloader/libpluginloader.a
 
+LIBS             += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
+INCLUDEPATH      += $$PWD/../pluginmanager
+DEPENDPATH       += $$PWD/../pluginmanager
+PRE_TARGETDEPS   += $$OUT_PWD/../pluginmanager/libpluginmanager.a
+
 LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
 INCLUDEPATH     += $$PWD/../stripchart
 DEPENDPATH      += $$PWD/../stripchart

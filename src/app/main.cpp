@@ -1,8 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
 
-#include "pluginmanager.h"
-
 #include <QDebug>
 #include <QStandardItemModel>
 #include <QTreeView>
@@ -13,7 +11,7 @@ int main(int argc, char *argv[])
     MainWindow window;
     window.show();
 
-    PluginManager pluginManager;
+//    PluginManager pluginManager;
 //    QTreeView tv;
 //    tv.setModel(pluginManager.model());
 //    tv.expandAll();
@@ -32,7 +30,7 @@ int main(int argc, char *argv[])
 //        });
 //    tv.setSelectionMode(QAbstractItemView::SingleSelection);
 //    tv.show();
-    pluginManager.show();
+//    pluginManager.loadPlugins();
 
     return a.exec();
 }

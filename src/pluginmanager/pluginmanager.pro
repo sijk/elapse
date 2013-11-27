@@ -12,6 +12,7 @@ SOURCES += pluginmanager.cpp \
 HEADERS += pluginmanager.h \
            pluginmanager_p.h \
            pluginfilterproxymodel.h \
-           plugin.h
+           plugin.h \
+           elements.h
 
 FORMS   += pluginmanager.ui

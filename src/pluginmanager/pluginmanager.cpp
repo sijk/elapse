@@ -4,7 +4,7 @@
 #include <QPluginLoader>
 #include <QStandardItemModel>
 #include "plugin.h"
-#include "sampletypes.h"
+#include "elements.h"
 #include "pluginfilterproxymodel.h"
 #include "pluginmanager_p.h"
 #include "pluginmanager.h"
@@ -13,33 +13,14 @@
 #include <QDebug>
 
 
-/* ========================================================================== */
-
-
-template<class T>
-struct ElementContainer
-{
-    T dataSource;
-    T sampleDecoders[N_SAMPLE_TYPES];
-    T featureExtractors[N_SAMPLE_TYPES];
-    T classifier;
-};
-
-
-/* ========================================================================== */
-
-
-PluginManager::PluginManager(QDir searchPath, QWidget *parent) :
+PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
     _model(new QStandardItemModel(this)),
     ui(new Ui::PluginManager)
 {
     ui->setupUi(this);
-
-    if (searchPath == QDir())
-        searchPath = QDir(qApp->applicationDirPath()).absoluteFilePath("plugins");
-
-    setSearchPath(searchPath);
+    setSearchPath(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"));
+    connect(this, SIGNAL(accepted()), SLOT(loadSelectedElementsFromPlugins()));
 }
 
 PluginManager::~PluginManager()
@@ -95,9 +76,18 @@ void PluginManager::setSearchPath(QDir path)
     attachViews();
 }
 
-QStandardItemModel *PluginManager::model() const
+void PluginManager::loadPlugins()
 {
-    return _model;
+    show();
+}
+
+void PluginManager::loadSelectedElementsFromPlugins()
+{
+    ElementSet *elements = new ElementSet;
+
+    // Load plugin and instantiate selected class for each element
+
+    emit pluginsLoaded(elements);
 }
 
 QStandardItem *PluginManager::createElementItem(const QString &name)
