@@ -15,7 +15,7 @@
 
 PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
-    _model(new QStandardItemModel(this)),
+    model(new QStandardItemModel(this)),
     ui(new Ui::PluginManager)
 {
     ui->setupUi(this);
@@ -28,16 +28,16 @@ PluginManager::~PluginManager()
     delete ui;
 }
 
-void PluginManager::setSearchPath(QDir path)
+void PluginManager::setSearchPath(QDir newPath)
 {
-    if (path == _path)
+    if (newPath == path)
         return;
 
-    _path = path;
-    _model->clear();
-    auto rootItem = _model->invisibleRootItem();
+    path = newPath;
+    model->clear();
+    auto rootItem = model->invisibleRootItem();
 
-    foreach (QFileInfo file, path.entryInfoList(QDir::Files)) {
+    foreach (QFileInfo file, newPath.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
         auto factory = static_cast<Plugin*>(plugin);
@@ -161,7 +161,7 @@ void PluginManager::attachViews()
                                 const QString &sampleType = QString()) {
         // Filter model by element type and sample type
         auto filteredModel = new PluginFilterProxyModel(iid, sampleType);
-        filteredModel->setSourceModel(_model);
+        filteredModel->setSourceModel(model);
 
         // Connect filtered model to view
         tree->setModel(filteredModel);

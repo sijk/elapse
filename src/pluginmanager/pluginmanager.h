@@ -15,13 +15,13 @@ class PluginManager;
 class PluginManager : public QDialog
 {
     Q_OBJECT
-    Q_PROPERTY(QDir searchPath MEMBER _path WRITE setSearchPath)
+    Q_PROPERTY(QDir searchPath MEMBER path WRITE setSearchPath)
 
 public:
     explicit PluginManager(QWidget *parent = 0);
     ~PluginManager();
 
-    void setSearchPath(QDir path);
+    void setSearchPath(QDir newPath);
     void loadPlugins();
 
 signals:
@@ -40,8 +40,8 @@ private:
     static QStandardItem *childWithText(const QStandardItem *item,
                                         const QString &name);
 
-    QDir _path;
-    QStandardItemModel *_model;
+    QDir path;
+    QStandardItemModel *model;
     Ui::PluginManager *ui;
 };
 
