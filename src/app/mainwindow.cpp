@@ -4,6 +4,7 @@
 #include "elements.h"
 #include "pipeline.h"
 #include "pluginmanager.h"
+#include "deviceproxy.h"
 #include "stripchart.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -33,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     spinner(new QMovie(":/img/spinner.gif")),
     pluginManager(new PluginManager(this)),
-    pipeline(new Pipeline(this))
+    pipeline(new Pipeline(this)),
+    device(new DeviceProxy(this))
 {
     ui->setupUi(this);
 

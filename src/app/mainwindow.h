@@ -7,6 +7,7 @@ class Pipeline;
 class PluginManager;
 class ElementSet;
 class Sample;
+class DeviceProxy;
 class QStateMachine;
 class QMovie;
 
@@ -41,6 +42,7 @@ private:
     QStateMachine *machine;
     PluginManager *pluginManager;
     Pipeline *pipeline;
+    DeviceProxy *device;
 };
 
 #endif // MAINWINDOW_H
