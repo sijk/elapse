@@ -23,8 +23,7 @@ void DeviceProxy::connectInBackground()
 
     // TODO: implement method on the server to test connectivity
     if (device->hello() != "Hello, world!") {
-        qDebug() << "Could not connect to remote session bus.";
-        emit error("Could not connect to remote session bus.");
+        emit error("Could not connect to the device.");
         return;
     }
 

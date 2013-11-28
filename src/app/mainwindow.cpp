@@ -45,8 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->eegPlot->setNSamples(1000);
     ui->spacingSlider->setValue(6e3);
 
-    connect(pipeline, SIGNAL(error(QString)),
-            this, SLOT(showErrorMessage(QString)));
+    connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
+    connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
 
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
             SLOT(setupPipeline(ElementSet*)));
