@@ -10,8 +10,10 @@ DESTDIR       = ../../
 
 SOURCES      += main.cpp \
                 mainwindow.cpp \
+                spinner.cpp \
                 eegfilesink.cpp
 HEADERS      += mainwindow.h \
+                spinner.h \
                 eegfilesink.h \
                 elements.h
 FORMS        += mainwindow.ui
