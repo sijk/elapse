@@ -8,8 +8,8 @@ class PluginManager;
 class ElementSet;
 class Sample;
 class DeviceProxy;
+class Spinner;
 class QStateMachine;
-class QMovie;
 
 namespace Ui {
 class MainWindow;
@@ -18,7 +18,6 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    Q_PROPERTY(bool showSpinner READ showSpinner WRITE showSpinner)
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -31,14 +30,11 @@ private slots:
     void setupPipeline(ElementSet *elements);
 
     void showErrorMessage(const QString &message);
-    bool showSpinner() const;
-    void showSpinner(bool show);
 
 private:
     void buildStateMachine();
 
     Ui::MainWindow *ui;
-    QMovie *spinner;
     QStateMachine *machine;
     PluginManager *pluginManager;
     Pipeline *pipeline;
