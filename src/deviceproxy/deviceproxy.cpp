@@ -1,4 +1,5 @@
 #include <QDBusConnection>
+#include <QtConcurrent/QtConcurrentRun>
 #include "deviceproxy.h"
 
 const QString SERVICE("org.nzbri.elapse");
@@ -9,11 +10,21 @@ using namespace org::nzbri::elapse;
 DeviceProxy::DeviceProxy(QObject *parent) :
     QObject(parent)
 {
+}
+
+void DeviceProxy::connect()
+{
+    QtConcurrent::run(this, &DeviceProxy::connectInBackground);
+}
+
+void DeviceProxy::connectInBackground()
+{
     device = new Device(SERVICE, "/elapse", QDBusConnection::sessionBus());
 
     // TODO: implement method on the server to test connectivity
     if (device->hello() != "Hello, world!") {
         qDebug() << "Could not connect to remote session bus.";
+        emit error("Could not connect to remote session bus.");
         return;
     }
 
@@ -26,5 +37,5 @@ DeviceProxy::DeviceProxy(QObject *parent) :
         eeg_channels.append(ch);
     }
 
-    qDebug() << eeg_channels.size() << eeg_channels[0]->gain();
+    emit connected();
 }

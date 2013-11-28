@@ -17,6 +17,16 @@ public:
     org::nzbri::elapse::Device *device;
     org::nzbri::elapse::Eeg::EegAdc *eeg;
     QList<org::nzbri::elapse::Eeg::EegChannel*> eeg_channels;
+
+public slots:
+    void connect();
+
+signals:
+    void connected();
+    void error(QString msg);
+
+private:
+    void connectInBackground();
 };
 
 
