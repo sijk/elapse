@@ -98,6 +98,7 @@ void MainWindow::buildStateMachine()
 
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->buttonConnect, "enabled", false);
+    connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
     connect(connecting, SIGNAL(entered()), device, SLOT(connect()));
     connecting->addTransition(device, SIGNAL(error(QString)), disconnected);
     connecting->addTransition(device, SIGNAL(connected()), connected);
@@ -117,6 +118,7 @@ void MainWindow::buildStateMachine()
 
     starting->assignProperty(ui->spinnerStarting, "running", true);
     starting->assignProperty(ui->buttonCapture, "enabled", false);
+    connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
     starting->addTransition(pipeline, SIGNAL(started()), running);
 
     running->assignProperty(ui->buttonCapture, "text", "Stop");
