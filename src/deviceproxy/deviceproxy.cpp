@@ -63,8 +63,11 @@ void DeviceProxy::connectInBackground()
 
     _device = new Device(SERVICE, "/elapse", connection);
 
-    // TODO: implement method on the server to test connectivity
-    if (_device->hello() != "Hello, world!") {
+    // Check whether the root object is accessible on the bus
+    auto reply = _device->isAccessible();
+    reply.waitForFinished();
+    if (reply.isError()) {
+        qDebug() << reply.error().message();
         qDebug() << _device->lastError().message();
         emit error("The server is not running on the device.");
         return;
