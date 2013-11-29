@@ -15,6 +15,28 @@ DeviceProxy::DeviceProxy(QObject *parent) :
 {
 }
 
+DeviceProxy::~DeviceProxy()
+{
+    qDeleteAll(_eeg_channels);
+    delete _eeg;
+    delete _device;
+}
+
+Device *DeviceProxy::device() const
+{
+    return _device;
+}
+
+Eeg::EegAdc *DeviceProxy::eeg() const
+{
+    return _eeg;
+}
+
+Eeg::EegChannel *DeviceProxy::eeg_channel(uint i) const
+{
+    return _eeg_channels.at(i);
+}
+
 void DeviceProxy::connect()
 {
     QtConcurrent::run(this, &DeviceProxy::connectInBackground);
@@ -35,22 +57,22 @@ void DeviceProxy::connectInBackground()
         return;
     }
 
-    device = new Device(SERVICE, "/elapse", connection);
+    _device = new Device(SERVICE, "/elapse", connection);
 
     // TODO: implement method on the server to test connectivity
-    if (device->hello() != "Hello, world!") {
-        qDebug() << device->lastError().message();
+    if (_device->hello() != "Hello, world!") {
+        qDebug() << _device->lastError().message();
         emit error("The server is not running on the device.");
         return;
     }
 
-    eeg = new Eeg::EegAdc(SERVICE, "/elapse/eeg", connection);
+    _eeg = new Eeg::EegAdc(SERVICE, "/elapse/eeg", connection);
 
-    for (uint i = 0; i < eeg->nChannels(); i++) {
+    for (uint i = 0; i < _eeg->nChannels(); i++) {
         auto ch = new Eeg::EegChannel(SERVICE,
                                       QString("/elapse/eeg/channel/%1").arg(i),
                                       connection);
-        eeg_channels.append(ch);
+        _eeg_channels.append(ch);
     }
 
     emit connected();

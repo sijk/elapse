@@ -13,10 +13,11 @@ class DeviceProxy : public QObject
     Q_OBJECT
 public:
     explicit DeviceProxy(QObject *parent = nullptr);
+    ~DeviceProxy();
 
-    org::nzbri::elapse::Device *device;
-    org::nzbri::elapse::Eeg::EegAdc *eeg;
-    QList<org::nzbri::elapse::Eeg::EegChannel*> eeg_channels;
+    org::nzbri::elapse::Device *device() const;
+    org::nzbri::elapse::Eeg::EegAdc *eeg() const;
+    org::nzbri::elapse::Eeg::EegChannel* eeg_channel(uint i) const;
 
 public slots:
     void connect();
@@ -27,6 +28,10 @@ signals:
 
 private:
     void connectInBackground();
+
+    org::nzbri::elapse::Device *_device;
+    org::nzbri::elapse::Eeg::EegAdc *_eeg;
+    QList<org::nzbri::elapse::Eeg::EegChannel*> _eeg_channels;
 };
 
 
