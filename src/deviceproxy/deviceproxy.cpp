@@ -1,8 +1,11 @@
 #include <QDBusConnection>
+#include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
 #include "deviceproxy.h"
 
-const QString SERVICE("org.nzbri.elapse");
+#define DEFAULT_HOST    "overo.local"
+#define DEFAULT_PORT    9000
+#define SERVICE         "org.nzbri.elapse"
 
 using namespace org::nzbri::elapse;
 
@@ -19,20 +22,34 @@ void DeviceProxy::connect()
 
 void DeviceProxy::connectInBackground()
 {
-    device = new Device(SERVICE, "/elapse", QDBusConnection::sessionBus());
+    QSettings settings;
+    QString host = settings.value("host", DEFAULT_HOST).toString();
+    uint port = settings.value("port", DEFAULT_PORT).toUInt();
+    QString address = QStringLiteral("tcp:host=%1,port=%2").arg(host).arg(port);
 
-    // TODO: implement method on the server to test connectivity
-    if (device->hello() != "Hello, world!") {
+    // Connect to the remote session bus
+    auto connection = QDBusConnection::connectToBus(address, "elapse-bus");
+    if (!connection.isConnected()) {
+        qDebug() << connection.lastError().message();
         emit error("Could not connect to the device.");
         return;
     }
 
-    eeg = new Eeg::EegAdc(SERVICE, "/elapse/eeg", QDBusConnection::sessionBus());
+    device = new Device(SERVICE, "/elapse", connection);
+
+    // TODO: implement method on the server to test connectivity
+    if (device->hello() != "Hello, world!") {
+        qDebug() << device->lastError().message();
+        emit error("The server is not running on the device.");
+        return;
+    }
+
+    eeg = new Eeg::EegAdc(SERVICE, "/elapse/eeg", connection);
 
     for (uint i = 0; i < eeg->nChannels(); i++) {
         auto ch = new Eeg::EegChannel(SERVICE,
                                       QString("/elapse/eeg/channel/%1").arg(i),
-                                      QDBusConnection::sessionBus());
+                                      connection);
         eeg_channels.append(ch);
     }
 
