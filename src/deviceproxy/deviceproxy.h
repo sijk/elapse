@@ -19,6 +19,8 @@ public:
     org::nzbri::elapse::Eeg::EegAdc *eeg() const;
     org::nzbri::elapse::Eeg::EegChannel* eeg_channel(uint i) const;
 
+    QString host() const;
+
 public slots:
     void connect();
 

@@ -135,7 +135,7 @@ void MainWindow::setupPipeline(ElementSet *elements)
     Q_ASSERT(elements);
     pipeline->setElements(elements);
 
-    elements->dataSource->setProperty("host", "overo.local");
+    elements->dataSource->setProperty("host", device->host());
     elements->sampleDecoders[EEG]->setProperty("gain", 1);
     elements->sampleDecoders[EEG]->setProperty("vref", 4.5e6);
 

@@ -37,6 +37,11 @@ Eeg::EegChannel *DeviceProxy::eeg_channel(uint i) const
     return _eeg_channels.at(i);
 }
 
+QString DeviceProxy::host() const
+{
+    return QSettings().value("host", DEFAULT_HOST).toString();
+}
+
 void DeviceProxy::connect()
 {
     QtConcurrent::run(this, &DeviceProxy::connectInBackground);
@@ -45,9 +50,8 @@ void DeviceProxy::connect()
 void DeviceProxy::connectInBackground()
 {
     QSettings settings;
-    QString host = settings.value("host", DEFAULT_HOST).toString();
     uint port = settings.value("port", DEFAULT_PORT).toUInt();
-    QString address = QStringLiteral("tcp:host=%1,port=%2").arg(host).arg(port);
+    QString address = QString("tcp:host=%1,port=%2").arg(host()).arg(port);
 
     // Connect to the remote session bus
     auto connection = QDBusConnection::connectToBus(address, "elapse-bus");
