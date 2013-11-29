@@ -1,5 +1,6 @@
 #include <QStateMachine>
 #include <QMessageBox>
+#include <QSettings>
 #include "elements.h"
 #include "pipeline.h"
 #include "pluginmanager.h"
@@ -52,6 +53,9 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(setupPipeline(ElementSet*)));
 
     buildStateMachine();
+
+    if (QSettings().value("auto-connect", true).toBool())
+        QTimer::singleShot(0, ui->buttonConnect, SLOT(click()));
 }
 
 /*!
