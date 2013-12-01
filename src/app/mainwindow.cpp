@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     buildStateMachine();
 
     if (QSettings().value("auto-connect", true).toBool())
-        QTimer::singleShot(0, ui->buttonConnect, SLOT(click()));
+        QMetaObject::invokeMethod(ui->buttonConnect, "click", Qt::QueuedConnection);
 }
 
 /*!
