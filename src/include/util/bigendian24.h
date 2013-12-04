@@ -3,16 +3,24 @@
 
 #include <QDataStream>
 
-/*
- * Helper class to parse 24-bit big-endian integers from a QDataStream.
+/*!
+ * \brief The BigEndian24 class parses 24-bit big-endian integers from a
+ * QDataStream.
  */
 
-struct BigEndian24
+class BigEndian24
 {
-    char bytes[3];
+public:
     inline qint32 to32bit() const;
+
+private:
+    char bytes[3];
+    friend QDataStream &operator>>(QDataStream &stream, BigEndian24 &value);
 };
 
+/*!
+ * \return the value as a signed 32-bit integer.
+ */
 qint32 BigEndian24::to32bit() const
 {
     // Set the high 24 bits and then right shift to get correct sign extension
@@ -21,6 +29,9 @@ qint32 BigEndian24::to32bit() const
             (uchar(bytes[2]) << 8)) >> 8;
 }
 
+/*!
+ * Read a BigEndian24 value from a QDataStream.
+ */
 QDataStream &operator>>(QDataStream &stream, BigEndian24 &value)
 {
     stream.readRawData(value.bytes, 3);
