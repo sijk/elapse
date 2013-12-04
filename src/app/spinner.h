@@ -6,13 +6,12 @@ class QMovie;
 
 
 /*!
- * \class Spinner
- * \ingroup widgets
- *
  * \brief The Spinner class provides a loading/waiting animation.
  *
  * When the Spinner is running() the animation is shown. When it is not
  * running() the animation is stopped and hidden.
+ *
+ * \ingroup widgets
  */
 
 class Spinner : public QLabel
