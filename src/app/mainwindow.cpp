@@ -24,6 +24,8 @@
  * of the actual functionality of the application. It also provides a GUI for
  * interacting with these objects and displaying the state of the signal
  * processing elements.
+ *
+ * \see \ref mainwindow-fsm
  */
 
 
@@ -82,6 +84,39 @@ void MainWindow::showErrorMessage(const QString &message)
     QMessageBox::warning(this, "Error", message);
 }
 
+/*!
+ * \page mainwindow-fsm MainWindow State Machine
+ *
+ * The behaviour of the MainWindow is driven by the following hierarchical
+ * state machine.
+ *
+ * @startuml{mainwindow-fsm.png}
+ *
+ * [*] --> Disconnected
+ * Disconnected --> Connecting : buttonConnect
+ *
+ * Connecting : enter / connect()
+ * Connecting --> Disconnected : error
+ * Connecting --> Connected : connected
+ *
+ * Connected --> Disconnected : disconnectAction
+ * Connected --> Disconnected : connection.error
+ *
+ * state Connected {
+ *      [*] --> Idle
+ *      Idle --> Active : buttonCapture
+ *      Active --> Idle : buttonCapture
+ *      Active --> Idle : pipeline.error
+ *      Active : enter / pipeline.start()
+ *      Active : exit / pipeline.stop()
+ *      state Active {
+ *          [*] --> Starting
+ *          Starting --> Running : pipeline.started
+ *      }
+ * }
+ *
+ * @enduml
+ */
 void MainWindow::buildStateMachine()
 {
     machine = new QStateMachine(this);
