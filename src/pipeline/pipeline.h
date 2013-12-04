@@ -6,6 +6,16 @@
 class ElementSet;
 
 
+/*!
+ * \class Pipeline
+ * \ingroup signal-pipeline
+ *
+ * \brief The Pipeline class manages a set of signal processing elements.
+ *
+ * It is responsible for managing the state of and connections between the
+ * elements in an ElementSet.
+ */
+
 class Pipeline : public QObject
 {
     Q_OBJECT
