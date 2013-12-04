@@ -14,15 +14,6 @@
 
 
 /*!
- * \class PluginManager
- * \ingroup plugins-int
- * \inmodule elapse-core
- *
- * \brief The PluginLoader class handles the finding and loading of plugins.
- */
-
-
-/*!
  * Construct a PluginManager as a child of the given \a parent.
  *
  * The default plugin search path is set to the "plugins" subdirectory of the
@@ -45,6 +36,11 @@ PluginManager::~PluginManager()
 {
     delete ui;
 }
+
+/*!
+ * \property PluginManager::searchPath
+ * The directory in which to search for plugins.
+ */
 
 /*!
  * Set the plugin search path to \a newPath and scan that directory for plugins.
@@ -165,6 +161,15 @@ void PluginManager::loadSelectedElementsFromPlugins()
 
     emit pluginsLoaded(elements);
 }
+
+/*!
+ * \fn PluginManager::pluginsLoaded(ElementSet*)
+ * Emitted when an ElementSet has been loaded.
+ *
+ * Ownership of the ElementSet is transferred to the receiver of this signal.
+ * This means that in order to prevent memory leaks there should be exactly one
+ * receiver connected to this signal.
+ */
 
 /*!
  * Helper function for building the internal plugin model.

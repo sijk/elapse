@@ -12,6 +12,13 @@ namespace Ui {
 class PluginManager;
 }
 
+
+/*!
+ * \brief The PluginManager class handles the finding and loading of plugins.
+ *
+ * \ingroup plugins-int
+ */
+
 class PluginManager : public QDialog
 {
     Q_OBJECT
