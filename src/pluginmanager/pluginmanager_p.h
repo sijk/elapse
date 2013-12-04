@@ -3,6 +3,11 @@
 
 #include <QtCore>
 
+/*!
+ * \brief The PluginItemDataRole enum enumerates the special data roles used in
+ * the PluginManager's internal data model.
+ */
+
 enum PluginItemDataRole
 {
     SAMPLETYPE_ROLE = Qt::UserRole,

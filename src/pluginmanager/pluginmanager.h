@@ -16,6 +16,8 @@ class PluginManager;
 /*!
  * \brief The PluginManager class handles the finding and loading of plugins.
  *
+ * \see \ref pluginmanager-model for a detailed description of the internal
+ * data model.
  * \ingroup plugins-int
  */
 

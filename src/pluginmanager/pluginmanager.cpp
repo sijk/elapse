@@ -38,6 +38,67 @@ PluginManager::~PluginManager()
 }
 
 /*!
+ * \page pluginmanager-model PluginManager Data Model
+ *
+ * This page describes the structure of the PluginManager's internal data model.
+ *
+ * Suppose that we have two plugins, \c FooPlugin and \c BarPlugin. They each
+ * provide several classes implementing DataSource and SampleDecoder element
+ * types. This hypothetical situation is illustrated below.
+ *
+ * @startuml{pluginmanager-model-classes.png}
+ *
+ * FooTcpDataSource --|> DataSource
+ * FooUdpDataSource --|> DataSource
+ * FooEegDecoder --|> SampleDecoder
+ * BarEegDecoder --|> SampleDecoder
+ * BarVideoDecoder --|> SampleDecoder
+ * FooPlugin o-- FooTcpDataSource
+ * FooPlugin o-- FooUdpDataSource
+ * FooPlugin o-- FooEegDecoder
+ * BarPlugin o-- BarEegDecoder
+ * BarPlugin o-- BarVideoDecoder
+ * FooEegDecoder : sampleType = "EEG"
+ * BarEegDecoder : sampleType = "EEG"
+ * BarVideoDecoder : sampleType = "VIDEO"
+ *
+ * @enduml
+ *
+ * Given these plugins, the structure of the PluginManager's data model would be
+ * as follows:
+ *
+ * \code
+ * [Root]
+ *      DataSource
+ *          FooPlugin
+ *              FooTcpDataSource
+ *              FooUdpDataSource
+ *
+ *      SampleDecoder
+ *          FooPlugin
+ *              FooEegDecoder
+ *          BarPlugin
+ *              BarEegDecoder
+ *              BarVideoDecoder
+ * \endcode
+ *
+ * If a PluginFilterProxyModel was defined with the arguments
+ * \c elementType = "SampleDecoder" and \c sampleType = "EEG", then the filtered
+ * model would have the following structure:
+ *
+ * \code
+ * SampleDecoder
+ *      FooPlugin
+ *          FooEegDecoder
+ *      BarPlugin
+ *          BarEegDecoder
+ * \endcode
+ *
+ * That is, it would include all of the classes implementing \c SampleDecoder
+ * which apply to the \c sampleType "EEG".
+ */
+
+/*!
  * \property PluginManager::searchPath
  * The directory in which to search for plugins.
  */
