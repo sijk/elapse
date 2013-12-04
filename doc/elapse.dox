@@ -1,0 +1,65 @@
+/*!
+    \mainpage Elapse developer documentation
+
+    \section start You are here
+
+    This is the developer documentation for the Elapse client-side application.
+    You need to read this if you're hacking on the core application itself. If
+    you're wanting to develop plugins for signal processing/classification,
+    go and read the \ref plugin-api documentation instead.
+
+    \section overview Overviews and Guides
+
+    The following pages describe the design of the core Elapse application.
+
+    \li ...
+
+    \section build-install Building & Installing
+
+    ...
+
+    \section doclist Code Documentation
+
+    \li \ref app
+    \li \ref signal-pipeline
+    \li \ref core-plugins
+    \li \ref plugins-int
+    \li \ref plugins-ext
+    \li \ref widgets
+
+    \section legal Licence Information
+
+    The core Elapse application is licensed under the terms of the ...
+*/
+
+/*!
+    \defgroup app Elapse application
+
+    These classes relate to the core Elapse application.
+*/
+
+/*!
+    \defgroup signal-pipeline Signal Pipeline
+
+    These classes relate to the signal processing pipeline.
+*/
+
+/*!
+    \defgroup core-plugins Core Plugins
+
+    These classes provide default implementations for some 
+    \ref signal-pipeline "pipeline elements".
+*/
+
+/*!
+    \defgroup plugins-int Internal Plugin Management
+
+    These classes enable the core application to search for and load plugins.
+    They also provide the base classes for the plugins themselves. 
+*/
+
+/*!
+    \defgroup widgets Widgets
+
+    These classes provide miscellaneous GUI widgets.
+*/
