@@ -5,11 +5,17 @@
 
     \brief Allows you to refer to a subclass of Sample by a numeric index.
 
-    \value EEG      Relates to EegSample
-    \value VIDEO    Relates to VideoSample
-    \value IMU      Relates to ImuSample
-    \value N_SAMPLE_TYPES
-                    The number of different SampleTypes
+    \var SampleType EEG
+    Relates to EegSample
+
+    \var SampleType VIDEO
+    Relates to VideoSample
+
+    \var SampleType IMU
+    Relates to ImuSample
+
+    \var SampleType N_SAMPLE_TYPES
+    The number of different SampleTypes
 */
 
 /* ========================================================================== */
@@ -17,15 +23,14 @@
 /*!
     \class Sample
     \ingroup signal-pipeline
-    \inmodule elapse-core
 
     \brief The Sample class is the base class for all samples acquired from
     sensors on the device.
 */
 
 /*!
-    \variable Sample::timestamp
-    \brief the time at which the Sample was captured on the device.
+    \var Sample::timestamp
+    \brief The time at which the Sample was captured on the device.
 
     It is measured in nanoseconds from an arbitrary point in time.
     The timestamps of all Samples captured while the device is powered on are
@@ -37,15 +42,14 @@
 /*!
     \class EegSample
     \ingroup signal-pipeline
-    \inmodule elapse-core
 
     \brief The EegSample class holds the data for one multi-channel sample of
     EEG.
 */
 
 /*!
-    \variable EegSample::seqnum
-    \brief a monotonically increasing sequence number.
+    \var EegSample::seqnum
+    \brief A monotonically increasing sequence number.
 
     The seqnum of each EegSample should be exactly 1 greater than the seqnum of
     the previous sample, except for the first sample after the Pipeline is
@@ -54,23 +58,23 @@
 */
 
 /*!
-    \variable EegSample::loff_stat_p
-    \brief the lead-off status (positive side).
+    \var EegSample::loff_stat_p
+    \brief The lead-off status (positive side).
 */
 
 /*!
-    \variable EegSample::loff_stat_n
-    \brief the lead-off status (negative side).
+    \var EegSample::loff_stat_n
+    \brief The lead-off status (negative side).
 */
 
 /*!
-    \variable EegSample::gpio
-    \brief the status of the four GPIO pins.
+    \var EegSample::gpio
+    \brief The status of the four GPIO pins.
 
     Pins 0..4 correspond to the lowest 4 bits of this field.
 */
 
 /*!
-    \variable EegSample::values
-    \brief the voltage readings in microvolts.
+    \var EegSample::values
+    \brief The voltage readings in microvolts.
 */
