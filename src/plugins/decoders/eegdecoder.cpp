@@ -7,12 +7,9 @@
 
 
 /*!
- * \class EegDecoder
- * \ingroup core-plugins
- * \inmodule elapse-core
+ * Check whether the current \a sample has a sequence number exactly one greater
+ * than that of the previous sample, and log a warning message if it's not.
  */
-
-
 void checkSequenceNumber(const EegSample &sample)
 {
     static quint32 prev_seqnum = 0;
@@ -27,6 +24,9 @@ void checkSequenceNumber(const EegSample &sample)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
+/*!
+ * Construct a new EegDecoder as a child of the given \a parent.
+ */
 EegDecoder::EegDecoder(QObject *parent) :
     SampleDecoder(parent),
     _vref(0),
@@ -34,6 +34,19 @@ EegDecoder::EegDecoder(QObject *parent) :
 {
 }
 
+/*!
+ * \property EegDecoder::gain
+ * The device's current gain setting for all channels.
+ */
+
+/*!
+ * \property EegDecoder::vref
+ * The device's current reference voltage in microvolts.
+ */
+
+/*!
+ * Decode the given \a data and emit \ref EegSample "EegSamples".
+ */
 void EegDecoder::onData(const QByteArray &data)
 {
     BigEndian24 value;
@@ -64,6 +77,10 @@ void EegDecoder::onData(const QByteArray &data)
 }
 
 double EegDecoder::toMicroVolts(double reading) const
+/*!
+ * \return the \a reading converted to microvolts, given the current gain()
+ * and vref().
+ */
 {
     return reading / _gain * _vref / ((1 << 23) - 1);
 }
