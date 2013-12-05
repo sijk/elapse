@@ -76,24 +76,30 @@ void MainWindow::showErrorMessage(const QString &message)
  * @startuml{mainwindow-fsm.png}
  *
  * [*] --> Disconnected
+ * Disconnected : enter / ui.showPage(0)
  * Disconnected --> Connecting : buttonConnect
  *
- * Connecting : enter / connect()
+ * Connecting : enter / device.connect()
+ * Connecting : enter / spinner.run()
  * Connecting --> Disconnected : error
  * Connecting --> Connected : connected
  *
+ * Connected : enter / ui.showPage(1)
  * Connected --> Disconnected : disconnectAction
- * Connected --> Disconnected : connection.error
+ * Connected --> Disconnected : device.error
  *
  * state Connected {
  *      [*] --> Idle
  *      Idle --> Active : buttonCapture
  *      Active --> Idle : buttonCapture
  *      Active --> Idle : pipeline.error
+ *      Active : enter / device.startStreaming()
  *      Active : enter / pipeline.start()
+ *      Active : exit / device.stopStreaming()
  *      Active : exit / pipeline.stop()
  *      state Active {
  *          [*] --> Starting
+ *          Starting : enter / spinner.run()
  *          Starting --> Running : pipeline.started
  *      }
  * }
