@@ -21,6 +21,22 @@ struct ElementSet
     SampleDecoder *sampleDecoders[N_SAMPLE_TYPES];
     FeatureExtractor *featureExtractors[N_SAMPLE_TYPES];
     Classifier *classifier;
+
+    ~ElementSet();
 };
+
+
+/*!
+ * Destroy this ElementSet and all of the elements it contains.
+ */
+inline ElementSet::~ElementSet() {
+    delete dataSource;
+    delete sampleDecoders[EEG];
+//    for (int i = 0; i < N_SAMPLE_TYPES; i++) {
+//        delete sampleDecoders[i];
+//        delete featureExtractors[i];
+//    }
+//    delete classifier;
+}
 
 #endif // ELEMENTS_H
