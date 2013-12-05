@@ -12,6 +12,8 @@
 
     The following page gives a complete example of how to implement a plugin.
 
+    \todo Mention the need for a Q_INVOKABLE default constructor.
+
     ...
 
     \section plugin-api-docs API Documentation
