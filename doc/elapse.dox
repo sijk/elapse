@@ -22,7 +22,7 @@
 
     \li \ref app
     \li \ref signal-pipeline
-    \li \ref core-plugins
+    \li \ref core-plugin
     \li \ref plugins-int
     \li \ref plugins-ext
     \li \ref widgets
@@ -45,9 +45,9 @@
 */
 
 /*!
-    \defgroup core-plugins Core Plugins
+    \defgroup core-plugin Core Plugin
 
-    These classes provide default implementations for some 
+    These classes provide default implementations of
     \ref signal-pipeline "pipeline elements".
 */
 

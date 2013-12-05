@@ -4,6 +4,11 @@
 #include <QTimer>
 #include "elements/datasource.h"
 
+
+/*!
+ * \ingroup core-plugin
+ */
+
 class DummyEegSource : public DataSource
 {
     Q_OBJECT

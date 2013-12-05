@@ -1,11 +1,13 @@
 TEMPLATE    = subdirs
 SUBDIRS	    = app \
               pipeline \
-              plugins \
+              coreplugin \
               pluginmanager \
               stripchart \
               deviceproxy
 
-app.depends += pipeline plugins stripchart
 app.depends += pluginmanager
+app.depends += coreplugin
+app.depends += pipeline
 app.depends += deviceproxy
+app.depends += stripchart
