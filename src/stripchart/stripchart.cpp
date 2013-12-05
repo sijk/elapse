@@ -7,17 +7,10 @@
 
 
 /*!
- * \class StripChart
- * \ingroup widgets
- * \inmodule elapse-core
+ * \brief The StripChartScaleDraw class labels the y-axis of a StripChart.
  *
- * \brief The StripChart class provides a generic stripchart widget for
- * displaying time-series data.
- *
- * Redrawing is handled intelligently. TODO...
+ * Labels are of the format "Ch n" where n is the strip index.
  */
-
-
 class StripChartScaleDraw : public QwtScaleDraw
 {
 public:
@@ -68,6 +61,10 @@ StripChart::~StripChart()
     delete plot;
 }
 
+/*!
+ * Helper function to set up the QwtPlotCurves, axis labels, and so on given the
+ * current configuration.
+ */
 void StripChart::createStrips()
 {
     // Delete any existing lines
@@ -103,7 +100,7 @@ void StripChart::createStrips()
 
 /*!
  * Append \a data to the StripChart. The cardinality of the given \a data must
- * be equal to nStrips.
+ * be equal to \c nStrips.
  */
 void StripChart::appendData(const QVector<double> &data)
 {
@@ -125,6 +122,9 @@ void StripChart::appendData(const QVector<double> &data)
     }
 }
 
+/*!
+ * Redraw the plot if necessary. Called periodiclly by the timer.
+ */
 void StripChart::redraw()
 {
     // If no data has arrived during the last refresh period, stop the timer.
@@ -142,7 +142,10 @@ void StripChart::redraw()
 
 /*!
  * \property StripChart::nStrips
- * \brief the number of channels of data to display.
+ * The number of channels of data to display.
+ */
+/*!
+ * Set the number of channels of data to display.
  */
 void StripChart::setNStrips(uint n)
 {
@@ -152,7 +155,10 @@ void StripChart::setNStrips(uint n)
 
 /*!
  * \property StripChart::nSamples
- * \brief the width of the StripChart in samples.
+ * The width of the StripChart in samples.
+ */
+/*!
+ * Set the width of the StripChart to \a n samples.
  */
 void StripChart::setNSamples(uint n)
 {
@@ -162,7 +168,14 @@ void StripChart::setNSamples(uint n)
 
 /*!
  * \property StripChart::stripSpacing
- * \brief the distance between adjacent strips.
+ * The distance between adjacent strips.
+ */
+/*!
+ * \fn StripChart::setSpacing(int)
+ * Set the distance between adjacent strips in y-axis units.
+ */
+/*!
+ * Set the distance between adjacent strips in y-axis units.
  */
 void StripChart::setSpacing(double spacing)
 {
@@ -190,5 +203,5 @@ void StripChart::setSpacing(double spacing)
 
 /*!
  * \property StripChart::rate
- * \brief the number of milliseconds between plot redraws.
+ * The number of milliseconds between plot redraws.
  */
