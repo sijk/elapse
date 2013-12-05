@@ -59,7 +59,11 @@ void Pipeline::setElements(ElementSet *newElements)
  */
 void Pipeline::start()
 {
-    Q_ASSERT(_elements);
+    if (!_elements) {
+        emit error("The pipeline is not configured.");
+        return;
+    }
+
     _elements->dataSource->start();
 }
 
@@ -68,6 +72,9 @@ void Pipeline::start()
  */
 void Pipeline::stop()
 {
+    if (!_elements)
+        return;
+
     _elements->dataSource->stop();
     emit stopped();
 }
