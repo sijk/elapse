@@ -43,11 +43,11 @@
          </widget>
         </item>
         <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QLabel" name="spinnerConnecting">
+         <widget class="Spinner" name="spinnerConnecting">
           <property name="minimumSize">
            <size>
             <width>20</width>
-            <height>0</height>
+            <height>20</height>
            </size>
           </property>
           <property name="text">
@@ -152,11 +152,11 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="spinnerStarting">
+           <widget class="Spinner" name="spinnerStarting">
             <property name="minimumSize">
              <size>
               <width>20</width>
-              <height>0</height>
+              <height>20</height>
              </size>
             </property>
             <property name="text">
@@ -226,6 +226,11 @@
    <extends>QWidget</extends>
    <header>stripchart.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Spinner</class>
+   <extends>QLabel</extends>
+   <header>spinner.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
