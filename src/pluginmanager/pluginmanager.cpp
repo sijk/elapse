@@ -34,6 +34,16 @@ PluginManager::PluginManager(QWidget *parent) :
  */
 PluginManager::~PluginManager()
 {
+    // Delete PluginFilterProxyModels
+    delete ui->treeSource->model();
+    delete ui->treeDecoderEeg->model();
+    delete ui->treeDecoderVideo->model();
+    delete ui->treeDecoderImu->model();
+    delete ui->treeFeatEeg->model();
+    delete ui->treeFeatVideo->model();
+    delete ui->treeFeatImu->model();
+    delete ui->treeClassifier->model();
+
     delete ui;
 }
 
