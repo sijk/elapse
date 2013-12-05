@@ -2,18 +2,7 @@
 #include "spinner.h"
 
 /*!
- * \class Spinner
- * \ingroup app
- * \inmodule elapse-core
- *
- * \brief The Spinner class provides a loading/waiting animation.
- *
- * When the Spinner is running() the animation is shown. When it is not
- * running() the animation is stopped and hidden.
- */
-
-/*!
- * Construct a Spinner as a child of the given parent.
+ * Construct a Spinner as a child of the given \a parent.
  */
 Spinner::Spinner(QWidget *parent) :
     QLabel(parent),
@@ -22,14 +11,16 @@ Spinner::Spinner(QWidget *parent) :
 }
 
 /*!
- * \property Spinner::running
- * \brief whether the spinner animation is visible.
+ * \return whether the spinner animation is visible and running.
  */
 bool Spinner::running() const
 {
     return animation->state() == QMovie::Running;
 }
 
+/*!
+ * Set whether the spinner animation is visible and running.
+ */
 void Spinner::setRunning(bool run)
 {
     if (run) {

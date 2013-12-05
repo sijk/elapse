@@ -8,6 +8,21 @@ class QTimer;
 class QwtPlot;
 class QwtPlotCurve;
 
+
+/*!
+ * \brief The StripChart class provides a generic stripchart widget for
+ * displaying time-series data.
+ *
+ * Redrawing is handled intelligently. If calls to appendData() occur less than
+ * \c rate milliseconds apart, the plot will be drawn every \c rate
+ * milliseconds. If appendData() calls occur more than \c rate milliseconds
+ * apart, the plot will be redrawn on each appendData() call. If appendData()
+ * is not called, the plot is not redrawn. This approach minimises computation
+ * while ensuring display responsiveness.
+ *
+ * \ingroup widgets
+ */
+
 class StripChart : public QWidget
 {
     Q_OBJECT

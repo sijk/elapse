@@ -13,21 +13,6 @@
 
 
 /*!
- * \class MainWindow
- * \ingroup app
- * \inmodule elapse-core
- *
- * \brief The MainWindow class provides the main window of the Elapse
- *        application.
- *
- * It contains a Pipeline, a PluginManager, and a ServerProxy which provide all
- * of the actual functionality of the application. It also provides a GUI for
- * interacting with these objects and displaying the state of the signal
- * processing elements.
- */
-
-
-/*!
  * Construct a MainWindow as a child of the given \a parent widget.
  */
 MainWindow::MainWindow(QWidget *parent) :
@@ -82,6 +67,39 @@ void MainWindow::showErrorMessage(const QString &message)
     QMessageBox::warning(this, "Error", message);
 }
 
+/*!
+ * \page mainwindow-fsm MainWindow State Machine
+ *
+ * The behaviour of the MainWindow is driven by the following hierarchical
+ * state machine.
+ *
+ * @startuml{mainwindow-fsm.png}
+ *
+ * [*] --> Disconnected
+ * Disconnected --> Connecting : buttonConnect
+ *
+ * Connecting : enter / connect()
+ * Connecting --> Disconnected : error
+ * Connecting --> Connected : connected
+ *
+ * Connected --> Disconnected : disconnectAction
+ * Connected --> Disconnected : connection.error
+ *
+ * state Connected {
+ *      [*] --> Idle
+ *      Idle --> Active : buttonCapture
+ *      Active --> Idle : buttonCapture
+ *      Active --> Idle : pipeline.error
+ *      Active : enter / pipeline.start()
+ *      Active : exit / pipeline.stop()
+ *      state Active {
+ *          [*] --> Starting
+ *          Starting --> Running : pipeline.started
+ *      }
+ * }
+ *
+ * @enduml
+ */
 void MainWindow::buildStateMachine()
 {
     machine = new QStateMachine(this);
@@ -94,8 +112,6 @@ void MainWindow::buildStateMachine()
     auto active = new QState(connected);
     auto starting = new QState(active);
     auto running = new QState(active);
-
-    // Define state transitions
 
     machine->setInitialState(disconnected);
     disconnected->addTransition(ui->buttonConnect, SIGNAL(clicked()), connecting);

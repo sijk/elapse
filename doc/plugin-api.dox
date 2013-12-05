@@ -1,0 +1,27 @@
+/*!
+    \page plugin-api Plugin API
+
+    This page will document the Elapse plugin API for implementing signal
+    processing and classification algorithms.
+
+    \section plugin-design Plugin System Design
+
+    ...
+
+    \section plugin-example Example Plugin
+
+    The following page gives a complete example of how to implement a plugin.
+
+    \todo Mention the need for a Q_INVOKABLE default constructor.
+
+    ...
+
+    \section plugin-api-docs API Documentation
+
+    \li \ref plugins-ext
+*/
+
+/*!
+    \defgroup plugins-ext External Plugin API
+*/
+

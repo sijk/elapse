@@ -3,18 +3,6 @@
 #include "pipeline.h"
 
 /*!
- * \class Pipeline
- * \ingroup signal-pipeline
- * \inmodule elapse-core
- *
- * \brief The Pipeline class manages a set of signal processing elements.
- *
- * It is responsible for managing the state of and connections between the
- * elements in an ElementSet.
- */
-
-
-/*!
  * Construct a new Pipeline as a child of the given \a parent.
  */
 Pipeline::Pipeline(QObject *parent) :

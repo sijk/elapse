@@ -14,15 +14,6 @@
 
 
 /*!
- * \class PluginManager
- * \ingroup plugins-int
- * \inmodule elapse-core
- *
- * \brief The PluginLoader class handles the finding and loading of plugins.
- */
-
-
-/*!
  * Construct a PluginManager as a child of the given \a parent.
  *
  * The default plugin search path is set to the "plugins" subdirectory of the
@@ -45,6 +36,72 @@ PluginManager::~PluginManager()
 {
     delete ui;
 }
+
+/*!
+ * \page pluginmanager-model PluginManager Data Model
+ *
+ * This page describes the structure of the PluginManager's internal data model.
+ *
+ * Suppose that we have two plugins, \c FooPlugin and \c BarPlugin. They each
+ * provide several classes implementing DataSource and SampleDecoder element
+ * types. This hypothetical situation is illustrated below.
+ *
+ * @startuml{pluginmanager-model-classes.png}
+ *
+ * FooTcpDataSource --|> DataSource
+ * FooUdpDataSource --|> DataSource
+ * FooEegDecoder --|> SampleDecoder
+ * BarEegDecoder --|> SampleDecoder
+ * BarVideoDecoder --|> SampleDecoder
+ * FooPlugin o-- FooTcpDataSource
+ * FooPlugin o-- FooUdpDataSource
+ * FooPlugin o-- FooEegDecoder
+ * BarPlugin o-- BarEegDecoder
+ * BarPlugin o-- BarVideoDecoder
+ * FooEegDecoder : sampleType = "EEG"
+ * BarEegDecoder : sampleType = "EEG"
+ * BarVideoDecoder : sampleType = "VIDEO"
+ *
+ * @enduml
+ *
+ * Given these plugins, the structure of the PluginManager's data model would be
+ * as follows:
+ *
+ * \code
+ * [Root]
+ *      DataSource
+ *          FooPlugin
+ *              FooTcpDataSource
+ *              FooUdpDataSource
+ *
+ *      SampleDecoder
+ *          FooPlugin
+ *              FooEegDecoder
+ *          BarPlugin
+ *              BarEegDecoder
+ *              BarVideoDecoder
+ * \endcode
+ *
+ * If a PluginFilterProxyModel was defined with the arguments
+ * \c elementType = "SampleDecoder" and \c sampleType = "EEG", then the filtered
+ * model would have the following structure:
+ *
+ * \code
+ * SampleDecoder
+ *      FooPlugin
+ *          FooEegDecoder
+ *      BarPlugin
+ *          BarEegDecoder
+ * \endcode
+ *
+ * That is, it would include all of the classes implementing \c SampleDecoder
+ * which apply to the \c sampleType "EEG".
+ */
+
+/*!
+ * \property PluginManager::searchPath
+ * The directory in which to search for plugins.
+ */
 
 /*!
  * Set the plugin search path to \a newPath and scan that directory for plugins.
@@ -165,6 +222,15 @@ void PluginManager::loadSelectedElementsFromPlugins()
 
     emit pluginsLoaded(elements);
 }
+
+/*!
+ * \fn PluginManager::pluginsLoaded(ElementSet*)
+ * Emitted when an ElementSet has been loaded.
+ *
+ * Ownership of the ElementSet is transferred to the receiver of this signal.
+ * This means that in order to prevent memory leaks there should be exactly one
+ * receiver connected to this signal.
+ */
 
 /*!
  * Helper function for building the internal plugin model.

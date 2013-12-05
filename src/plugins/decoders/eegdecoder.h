@@ -5,6 +5,13 @@
 
 class EegSample;
 
+
+/*!
+ * \brief The EegDecoder class decodes the byte stream from the EEG hardware.
+ *
+ * \ingroup core-plugins
+ */
+
 class EegDecoder : public SampleDecoder
 {
     Q_OBJECT

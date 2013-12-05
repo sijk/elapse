@@ -7,6 +7,14 @@
 class FeatureExtractor;
 class Classifier;
 
+
+/*!
+ * \brief The ElementSet struct holds pointers to a complete set of
+ * \ref signal-pipeline "pipeline elements".
+ *
+ * \ingroup signal-pipeline
+ */
+
 struct ElementSet
 {
     DataSource *dataSource;
