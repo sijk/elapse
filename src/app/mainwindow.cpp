@@ -13,23 +13,6 @@
 
 
 /*!
- * \class MainWindow
- * \ingroup app
- * \inmodule elapse-core
- *
- * \brief The MainWindow class provides the main window of the Elapse
- *        application.
- *
- * It contains a Pipeline, a PluginManager, and a ServerProxy which provide all
- * of the actual functionality of the application. It also provides a GUI for
- * interacting with these objects and displaying the state of the signal
- * processing elements.
- *
- * \see \ref mainwindow-fsm
- */
-
-
-/*!
  * Construct a MainWindow as a child of the given \a parent widget.
  */
 MainWindow::MainWindow(QWidget *parent) :
@@ -129,8 +112,6 @@ void MainWindow::buildStateMachine()
     auto active = new QState(connected);
     auto starting = new QState(active);
     auto running = new QState(active);
-
-    // Define state transitions
 
     machine->setInitialState(disconnected);
     disconnected->addTransition(ui->buttonConnect, SIGNAL(clicked()), connecting);
