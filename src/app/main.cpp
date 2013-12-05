@@ -1,13 +1,12 @@
 #include <QApplication>
 #include "mainwindow.h"
 
-#include <QDebug>
-#include <QStandardItemModel>
-#include <QTreeView>
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setOrganizationName("NeuroTech");
+    a.setApplicationName("Elapse client");
+
     MainWindow window;
     window.show();
 

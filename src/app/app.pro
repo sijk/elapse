@@ -1,6 +1,6 @@
 include(../../global.pri)
 
-QT           += core gui widgets
+QT           += core gui widgets dbus
 CONFIG       += qwt
 
 TARGET        = elapse
@@ -10,8 +10,10 @@ DESTDIR       = ../../
 
 SOURCES      += main.cpp \
                 mainwindow.cpp \
+                spinner.cpp \
                 eegfilesink.cpp
 HEADERS      += mainwindow.h \
+                spinner.h \
                 eegfilesink.h \
                 elements.h
 FORMS        += mainwindow.ui
@@ -36,3 +38,9 @@ LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
 INCLUDEPATH     += $$PWD/../pluginmanager
 DEPENDPATH      += $$PWD/../pluginmanager
 PRE_TARGETDEPS  += $$OUT_PWD/../pluginmanager/libpluginmanager.a
+
+LIBS            += -L$$OUT_PWD/../deviceproxy/ -ldeviceproxy
+INCLUDEPATH     += $$PWD/../deviceproxy
+DEPENDPATH      += $$PWD/../deviceproxy
+PRE_TARGETDEPS  += $$OUT_PWD/../deviceproxy/libdeviceproxy.a
+INCLUDEPATH     += $$OUT_PWD/../deviceproxy   # for foo_interface.h

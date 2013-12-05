@@ -3,7 +3,9 @@ SUBDIRS	    = app \
               pipeline \
               plugins \
               pluginmanager \
-              stripchart
+              stripchart \
+              deviceproxy
 
 app.depends += pipeline plugins stripchart
 app.depends += pluginmanager
+app.depends += deviceproxy
