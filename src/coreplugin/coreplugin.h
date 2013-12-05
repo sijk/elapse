@@ -6,6 +6,15 @@
 #include "dummyeegsource.h"
 #include "eegdecoder.h"
 
+
+/*!
+ * \brief The CorePlugin class encapsulates the default element implementations
+ * as a Plugin.
+ *
+ * It provides placeholder implementations for some elements and fully
+ * functioning implementations for others.
+ */
+
 class CorePlugin : public Plugin
 {
     Q_OBJECT

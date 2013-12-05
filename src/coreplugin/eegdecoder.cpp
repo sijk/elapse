@@ -76,11 +76,11 @@ void EegDecoder::onData(const QByteArray &data)
     }
 }
 
-double EegDecoder::toMicroVolts(double reading) const
 /*!
  * \return the \a reading converted to microvolts, given the current gain()
  * and vref().
  */
+double EegDecoder::toMicroVolts(double reading) const
 {
     return reading / _gain * _vref / ((1 << 23) - 1);
 }

@@ -4,6 +4,14 @@
 #include <QTcpSocket>
 #include "elements/datasource.h"
 
+
+/*!
+ * \brief The TcpClientDataSource class receives data from the device over
+ * several TCP sockets - one for each SampleType.
+ *
+ * \ingroup core-plugin
+ */
+
 class TcpClientDataSource : public DataSource
 {
     Q_OBJECT
@@ -15,7 +23,7 @@ public slots:
     void stop();
 
 private slots:
-    void onDataReady();
+    void onEegReady();
     void onError(QAbstractSocket::SocketError err);
 
 private:

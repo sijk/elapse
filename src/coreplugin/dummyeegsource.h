@@ -6,6 +6,9 @@
 
 
 /*!
+ * \brief The DummyEegSource class provides several channels of sinusoidal
+ * dummy EEG data.
+ *
  * \ingroup core-plugin
  */
 
