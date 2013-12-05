@@ -117,6 +117,10 @@ void MainWindow::buildStateMachine()
     active->setInitialState(starting);
     connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
     connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
+    // We need to delay evaluation of device->device() by wrapping it in a
+    // closure since it is not valid until the device is connected.
+    connect(active, &QState::entered, [=](){ device->device()->startStreaming(); });
+    connect(active, &QState::exited, [=](){ device->device()->stopStreaming(); });
     active->addTransition(ui->buttonCapture, SIGNAL(clicked()), idle);
     active->addTransition(pipeline, SIGNAL(error(QString)), idle);
 
