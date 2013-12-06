@@ -78,3 +78,24 @@
     \var EegSample::values
     \brief The voltage readings in microvolts.
 */
+
+
+/* ========================================================================== */
+
+/*!
+    \class VideoSample
+    \ingroup signal-datatypes
+
+    \brief The VideoSample class holds the data for one frame of video.
+*/
+
+
+/* ========================================================================== */
+
+/*!
+    \class ImuSample
+    \ingroup signal-datatypes
+
+    \brief The ImuSample class holds the data for one 6-axis sample from
+    the IMU.
+*/

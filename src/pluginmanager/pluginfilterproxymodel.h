@@ -9,6 +9,8 @@
  *
  * It is used to map part of the model to each QTreeView in the PluginManager
  * window.
+ *
+ * \ingroup plugins-int
  */
 
 class PluginFilterProxyModel : public QSortFilterProxyModel
