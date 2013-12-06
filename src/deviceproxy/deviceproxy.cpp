@@ -11,7 +11,9 @@ using namespace org::nzbri::elapse;
 
 
 DeviceProxy::DeviceProxy(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    _device(nullptr),
+    _eeg(nullptr)
 {
 }
 
