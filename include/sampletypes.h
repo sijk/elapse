@@ -28,4 +28,14 @@ struct EegSample : Sample
 };
 
 
+struct VideoSample : Sample
+{
+};
+
+
+struct ImuSample : Sample
+{
+};
+
+
 #endif // SAMPLETYPES_H

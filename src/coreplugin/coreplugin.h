@@ -5,6 +5,12 @@
 #include "tcpclientdatasource.h"
 #include "dummyeegsource.h"
 #include "eegdecoder.h"
+#include "videodecoder.h"
+#include "imudecoder.h"
+#include "dummyeegfeatureextractor.h"
+#include "dummyvideofeatureextractor.h"
+#include "dummyimufeatureextractor.h"
+#include "dummyclassifier.h"
 
 
 /*!
@@ -25,7 +31,16 @@ public:
         return {
             TcpClientDataSource::staticMetaObject,
             DummyEegSource::staticMetaObject,
-            EegDecoder::staticMetaObject
+
+            EegDecoder::staticMetaObject,
+            VideoDecoder::staticMetaObject,
+            ImuDecoder::staticMetaObject,
+
+            DummyEegFeatureExtractor::staticMetaObject,
+            DummyVideoFeatureExtractor::staticMetaObject,
+            DummyImuFeatureExtractor::staticMetaObject,
+
+            DummyClassifier::staticMetaObject
         };
     }
 };

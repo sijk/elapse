@@ -4,8 +4,8 @@
 #include "sampletypes.h"
 #include "elements/datasource.h"
 #include "elements/decoder.h"
-class FeatureExtractor;
-class Classifier;
+#include "elements/featurextractor.h"
+#include "elements/classifier.h"
 
 
 /*!
@@ -31,12 +31,11 @@ struct ElementSet
  */
 inline ElementSet::~ElementSet() {
     delete dataSource;
-    delete sampleDecoders[EEG];
-//    for (int i = 0; i < N_SAMPLE_TYPES; i++) {
-//        delete sampleDecoders[i];
-//        delete featureExtractors[i];
-//    }
-//    delete classifier;
+    for (int i = 0; i < N_SAMPLE_TYPES; i++) {
+        delete sampleDecoders[i];
+        delete featureExtractors[i];
+    }
+    delete classifier;
 }
 
 #endif // ELEMENTS_H

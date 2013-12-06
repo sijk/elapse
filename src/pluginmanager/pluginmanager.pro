@@ -8,9 +8,12 @@ SOURCES += pluginmanager.cpp \
 HEADERS += pluginmanager.h \
            pluginmanager_p.h \
            pluginfilterproxymodel.h \
-           plugin.h \
+
+HEADERS += plugin.h \
            elements.h \
            elements/datasource.h \
-           elements/decoder.h
+           elements/decoder.h \
+           elements/featurextractor.h \
+           elements/classifier.h
 
 FORMS   += pluginmanager.ui

@@ -1,20 +1,35 @@
 include(../../global.pri)
 
-TEMPLATE        = lib
-CONFIG         += plugin
-QT             += network
-DESTDIR         = ../../plugins/
+TEMPLATE      = lib
+CONFIG       += plugin
+QT           += network
+DESTDIR       = ../../plugins/
 
-HEADERS         = eegdecoder.h \
-                  tcpclientdatasource.h \
-                  dummyeegsource.h \
-                  coreplugin.h \
-                  elements/datasource.h \
-                  elements/decoder.h \
-                  plugin.h
+HEADERS       = tcpclientdatasource.h \
+                dummyeegsource.h \
+                eegdecoder.h \
+                videodecoder.h \
+                imudecoder.h \
+                dummyeegfeatureextractor.h \
+                dummyvideofeatureextractor.h \
+                dummyimufeatureextractor.h \
+                dummyclassifier.h
 
-SOURCES         = eegdecoder.cpp \
-                  tcpclientdatasource.cpp \
-                  dummyeegsource.cpp
+SOURCES       = tcpclientdatasource.cpp \
+                dummyeegsource.cpp \
+                eegdecoder.cpp \
+                videodecoder.cpp \
+                imudecoder.cpp \
+                dummyeegfeatureextractor.cpp \
+                dummyvideofeatureextractor.cpp \
+                dummyimufeatureextractor.cpp \
+                dummyclassifier.cpp
 
-TARGET          = $$qtLibraryTarget(coreplugin)
+HEADERS      += coreplugin.h \
+                elements/datasource.h \
+                elements/decoder.h \
+                elements/featurextractor.h \
+                elements/classifier.h \
+                plugin.h
+
+TARGET        = $$qtLibraryTarget(coreplugin)

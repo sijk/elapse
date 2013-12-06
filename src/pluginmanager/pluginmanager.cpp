@@ -222,12 +222,23 @@ void PluginManager::loadSelectedElementsFromPlugins()
 {
     auto *elements = new ElementSet;
 
-    elements->dataSource            = loadSelected<DataSource*>(ui->treeSource);
-    elements->sampleDecoders[EEG]   = loadSelected<SampleDecoder*>(ui->treeDecoderEeg);
+    elements->dataSource               = loadSelected<DataSource*>(ui->treeSource);
+    elements->sampleDecoders[EEG]      = loadSelected<SampleDecoder*>(ui->treeDecoderEeg);
+    elements->sampleDecoders[VIDEO]    = loadSelected<SampleDecoder*>(ui->treeDecoderVideo);
+    elements->sampleDecoders[IMU]      = loadSelected<SampleDecoder*>(ui->treeDecoderImu);
+    elements->featureExtractors[EEG]   = loadSelected<FeatureExtractor*>(ui->treeFeatEeg);
+    elements->featureExtractors[VIDEO] = loadSelected<FeatureExtractor*>(ui->treeFeatVideo);
+    elements->featureExtractors[IMU]   = loadSelected<FeatureExtractor*>(ui->treeFeatImu);
+    elements->classifier               = loadSelected<Classifier*>(ui->treeClassifier);
 
-    if (!elements ||
-        !elements->dataSource ||
-        !elements->sampleDecoders[EEG])
+    if (!elements->dataSource ||
+        !elements->sampleDecoders[EEG] ||
+        !elements->sampleDecoders[VIDEO] ||
+        !elements->sampleDecoders[IMU] ||
+        !elements->featureExtractors[EEG] ||
+        !elements->featureExtractors[VIDEO] ||
+        !elements->featureExtractors[IMU] ||
+        !elements->classifier)
         return;
 
     emit pluginsLoaded(elements);
