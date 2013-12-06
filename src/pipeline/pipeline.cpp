@@ -5,11 +5,60 @@
 /*!
  * \page pipeline-arch Signal Pipeline Structure
  *
- * @startuml{pipeline-arch.png}
+ * @startuml{pipeline-arch-class.png}
  *
- * [DataSource] -> [SampleDecoder]
- * [SampleDecoder] -> [FeatureExtractor]
- * [FeatureExtractor] -> [Classifier]
+ * hide class circle
+ * hide class attributes
+ * skinparam packageBorderColor white
+ * skinparam shadowing false
+ *
+ * class dataSource {
+ *      onEegReady()
+ *      onVideoReady()
+ *      onImuReady()
+ * }
+ * package {
+ *      class "sampleDecoders[EEG]" {
+ *          onData()
+ *          newSample()
+ *      }
+ *      class "sampleDecoders[VIDEO]" {
+ *          onData()
+ *          newSample()
+ *      }
+ *      class "sampleDecoders[IMU]" {
+ *          onData()
+ *          newSample()
+ *      }
+ * }
+ * package {
+ *      class "featureExtractors[EEG]" {
+ *          onSample()
+ *          newFeatures()
+ *      }
+ *      class "featureExtractors[VIDEO]" {
+ *          onSample()
+ *          newFeatures()
+ *      }
+ *      class "featureExtractors[IMU]" {
+ *          onSample()
+ *          newFeatures()
+ *      }
+ * }
+ * class classifier {
+ *      onFeatures()
+ *      newState()
+ * }
+ *
+ * dataSource -> "sampleDecoders[EEG]" : QByteArray
+ * dataSource -> "sampleDecoders[VIDEO]" : QByteArray
+ * dataSource -> "sampleDecoders[IMU]" : QByteArray
+ * "sampleDecoders[EEG]" -> "featureExtractors[EEG]" : EegSample
+ * "sampleDecoders[VIDEO]" -> "featureExtractors[VIDEO]" : VideoSample
+ * "sampleDecoders[IMU]" -> "featureExtractors[IMU]" : ImuSample
+ * "featureExtractors[EEG]" -> classifier : EegFeatures
+ * "featureExtractors[VIDEO]" -> classifier : VideoFeatures
+ * "featureExtractors[IMU]" -> classifier : ImuFeatures
  *
  * @enduml
  */
