@@ -10,7 +10,7 @@
  *
  * Each Pipeline has one Classifier.
  *
- * \ingroup signal-pipeline
+ * \ingroup pipeline-elements
  */
 
 class Classifier : public QObject

@@ -1,7 +1,7 @@
 /*!
     \enum SampleType
     \relates Sample
-    \ingroup signal-pipeline
+    \ingroup signal-datatypes
 
     \brief Allows you to refer to a subclass of Sample by a numeric index.
 
@@ -22,7 +22,7 @@
 
 /*!
     \class Sample
-    \ingroup signal-pipeline
+    \ingroup signal-datatypes
 
     \brief The Sample class is the base class for all samples acquired from
     sensors on the device.
@@ -41,7 +41,7 @@
 
 /*!
     \class EegSample
-    \ingroup signal-pipeline
+    \ingroup signal-datatypes
 
     \brief The EegSample class holds the data for one multi-channel sample of
     EEG.

@@ -33,22 +33,43 @@
 */
 
 /*!
-    \defgroup app Elapse application
+    \defgroup app Elapse Application
 
     These classes relate to the core Elapse application.
+
+    For a detailed specification of the MainWindow's behaviour, see
+    \ref mainwindow-fsm.
 */
 
 /*!
     \defgroup signal-pipeline Signal Pipeline
 
     These classes relate to the signal processing pipeline.
+
+    For an illustration of the Pipeline's structure, see \ref pipeline-arch.
+*/
+
+/*!
+    \defgroup pipeline-elements Pipeline Elements
+    \ingroup signal-pipeline
+
+    These classes implement the elements of the \ref signal-pipeline
+    "signal processing pipeline". For an illustration of how they fit together,
+    see \ref pipeline-arch.
+*/
+
+/*!
+    \defgroup signal-datatypes Signal Datatypes
+    \ingroup signal-pipeline
+
+    These classes define the datatypes for the signals flowing through the
+    \ref signal-pipeline "pipeline".
 */
 
 /*!
     \defgroup core-plugin Core Plugin
 
-    These classes provide default implementations of
-    \ref signal-pipeline "pipeline elements".
+    These classes provide default implementations of \ref pipeline-elements.
 */
 
 /*!

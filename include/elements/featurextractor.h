@@ -12,7 +12,7 @@ class Sample;
  *
  * Each Pipeline has several FeatureExtractors: one per \ref SampleType.
  *
- * \ingroup signal-pipeline
+ * \ingroup pipeline-elements
  */
 
 class FeatureExtractor : public QObject

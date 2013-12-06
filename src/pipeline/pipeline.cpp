@@ -3,6 +3,18 @@
 #include "pipeline.h"
 
 /*!
+ * \page pipeline-arch Signal Pipeline Structure
+ *
+ * @startuml{pipeline-arch.png}
+ *
+ * [DataSource] -> [SampleDecoder]
+ * [SampleDecoder] -> [FeatureExtractor]
+ * [FeatureExtractor] -> [Classifier]
+ *
+ * @enduml
+ */
+
+/*!
  * Construct a new Pipeline as a child of the given \a parent.
  */
 Pipeline::Pipeline(QObject *parent) :

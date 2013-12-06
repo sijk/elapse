@@ -13,7 +13,7 @@ class Sample;
  *
  * Each Pipeline has several SampleDecoders: one per \ref SampleType.
  *
- * \ingroup signal-pipeline
+ * \ingroup pipeline-elements
  */
 
 class SampleDecoder : public QObject

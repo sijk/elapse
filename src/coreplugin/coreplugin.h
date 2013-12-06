@@ -19,6 +19,8 @@
  *
  * It provides placeholder implementations for some elements and fully
  * functioning implementations for others.
+ *
+ * \ingroup core-plugin
  */
 
 class CorePlugin : public Plugin

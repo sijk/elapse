@@ -13,6 +13,7 @@ class ElementSet;
  * elements in an ElementSet.
  *
  * \ingroup signal-pipeline
+ * \see \ref pipeline-arch for an illustration of the pipeline's structure.
  */
 
 class Pipeline : public QObject

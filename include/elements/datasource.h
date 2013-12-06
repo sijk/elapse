@@ -12,7 +12,7 @@ class QByteArray;
  * Each Pipeline has one DataSource which provides data to several
  * \ref SampleDecoder "SampleDecoders".
  *
- * \ingroup signal-pipeline
+ * \ingroup pipeline-elements
  */
 
 class DataSource : public QObject
