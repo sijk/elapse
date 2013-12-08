@@ -58,19 +58,25 @@ PluginManager::~PluginManager()
  *
  * @startuml{pluginmanager-model-classes.png}
  *
+ * package libfooplugin.so {
+ *     FooPlugin o-- FooTcpDataSource
+ *     FooPlugin o-- FooUdpDataSource
+ *     FooPlugin o-- FooEegDecoder
+ * }
+ * package libbarplugin.so {
+ *     BarPlugin o-- BarEegDecoder
+ *     BarPlugin o-- BarVideoDecoder
+ * }
+ *
+ * BarEegDecoder    --|> SampleDecoder
+ * BarVideoDecoder  --|> SampleDecoder
+ * FooEegDecoder    --|> SampleDecoder
  * FooTcpDataSource --|> DataSource
  * FooUdpDataSource --|> DataSource
- * FooEegDecoder --|> SampleDecoder
- * BarEegDecoder --|> SampleDecoder
- * BarVideoDecoder --|> SampleDecoder
- * FooPlugin o-- FooTcpDataSource
- * FooPlugin o-- FooUdpDataSource
- * FooPlugin o-- FooEegDecoder
- * BarPlugin o-- BarEegDecoder
- * BarPlugin o-- BarVideoDecoder
- * FooEegDecoder : sampleType = "EEG"
- * BarEegDecoder : sampleType = "EEG"
- * BarVideoDecoder : sampleType = "VIDEO"
+ *
+ * FooEegDecoder : SampleType : "EEG"
+ * BarEegDecoder : SampleType : "EEG"
+ * BarVideoDecoder : SampleType : "VIDEO"
  *
  * @enduml
  *
