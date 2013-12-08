@@ -23,9 +23,11 @@ public:
 
 public slots:
     void connect();
+    void disconnect();
 
 signals:
     void connected();
+    void disconnected();
     void error(QString msg);
 
 private:

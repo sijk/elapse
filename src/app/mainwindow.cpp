@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->buttonConnect->setDefaultAction(ui->actionConnect);
+
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
 
@@ -40,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     buildStateMachine();
 
     if (QSettings().value("auto-connect", true).toBool())
-        QMetaObject::invokeMethod(ui->buttonConnect, "click", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 }
 
 /*!
@@ -77,15 +79,15 @@ void MainWindow::showErrorMessage(const QString &message)
  *
  * [*] -> Disconnected
  * Disconnected : enter / ui.showPage(0)
- * Disconnected -> Connecting : buttonConnect
+ * Disconnected -> Connecting : actionConnect
  *
  * Connecting : enter / device.connect()
  * Connecting : enter / spinner.run()
- * Connecting --> Disconnected : error
+ * Connecting --> Disconnected : device.error
  * Connecting --> Connected : connected
  *
  * Connected : enter / ui.showPage(1)
- * Connected --> Disconnected : disconnectAction
+ * Connected --> Disconnected : actionConnect
  * Connected --> Disconnected : device.error
  *
  * state Connected {
@@ -120,10 +122,10 @@ void MainWindow::buildStateMachine()
     auto running = new QState(active);
 
     machine->setInitialState(disconnected);
-    disconnected->addTransition(ui->buttonConnect, SIGNAL(clicked()), connecting);
+    disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
 
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
-    connecting->assignProperty(ui->buttonConnect, "enabled", false);
+    connecting->assignProperty(ui->actionConnect, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
     connect(connecting, SIGNAL(entered()), device, SLOT(connect()));
     connecting->addTransition(device, SIGNAL(error(QString)), disconnected);
@@ -131,8 +133,10 @@ void MainWindow::buildStateMachine()
 
     connected->setInitialState(idle);
     connected->assignProperty(ui->stackedWidget, "currentIndex", 1);
-    // TODO: -> disconnected on disconnect action
-    // TODO: -> disconnected on comms error
+    connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
+    connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
+    connected->addTransition(device, SIGNAL(error(QString)), disconnected);
+    connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
 
     idle->addTransition(ui->buttonCapture, SIGNAL(clicked()), active);
 

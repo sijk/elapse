@@ -35,10 +35,13 @@
           </property>
          </spacer>
         </item>
-        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QPushButton" name="buttonConnect">
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QToolButton" name="buttonConnect">
           <property name="text">
            <string>Connect</string>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
           </property>
          </widget>
         </item>
@@ -192,8 +195,9 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="separator"/>
+    <addaction name="actionConnect"/>
     <addaction name="actionPlugins"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuFile"/>
@@ -216,6 +220,20 @@
    </property>
    <property name="text">
     <string>&amp;Plugins</string>
+   </property>
+   <property name="toolTip">
+    <string>Load plugins</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="icon">
+    <iconset theme="network-wireless"/>
+   </property>
+   <property name="text">
+    <string>&amp;Connect</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect to the device</string>
    </property>
   </action>
  </widget>

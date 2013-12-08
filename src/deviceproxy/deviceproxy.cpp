@@ -58,7 +58,7 @@ void DeviceProxy::connectInBackground()
     // Connect to the remote session bus
     auto connection = QDBusConnection::connectToBus(address, "elapse-bus");
     if (!connection.isConnected()) {
-        qDebug() << connection.lastError().message();
+        qDebug() << "Connect:" << connection.lastError().message();
         emit error("Could not connect to the device.");
         return;
     }
@@ -69,8 +69,8 @@ void DeviceProxy::connectInBackground()
     auto reply = _device->isAccessible();
     reply.waitForFinished();
     if (reply.isError()) {
-        qDebug() << reply.error().message();
-        qDebug() << _device->lastError().message();
+        qDebug() << "Server:" << reply.error().message();
+        qDebug() << "Proxy:" << _device->lastError().message();
         emit error("The server is not running on the device.");
         return;
     }
@@ -85,4 +85,18 @@ void DeviceProxy::connectInBackground()
     }
 
     emit connected();
+}
+
+void DeviceProxy::disconnect()
+{
+    delete _device;
+    _device = nullptr;
+
+    delete _eeg;
+    _eeg = nullptr;
+
+    qDeleteAll(_eeg_channels);
+    _eeg_channels.clear();
+
+    emit disconnected();
 }
