@@ -13,9 +13,9 @@
  * skinparam shadowing false
  *
  * class dataSource {
- *      onEegReady()
- *      onVideoReady()
- *      onImuReady()
+ *      eegReady()
+ *      videoReady()
+ *      imuReady()
  * }
  * package {
  *      class "sampleDecoders[EEG]" {

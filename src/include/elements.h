@@ -12,6 +12,10 @@
  * \brief The ElementSet struct holds pointers to a complete set of
  * \ref signal-pipeline "pipeline elements".
  *
+ * The lifetimes of the elements in the set are tied to the set itself; that is,
+ * when the ElementSet is destroyed all of the elements it contains will be
+ * detroyed too.
+ *
  * \ingroup signal-pipeline
  */
 
