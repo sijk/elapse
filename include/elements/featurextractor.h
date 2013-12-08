@@ -21,7 +21,7 @@ class FeatureExtractor : public QObject
 
 public:
     /*! Construct a new FeatureExtractor as a child of the given \a parent. */
-    explicit FeatureExtractor(QObject *parent = 0) : QObject(parent) {}
+    explicit FeatureExtractor(QObject *parent = nullptr) : QObject(parent) {}
 
     /*! Destroy this FeatureExtractor. */
     virtual ~FeatureExtractor() {}

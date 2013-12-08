@@ -20,7 +20,7 @@ class Pipeline : public QObject
 {
     Q_OBJECT
 public:
-    explicit Pipeline(QObject *parent = 0);
+    explicit Pipeline(QObject *parent = nullptr);
     ~Pipeline();
 
     ElementSet *elements() const;

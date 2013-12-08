@@ -27,7 +27,7 @@ class PluginManager : public QDialog
     Q_PROPERTY(QDir searchPath MEMBER path WRITE setSearchPath)
 
 public:
-    explicit PluginManager(QWidget *parent = 0);
+    explicit PluginManager(QWidget *parent = nullptr);
     ~PluginManager();
 
     void setSearchPath(QDir newPath);
