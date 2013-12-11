@@ -47,7 +47,7 @@ EegDecoder::EegDecoder(QObject *parent) :
 /*!
  * Decode the given \a data and emit \ref EegSample "EegSamples".
  */
-void EegDecoder::onData(const QByteArray &data)
+void EegDecoder::onData(QByteArray data)
 {
     BigEndian24 value;
     quint32 status;

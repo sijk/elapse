@@ -19,7 +19,7 @@ public:
     Q_INVOKABLE explicit VideoDecoder(QObject *parent = nullptr);
 
 public slots:
-    void onData(const QByteArray &data);
+    void onData(QByteArray data);
 };
 
 #endif // VIDEODECODER_H

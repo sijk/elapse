@@ -23,7 +23,7 @@ public:
     Q_INVOKABLE explicit EegDecoder(QObject *parent = nullptr);
 
 public slots:
-    void onData(const QByteArray &data);
+    void onData(QByteArray data);
 
 private:
     double toMicroVolts(double value) const;

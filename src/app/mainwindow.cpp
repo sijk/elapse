@@ -64,7 +64,7 @@ void MainWindow::on_actionPlugins_triggered()
     pluginManager->loadPlugins();
 }
 
-void MainWindow::showErrorMessage(const QString &message)
+void MainWindow::showErrorMessage(QString message)
 {
     QMessageBox::warning(this, "Error", message);
 }

@@ -6,7 +6,7 @@ VideoDecoder::VideoDecoder(QObject *parent) :
 {
 }
 
-void VideoDecoder::onData(const QByteArray &data)
+void VideoDecoder::onData(QByteArray data)
 {
     Q_UNUSED(data)
 }

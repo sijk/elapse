@@ -19,7 +19,7 @@ public:
     Q_INVOKABLE explicit ImuDecoder(QObject *parent = nullptr);
 
 public slots:
-    void onData(const QByteArray &data);
+    void onData(QByteArray data);
 };
 
 #endif // IMUDECODER_H

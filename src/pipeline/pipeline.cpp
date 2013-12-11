@@ -151,7 +151,7 @@ void Pipeline::stop()
  */
 
 /*!
- * \fn Pipeline::error(const QString &msg)
+ * \fn Pipeline::error(QString msg)
  * Emitted when an error has occurred somewhere in the pipeline. The \a msg is
  * human readable, suitable for displaying in a dialog box or similar.
  */

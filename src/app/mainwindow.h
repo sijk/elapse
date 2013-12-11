@@ -43,7 +43,7 @@ private slots:
     void on_actionPlugins_triggered();
     void setupPipeline(ElementSet *elements);
 
-    void showErrorMessage(const QString &message);
+    void showErrorMessage(QString message);
 
 private:
     void buildStateMachine();

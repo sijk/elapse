@@ -29,7 +29,7 @@ public:
 signals:
     void started();
     void stopped();
-    void error(const QString &msg);
+    void error(QString msg);
 
 public slots:
     void start();

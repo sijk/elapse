@@ -13,12 +13,12 @@ public:
     ~EegFileSink();
 
 signals:
-    void recordingStarted(const QString &fname);
-    void recordingFinished(const QString &fname);
+    void recordingStarted(QString fname);
+    void recordingFinished(QString fname);
 
 public slots:
     void startRecording();
-    void onData(const QByteArray &bytes);
+    void onData(QByteArray bytes);
     void stopRecording();
 
 private:

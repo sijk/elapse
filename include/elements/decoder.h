@@ -38,7 +38,7 @@ public slots:
      * a one-to-one mapping between the incoming \a data and outgoing
      * \ref Sample "Samples".
      */
-    virtual void onData(const QByteArray &data) = 0;
+    virtual void onData(QByteArray data) = 0;
 };
 
 #endif // DECODER_H

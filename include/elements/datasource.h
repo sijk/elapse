@@ -31,13 +31,13 @@ public:
 
 signals:
     /*! Emitted when video \a data arrives from the device. */
-    void videoReady(const QByteArray &data);
+    void videoReady(QByteArray data);
 
     /*! Emitted when EEG \a data arrives from the device. */
-    void eegReady(const QByteArray &data);
+    void eegReady(QByteArray data);
 
     /*! Emitted when IMU \a data arrives from the device. */
-    void imuReady(const QByteArray &data);
+    void imuReady(QByteArray data);
 
     /*!
      * Emitted when the DataSource has succesfully connected to the device
@@ -50,7 +50,7 @@ signals:
      * Emitted when an error occurs. The \a message is a human-readable string
      * which should be useful for debugging the error.
      */
-    void error(const QString &message);
+    void error(QString message);
 
 public slots:
     /*!

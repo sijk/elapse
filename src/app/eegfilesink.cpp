@@ -51,7 +51,7 @@ void EegFileSink::startRecording()
     emit recordingStarted(fname);
 }
 
-void EegFileSink::onData(const QByteArray &bytes)
+void EegFileSink::onData(QByteArray bytes)
 {
     Q_ASSERT_X(recording, "EegFileSink", "received data when not recording");
     file->write(bytes);

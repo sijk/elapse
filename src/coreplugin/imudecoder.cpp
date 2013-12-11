@@ -6,7 +6,7 @@ ImuDecoder::ImuDecoder(QObject *parent) :
 {
 }
 
-void ImuDecoder::onData(const QByteArray &data)
+void ImuDecoder::onData(QByteArray data)
 {
     Q_UNUSED(data)
 }
