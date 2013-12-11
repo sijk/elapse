@@ -14,6 +14,8 @@ enum SampleType
 
 struct Sample
 {
+    virtual ~Sample() {}
+
     quint64 timestamp;
 };
 

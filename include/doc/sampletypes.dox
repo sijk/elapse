@@ -29,6 +29,15 @@
 */
 
 /*!
+    \fn Sample::~Sample()
+    \brief Destroy this Sample.
+
+    Providing a virtual destructor means that elements can implement their own
+    private subclasses of the different sample types if necessary (to handle
+    memory management, etc.).
+*/
+
+/*!
     \var Sample::timestamp
     \brief The time at which the Sample was captured on the device.
 
