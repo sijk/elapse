@@ -1,9 +1,11 @@
 include(../../global.pri)
 
 TEMPLATE      = lib
-CONFIG       += plugin
+CONFIG       += plugin link_pkgconfig qxt
 QT           += network
 DESTDIR       = ../../plugins/
+PKGCONFIG     = gstreamer-1.0 gstreamer-app-1.0
+QXT          += core
 
 HEADERS       = tcpclientdatasource.h \
                 dummyeegsource.h \

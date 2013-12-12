@@ -4,6 +4,8 @@
 #include "elements/decoder.h"
 
 
+class VideoDecoderPrivate;
+
 /*!
  * \brief The VideoDecoder class decodes the byte stream from the camera.
  *
@@ -17,9 +19,14 @@ class VideoDecoder : public SampleDecoder
 
 public:
     Q_INVOKABLE explicit VideoDecoder(QObject *parent = nullptr);
+    ~VideoDecoder();
 
 public slots:
     void onData(QByteArray data);
+
+private:
+    VideoDecoderPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(VideoDecoder)
 };
 
 #endif // VIDEODECODER_H

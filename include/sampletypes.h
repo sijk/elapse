@@ -3,6 +3,7 @@
 
 #include <QtGlobal>
 #include <QVector>
+#include <QByteArray>
 
 
 enum SampleType
@@ -32,6 +33,8 @@ struct EegSample : Sample
 
 struct VideoSample : Sample
 {
+    int w, h;
+    QByteArray data;
 };
 
 
