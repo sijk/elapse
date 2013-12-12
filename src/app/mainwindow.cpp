@@ -7,9 +7,9 @@
 #include "pluginmanager.h"
 #include "deviceproxy.h"
 #include "stripchart.h"
+#include "logview.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 
 
 /*!
@@ -44,6 +44,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if (QSettings().value("auto-connect", true).toBool())
         QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
+
+    auto logView = new LogView(this);
+    qxtLog->addLoggerEngine("LogView", logView->loggerEngine());
+    logView->show();
 }
 
 /*!

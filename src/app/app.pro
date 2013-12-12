@@ -45,3 +45,8 @@ INCLUDEPATH     += $$PWD/../deviceproxy
 DEPENDPATH      += $$PWD/../deviceproxy
 PRE_TARGETDEPS  += $$OUT_PWD/../deviceproxy/libdeviceproxy.a
 INCLUDEPATH     += $$OUT_PWD/../deviceproxy   # for foo_interface.h
+
+LIBS            += -L$$OUT_PWD/../loggerwidget/ -lloggerwidget
+INCLUDEPATH     += $$PWD/../loggerwidget
+DEPENDPATH      += $$PWD/../loggerwidget
+PRE_TARGETDEPS  += $$OUT_PWD/../loggerwidget/libloggerwidget.a

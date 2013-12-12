@@ -4,10 +4,12 @@ SUBDIRS	    = app \
               coreplugin \
               pluginmanager \
               stripchart \
-              deviceproxy
+              deviceproxy \
+              loggerwidget
 
 app.depends += pluginmanager
 app.depends += coreplugin
 app.depends += pipeline
 app.depends += deviceproxy
 app.depends += stripchart
+app.depends += loggerwidget
