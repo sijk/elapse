@@ -1,7 +1,8 @@
 include(../../global.pri)
 
 QT           += core gui widgets dbus
-CONFIG       += qwt
+CONFIG       += qwt qxt
+QXT          += core
 
 TARGET        = elapse
 TEMPLATE      = app

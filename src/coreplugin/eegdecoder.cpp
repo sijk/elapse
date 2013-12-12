@@ -1,9 +1,8 @@
 #include <QDataStream>
+#include <QxtLogger>
 #include "sampletypes.h"
 #include "util/bigendian24.h"
 #include "eegdecoder.h"
-
-#include <QDebug>
 
 
 /*!
@@ -16,7 +15,7 @@ void checkSequenceNumber(const EegSample &sample)
 
     int dropped = sample.seqnum - prev_seqnum - 1;
     if (dropped)
-        qDebug() << "Dropped" << dropped << "samples";
+        qxtLog->debug(dropped, "dropped samples");
 
     prev_seqnum = sample.seqnum;
 }

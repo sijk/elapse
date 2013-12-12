@@ -2,9 +2,9 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include <QxtLogger>
 #include "eegfilesink.h"
 
-#include <QDebug>
 
 EegFileSink::EegFileSink(QObject *parent) :
     QObject(parent),
@@ -15,7 +15,7 @@ EegFileSink::EegFileSink(QObject *parent) :
 EegFileSink::~EegFileSink()
 {
     if (recording) {
-        qDebug() << "Emergency closing eeg file sink!";
+        qxtLog->warning("Emergency closing eeg file sink!");
         stopRecording();
     }
 }
@@ -29,7 +29,7 @@ void EegFileSink::startRecording()
     dataDir.cdUp();
     if (!dataDir.exists("data")) {
         if (!dataDir.mkdir("data")) {
-            qDebug() << "Error creating data directory!";
+            qxtLog->error("Error creating data directory!");
             return;
         }
     }
@@ -43,7 +43,7 @@ void EegFileSink::startRecording()
     Q_ASSERT_X(!file->exists(), "EegFileSink", "file already exists");
 
     if (!file->open(QIODevice::WriteOnly)) {
-        qDebug() << "Error opening" << file->fileName() << "for writing.";
+        qxtLog->error("Error opening", file->fileName(), "for writing.");
         return;
     }
 

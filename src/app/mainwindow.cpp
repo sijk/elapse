@@ -1,6 +1,7 @@
 #include <QStateMachine>
 #include <QMessageBox>
 #include <QSettings>
+#include <QxtLogger>
 #include "elements.h"
 #include "pipeline.h"
 #include "pluginmanager.h"
@@ -9,7 +10,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDebug>
 
 
 /*!
