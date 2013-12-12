@@ -31,6 +31,8 @@ public:
     ~PluginManager();
 
     void setSearchPath(QDir newPath);
+
+public slots:
     void loadPlugins();
 
 signals:

@@ -28,16 +28,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
-
-    ui->eegPlot->setNStrips(8);
-    ui->eegPlot->setNSamples(1000);
-    ui->spacingSlider->setValue(6e3);
+    connect(ui->actionPlugins, SIGNAL(triggered()),
+            pluginManager, SLOT(loadPlugins()));
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
+            SLOT(setupPipeline(ElementSet*)));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
 
-    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
-            SLOT(setupPipeline(ElementSet*)));
+    ui->eegPlot->setNStrips(8);
+    ui->eegPlot->setNSamples(1000);
+    ui->spacingSlider->setValue(6e3);
 
     buildStateMachine();
 
@@ -59,9 +60,10 @@ void MainWindow::onEegSample(const Sample &sample)
     ui->eegPlot->appendData(eeg.values);
 }
 
-void MainWindow::on_actionPlugins_triggered()
+void MainWindow::onVideoSample(const Sample &sample)
 {
-    pluginManager->loadPlugins();
+//    auto frame = static_cast<const VideoSample&>(sample);
+    qxtLog->debug(sample.timestamp);
 }
 
 void MainWindow::showErrorMessage(QString message)
@@ -169,6 +171,8 @@ void MainWindow::setupPipeline(ElementSet *elements)
     elements->sampleDecoders[EEG]->setProperty("gain", 1);
     elements->sampleDecoders[EEG]->setProperty("vref", 4.5e6);
 
-    connect(elements->sampleDecoders[EEG],
-            SIGNAL(newSample(Sample)), SLOT(onEegSample(Sample)));
+    connect(elements->sampleDecoders[EEG], SIGNAL(newSample(Sample)),
+            SLOT(onEegSample(Sample)));
+    connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(Sample)),
+            SLOT(onVideoSample(Sample)));
 }
