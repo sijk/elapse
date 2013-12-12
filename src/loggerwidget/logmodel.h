@@ -6,12 +6,21 @@
 #include <QxtLogger>
 
 
+/*!
+ * \brief The LogItem struct represents a logged message.
+ * \ingroup logging
+ */
+
 struct LogItem {
     QTime time;
     QxtLogger::LogLevel level;
     QString message;
 };
 
+
+/*!
+ * \brief The LogModel class stores LogItems in a table model.
+ */
 
 class LogModel : public QAbstractTableModel
 {

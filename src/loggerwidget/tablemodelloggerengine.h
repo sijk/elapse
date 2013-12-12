@@ -1,5 +1,5 @@
-#ifndef MODELLOGGERENGINE_H
-#define MODELLOGGERENGINE_H
+#ifndef TABLEMODELLOGGERENGINE_H
+#define TABLEMODELLOGGERENGINE_H
 
 #include <QxtLoggerEngine>
 
@@ -7,11 +7,17 @@ class LogModel;
 class QAbstractItemModel;
 
 
-class ModelLoggerEngine : public QxtLoggerEngine
+/*!
+ * \brief The TableModelLoggerEngine class is a QxtLoggerEngine that stores
+ * messages in a table model.
+ * \ingroup logging
+ */
+
+class TableModelLoggerEngine : public QxtLoggerEngine
 {
 public:
-    ModelLoggerEngine();
-    ~ModelLoggerEngine();
+    TableModelLoggerEngine();
+    ~TableModelLoggerEngine();
 
     void initLoggerEngine();
     void killLoggerEngine();
@@ -25,4 +31,4 @@ private:
     LogModel *_model;
 };
 
-#endif // MODELLOGGERENGINE_H
+#endif // TABLEMODELLOGGERENGINE_H

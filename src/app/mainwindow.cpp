@@ -46,7 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
         QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 
     auto logView = new LogView(this);
-    qxtLog->addLoggerEngine("LogView", logView->loggerEngine());
     logView->show();
 }
 

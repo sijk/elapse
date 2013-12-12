@@ -100,3 +100,9 @@
 
     These classes provide miscellaneous GUI widgets.
 */
+
+/*!
+    \defgroup logging Logging
+
+    These classes provide tools for managing log messages.
+*/

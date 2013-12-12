@@ -3,12 +3,19 @@
 
 #include <QDialog>
 
-class ModelLoggerEngine;
+class TableModelLoggerEngine;
 class QxtLoggerEngine;
 
 namespace Ui {
 class LogView;
 }
+
+
+/*!
+ * \brief The LogView class provides a dialog for viewing log messages.
+ * \ingroup widgets
+ * \ingroup logging
+ */
 
 class LogView : public QDialog
 {
@@ -22,7 +29,7 @@ public:
 
 private:
     Ui::LogView *ui;
-    ModelLoggerEngine *engine;
+    TableModelLoggerEngine *engine;
 };
 
 #endif // LOGVIEW_H

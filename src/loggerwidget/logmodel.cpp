@@ -13,6 +13,9 @@ static const QMap<QxtLogger::LogLevel, QBrush> levelColours = {
     { QxtLogger::WriteLevel,    Qt::white       },
 };
 
+/*!
+ * Construct a new LogModel as a child of the given \a parent.
+ */
 LogModel::LogModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
@@ -88,6 +91,9 @@ QVariant LogModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
+/*!
+ * Append the given \a item to the table model.
+ */
 void LogModel::appendItem(const LogItem &item)
 {
     int row = _items.size();

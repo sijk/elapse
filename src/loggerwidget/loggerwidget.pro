@@ -4,8 +4,8 @@ QT      += widgets
 
 SOURCES += logview.cpp \
            logmodel.cpp \
-           modelloggerengine.cpp
+           tablemodelloggerengine.cpp
 HEADERS += logview.h \
            logmodel.h \
-           modelloggerengine.h
+           tablemodelloggerengine.h
 FORMS   += logview.ui
