@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class TableModelLoggerEngine;
+class LogFilterProxyModel;
 class QxtLoggerEngine;
 
 namespace Ui {
@@ -27,9 +28,13 @@ public:
 
     QxtLoggerEngine *loggerEngine();
 
+private slots:
+    void setFilterLevel(int idx);
+
 private:
     Ui::LogView *ui;
     TableModelLoggerEngine *engine;
+    LogFilterProxyModel *proxyModel;
 };
 
 #endif // LOGVIEW_H

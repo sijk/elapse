@@ -1,7 +1,21 @@
+#include <QStringListModel>
 #include <QxtLogger>
 #include "tablemodelloggerengine.h"
+#include "logfilterproxymodel.h"
 #include "logview.h"
 #include "ui_logview.h"
+
+
+static QStringListModel levelNames{{
+    "Trace", "Debug", "Info", "Warning", "Error", "Critical", "Fatal",
+}};
+
+static const QList<QxtLogger::LogLevel> levels{
+    QxtLogger::TraceLevel, QxtLogger::DebugLevel, QxtLogger::InfoLevel,
+    QxtLogger::WarningLevel, QxtLogger::ErrorLevel, QxtLogger::CriticalLevel,
+    QxtLogger::FatalLevel,
+};
+
 
 /*!
  * Construct a new LogView as a child of the given \a parent.
@@ -12,15 +26,24 @@
 LogView::LogView(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LogView),
-    engine(new TableModelLoggerEngine)
+    engine(new TableModelLoggerEngine),
+    proxyModel(new LogFilterProxyModel(this))
 {
     ui->setupUi(this);
-    ui->tableView->setModel(engine->model());
 
-    connect(engine->model(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+    proxyModel->setSourceModel(engine->model());
+    ui->tableView->setModel(proxyModel);
+
+    connect(proxyModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
             ui->tableView, SLOT(resizeColumnsToContents()));
-    connect(engine->model(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+    connect(proxyModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
             ui->tableView, SLOT(scrollToBottom()));
+
+    ui->comboBox->setModel(&levelNames);
+    ui->comboBox->setCurrentIndex(levels.indexOf(proxyModel->minimumLogLevel()));
+
+    connect(ui->comboBox, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(setFilterLevel(int)));
 }
 
 /*!
@@ -38,4 +61,12 @@ LogView::~LogView()
 QxtLoggerEngine *LogView::loggerEngine()
 {
     return engine;
+}
+
+/*!
+ * Set the LogFilterProxyModel::minimumLogLevel() to the \a idx'th level.
+ */
+void LogView::setFilterLevel(int idx)
+{
+    proxyModel->setMinimumLogLevel(levels[idx]);
 }

@@ -18,6 +18,9 @@ struct LogItem {
 };
 
 
+#define LOG_LEVEL_ROLE  Qt::UserRole
+
+
 /*!
  * \brief The LogModel class stores LogItems in a table model.
  */

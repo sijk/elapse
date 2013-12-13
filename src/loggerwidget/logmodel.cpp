@@ -6,7 +6,7 @@ static const QMap<QxtLogger::LogLevel, QBrush> levelColours = {
     { QxtLogger::TraceLevel,    Qt::gray        },
     { QxtLogger::DebugLevel,    Qt::lightGray   },
     { QxtLogger::InfoLevel,     Qt::white       },
-    { QxtLogger::WarningLevel,  Qt::darkYellow  },
+    { QxtLogger::WarningLevel,  Qt::yellow      },
     { QxtLogger::ErrorLevel,    Qt::red         },
     { QxtLogger::CriticalLevel, Qt::magenta     },
     { QxtLogger::FatalLevel,    Qt::darkMagenta },
@@ -53,6 +53,9 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         case 2:
             return item.message;
         }
+
+    case LOG_LEVEL_ROLE:
+        return item.level;
 
     case Qt::BackgroundRole:
         switch (index.column()) {
