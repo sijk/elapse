@@ -20,11 +20,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
-    device(new DeviceProxy(this))
+    device(new DeviceProxy(this)),
+    logView(new LogView(this))
 {
     ui->setupUi(this);
 
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
+    connect(ui->actionLogView, SIGNAL(triggered(bool)),
+            logView, SLOT(setVisible(bool)));
 
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
@@ -42,11 +45,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     buildStateMachine();
 
-    if (QSettings().value("auto-connect", true).toBool())
+    QSettings settings;
+
+    if (settings.value("auto-connect", true).toBool())
         QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 
-    auto logView = new LogView(this);
-    logView->show();
+    if (settings.value("show-log", false).toBool())
+        logView->show();
 }
 
 /*!

@@ -200,7 +200,14 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionLogView"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menu_View"/>
   </widget>
   <action name="actionQuit">
    <property name="icon">
@@ -227,13 +234,26 @@
   </action>
   <action name="actionConnect">
    <property name="icon">
-    <iconset theme="network-wireless"/>
+    <iconset theme="network-wireless">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>&amp;Connect</string>
    </property>
    <property name="toolTip">
     <string>Connect to the device</string>
+   </property>
+  </action>
+  <action name="actionLogView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Message &amp;Log</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the message log</string>
    </property>
   </action>
  </widget>

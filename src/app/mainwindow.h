@@ -8,7 +8,7 @@ class PluginManager;
 class ElementSet;
 class Sample;
 class DeviceProxy;
-class Spinner;
+class LogView;
 class QStateMachine;
 
 namespace Ui {
@@ -51,6 +51,7 @@ private:
     PluginManager *pluginManager;
     Pipeline *pipeline;
     DeviceProxy *device;
+    LogView *logView;
 };
 
 #endif // MAINWINDOW_H
