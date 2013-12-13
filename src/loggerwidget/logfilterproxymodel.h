@@ -9,7 +9,8 @@
  * \brief The LogFilterProxyModel class filters the LogModel by log level.
  *
  * All messages in the source model with level less than minimumLogLevel()
- * will be hidden. The default minimum log level is \c InfoLevel.
+ * will be hidden. The default minimum log level is \c InfoLevel. Changes to
+ * the minimum log level are persistent between application restarts.
  *
  * \ingroup logging
  */
