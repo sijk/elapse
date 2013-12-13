@@ -47,11 +47,11 @@ private:
     void buildStateMachine();
 
     Ui::ElapseClient *ui;
+    LogView *logView;
     QStateMachine *machine;
     PluginManager *pluginManager;
     Pipeline *pipeline;
     DeviceProxy *device;
-    LogView *logView;
 };
 
 #endif // ELAPSECLIENT_H

@@ -18,10 +18,10 @@
 ElapseClient::ElapseClient(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ElapseClient),
+    logView(new LogView(this)),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
-    device(new DeviceProxy(this)),
-    logView(new LogView(this))
+    device(new DeviceProxy(this))
 {
     ui->setupUi(this);
 
