@@ -28,6 +28,17 @@
     ElementSet *-- "N" FeatureExtractor
     ElementSet *-- "1" Classifier
 
+    DataSource ..> QByteArray : produces
+    SampleDecoder <.. QByteArray
+
+    SampleDecoder ..> Sample : decodes
+    FeatureExtractor <.. Sample
+
+    FeatureExtractor ..> FeatureVector : extracts
+    Classifier <.. FeatureVector
+
+    Classifier ..> CognitiveState : classifies
+
     @enduml
 
     \section build-install Building & Installing
