@@ -3,14 +3,13 @@
 #include <QJsonObject>
 #include <QPluginLoader>
 #include <QStandardItemModel>
+#include <QxtLogger>
 #include "plugin.h"
 #include "elements.h"
 #include "pluginfilterproxymodel.h"
 #include "pluginmanager_p.h"
 #include "pluginmanager.h"
 #include "ui_pluginmanager.h"
-
-#include <QDebug>
 
 
 /*!
@@ -161,7 +160,7 @@ void PluginManager::setSearchPath(QDir newPath)
                 pluginItem->appendRow(classItem);
             }
         } else {
-            qDebug() << loader.errorString();
+            qxtLog->error(loader.errorString());
         }
 
         loader.unload();

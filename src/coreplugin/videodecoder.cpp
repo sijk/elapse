@@ -1,11 +1,10 @@
 #include <QQueue>
+#include <QxtLogger>
 #include <gst/gst.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/app/gstappsink.h>
 #include "sampletypes.h"
 #include "videodecoder.h"
-
-#include <QDebug>
 
 
 #define SRC_CAPS \
@@ -78,7 +77,7 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     GError *gerror = nullptr;
     pipeline = gst_parse_launch(PIPELINE, &gerror);
     if (gerror) {
-        qDebug() << gerror->message;
+        qxtLog->error(gerror->message);
         g_clear_error(&gerror);
         if (pipeline)
             gst_object_unref(pipeline);
@@ -237,7 +236,7 @@ void VideoDecoderPrivate::onVideoError(GstBus *bus, GstMessage *msg,
     QString message("VideoDecoder error from %1: %2");
     message = message.arg(GST_OBJECT_NAME(msg->src)).arg(gerror->message);
 //    emit q->error(message);
-    qDebug() << message;
+    qxtLog->error(message);
 
     g_clear_error(&gerror);
     g_free(debugInfo);

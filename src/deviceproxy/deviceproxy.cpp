@@ -1,6 +1,7 @@
 #include <QDBusConnection>
 #include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QxtLogger>
 #include "deviceproxy.h"
 
 #define DEFAULT_HOST    "overo.local"
@@ -58,7 +59,7 @@ void DeviceProxy::connectInBackground()
     // Connect to the remote session bus
     auto connection = QDBusConnection::connectToBus(address, "elapse-bus");
     if (!connection.isConnected()) {
-        qDebug() << "Connect:" << connection.lastError().message();
+        qxtLog->error("Connect:", connection.lastError().message());
         emit error("Could not connect to the device.");
         return;
     }
@@ -69,8 +70,8 @@ void DeviceProxy::connectInBackground()
     auto reply = _device->isAccessible();
     reply.waitForFinished();
     if (reply.isError()) {
-        qDebug() << "Server:" << reply.error().message();
-        qDebug() << "Proxy:" << _device->lastError().message();
+        qxtLog->error("Server:", reply.error().message());
+        qxtLog->error("Proxy:", _device->lastError().message());
         emit error("The server is not running on the device.");
         return;
     }

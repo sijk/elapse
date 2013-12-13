@@ -1,15 +1,15 @@
 #include <QStateMachine>
 #include <QMessageBox>
 #include <QSettings>
+#include <QxtLogger>
 #include "elements.h"
 #include "pipeline.h"
 #include "pluginmanager.h"
 #include "deviceproxy.h"
 #include "stripchart.h"
+#include "logview.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-#include <QDebug>
 
 
 /*!
@@ -20,29 +20,38 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
-    device(new DeviceProxy(this))
+    device(new DeviceProxy(this)),
+    logView(new LogView(this))
 {
     ui->setupUi(this);
 
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
+    connect(ui->actionLogView, SIGNAL(triggered(bool)),
+            logView, SLOT(setVisible(bool)));
 
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
+    connect(ui->actionPlugins, SIGNAL(triggered()),
+            pluginManager, SLOT(loadPlugins()));
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
+            SLOT(setupPipeline(ElementSet*)));
+
+    connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
+    connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
 
     ui->eegPlot->setNStrips(8);
     ui->eegPlot->setNSamples(1000);
     ui->spacingSlider->setValue(6e3);
 
-    connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
-    connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
-
-    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
-            SLOT(setupPipeline(ElementSet*)));
-
     buildStateMachine();
 
-    if (QSettings().value("auto-connect", true).toBool())
+    QSettings settings;
+
+    if (settings.value("auto-connect", true).toBool())
         QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
+
+    if (settings.value("show-log", false).toBool())
+        logView->show();
 }
 
 /*!
@@ -59,9 +68,10 @@ void MainWindow::onEegSample(const Sample &sample)
     ui->eegPlot->appendData(eeg.values);
 }
 
-void MainWindow::on_actionPlugins_triggered()
+void MainWindow::onVideoSample(const Sample &sample)
 {
-    pluginManager->loadPlugins();
+//    auto frame = static_cast<const VideoSample&>(sample);
+    qxtLog->debug(sample.timestamp);
 }
 
 void MainWindow::showErrorMessage(QString message)
@@ -169,6 +179,8 @@ void MainWindow::setupPipeline(ElementSet *elements)
     elements->sampleDecoders[EEG]->setProperty("gain", 1);
     elements->sampleDecoders[EEG]->setProperty("vref", 4.5e6);
 
-    connect(elements->sampleDecoders[EEG],
-            SIGNAL(newSample(Sample)), SLOT(onEegSample(Sample)));
+    connect(elements->sampleDecoders[EEG], SIGNAL(newSample(Sample)),
+            SLOT(onEegSample(Sample)));
+    connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(Sample)),
+            SLOT(onVideoSample(Sample)));
 }

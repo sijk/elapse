@@ -8,7 +8,7 @@ class PluginManager;
 class ElementSet;
 class Sample;
 class DeviceProxy;
-class Spinner;
+class LogView;
 class QStateMachine;
 
 namespace Ui {
@@ -39,11 +39,9 @@ public:
 
 private slots:
     void onEegSample(const Sample &sample);
-
-    void on_actionPlugins_triggered();
-    void setupPipeline(ElementSet *elements);
-
+    void onVideoSample(const Sample &sample);
     void showErrorMessage(QString message);
+    void setupPipeline(ElementSet *elements);
 
 private:
     void buildStateMachine();
@@ -53,6 +51,7 @@ private:
     PluginManager *pluginManager;
     Pipeline *pipeline;
     DeviceProxy *device;
+    LogView *logView;
 };
 
 #endif // MAINWINDOW_H
