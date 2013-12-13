@@ -2,10 +2,10 @@
 #define ELAPSECLIENT_H
 
 #include <QMainWindow>
+#include "elements.h"
 
 class Pipeline;
 class PluginManager;
-class ElementSet;
 class Sample;
 class DeviceProxy;
 class LogView;
@@ -41,7 +41,7 @@ private slots:
     void onEegSample(const Sample &sample);
     void onVideoSample(const Sample &sample);
     void showErrorMessage(QString message);
-    void setupPipeline(ElementSet *elements);
+    void setupPipeline(ElementSetPtr elements);
 
 private:
     void buildStateMachine();

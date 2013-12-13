@@ -2,7 +2,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QxtLogger>
-#include "elements.h"
 #include "pipeline.h"
 #include "pluginmanager.h"
 #include "deviceproxy.h"
@@ -33,8 +32,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
             ui->eegPlot, SLOT(setSpacing(int)));
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(loadPlugins()));
-    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSet*)),
-            SLOT(setupPipeline(ElementSet*)));
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+            SLOT(setupPipeline(ElementSetPtr)));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -170,7 +169,7 @@ void ElapseClient::buildStateMachine()
     machine->start();
 }
 
-void ElapseClient::setupPipeline(ElementSet *elements)
+void ElapseClient::setupPipeline(ElementSetPtr elements)
 {
     Q_ASSERT(elements);
     pipeline->setElements(elements);

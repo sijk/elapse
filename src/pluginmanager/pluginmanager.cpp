@@ -5,7 +5,6 @@
 #include <QStandardItemModel>
 #include <QxtLogger>
 #include "plugin.h"
-#include "elements.h"
 #include "pluginfilterproxymodel.h"
 #include "pluginmanager_p.h"
 #include "pluginmanager.h"
@@ -219,13 +218,13 @@ ElementType loadSelected(QTreeView *tree)
  * Called when the PluginManager window is closed with OK. Create a new
  * ElementSet and load the selected classes from plugins to populate it.
  *
- * Ownership of the ElementSet is transferred to the receiver of the
- * pluginsLoaded() signal. This means that in order to prevent memory leaks
- * there should be exactly one receiver connected to the pluginsLoaded() signal.
+ * The lifetime of the created ElementSet is managed automatically by virtue of
+ * using a QSharedPointer to refer to it. As soon as the last reference to the
+ * ElementSet is dropped it will be deleted automatically.
  */
 void PluginManager::loadSelectedElementsFromPlugins()
 {
-    auto *elements = new ElementSet;
+    auto elements = ElementSetPtr::create();
 
     elements->dataSource               = loadSelected<DataSource*>(ui->treeSource);
     elements->sampleDecoders[EEG]      = loadSelected<SampleDecoder*>(ui->treeDecoderEeg);
@@ -250,12 +249,12 @@ void PluginManager::loadSelectedElementsFromPlugins()
 }
 
 /*!
- * \fn PluginManager::pluginsLoaded(ElementSet*)
+ * \fn PluginManager::pluginsLoaded(ElementSetPtr)
  * Emitted when an ElementSet has been loaded.
  *
- * Ownership of the ElementSet is transferred to the receiver of this signal.
- * This means that in order to prevent memory leaks there should be exactly one
- * receiver connected to this signal.
+ * The lifetime of the created ElementSet is managed automatically by virtue of
+ * using a QSharedPointer to refer to it. As soon as the last reference to the
+ * ElementSet is dropped it will be deleted automatically.
  */
 
 /*!

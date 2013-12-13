@@ -2,8 +2,7 @@
 #define PIPELINE_H
 
 #include <QObject>
-
-class ElementSet;
+#include "elements.h"
 
 
 /*!
@@ -21,10 +20,9 @@ class Pipeline : public QObject
     Q_OBJECT
 public:
     explicit Pipeline(QObject *parent = nullptr);
-    ~Pipeline();
 
-    ElementSet *elements() const;
-    void setElements(ElementSet *newElements);
+    ElementSetPtr elements() const;
+    void setElements(ElementSetPtr newElements);
 
 signals:
     void started();
@@ -36,7 +34,7 @@ public slots:
     void stop();
 
 private:
-    ElementSet *_elements;
+    ElementSetPtr _elements;
 };
 
 

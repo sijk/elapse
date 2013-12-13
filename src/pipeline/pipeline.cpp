@@ -1,5 +1,4 @@
 #include <QVariant>
-#include "elements.h"
 #include "pipeline.h"
 
 /*!
@@ -73,37 +72,26 @@ Pipeline::Pipeline(QObject *parent) :
 }
 
 /*!
- * Destroy this Pipeline and its ElementSet.
- */
-Pipeline::~Pipeline()
-{
-    if (_elements)
-        delete _elements;
-}
-
-/*!
  * \return the Pipeline's ElementSet.
  */
-ElementSet *Pipeline::elements() const
+ElementSetPtr Pipeline::elements() const
 {
     return _elements;
 }
 
 /*!
- * Provide a new set of elements to the Pipeline. The Pipeline takes ownership
- * of the given ElementSet and will destroy it when it is no longer needed.
+ * Provide a new set of elements to the Pipeline.
  *
  * This method also sets up the connections between the elements and propagates
  * signals from elements to the Pipeline.
  *
- * Calling setElements() when the Pipeline already has an ElementSet will cause
- * the existing set to be destroyed and replaced by the new one.
+ * ElementSet lifetimes are handled automatically, so if you call setElements()
+ * when the Pipeline already has an ElementSet the old set will be released
+ * (and destroyed if nothing else holds a reference to it) and replaced by the
+ * new set.
  */
-void Pipeline::setElements(ElementSet *newElements)
+void Pipeline::setElements(ElementSetPtr newElements)
 {
-    if (_elements)
-        delete _elements;
-
     _elements = newElements;
 
     // Connect elements

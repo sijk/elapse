@@ -1,6 +1,7 @@
 #ifndef ELEMENTS_H
 #define ELEMENTS_H
 
+#include <QSharedPointer>
 #include "sampletypes.h"
 #include "elements/datasource.h"
 #include "elements/decoder.h"
@@ -41,5 +42,8 @@ inline ElementSet::~ElementSet() {
     }
     delete classifier;
 }
+
+
+typedef QSharedPointer<ElementSet> ElementSetPtr;
 
 #endif // ELEMENTS_H

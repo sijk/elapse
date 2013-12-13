@@ -3,10 +3,10 @@
 
 #include <QDialog>
 #include <QDir>
+#include "elements.h"
 
 class QStandardItem;
 class QStandardItemModel;
-class ElementSet;
 
 namespace Ui {
 class PluginManager;
@@ -36,7 +36,7 @@ public slots:
     void loadPlugins();
 
 signals:
-    void pluginsLoaded(ElementSet* elements);
+    void pluginsLoaded(ElementSetPtr elements);
 
 private slots:
     void loadSelectedElementsFromPlugins();
