@@ -16,9 +16,9 @@
 
     @startuml{structure.png}
 
-    MainWindow *-- DeviceProxy
-    MainWindow *-- Pipeline
-    MainWindow *-- PluginManager
+    ElapseClient *-- DeviceProxy
+    ElapseClient *-- Pipeline
+    ElapseClient *-- PluginManager
 
     Pipeline o-- ElementSet
     PluginManager ..> ElementSet : creates
@@ -64,8 +64,8 @@
 
     These classes relate to the core Elapse application.
 
-    For a detailed specification of the MainWindow's behaviour, see
-    \ref mainwindow-fsm.
+    For a detailed specification of the ElapseClient's behaviour, see
+    \ref elapseclient-fsm.
 */
 
 /*!

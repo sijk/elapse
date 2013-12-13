@@ -1,5 +1,5 @@
 #include <QApplication>
-#include "mainwindow.h"
+#include "elapseclient.h"
 
 int main(int argc, char *argv[])
 {
@@ -7,8 +7,8 @@ int main(int argc, char *argv[])
     a.setOrganizationName("NeuroTech");
     a.setApplicationName("Elapse client");
 
-    MainWindow window;
-    window.show();
+    ElapseClient elapseClient;
+    elapseClient.show();
 
     return a.exec();
 }

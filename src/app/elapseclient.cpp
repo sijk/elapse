@@ -8,16 +8,16 @@
 #include "deviceproxy.h"
 #include "stripchart.h"
 #include "logview.h"
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "elapseclient.h"
+#include "ui_elapseclient.h"
 
 
 /*!
- * Construct a MainWindow as a child of the given \a parent widget.
+ * Construct a ElapseClient as a child of the given \a parent widget.
  */
-MainWindow::MainWindow(QWidget *parent) :
+ElapseClient::ElapseClient(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
+    ui(new Ui::ElapseClient),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
     device(new DeviceProxy(this)),
@@ -55,37 +55,37 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 /*!
- * Destroy this MainWindow.
+ * Destroy this ElapseClient.
  */
-MainWindow::~MainWindow()
+ElapseClient::~ElapseClient()
 {
     delete ui;
 }
 
-void MainWindow::onEegSample(const Sample &sample)
+void ElapseClient::onEegSample(const Sample &sample)
 {
     auto eeg = static_cast<const EegSample&>(sample);
     ui->eegPlot->appendData(eeg.values);
 }
 
-void MainWindow::onVideoSample(const Sample &sample)
+void ElapseClient::onVideoSample(const Sample &sample)
 {
 //    auto frame = static_cast<const VideoSample&>(sample);
     qxtLog->debug(sample.timestamp);
 }
 
-void MainWindow::showErrorMessage(QString message)
+void ElapseClient::showErrorMessage(QString message)
 {
     QMessageBox::warning(this, "Error", message);
 }
 
 /*!
- * \page mainwindow-fsm MainWindow State Machine
+ * \page elapseclient-fsm ElapseClient State Machine
  *
- * The behaviour of the MainWindow is driven by the following hierarchical
+ * The behaviour of the ElapseClient is driven by the following hierarchical
  * state machine.
  *
- * @startuml{mainwindow-fsm.png}
+ * @startuml{elapseclient-fsm.png}
  *
  * [*] -> Disconnected
  * Disconnected : enter / ui.showPage(0)
@@ -118,7 +118,7 @@ void MainWindow::showErrorMessage(QString message)
  *
  * @enduml
  */
-void MainWindow::buildStateMachine()
+void ElapseClient::buildStateMachine()
 {
     machine = new QStateMachine(this);
     machine->setGlobalRestorePolicy(QState::RestoreProperties);
@@ -170,7 +170,7 @@ void MainWindow::buildStateMachine()
     machine->start();
 }
 
-void MainWindow::setupPipeline(ElementSet *elements)
+void ElapseClient::setupPipeline(ElementSet *elements)
 {
     Q_ASSERT(elements);
     pipeline->setElements(elements);

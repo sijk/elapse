@@ -10,14 +10,14 @@ TEMPLATE      = app
 DESTDIR       = ../../
 
 SOURCES      += main.cpp \
-                mainwindow.cpp \
+                elapseclient.cpp \
                 spinner.cpp \
                 eegfilesink.cpp
-HEADERS      += mainwindow.h \
+HEADERS      += elapseclient.h \
                 spinner.h \
                 eegfilesink.h \
                 elements.h
-FORMS        += mainwindow.ui
+FORMS        += elapseclient.ui
 RESOURCES    += ../../elapse.qrc
 
 LIBS            += -L$$OUT_PWD/../pipeline/ -lpipeline

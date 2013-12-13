@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef ELAPSECLIENT_H
+#define ELAPSECLIENT_H
 
 #include <QMainWindow>
 
@@ -12,12 +12,12 @@ class LogView;
 class QStateMachine;
 
 namespace Ui {
-class MainWindow;
+class ElapseClient;
 }
 
 
 /*!
- * \brief The MainWindow class provides the main window of the Elapse
+ * \brief The ElapseClient class provides the main window of the Elapse
  * application.
  *
  * It contains a Pipeline, a PluginManager, and a DeviceProxy which provide all
@@ -25,17 +25,17 @@ class MainWindow;
  * interacting with these objects and displaying the state of the signal
  * processing elements.
  *
- * \see \ref mainwindow-fsm
+ * \see \ref elapseclient-fsm
  * \ingroup app
  */
 
-class MainWindow : public QMainWindow
+class ElapseClient : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit ElapseClient(QWidget *parent = nullptr);
+    ~ElapseClient();
 
 private slots:
     void onEegSample(const Sample &sample);
@@ -46,7 +46,7 @@ private slots:
 private:
     void buildStateMachine();
 
-    Ui::MainWindow *ui;
+    Ui::ElapseClient *ui;
     QStateMachine *machine;
     PluginManager *pluginManager;
     Pipeline *pipeline;
@@ -54,4 +54,4 @@ private:
     LogView *logView;
 };
 
-#endif // MAINWINDOW_H
+#endif // ELAPSECLIENT_H

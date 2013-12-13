@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>ElapseClient</class>
+ <widget class="QMainWindow" name="ElapseClient">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -276,7 +276,7 @@
   <connection>
    <sender>actionQuit</sender>
    <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
+   <receiver>ElapseClient</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
