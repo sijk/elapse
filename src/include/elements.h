@@ -44,6 +44,12 @@ inline ElementSet::~ElementSet() {
 }
 
 
+/*!
+ * A reference-counted pointer to an ElementSet. Automatically deletes the
+ * ElementSet when nothing refers to it.
+ * \ingroup signal-pipeline
+ */
 typedef QSharedPointer<ElementSet> ElementSetPtr;
+
 
 #endif // ELEMENTS_H
