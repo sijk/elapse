@@ -7,6 +7,7 @@
 
 class QStandardItem;
 class QStandardItemModel;
+class QTreeView;
 
 namespace Ui {
 class PluginManager;
@@ -34,12 +35,13 @@ public:
 
 public slots:
     void loadPlugins();
+    bool loadPluginsFromSettings();
 
 signals:
     void pluginsLoaded(ElementSetPtr elements);
 
 private slots:
-    void loadSelectedElementsFromPlugins();
+    void loadSelectedElements();
 
 private:
     static QStandardItem *createElementItem(const QString &name);
@@ -50,6 +52,19 @@ private:
     static QStandardItem *childWithText(const QStandardItem *item,
                                         const QString &name);
     void attachViews();
+
+    void loadElementSetFromSelection(ElementSetPtr elements);
+    void loadElementSetFromSettings(ElementSetPtr elements);
+
+    typedef void(PluginManager::*ElementLoader)(ElementSetPtr);
+    bool doLoadElements(ElementLoader loader);
+
+    struct ClassInfo;
+    ClassInfo getSelectedElement(QTreeView *tree);
+    ClassInfo getSavedElement(QString elementName);
+
+    void saveSelectedElements();
+    void selectSavedElements();
 
     QDir path;
     QStandardItemModel *model;

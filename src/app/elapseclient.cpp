@@ -45,12 +45,18 @@ ElapseClient::ElapseClient(QWidget *parent) :
     buildStateMachine();
 
     QSettings settings;
+    qxtLog->info("Loading settings from", settings.fileName());
 
     if (settings.value("auto-connect", true).toBool())
         QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 
     if (settings.value("show-log", false).toBool())
         logView->show();
+
+    if (!pluginManager->loadPluginsFromSettings()) {
+        qxtLog->warning("Failed to load the saved element set");
+        showErrorMessage("Could not load the saved element set.");
+    }
 }
 
 /*!

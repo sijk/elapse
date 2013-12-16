@@ -11,6 +11,22 @@
 #include "ui_pluginmanager.h"
 
 
+template<class ElementType>
+void loadElement(ElementType &element, PluginManager::ClassInfo info);
+
+
+namespace {
+const QString pathSetting("elements/%1/plugin-path");
+const QString classSetting("elements/%1/class-name");
+}
+
+
+struct PluginManager::ClassInfo {
+    QString pluginPath;
+    QString className;
+};
+
+
 /*!
  * Construct a PluginManager as a child of the given \a parent.
  *
@@ -23,8 +39,9 @@ PluginManager::PluginManager(QWidget *parent) :
     ui(new Ui::PluginManager)
 {
     ui->setupUi(this);
-    setSearchPath(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"));
-    connect(this, SIGNAL(accepted()), SLOT(loadSelectedElementsFromPlugins()));
+    QString defaultPath(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"));
+    setSearchPath(QSettings().value("plugins-path", defaultPath).toString());
+    connect(this, SIGNAL(accepted()), SLOT(loadSelectedElements()));
 }
 
 /*!
@@ -122,8 +139,13 @@ PluginManager::~PluginManager()
  */
 void PluginManager::setSearchPath(QDir newPath)
 {
-    if (newPath == path)
+    qxtLog->info("Searching for plugins in", newPath.absolutePath());
+
+    if (newPath == path) {
+        qxtLog->debug("PluginManager search path was set to the current value. "
+                      "Not doing anything...");
         return;
+    }
 
     path = newPath;
     model->clear();
@@ -178,62 +200,50 @@ void PluginManager::loadPlugins()
 }
 
 /*!
- * Helper function for loadSelectedElementsFromPlugins(). Load the plugin
- * containing the class that is selected in the given \a tree view and
- * return an instance of that class.
- *
- * If the plugin cannot be loaded, the class cannot be instantiated, or casting
- * the instance to the requested ElementType fails, a null pointer is returned.
+ * Called when the PluginManager window is closed with OK. Create a new
+ * ElementSet and load the selected classes from plugins to populate it.
  */
-template<class ElementType>
-ElementType loadSelected(QTreeView *tree)
+void PluginManager::loadSelectedElements()
 {
-    QModelIndexList idxs = tree->selectionModel()->selection().indexes();
-    Q_ASSERT(idxs.size() == 1);
-    QModelIndex index = idxs.at(0);
-
-    QString className(index.data().toString());
-    QString pluginPath(index.parent().data(FILEPATH_ROLE).toString());
-
-    QPluginLoader loader(pluginPath);
-    Plugin *plugin = static_cast<Plugin*>(loader.instance());
-
-    if (!plugin)
-        return nullptr;
-
-    foreach (const QMetaObject &obj, plugin->classes()) {
-        if (obj.className() == className) {
-            QObject *instance = obj.newInstance();
-            ElementType element = qobject_cast<ElementType>(instance);
-            if (instance && !element)
-                delete instance;
-            return element;
-        }
-    }
-
-    return nullptr;
+    qxtLog->info("Loading the selected set of elements");
+    if (doLoadElements(&PluginManager::loadElementSetFromSelection))
+        saveSelectedElements();
 }
 
 /*!
- * Called when the PluginManager window is closed with OK. Create a new
- * ElementSet and load the selected classes from plugins to populate it.
+ * Create a new element set and populate it with the classes that are saved in
+ * the settings file.
  *
- * The lifetime of the created ElementSet is managed automatically by virtue of
- * using a QSharedPointer to refer to it. As soon as the last reference to the
- * ElementSet is dropped it will be deleted automatically.
+ * \return \c true if either all necessary plugins were loaded successfully or
+ * if there were no elements saved in the settings file.
+ * Returns \c false if there was an error loading plugins.
  */
-void PluginManager::loadSelectedElementsFromPlugins()
+bool PluginManager::loadPluginsFromSettings()
+{
+    if (!QSettings().childGroups().contains("elements")) {
+        qxtLog->debug("No saved elements to load");
+        return true;
+    }
+
+    qxtLog->info("Loading the saved set of elements");
+    bool success = doLoadElements(&PluginManager::loadElementSetFromSettings);
+
+    if (success)
+        selectSavedElements();
+
+    return success;
+}
+
+/*!
+ * Load elements with the given \a loader and check whether it succeeded.
+ * If so, emit the pluginsLoaded() signal.
+ */
+bool PluginManager::doLoadElements(ElementLoader loader)
 {
     auto elements = ElementSetPtr::create();
 
-    elements->dataSource               = loadSelected<DataSource*>(ui->treeSource);
-    elements->sampleDecoders[EEG]      = loadSelected<SampleDecoder*>(ui->treeDecoderEeg);
-    elements->sampleDecoders[VIDEO]    = loadSelected<SampleDecoder*>(ui->treeDecoderVideo);
-    elements->sampleDecoders[IMU]      = loadSelected<SampleDecoder*>(ui->treeDecoderImu);
-    elements->featureExtractors[EEG]   = loadSelected<FeatureExtractor*>(ui->treeFeatEeg);
-    elements->featureExtractors[VIDEO] = loadSelected<FeatureExtractor*>(ui->treeFeatVideo);
-    elements->featureExtractors[IMU]   = loadSelected<FeatureExtractor*>(ui->treeFeatImu);
-    elements->classifier               = loadSelected<Classifier*>(ui->treeClassifier);
+    // Populate the ElementSet
+    (this->*loader)(elements);
 
     if (!elements->dataSource ||
         !elements->sampleDecoders[EEG] ||
@@ -242,10 +252,14 @@ void PluginManager::loadSelectedElementsFromPlugins()
         !elements->featureExtractors[EEG] ||
         !elements->featureExtractors[VIDEO] ||
         !elements->featureExtractors[IMU] ||
-        !elements->classifier)
-        return;
+        !elements->classifier) {
+        qxtLog->warning("Failed to load all elements from plugins.");
+        return false;
+    }
 
+    qxtLog->info("Successfully loaded all elements from plugins.");
     emit pluginsLoaded(elements);
+    return true;
 }
 
 /*!
@@ -256,6 +270,183 @@ void PluginManager::loadSelectedElementsFromPlugins()
  * using a QSharedPointer to refer to it. As soon as the last reference to the
  * ElementSet is dropped it will be deleted automatically.
  */
+
+/*!
+ * Populate the given \a elements with the classes selected in the tree-views.
+ *
+ * \see loadElement()
+ */
+void PluginManager::loadElementSetFromSelection(ElementSetPtr elements)
+{
+    loadElement(elements->dataSource,               getSelectedElement(ui->treeSource));
+    loadElement(elements->sampleDecoders[EEG],      getSelectedElement(ui->treeDecoderEeg));
+    loadElement(elements->sampleDecoders[VIDEO],    getSelectedElement(ui->treeDecoderVideo));
+    loadElement(elements->sampleDecoders[IMU],      getSelectedElement(ui->treeDecoderImu));
+    loadElement(elements->featureExtractors[EEG],   getSelectedElement(ui->treeFeatEeg));
+    loadElement(elements->featureExtractors[VIDEO], getSelectedElement(ui->treeFeatVideo));
+    loadElement(elements->featureExtractors[IMU],   getSelectedElement(ui->treeFeatImu));
+    loadElement(elements->classifier,               getSelectedElement(ui->treeClassifier));
+}
+
+/*!
+ * Populate the given \a elements with the classes saved in the settings file.
+ *
+ * \see loadElement()
+ */
+void PluginManager::loadElementSetFromSettings(ElementSetPtr elements)
+{
+    loadElement(elements->dataSource,               getSavedElement("data-source"));
+    loadElement(elements->sampleDecoders[EEG],      getSavedElement("eeg-decoder"));
+    loadElement(elements->sampleDecoders[VIDEO],    getSavedElement("video-decoder"));
+    loadElement(elements->sampleDecoders[IMU],      getSavedElement("imu-decoder"));
+    loadElement(elements->featureExtractors[EEG],   getSavedElement("eeg-featex"));
+    loadElement(elements->featureExtractors[VIDEO], getSavedElement("video-featex"));
+    loadElement(elements->featureExtractors[IMU],   getSavedElement("imu-featex"));
+    loadElement(elements->classifier,               getSavedElement("classifier"));
+}
+
+/*!
+ * Load the plugin from \a info.pluginPath and instantiate an object of class
+ * \a info.className. If the plugin cannot be loaded, the class cannot be
+ * instantiated, or casting the instance to the requested ElementType fails,
+ * \a element will be \c NULL. Otherwise \a element will hold the newly-created
+ * element.
+ */
+template<class ElementType>
+void loadElement(ElementType &element, PluginManager::ClassInfo info)
+{
+    Q_STATIC_ASSERT(std::is_pointer<ElementType>::value);
+
+    element = nullptr;
+
+    if (info.pluginPath.isEmpty() || info.className.isEmpty())
+        return;
+
+    QPluginLoader loader(info.pluginPath);
+    Plugin *plugin = static_cast<Plugin*>(loader.instance());
+
+    if (!plugin) {
+        qxtLog->debug("Could not load plugin", info.pluginPath);
+        return;
+    }
+
+    foreach (const QMetaObject &obj, plugin->classes()) {
+        if (obj.className() == info.className) {
+            QObject *instance = obj.newInstance();
+            element = qobject_cast<ElementType>(instance);
+            if (instance && !element)
+                delete instance;
+            break;
+        }
+    }
+
+    qxtLog->trace(element ? "Loaded" : "Failed to load", info.className,
+                  "from", QFileInfo(info.pluginPath).fileName());
+}
+
+/*!
+ * \return the details of the class that is selected in the given \a tree view.
+ */
+PluginManager::ClassInfo PluginManager::getSelectedElement(QTreeView *tree)
+{
+    ClassInfo info;
+
+    QModelIndexList idxs = tree->selectionModel()->selection().indexes();
+    Q_ASSERT(idxs.size() == 1);
+    QModelIndex index = idxs.at(0);
+
+    info.className = index.data().toString();
+    info.pluginPath = index.parent().data(FILEPATH_ROLE).toString();
+
+    return info;
+}
+
+/*!
+ * \return the details of the saved class with the given \c elementName.
+ */
+PluginManager::ClassInfo PluginManager::getSavedElement(QString elementName)
+{
+    ClassInfo info;
+
+    QSettings settings;
+    info.pluginPath = settings.value(pathSetting.arg(elementName)).toString();
+    info.className = settings.value(classSetting.arg(elementName)).toString();
+
+    return info;
+}
+
+/*!
+ * Inspect the tree views and save the details of the selected elements to
+ * the settings file.
+ */
+void PluginManager::saveSelectedElements()
+{
+    QSettings settings;
+
+    auto saveElement = [&](QTreeView *tree, const QString &name) {
+        ClassInfo info = getSelectedElement(tree);
+        settings.setValue(pathSetting.arg(name), info.pluginPath);
+        settings.setValue(classSetting.arg(name), info.className);
+    };
+
+    saveElement(ui->treeSource,       "data-source");
+    saveElement(ui->treeDecoderEeg,   "eeg-decoder");
+    saveElement(ui->treeDecoderVideo, "video-decoder");
+    saveElement(ui->treeDecoderImu,   "imu-decoder");
+    saveElement(ui->treeFeatEeg,      "eeg-featex");
+    saveElement(ui->treeFeatVideo,    "video-featex");
+    saveElement(ui->treeFeatImu,      "imu-featex");
+    saveElement(ui->treeClassifier,   "classifier");
+
+    qxtLog->info("Saved current element selection");
+}
+
+/*!
+ * Set the selections in the tree views to match the elements that are saved
+ * in the settings file.
+ */
+void PluginManager::selectSavedElements()
+{
+    QSettings settings;
+
+    auto selectSavedElement = [&](QTreeView *tree, const QString &name) {
+        QAbstractItemModel *model = tree->model();
+        QItemSelectionModel *selection = tree->selectionModel();
+        PluginManager::ClassInfo info;
+
+        info.pluginPath = settings.value(pathSetting.arg(name)).toString();
+        info.className = settings.value(classSetting.arg(name)).toString();
+
+        // Search the model for the item that matches the saved plugin/class
+        // names and select it.
+
+        auto element = model->index(0,0);
+        for (int i = 0; i < model->rowCount(element); i++) {
+            auto plugin = model->index(i, 0, element);
+
+            if (model->data(plugin, FILEPATH_ROLE) != info.pluginPath)
+                continue;
+
+            for (int j = 0; j < model->rowCount(plugin); j++) {
+                auto classIndex = model->index(j, 0, plugin);
+
+                if (model->data(classIndex).toString() == info.className) {
+                    selection->select(classIndex, QItemSelectionModel::SelectCurrent);
+                    return;
+                }
+            }
+        }
+    };
+
+    selectSavedElement(ui->treeSource,       "data-source");
+    selectSavedElement(ui->treeDecoderEeg,   "eeg-decoder");
+    selectSavedElement(ui->treeDecoderVideo, "video-decoder");
+    selectSavedElement(ui->treeDecoderImu,   "imu-decoder");
+    selectSavedElement(ui->treeFeatEeg,      "eeg-featex");
+    selectSavedElement(ui->treeFeatVideo,    "video-featex");
+    selectSavedElement(ui->treeFeatImu,      "imu-featex");
+    selectSavedElement(ui->treeClassifier,   "classifier");
+}
 
 /*!
  * Helper function for building the internal plugin model.
