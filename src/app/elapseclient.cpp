@@ -31,7 +31,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
     connect(ui->actionPlugins, SIGNAL(triggered()),
-            pluginManager, SLOT(loadPlugins()));
+            pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             SLOT(setupPipeline(ElementSetPtr)));
 
@@ -53,10 +53,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     if (settings.value("show-log", false).toBool())
         logView->show();
 
-    if (!pluginManager->loadPluginsFromSettings()) {
-        qxtLog->warning("Failed to load the saved element set");
-        showErrorMessage("Could not load the saved element set.");
-    }
+    pluginManager->loadPluginsFromSettings();
 }
 
 /*!

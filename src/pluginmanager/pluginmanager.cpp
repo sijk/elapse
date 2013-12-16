@@ -11,57 +11,6 @@
 #include "ui_pluginmanager.h"
 
 
-template<class ElementType>
-void loadElement(ElementType &element, PluginManager::ClassInfo info);
-
-
-namespace {
-const QString pathSetting("elements/%1/plugin-path");
-const QString classSetting("elements/%1/class-name");
-}
-
-
-struct PluginManager::ClassInfo {
-    QString pluginPath;
-    QString className;
-};
-
-
-/*!
- * Construct a PluginManager as a child of the given \a parent.
- *
- * The default plugin search path is set to the "plugins" subdirectory of the
- * directory containing the application executable.
- */
-PluginManager::PluginManager(QWidget *parent) :
-    QDialog(parent),
-    model(new QStandardItemModel(this)),
-    ui(new Ui::PluginManager)
-{
-    ui->setupUi(this);
-    QString defaultPath(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"));
-    setSearchPath(QSettings().value("plugins-path", defaultPath).toString());
-    connect(this, SIGNAL(accepted()), SLOT(loadSelectedElements()));
-}
-
-/*!
- * Destroy this PluginManager.
- */
-PluginManager::~PluginManager()
-{
-    // Delete PluginFilterProxyModels
-    delete ui->treeSource->model();
-    delete ui->treeDecoderEeg->model();
-    delete ui->treeDecoderVideo->model();
-    delete ui->treeDecoderImu->model();
-    delete ui->treeFeatEeg->model();
-    delete ui->treeFeatVideo->model();
-    delete ui->treeFeatImu->model();
-    delete ui->treeClassifier->model();
-
-    delete ui;
-}
-
 /*!
  * \page pluginmanager-model PluginManager Data Model
  *
@@ -129,15 +78,92 @@ PluginManager::~PluginManager()
  * which apply to the \c sampleType "EEG".
  */
 
-/*!
- * \property PluginManager::searchPath
- * The directory in which to search for plugins.
- */
+
+class PluginManagerPrivate
+{
+public:
+    PluginManagerPrivate(PluginManager *q);
+    ~PluginManagerPrivate();
+
+    struct ClassInfo;
+    typedef void (PluginManagerPrivate::*ElementLoader)(ElementSetPtr);
+
+    void setSearchPath(QDir newPath);
+
+    static QStandardItem *createElementTypeItem(const QString &name);
+    static QStandardItem *createPluginItem(const QString &name,
+                                           const QFileInfo &file);
+    static QStandardItem *createElementItem(const QMetaObject &obj);
+    static const QMetaObject *baseClass(const QMetaObject *obj);
+    static QStandardItem *childWithText(const QStandardItem *item,
+                                        const QString &name);
+    void attachViews();
+
+    ElementSetPtr loadSelectedElements();
+    ElementSetPtr loadSavedElements();
+    ElementSetPtr doLoadElements(ElementLoader loader);
+
+    void loadElementSetFromSelection(ElementSetPtr elements);
+    void loadElementSetFromSettings(ElementSetPtr elements);
+
+    template<class ElementType>
+    static void loadElement(ElementType &element, ClassInfo info);
+
+    static ClassInfo getSelectedElement(QTreeView *tree);
+    static ClassInfo getSavedElement(QString elementName);
+
+    void saveSelectedElements();
+    void selectSavedElements();
+
+    Ui::PluginManager *ui;
+    QDir path;
+    QStandardItemModel *model;
+    static const QString pathSetting;
+    static const QString classSetting;
+};
+
+struct PluginManagerPrivate::ClassInfo {
+    QString pluginPath;
+    QString className;
+};
+
+const QString PluginManagerPrivate::pathSetting("elements/%1/plugin-path");
+const QString PluginManagerPrivate::classSetting("elements/%1/class-name");
 
 /*!
- * Set the plugin search path to \a newPath and scan that directory for plugins.
+ * Create the private data for the given PluginManager. Set the search path to
+ * the default and populate the plugin model from that path.
  */
-void PluginManager::setSearchPath(QDir newPath)
+PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
+    ui(new Ui::PluginManager),
+    model(new QStandardItemModel)
+{
+    ui->setupUi(q);
+
+    QString defaultPath(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"));
+    setSearchPath(QSettings().value("plugins-path", defaultPath).toString());
+}
+
+PluginManagerPrivate::~PluginManagerPrivate()
+{
+    // Delete PluginFilterProxyModels
+    delete ui->treeSource->model();
+    delete ui->treeDecoderEeg->model();
+    delete ui->treeDecoderVideo->model();
+    delete ui->treeDecoderImu->model();
+    delete ui->treeFeatEeg->model();
+    delete ui->treeFeatVideo->model();
+    delete ui->treeFeatImu->model();
+    delete ui->treeClassifier->model();
+
+    delete model;
+    delete ui;
+}
+
+/*!
+ * \see PluginManager::setSearchPath()
+ */
+void PluginManagerPrivate::setSearchPath(QDir newPath)
 {
     qxtLog->info("Searching for plugins in", newPath.absolutePath());
 
@@ -165,7 +191,7 @@ void PluginManager::setSearchPath(QDir newPath)
                 // Find or create element item
                 auto elementItem = childWithText(rootItem, elementName);
                 if (!elementItem) {
-                    elementItem = createElementItem(elementName);
+                    elementItem = createElementTypeItem(elementName);
                     rootItem->appendRow(elementItem);
                 }
 
@@ -177,7 +203,7 @@ void PluginManager::setSearchPath(QDir newPath)
                 }
 
                 // Create class item
-                auto classItem = createClassItem(obj);
+                auto classItem = createElementItem(obj);
                 pluginItem->appendRow(classItem);
             }
         } else {
@@ -191,54 +217,177 @@ void PluginManager::setSearchPath(QDir newPath)
 }
 
 /*!
- * Show the Pluginmanager window, allowing the user to select the set of
- * elements they would like to load from plugins.
+ * Helper function for building the internal plugin model.
+ * \return a QStandardItem representing an element type with the given \a name.
  */
-void PluginManager::loadPlugins()
+QStandardItem *PluginManagerPrivate::createElementTypeItem(const QString &name)
 {
-    show();
+    auto item = new QStandardItem(name);
+
+    QFont font;
+    font.setBold(true);
+    item->setFont(font);
+
+    item->setSelectable(false);
+    item->setEditable(false);
+
+    return item;
 }
 
 /*!
- * Called when the PluginManager window is closed with OK. Create a new
- * ElementSet and load the selected classes from plugins to populate it.
+ * Helper function for building the internal plugin model.
+ * \return a QStandardItem representing a plugin with the given \a name at the
+ * given \a file path.
+ *
+ * The absolute path to the plugin file is stored as item data with the role
+ * FILEPATH_ROLE.
  */
-void PluginManager::loadSelectedElements()
+QStandardItem *PluginManagerPrivate::createPluginItem(const QString &name,
+                                                      const QFileInfo &file)
+{
+    auto item = new QStandardItem(name);
+
+    item->setData(file.absoluteFilePath(), FILEPATH_ROLE);
+
+    QFont font;
+    font.setItalic(true);
+    item->setFont(font);
+
+    item->setSelectable(false);
+    item->setEditable(false);
+
+    return item;
+}
+
+/*!
+ * Helper function for building the internal plugin model.
+ * \return a QStandardItem representing an element class provided by a plugin.
+ *
+ * If the class provides a Q_CLASSINFO entry with the key "SampleType", the
+ * value of this entry is stored as item data with the role SAMPLETYPE_ROLE.
+ */
+QStandardItem *PluginManagerPrivate::createElementItem(const QMetaObject &obj)
+{
+    auto item = new QStandardItem(obj.className());
+
+    int typeIdx = obj.indexOfClassInfo("SampleType");
+    if (typeIdx >= 0) {
+        QString sampleType = obj.classInfo(typeIdx).value();
+        item->setData(sampleType, SAMPLETYPE_ROLE);
+    }
+
+    item->setEditable(false);
+
+    return item;
+}
+
+/*!
+ * \return the first child of the given \a item with text \a name, or NULL.
+ */
+QStandardItem *PluginManagerPrivate::childWithText(const QStandardItem *item,
+                                                   const QString &name)
+{
+    for (int i = 0; i < item->rowCount(); i++) {
+        auto child = item->child(i);
+        if (child->text() == name)
+            return child;
+    }
+    return nullptr;
+}
+
+/*!
+ * \return the base class of \a obj just before QObject.
+ *
+ * For instance, if there was an inheritance hierarchy of QObject <- A <- B <- C
+ * then baseClass(C) == baseClass(B) == baseClass(A) == A.
+ */
+const QMetaObject *PluginManagerPrivate::baseClass(const QMetaObject *obj)
+{
+    const QMetaObject *super = obj->superClass();
+    if (super && super != &QObject::staticMetaObject)
+        return baseClass(super);
+    return obj;
+}
+
+/*!
+ * Connect the QTreeViews in the PluginManager window to the corresponding parts
+ * of the internal plugin model.
+ */
+void PluginManagerPrivate::attachViews()
+{
+    auto setupTreeView = [this](QTreeView *tree, const QString &elementType,
+                                const QString &sampleType = QString()) {
+        // Filter model by element type and sample type
+        auto filteredModel = new PluginFilterProxyModel(elementType, sampleType);
+        filteredModel->setSourceModel(model);
+
+        // Connect filtered model to view
+        tree->setModel(filteredModel);
+        // TODO: do this root item selection inside the proxy model
+        tree->setRootIndex(tree->model()->index(0,0));
+        tree->expandAll();
+
+        // Select the first class by default
+        tree->selectionModel()->select(tree->rootIndex().child(0,0).child(0,0),
+                                       QItemSelectionModel::SelectCurrent);
+
+        // Ensure that something is always selected from then on
+        QObject::connect(tree->selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            [=](const QItemSelection &current, const QItemSelection &prev){
+                if (current.indexes().isEmpty() && !prev.indexes().isEmpty())
+                    tree->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent);
+            });
+    };
+
+    setupTreeView(ui->treeSource,       "DataSource");
+    setupTreeView(ui->treeDecoderEeg,   "SampleDecoder",    "EEG");
+    setupTreeView(ui->treeDecoderVideo, "SampleDecoder",    "VIDEO");
+    setupTreeView(ui->treeDecoderImu,   "SampleDecoder",    "IMU");
+    setupTreeView(ui->treeFeatEeg,      "FeatureExtractor", "EEG");
+    setupTreeView(ui->treeFeatVideo,    "FeatureExtractor", "VIDEO");
+    setupTreeView(ui->treeFeatImu,      "FeatureExtractor", "IMU");
+    setupTreeView(ui->treeClassifier,   "Classifier");
+}
+
+/*!
+ * \see PluginManager::loadPluginsFromSelection()
+ */
+ElementSetPtr PluginManagerPrivate::loadSelectedElements()
 {
     qxtLog->info("Loading the selected set of elements");
-    if (doLoadElements(&PluginManager::loadElementSetFromSelection))
+    auto elements = doLoadElements(&PluginManagerPrivate::loadElementSetFromSelection);
+
+    if (elements)
         saveSelectedElements();
+
+    return elements;
 }
 
 /*!
- * Create a new element set and populate it with the classes that are saved in
- * the settings file.
- *
- * \return \c true if either all necessary plugins were loaded successfully or
- * if there were no elements saved in the settings file.
- * Returns \c false if there was an error loading plugins.
+ * \see PluginManager::loadPluginsFromSettings()
  */
-bool PluginManager::loadPluginsFromSettings()
+ElementSetPtr PluginManagerPrivate::loadSavedElements()
 {
     if (!QSettings().childGroups().contains("elements")) {
         qxtLog->debug("No saved elements to load");
-        return true;
+        return ElementSetPtr();
     }
 
     qxtLog->info("Loading the saved set of elements");
-    bool success = doLoadElements(&PluginManager::loadElementSetFromSettings);
+    auto elements = doLoadElements(&PluginManagerPrivate::loadElementSetFromSettings);
 
-    if (success)
+    if (elements)
         selectSavedElements();
 
-    return success;
+    return elements;
 }
 
 /*!
  * Load elements with the given \a loader and check whether it succeeded.
- * If so, emit the pluginsLoaded() signal.
+ * If so, return the ElementSet, otherwise return \c NULL.
  */
-bool PluginManager::doLoadElements(ElementLoader loader)
+ElementSetPtr PluginManagerPrivate::doLoadElements(ElementLoader loader)
 {
     auto elements = ElementSetPtr::create();
 
@@ -254,29 +403,19 @@ bool PluginManager::doLoadElements(ElementLoader loader)
         !elements->featureExtractors[IMU] ||
         !elements->classifier) {
         qxtLog->warning("Failed to load all elements from plugins.");
-        return false;
+        return ElementSetPtr();
     }
 
     qxtLog->info("Successfully loaded all elements from plugins.");
-    emit pluginsLoaded(elements);
-    return true;
+    return elements;
 }
-
-/*!
- * \fn PluginManager::pluginsLoaded(ElementSetPtr)
- * Emitted when an ElementSet has been loaded.
- *
- * The lifetime of the created ElementSet is managed automatically by virtue of
- * using a QSharedPointer to refer to it. As soon as the last reference to the
- * ElementSet is dropped it will be deleted automatically.
- */
 
 /*!
  * Populate the given \a elements with the classes selected in the tree-views.
  *
  * \see loadElement()
  */
-void PluginManager::loadElementSetFromSelection(ElementSetPtr elements)
+void PluginManagerPrivate::loadElementSetFromSelection(ElementSetPtr elements)
 {
     loadElement(elements->dataSource,               getSelectedElement(ui->treeSource));
     loadElement(elements->sampleDecoders[EEG],      getSelectedElement(ui->treeDecoderEeg));
@@ -293,7 +432,7 @@ void PluginManager::loadElementSetFromSelection(ElementSetPtr elements)
  *
  * \see loadElement()
  */
-void PluginManager::loadElementSetFromSettings(ElementSetPtr elements)
+void PluginManagerPrivate::loadElementSetFromSettings(ElementSetPtr elements)
 {
     loadElement(elements->dataSource,               getSavedElement("data-source"));
     loadElement(elements->sampleDecoders[EEG],      getSavedElement("eeg-decoder"));
@@ -313,7 +452,7 @@ void PluginManager::loadElementSetFromSettings(ElementSetPtr elements)
  * element.
  */
 template<class ElementType>
-void loadElement(ElementType &element, PluginManager::ClassInfo info)
+void PluginManagerPrivate::loadElement(ElementType &element, ClassInfo info)
 {
     Q_STATIC_ASSERT(std::is_pointer<ElementType>::value);
 
@@ -347,7 +486,7 @@ void loadElement(ElementType &element, PluginManager::ClassInfo info)
 /*!
  * \return the details of the class that is selected in the given \a tree view.
  */
-PluginManager::ClassInfo PluginManager::getSelectedElement(QTreeView *tree)
+PluginManagerPrivate::ClassInfo PluginManagerPrivate::getSelectedElement(QTreeView *tree)
 {
     ClassInfo info;
 
@@ -364,7 +503,7 @@ PluginManager::ClassInfo PluginManager::getSelectedElement(QTreeView *tree)
 /*!
  * \return the details of the saved class with the given \c elementName.
  */
-PluginManager::ClassInfo PluginManager::getSavedElement(QString elementName)
+PluginManagerPrivate::ClassInfo PluginManagerPrivate::getSavedElement(QString elementName)
 {
     ClassInfo info;
 
@@ -379,7 +518,7 @@ PluginManager::ClassInfo PluginManager::getSavedElement(QString elementName)
  * Inspect the tree views and save the details of the selected elements to
  * the settings file.
  */
-void PluginManager::saveSelectedElements()
+void PluginManagerPrivate::saveSelectedElements()
 {
     QSettings settings;
 
@@ -405,14 +544,14 @@ void PluginManager::saveSelectedElements()
  * Set the selections in the tree views to match the elements that are saved
  * in the settings file.
  */
-void PluginManager::selectSavedElements()
+void PluginManagerPrivate::selectSavedElements()
 {
     QSettings settings;
 
     auto selectSavedElement = [&](QTreeView *tree, const QString &name) {
         QAbstractItemModel *model = tree->model();
         QItemSelectionModel *selection = tree->selectionModel();
-        PluginManager::ClassInfo info;
+        PluginManagerPrivate::ClassInfo info;
 
         info.pluginPath = settings.value(pathSetting.arg(name)).toString();
         info.className = settings.value(classSetting.arg(name)).toString();
@@ -448,135 +587,90 @@ void PluginManager::selectSavedElements()
     selectSavedElement(ui->treeClassifier,   "classifier");
 }
 
-/*!
- * Helper function for building the internal plugin model.
- * \return a QStandardItem representing an element type with the given \a name.
- */
-QStandardItem *PluginManager::createElementItem(const QString &name)
-{
-    auto item = new QStandardItem(name);
-
-    QFont font;
-    font.setBold(true);
-    item->setFont(font);
-
-    item->setSelectable(false);
-    item->setEditable(false);
-
-    return item;
-}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 /*!
- * Helper function for building the internal plugin model.
- * \return a QStandardItem representing a plugin with the given \a name at the
- * given \a file path.
+ * Construct a PluginManager as a child of the given \a parent.
  *
- * The absolute path to the plugin file is stored as item data with the role
- * FILEPATH_ROLE.
+ * The default plugin search path is set to the "plugins" subdirectory of the
+ * directory containing the application executable.
  */
-QStandardItem *PluginManager::createPluginItem(const QString &name,
-                                               const QFileInfo &file)
+PluginManager::PluginManager(QWidget *parent) :
+    QDialog(parent),
+    d_ptr(new PluginManagerPrivate(this))
 {
-    auto item = new QStandardItem(name);
-
-    item->setData(file.absoluteFilePath(), FILEPATH_ROLE);
-
-    QFont font;
-    font.setItalic(true);
-    item->setFont(font);
-
-    item->setSelectable(false);
-    item->setEditable(false);
-
-    return item;
+    connect(this, SIGNAL(accepted()), SLOT(loadPluginsFromSelection()));
 }
 
 /*!
- * Helper function for building the internal plugin model.
- * \return a QStandardItem representing a class provided by a plugin.
+ * Destroy this PluginManager.
+ */
+PluginManager::~PluginManager()
+{
+    delete d_ptr;
+}
+
+/*!
+ * \property PluginManager::searchPath
+ * The directory in which to search for plugins.
+ */
+QDir PluginManager::searchPath() const
+{
+    Q_D(const PluginManager);
+    return d->path;
+}
+
+/*!
+ * Set the plugin search path to \a newPath and scan that directory for plugins.
+ */
+void PluginManager::setSearchPath(QDir newPath)
+{
+    Q_D(PluginManager);
+    d->setSearchPath(newPath);
+}
+
+/*!
+ * Show the Pluginmanager window, allowing the user to select the set of
+ * elements they would like to load from plugins. If the window is not
+ * cancelled, create a new element set and populate it with the classes that
+ * were selected in the tree views.
  *
- * If the class provides a Q_CLASSINFO entry with the key "SampleType", the
- * value of this entry is stored as item data with the role SAMPLETYPE_ROLE.
+ * \see loadPluginsFromSelection()
  */
-QStandardItem *PluginManager::createClassItem(const QMetaObject &obj)
+void PluginManager::selectPluginsToLoad()
 {
-    auto item = new QStandardItem(obj.className());
-
-    int typeIdx = obj.indexOfClassInfo("SampleType");
-    if (typeIdx >= 0) {
-        QString sampleType = obj.classInfo(typeIdx).value();
-        item->setData(sampleType, SAMPLETYPE_ROLE);
-    }
-
-    item->setEditable(false);
-
-    return item;
+    show();
 }
 
 /*!
- * \return the first child of the given \a item with text \a name, or NULL.
+ * Create a new ElementSet and populate it with the classes that are saved in
+ * the settings file.
  */
-QStandardItem *PluginManager::childWithText(const QStandardItem *item,
-                                            const QString &name)
+void PluginManager::loadPluginsFromSettings()
 {
-    for (int i = 0; i < item->rowCount(); i++) {
-        auto child = item->child(i);
-        if (child->text() == name)
-            return child;
-    }
-    return nullptr;
+    Q_D(PluginManager);
+    auto elements = d->loadSavedElements();
+    if (elements)
+        emit pluginsLoaded(elements);
 }
 
 /*!
- * \return the base class of \a obj just before QObject.
+ * Called when the PluginManager window is closed with OK. Create a new
+ * ElementSet and load the selected classes from plugins to populate it.
+ */
+void PluginManager::loadPluginsFromSelection()
+{
+    Q_D(PluginManager);
+    auto elements = d->loadSelectedElements();
+    if (elements)
+        emit pluginsLoaded(elements);
+}
+
+/*!
+ * \fn PluginManager::pluginsLoaded(ElementSetPtr)
+ * Emitted when an ElementSet has been loaded.
  *
- * For instance, if there was an inheritance hierarchy of QObject <- A <- B <- C
- * then baseClass(C) == baseClass(B) == baseClass(A) == A.
+ * The lifetime of the created ElementSet is managed automatically by virtue of
+ * using a QSharedPointer to refer to it. As soon as the last reference to the
+ * ElementSet is dropped it will be deleted automatically.
  */
-const QMetaObject *PluginManager::baseClass(const QMetaObject *obj)
-{
-    const QMetaObject *super = obj->superClass();
-    if (super && super != &QObject::staticMetaObject)
-        return baseClass(super);
-    return obj;
-}
-
-/*!
- * Connect the QTreeViews in the PluginManager window to the corresponding parts
- * of the internal plugin model.
- */
-void PluginManager::attachViews()
-{
-    auto setupTreeView = [this](QTreeView *tree, const QString &elementType,
-                                const QString &sampleType = QString()) {
-        // Filter model by element type and sample type
-        auto filteredModel = new PluginFilterProxyModel(elementType, sampleType);
-        filteredModel->setSourceModel(model);
-
-        // Connect filtered model to view
-        tree->setModel(filteredModel);
-        // TODO: do this root item selection inside the proxy model
-        tree->setRootIndex(tree->model()->index(0,0));
-        tree->expandAll();
-
-        // Select the first class by default
-        tree->selectionModel()->select(tree->rootIndex().child(0,0).child(0,0),
-                                       QItemSelectionModel::SelectCurrent);
-
-        // Ensure that something is always selected from then on
-        connect(tree->selectionModel(), &QItemSelectionModel::selectionChanged,
-            [=](const QItemSelection &current, const QItemSelection &prev){
-                if (current.indexes().isEmpty() && !prev.indexes().isEmpty())
-                    tree->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent);
-            });
-    };
-
-    setupTreeView(ui->treeSource,       "DataSource");
-    setupTreeView(ui->treeDecoderEeg,   "SampleDecoder",    "EEG");
-    setupTreeView(ui->treeDecoderVideo, "SampleDecoder",    "VIDEO");
-    setupTreeView(ui->treeDecoderImu,   "SampleDecoder",    "IMU");
-    setupTreeView(ui->treeFeatEeg,      "FeatureExtractor", "EEG");
-    setupTreeView(ui->treeFeatVideo,    "FeatureExtractor", "VIDEO");
-    setupTreeView(ui->treeFeatImu,      "FeatureExtractor", "IMU");
-    setupTreeView(ui->treeClassifier,   "Classifier");
-}
