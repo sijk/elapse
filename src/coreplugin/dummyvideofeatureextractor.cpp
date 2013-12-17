@@ -6,7 +6,7 @@ DummyVideoFeatureExtractor::DummyVideoFeatureExtractor(QObject *parent) :
 {
 }
 
-void DummyVideoFeatureExtractor::onSample(const Sample &sample)
+void DummyVideoFeatureExtractor::onSample(SamplePtr sample)
 {
     Q_UNUSED(sample)
 }

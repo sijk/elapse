@@ -9,15 +9,15 @@
  * Check whether the current \a sample has a sequence number exactly one greater
  * than that of the previous sample, and log a warning message if it's not.
  */
-void checkSequenceNumber(const EegSample &sample)
+void checkSequenceNumber(const EegSample *sample)
 {
     static quint32 prev_seqnum = 0;
 
-    int dropped = sample.seqnum - prev_seqnum - 1;
+    int dropped = sample->seqnum - prev_seqnum - 1;
     if (dropped)
         qxtLog->debug(dropped, "dropped samples");
 
-    prev_seqnum = sample.seqnum;
+    prev_seqnum = sample->seqnum;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -54,24 +54,24 @@ void EegDecoder::onData(QByteArray data)
     stream.setByteOrder(QDataStream::LittleEndian);
 
     while (!stream.atEnd()) {
-        EegSample sample;
+        auto sample = new EegSample;
 
-        stream >> sample.seqnum;
-        stream >> sample.timestamp;
+        stream >> sample->seqnum;
+        stream >> sample->timestamp;
 
         stream >> value;
         status = value.to32bit();
-        sample.loff_stat_p = (status >> 12) & 0xFF;
-        sample.loff_stat_n = (status >> 4) & 0xFF;
-        sample.gpio = status & 0x0F;
+        sample->loff_stat_p = (status >> 12) & 0xFF;
+        sample->loff_stat_n = (status >> 4) & 0xFF;
+        sample->gpio = status & 0x0F;
 
         for (int i = 0; i < 8; i++) {
             stream >> value;
-            sample.values.append(toMicroVolts(value.to32bit()));
+            sample->values.append(toMicroVolts(value.to32bit()));
         }
 
         checkSequenceNumber(sample);
-        emit newSample(sample);
+        emit newSample(SamplePtr(sample));
     }
 }
 

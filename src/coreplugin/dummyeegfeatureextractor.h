@@ -22,7 +22,7 @@ public:
     Q_INVOKABLE explicit DummyEegFeatureExtractor(QObject *parent = nullptr);
 
 public slots:
-    void onSample(const Sample &sample);
+    void onSample(SamplePtr sample);
 };
 
 #endif // DUMMYEEGFEATUREEXTRACTOR_H

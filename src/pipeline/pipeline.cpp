@@ -69,6 +69,7 @@ Pipeline::Pipeline(QObject *parent) :
     QObject(parent),
     _elements(nullptr)
 {
+    qRegisterMetaType<SamplePtr>("SamplePtr");
 }
 
 /*!

@@ -179,8 +179,8 @@ GstFlowReturn VideoDecoderPrivate::onFrameDecoded(GstAppSink *sink,
         return GST_FLOW_ERROR;
 
     // Wrap it up in a VideoSample and send it on its way
-    GstVideoSample frame(sample);
-    emit q->newSample(frame);
+    auto frame = new GstVideoSample(sample);
+    emit q->newSample(SamplePtr(frame));
 
     gst_sample_unref(sample);
     return GST_FLOW_OK;

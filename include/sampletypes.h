@@ -4,6 +4,7 @@
 #include <QtGlobal>
 #include <QVector>
 #include <QByteArray>
+#include <QSharedPointer>
 
 
 enum SampleType
@@ -19,6 +20,9 @@ struct Sample
 
     quint64 timestamp;
 };
+
+
+typedef QSharedPointer<const Sample> SamplePtr;
 
 
 struct EegSample : Sample

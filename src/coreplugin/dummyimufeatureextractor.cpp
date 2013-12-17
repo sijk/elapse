@@ -6,7 +6,7 @@ DummyImuFeatureExtractor::DummyImuFeatureExtractor(QObject *parent) :
 {
 }
 
-void DummyImuFeatureExtractor::onSample(const Sample &sample)
+void DummyImuFeatureExtractor::onSample(SamplePtr sample)
 {
     Q_UNUSED(sample)
 }

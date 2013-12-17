@@ -2,9 +2,9 @@
 #define DECODER_H
 
 #include <QObject>
+#include "sampletypes.h"
 
 class QByteArray;
-class Sample;
 
 
 /*!
@@ -28,7 +28,7 @@ public:
 
 signals:
     /*! Emitted when a \a sample has been decoded. */
-    void newSample(const Sample &sample);
+    void newSample(SamplePtr sample);
 
 public slots:
     /*!

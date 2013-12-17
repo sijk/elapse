@@ -2,8 +2,7 @@
 #define FEATUREXTRACTOR_H
 
 #include <QObject>
-
-class Sample;
+#include "sampletypes.h"
 
 
 /*!
@@ -28,7 +27,7 @@ public:
 
 public slots:
     /*! Executed when the next \a sample is available for analysis. */
-    virtual void onSample(const Sample &sample) = 0;
+    virtual void onSample(SamplePtr sample) = 0;
 };
 
 #endif // FEATUREXTRACTOR_H

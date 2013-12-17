@@ -22,7 +22,7 @@ public:
     Q_INVOKABLE explicit DummyVideoFeatureExtractor(QObject *parent = nullptr);
 
 public slots:
-    void onSample(const Sample &sample);
+    void onSample(SamplePtr sample);
 };
 
 #endif // DUMMYVIDEOFEATUREEXTRACTOR_H

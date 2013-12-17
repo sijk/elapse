@@ -6,7 +6,7 @@ DummyEegFeatureExtractor::DummyEegFeatureExtractor(QObject *parent) :
 {
 }
 
-void DummyEegFeatureExtractor::onSample(const Sample &sample)
+void DummyEegFeatureExtractor::onSample(SamplePtr sample)
 {
     Q_UNUSED(sample)
 }

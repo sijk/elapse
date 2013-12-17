@@ -38,8 +38,8 @@ public:
     ~ElapseClient();
 
 private slots:
-    void onEegSample(const Sample &sample);
-    void onVideoSample(const Sample &sample);
+    void onEegSample(SamplePtr sample);
+    void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
     void setupPipeline(ElementSetPtr elements);
 

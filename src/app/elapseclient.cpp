@@ -64,16 +64,16 @@ ElapseClient::~ElapseClient()
     delete ui;
 }
 
-void ElapseClient::onEegSample(const Sample &sample)
+void ElapseClient::onEegSample(SamplePtr sample)
 {
-    auto eeg = static_cast<const EegSample&>(sample);
-    ui->eegPlot->appendData(eeg.values);
+    auto eeg = sample.staticCast<const EegSample>();
+    ui->eegPlot->appendData(eeg->values);
 }
 
-void ElapseClient::onVideoSample(const Sample &sample)
+void ElapseClient::onVideoSample(SamplePtr sample)
 {
-//    auto frame = static_cast<const VideoSample&>(sample);
-    qxtLog->debug(sample.timestamp);
+    auto frame = sample.staticCast<const VideoSample>();
+    qxtLog->trace(frame->timestamp);
 }
 
 void ElapseClient::showErrorMessage(QString message)
@@ -181,8 +181,8 @@ void ElapseClient::setupPipeline(ElementSetPtr elements)
     elements->sampleDecoders[EEG]->setProperty("gain", 1);
     elements->sampleDecoders[EEG]->setProperty("vref", 4.5e6);
 
-    connect(elements->sampleDecoders[EEG], SIGNAL(newSample(Sample)),
-            SLOT(onEegSample(Sample)));
-    connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(Sample)),
-            SLOT(onVideoSample(Sample)));
+    connect(elements->sampleDecoders[EEG], SIGNAL(newSample(SamplePtr)),
+            SLOT(onEegSample(SamplePtr)));
+    connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(SamplePtr)),
+            SLOT(onVideoSample(SamplePtr)));
 }
