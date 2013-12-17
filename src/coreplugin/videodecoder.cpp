@@ -14,8 +14,8 @@
     "payload=(int)96"
 
 #define PIPELINE \
-    "appsrc ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
-    "avdec_h264 ! appsink"
+    "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
+    "avdec_h264 ! appsink name=sink"
 
 // TODO: Use an rtpjitterbuffer?
 
@@ -51,6 +51,7 @@ public:
     GstElement *pipeline;
     GstAppSrc *appsrc;
     GstAppSink *appsink;
+    GstBus *bus;
     QQueue<QByteArray> datastore;
 
     void onData(QByteArray data);
@@ -70,8 +71,10 @@ public:
 VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     q_ptr(q)
 {
-    int argc = 0;
-    gst_init(&argc, nullptr);
+    if (!gst_is_initialized()) {
+        int argc = 0;
+        gst_init(&argc, nullptr);
+    }
 
     // Create the pipeline
     GError *gerror = nullptr;
@@ -86,8 +89,8 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     }
 
     // Store references to the appsrc/sink
-    appsrc = GST_APP_SRC(gst_bin_get_by_name(GST_BIN(pipeline), "appsrc0"));
-    appsink = GST_APP_SINK(gst_bin_get_by_name(GST_BIN(pipeline), "appsink0"));
+    appsrc = GST_APP_SRC(gst_bin_get_by_name(GST_BIN(pipeline), "src"));
+    appsink = GST_APP_SINK(gst_bin_get_by_name(GST_BIN(pipeline), "sink"));
 
     // Configure the appsrc
     gst_app_src_set_stream_type(appsrc, GST_APP_STREAM_TYPE_STREAM);
@@ -104,10 +107,9 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     g_signal_connect(appsink, "new-sample", G_CALLBACK(onFrameDecoded), this);
 
     // Listen for error messages from the pipeline
-    GstBus *bus = gst_element_get_bus(pipeline);
+    bus = gst_element_get_bus(pipeline);
     gst_bus_add_signal_watch(bus);
     g_signal_connect(bus, "message::error", G_CALLBACK(onVideoError), this);
-    g_object_unref(bus);
 
     // Start the pipeline
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
@@ -118,6 +120,11 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
  */
 VideoDecoderPrivate::~VideoDecoderPrivate()
 {
+    g_signal_handlers_disconnect_by_data(appsink, this);
+    g_signal_handlers_disconnect_by_data(bus, this);
+    gst_bus_remove_signal_watch(bus);
+    g_object_unref(bus);
+
     gst_element_set_state(pipeline, GST_STATE_NULL);
     gst_object_unref(pipeline);
 }
