@@ -4,7 +4,7 @@ TEMPLATE      = lib
 CONFIG       += plugin link_pkgconfig qwt qxt
 QT           += network opengl
 DESTDIR       = ../../plugins/
-PKGCONFIG     = gstreamer-1.0 gstreamer-app-1.0
+PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10
 QXT          += core
 
 HEADERS       = udpdatasource.h \
