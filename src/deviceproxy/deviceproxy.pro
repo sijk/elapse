@@ -7,5 +7,5 @@ SOURCES += deviceproxy.cpp
 HEADERS += deviceproxy.h
 
 DBUS_INTERFACES = \
-    ../../../elapse-server/files/interfaces/elapse.xml \
-    ../../../elapse-server/files/interfaces/eeg.xml
+    ../../../elapse-server/files/src/interfaces/elapse.xml \
+    ../../../elapse-server/files/src/interfaces/eeg.xml
