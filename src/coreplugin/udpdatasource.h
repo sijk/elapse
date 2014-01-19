@@ -25,13 +25,16 @@ public slots:
 
 private slots:
     void onEegReady();
+    void onImuReady();
     void onVideoReady();
     void onSocketError(QAbstractSocket::SocketError err);
 
 private:
     QUdpSocket eegSock;
+    QUdpSocket imuSock;
     QUdpSocket videoSock;
     quint16 eegPort;
+    quint16 imuPort;
     quint16 videoPort;
     QxtSignalGroup startedSignals;
 };
