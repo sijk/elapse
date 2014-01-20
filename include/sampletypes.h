@@ -3,6 +3,7 @@
 
 #include <QtGlobal>
 #include <QVector>
+#include <QVector3D>
 #include <QByteArray>
 #include <QSharedPointer>
 
@@ -42,6 +43,8 @@ struct VideoSample : Sample
 
 struct ImuSample : Sample
 {
+    QVector3D acc;
+    QVector3D gyr;
 };
 
 

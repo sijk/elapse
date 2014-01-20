@@ -108,3 +108,13 @@
     \brief The ImuSample class holds the data for one 6-axis sample from
     the IMU.
 */
+
+/*!
+    \var ImuSample::acc
+    \brief The linear accelerations in \e g.
+*/
+
+/*!
+    \var ImuSample::gyr
+    \brief The angular rates in degrees per second.
+*/
