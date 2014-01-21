@@ -98,7 +98,21 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="StripChart" name="eegPlot" native="true"/>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="StripChart" name="eegPlot" native="true"/>
+          </item>
+          <item>
+           <widget class="HeadWidget" name="headWidget" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0">
@@ -279,6 +293,12 @@
    <class>Spinner</class>
    <extends>QLabel</extends>
    <header>spinner.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HeadWidget</class>
+   <extends>QWidget</extends>
+   <header>headwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

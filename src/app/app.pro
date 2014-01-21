@@ -1,6 +1,6 @@
 include(../../global.pri)
 
-QT           += core gui widgets dbus
+QT           += core gui widgets opengl dbus
 CONFIG       += qwt qxt
 QXT          += core
 
@@ -50,3 +50,8 @@ LIBS            += -L$$OUT_PWD/../loggerwidget/ -lloggerwidget
 INCLUDEPATH     += $$PWD/../loggerwidget
 DEPENDPATH      += $$PWD/../loggerwidget
 PRE_TARGETDEPS  += $$OUT_PWD/../loggerwidget/libloggerwidget.a
+
+LIBS            += -L$$OUT_PWD/../headwidget/ -lheadwidget
+INCLUDEPATH     += $$PWD/../headwidget
+DEPENDPATH      += $$PWD/../headwidget
+PRE_TARGETDEPS  += $$OUT_PWD/../headwidget/libheadwidget.a
