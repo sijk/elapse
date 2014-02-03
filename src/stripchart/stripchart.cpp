@@ -123,7 +123,7 @@ void StripChart::appendData(const QVector<double> &data)
 }
 
 /*!
- * Redraw the plot if necessary. Called periodiclly by the timer.
+ * Redraw the plot if necessary. Called periodically by the timer.
  */
 void StripChart::redraw()
 {
