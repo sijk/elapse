@@ -44,6 +44,11 @@ EegDecoder::EegDecoder(QObject *parent) :
  */
 
 /*!
+ * \property EegDecoder::nChannels
+ * The number of EEG channels that the device has.
+ */
+
+/*!
  * Decode the given \a data and emit \ref EegSample "EegSamples".
  */
 void EegDecoder::onData(QByteArray data)
@@ -65,7 +70,7 @@ void EegDecoder::onData(QByteArray data)
         sample->loff_stat_n = (status >> 4) & 0xFF;
         sample->gpio = status & 0x0F;
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < _nChannels; i++) {
             stream >> value;
             sample->values.append(toMicroVolts(value.to32bit()));
         }
