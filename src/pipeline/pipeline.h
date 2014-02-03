@@ -22,16 +22,17 @@ public:
     explicit Pipeline(QObject *parent = nullptr);
 
     ElementSetPtr elements() const;
+
+public slots:
     void setElements(ElementSetPtr newElements);
+
+    void start();
+    void stop();
 
 signals:
     void started();
     void stopped();
     void error(QString msg);
-
-public slots:
-    void start();
-    void stop();
 
 private:
     ElementSetPtr _elements;

@@ -33,14 +33,11 @@ ElapseClient::ElapseClient(QWidget *parent) :
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
-            SLOT(setupPipeline(ElementSetPtr)));
+            pipeline, SLOT(setElements(ElementSetPtr)));
+    connect(device, SIGNAL(connected()), SLOT(setupPipeline()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
-
-    ui->eegPlot->setNStrips(8);
-    ui->eegPlot->setNSamples(1000);
-    ui->spacingSlider->setValue(6e3);
 
     buildStateMachine();
 
@@ -172,14 +169,21 @@ void ElapseClient::buildStateMachine()
     machine->start();
 }
 
-void ElapseClient::setupPipeline(ElementSetPtr elements)
+void ElapseClient::setupPipeline()
 {
+    auto elements = pipeline->elements();
     Q_ASSERT(elements);
-    pipeline->setElements(elements);
+
+    ui->eegPlot->setNStrips(device->eeg()->nChannels());
+    ui->eegPlot->setNSamples(4 * device->eeg()->sampleRate());
+    ui->spacingSlider->setValue(6e3);
 
     elements->dataSource->setProperty("host", device->host());
     elements->sampleDecoders[EEG]->setProperty("gain", 1);
-    elements->sampleDecoders[EEG]->setProperty("vref", 4.5e6);
+    elements->sampleDecoders[EEG]->setProperty("vref",
+                                               device->eeg()->vref());
+    elements->sampleDecoders[EEG]->setProperty("nChannels",
+                                               device->eeg()->nChannels());
 
     connect(elements->sampleDecoders[EEG], SIGNAL(newSample(SamplePtr)),
             SLOT(onEegSample(SamplePtr)));
