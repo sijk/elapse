@@ -78,6 +78,12 @@ void ElapseClient::showErrorMessage(QString message)
     QMessageBox::warning(this, "Error", message);
 }
 
+void ElapseClient::onBatteryLow()
+{
+    QMessageBox::warning(this, "Low battery",
+                         "The device's battery is low. Power it off soon.");
+}
+
 /*!
  * \page elapseclient-fsm ElapseClient State Machine
  *
@@ -189,4 +195,6 @@ void ElapseClient::setupPipeline()
             SLOT(onEegSample(SamplePtr)));
     connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(SamplePtr)),
             SLOT(onVideoSample(SamplePtr)));
+
+    connect(device->battery(), SIGNAL(batteryLow()), SLOT(onBatteryLow()));
 }

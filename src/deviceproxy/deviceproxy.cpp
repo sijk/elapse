@@ -14,6 +14,7 @@ using namespace org::nzbri::elapse;
 DeviceProxy::DeviceProxy(QObject *parent) :
     QObject(parent),
     _device(nullptr),
+    _battery(nullptr),
     _eeg(nullptr)
 {
 }
@@ -22,12 +23,18 @@ DeviceProxy::~DeviceProxy()
 {
     qDeleteAll(_eeg_channels);
     delete _eeg;
+    delete _battery;
     delete _device;
 }
 
 Device *DeviceProxy::device() const
 {
     return _device;
+}
+
+org::nzbri::elapse::Battery *DeviceProxy::battery() const
+{
+    return _battery;
 }
 
 Eeg::EegAdc *DeviceProxy::eeg() const
@@ -76,6 +83,7 @@ void DeviceProxy::connectInBackground()
         return;
     }
 
+    _battery = new Battery(SERVICE, "/elapse/battery", connection);
     _eeg = new Eeg::EegAdc(SERVICE, "/elapse/eeg", connection);
 
     for (uint i = 0; i < _eeg->nChannels(); i++) {
@@ -92,6 +100,9 @@ void DeviceProxy::disconnect()
 {
     delete _device;
     _device = nullptr;
+
+    delete _battery;
+    _battery = nullptr;
 
     delete _eeg;
     _eeg = nullptr;

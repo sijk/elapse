@@ -16,6 +16,7 @@ public:
     ~DeviceProxy();
 
     org::nzbri::elapse::Device *device() const;
+    org::nzbri::elapse::Battery *battery() const;
     org::nzbri::elapse::Eeg::EegAdc *eeg() const;
     org::nzbri::elapse::Eeg::EegChannel* eeg_channel(uint i) const;
 
@@ -34,6 +35,7 @@ private:
     void connectInBackground();
 
     org::nzbri::elapse::Device *_device;
+    org::nzbri::elapse::Battery *_battery;
     org::nzbri::elapse::Eeg::EegAdc *_eeg;
     QList<org::nzbri::elapse::Eeg::EegChannel*> _eeg_channels;
 };

@@ -41,6 +41,7 @@ private slots:
     void onEegSample(SamplePtr sample);
     void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
+    void onBatteryLow();
     void setupPipeline();
 
 private:
