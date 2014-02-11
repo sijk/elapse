@@ -44,13 +44,13 @@ ElapseClient::ElapseClient(QWidget *parent) :
     QSettings settings;
     qxtLog->info("Loading settings from", settings.fileName());
 
-    if (settings.value("auto-connect", true).toBool())
-        QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
-
     if (settings.value("show-log", false).toBool())
         logView->show();
 
     pluginManager->loadPluginsFromSettings();
+
+    if (settings.value("auto-connect", true).toBool() && pipeline->elements())
+        QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 }
 
 /*!
