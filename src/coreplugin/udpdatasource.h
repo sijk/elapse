@@ -1,5 +1,5 @@
-#ifndef TCPCLIENTDATASOURCE_H
-#define TCPCLIENTDATASOURCE_H
+#ifndef UDPDATASOURCE_H
+#define UDPDATASOURCE_H
 
 #include <QUdpSocket>
 #include <QxtSignalGroup>
@@ -7,17 +7,17 @@
 
 
 /*!
- * \brief The TcpClientDataSource class receives data from the device over
- * several TCP sockets - one for each SampleType.
+ * \brief The UdpDataSource class receives data from the device over
+ * several UDP sockets - one for each SampleType.
  *
  * \ingroup core-plugin
  */
 
-class TcpClientDataSource : public DataSource
+class UdpDataSource : public DataSource
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit TcpClientDataSource(QObject *parent = nullptr);
+    Q_INVOKABLE explicit UdpDataSource(QObject *parent = nullptr);
 
 public slots:
     void start();
@@ -36,4 +36,4 @@ private:
     QxtSignalGroup startedSignals;
 };
 
-#endif // TCPCLIENTDATASOURCE_H
+#endif // UDPDATASOURCE_H

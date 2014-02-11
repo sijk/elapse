@@ -1,9 +1,9 @@
-#include "tcpclientdatasource.h"
+#include "udpdatasource.h"
 
 /*!
- * Construct a new TcpClientDataSource as a child of the given \a parent.
+ * Construct a new UdpDataSource as a child of the given \a parent.
  */
-TcpClientDataSource::TcpClientDataSource(QObject *parent) :
+UdpDataSource::UdpDataSource(QObject *parent) :
     DataSource(parent),
     eegPort(5000),
     videoPort(6000)
@@ -25,10 +25,9 @@ TcpClientDataSource::TcpClientDataSource(QObject *parent) :
 }
 
 /*!
- * Connect all of the sockets to their counterparts on the device and start
- * receiving data.
+ * Start listening for data on all of the sockets.
  */
-void TcpClientDataSource::start()
+void UdpDataSource::start()
 {
     eegSock.bind(QHostAddress::AnyIPv4, eegPort);
     videoSock.bind(videoPort);
@@ -37,7 +36,7 @@ void TcpClientDataSource::start()
 /*!
  * Stop receiving data; close all of the sockets.
  */
-void TcpClientDataSource::stop()
+void UdpDataSource::stop()
 {
     eegSock.close();
     videoSock.close();
@@ -46,7 +45,7 @@ void TcpClientDataSource::stop()
 /*!
  * Read EEG data from the socket and emit the eegReady() signal.
  */
-void TcpClientDataSource::onEegReady()
+void UdpDataSource::onEegReady()
 {
     while (eegSock.hasPendingDatagrams()) {
         QByteArray dgram;
@@ -57,9 +56,9 @@ void TcpClientDataSource::onEegReady()
 }
 
 /*!
- * Read video datagrams from the socket and emit the videoReady() signal.
+ * Read video data from the socket and emit the videoReady() signal.
  */
-void TcpClientDataSource::onVideoReady()
+void UdpDataSource::onVideoReady()
 {
     while (videoSock.hasPendingDatagrams()) {
         QByteArray dgram;
@@ -73,7 +72,7 @@ void TcpClientDataSource::onVideoReady()
  * Emit an error() message when an error occurs on one of the sockets.
  * The host and port will be appended to the error string.
  */
-void TcpClientDataSource::onSocketError(QAbstractSocket::SocketError err)
+void UdpDataSource::onSocketError(QAbstractSocket::SocketError err)
 {
     Q_UNUSED(err)
     auto sock = qobject_cast<QAbstractSocket*>(sender());

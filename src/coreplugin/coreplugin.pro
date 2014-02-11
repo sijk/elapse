@@ -7,7 +7,7 @@ DESTDIR       = ../../plugins/
 PKGCONFIG     = gstreamer-1.0 gstreamer-app-1.0
 QXT          += core
 
-HEADERS       = tcpclientdatasource.h \
+HEADERS       = udpdatasource.h \
                 dummyeegsource.h \
                 eegdecoder.h \
                 videodecoder.h \
@@ -17,7 +17,7 @@ HEADERS       = tcpclientdatasource.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h
 
-SOURCES       = tcpclientdatasource.cpp \
+SOURCES       = udpdatasource.cpp \
                 dummyeegsource.cpp \
                 eegdecoder.cpp \
                 videodecoder.cpp \

@@ -2,7 +2,7 @@
 #define COREPLUGIN_H
 
 #include "plugin.h"
-#include "tcpclientdatasource.h"
+#include "udpdatasource.h"
 #include "dummyeegsource.h"
 #include "eegdecoder.h"
 #include "videodecoder.h"
@@ -31,7 +31,7 @@ public:
     ClassList classes()
     {
         return {
-            TcpClientDataSource::staticMetaObject,
+            UdpDataSource::staticMetaObject,
             DummyEegSource::staticMetaObject,
 
             EegDecoder::staticMetaObject,
