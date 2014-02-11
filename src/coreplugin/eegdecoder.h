@@ -3,8 +3,6 @@
 
 #include "elements/decoder.h"
 
-class EegSample;
-
 
 /*!
  * \brief The EegDecoder class decodes the byte stream from the EEG hardware.

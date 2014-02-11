@@ -4,6 +4,8 @@
 #include "util/bigendian24.h"
 #include "eegdecoder.h"
 
+#define CHANNELS_PER_CHIP   8
+
 
 /*!
  * Check whether the current \a sample has a sequence number exactly one greater
@@ -53,7 +55,7 @@ EegDecoder::EegDecoder(QObject *parent) :
  */
 void EegDecoder::onData(QByteArray data)
 {
-    BigEndian24 value;
+    BigEndian24 be24;
     quint32 status;
     QDataStream stream(data);
     stream.setByteOrder(QDataStream::LittleEndian);
@@ -64,15 +66,16 @@ void EegDecoder::onData(QByteArray data)
         stream >> sample->seqnum;
         stream >> sample->timestamp;
 
-        stream >> value;
-        status = value.to32bit();
-        sample->loff_stat_p = (status >> 12) & 0xFF;
-        sample->loff_stat_n = (status >> 4) & 0xFF;
-        sample->gpio = status & 0x0F;
+        for (uint chip = 0; chip < _nChannels / CHANNELS_PER_CHIP; chip++) {
+            stream >> be24;
+            status = be24.to32bit();
+            quint8 loffStatP = (status >> 12) & 0xFF;
+            sample->leadOff |= loffStatP << (CHANNELS_PER_CHIP * chip);
 
-        for (int i = 0; i < _nChannels; i++) {
-            stream >> value;
-            sample->values.append(toMicroVolts(value.to32bit()));
+            for (uint channel = 0; channel < CHANNELS_PER_CHIP; channel++) {
+                stream >> be24;
+                sample->values.append(toMicroVolts(be24.to32bit()));
+            }
         }
 
         checkSequenceNumber(sample);

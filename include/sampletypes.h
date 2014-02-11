@@ -28,9 +28,7 @@ typedef QSharedPointer<const Sample> SamplePtr;
 struct EegSample : Sample
 {
     quint32 seqnum;
-    quint8 loff_stat_p;
-    quint8 loff_stat_n;
-    quint8 gpio;
+    quint16 leadOff;
     QVector<double> values;
 };
 
