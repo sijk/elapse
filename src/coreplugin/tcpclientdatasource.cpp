@@ -16,8 +16,8 @@ TcpClientDataSource::TcpClientDataSource(QObject *parent) :
     connect(&videoSock, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(onSocketError(QAbstractSocket::SocketError)));
 
-    startedSignals.addSignal(&eegSock, SIGNAL(connected()));
-    startedSignals.addSignal(&videoSock, SIGNAL(readyRead()));
+    startedSignals.addSignal(&eegSock, SIGNAL(readyRead()));
+//    startedSignals.addSignal(&videoSock, SIGNAL(readyRead()));
 
     connect(&startedSignals, SIGNAL(allSignalsReceived()), SIGNAL(started()));
     connect(this, SIGNAL(started()), &startedSignals, SLOT(reset()));
@@ -30,7 +30,7 @@ TcpClientDataSource::TcpClientDataSource(QObject *parent) :
  */
 void TcpClientDataSource::start()
 {
-    eegSock.connectToHost(_host, eegPort);
+    eegSock.bind(QHostAddress::AnyIPv4, eegPort);
     videoSock.bind(videoPort);
 }
 
@@ -48,8 +48,12 @@ void TcpClientDataSource::stop()
  */
 void TcpClientDataSource::onEegReady()
 {
-    if (eegSock.bytesAvailable())
-        emit eegReady(eegSock.readAll());
+    while (eegSock.hasPendingDatagrams()) {
+        QByteArray dgram;
+        dgram.resize(eegSock.pendingDatagramSize());
+        eegSock.readDatagram(dgram.data(), dgram.size());
+        emit eegReady(dgram);
+    }
 }
 
 /*!

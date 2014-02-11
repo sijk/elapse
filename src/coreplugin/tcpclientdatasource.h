@@ -1,7 +1,6 @@
 #ifndef TCPCLIENTDATASOURCE_H
 #define TCPCLIENTDATASOURCE_H
 
-#include <QTcpSocket>
 #include <QUdpSocket>
 #include <QxtSignalGroup>
 #include "elements/datasource.h"
@@ -30,7 +29,7 @@ private slots:
     void onSocketError(QAbstractSocket::SocketError err);
 
 private:
-    QTcpSocket eegSock;
+    QUdpSocket eegSock;
     QUdpSocket videoSock;
     quint16 eegPort;
     quint16 videoPort;
