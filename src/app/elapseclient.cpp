@@ -34,7 +34,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             pipeline, SLOT(setElements(ElementSetPtr)));
-    connect(device, SIGNAL(connected()), SLOT(setupPipeline()));
+    connect(device, SIGNAL(connected()), SLOT(setupElements()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -175,21 +175,35 @@ void ElapseClient::buildStateMachine()
     machine->start();
 }
 
-void ElapseClient::setupPipeline()
+void ElapseClient::setupElements()
 {
     auto elements = pipeline->elements();
     Q_ASSERT(elements);
+    auto eeg = device->eeg();
 
-    ui->eegPlot->setNStrips(device->eeg()->nChannels());
-    ui->eegPlot->setNSamples(4 * device->eeg()->sampleRate());
-    ui->spacingSlider->setValue(6e3);
+    // Configure hardware
+
+    eeg->setSampleRate(250);
+    eeg->setUseRefElec(true);
+    eeg->setAllChannels({{"enabled", true},
+                         {"gain", 24},
+                         {"inputMux", "Normal"}});
+
+    // Configure pipeline to match
 
     elements->dataSource->setProperty("host", device->host());
-    elements->sampleDecoders[EEG]->setProperty("gain", 1);
-    elements->sampleDecoders[EEG]->setProperty("vref",
-                                               device->eeg()->vref());
-    elements->sampleDecoders[EEG]->setProperty("nChannels",
-                                               device->eeg()->nChannels());
+
+    elements->sampleDecoders[EEG]->setProperty("gain", 24);
+    elements->sampleDecoders[EEG]->setProperty("vref", eeg->vref());
+    elements->sampleDecoders[EEG]->setProperty("nChannels", eeg->nChannels());
+
+    // Configure GUI
+
+    ui->eegPlot->setNStrips(eeg->nChannels());
+    ui->eegPlot->setNSamples(5 * eeg->sampleRate());
+    ui->spacingSlider->setValue(6e3);
+
+    // Connect signals to GUI
 
     connect(elements->sampleDecoders[EEG], SIGNAL(newSample(SamplePtr)),
             SLOT(onEegSample(SamplePtr)));

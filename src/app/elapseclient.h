@@ -42,7 +42,7 @@ private slots:
     void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
     void onBatteryLow();
-    void setupPipeline();
+    void setupElements();
 
 private:
     void buildStateMachine();
