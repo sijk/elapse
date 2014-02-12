@@ -25,6 +25,8 @@ public:
     bool running() const;
 
 public slots:
+    void start();
+    void stop();
     void setRunning(bool run);
 
 private:

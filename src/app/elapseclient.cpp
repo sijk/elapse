@@ -94,7 +94,7 @@ void ElapseClient::onBatteryLow()
  *
  * [*] -> Disconnected
  * Disconnected : enter / ui.showPage(0)
- * Disconnected -> Connecting : actionConnect
+ * Disconnected -> Connecting : connect
  *
  * Connecting : enter / device.connect()
  * Connecting : enter / spinner.run()
@@ -102,23 +102,19 @@ void ElapseClient::onBatteryLow()
  * Connecting --> Connected : connected
  *
  * Connected : enter / ui.showPage(1)
- * Connected --> Disconnected : actionConnect
+ * Connected : exit / device.disconnect()
+ * Connected --> Disconnected : disconnect
  * Connected --> Disconnected : device.error
  *
  * state Connected {
  *      [*] -> Idle
- *      Idle --> Active : buttonCapture
- *      Active --> Idle : buttonCapture
- *      Active --> Idle : pipeline.error
+ *      Idle -> Active : capture
+ *      Active -> Idle : stop
+ *      Active -> Idle : pipeline.error
  *      Active : enter / device.startStreaming()
  *      Active : enter / pipeline.start()
  *      Active : exit / device.stopStreaming()
  *      Active : exit / pipeline.stop()
- *      state Active {
- *          [*] -> Starting
- *          Starting : enter / spinner.run()
- *          Starting -> Running : pipeline.started
- *      }
  * }
  *
  * @enduml
@@ -133,8 +129,6 @@ void ElapseClient::buildStateMachine()
     auto connected = new QState(machine);
     auto idle = new QState(connected);
     auto active = new QState(connected);
-    auto starting = new QState(active);
-    auto running = new QState(active);
 
     machine->setInitialState(disconnected);
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
@@ -155,22 +149,17 @@ void ElapseClient::buildStateMachine()
 
     idle->addTransition(ui->buttonCapture, SIGNAL(clicked()), active);
 
-    active->setInitialState(starting);
+    active->assignProperty(ui->buttonCapture, "text", "Stop");
     connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
     connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
     // We need to delay evaluation of device->device() by wrapping it in a
     // closure since it is not valid until the device is connected.
     connect(active, &QState::entered, [=](){ device->device()->startStreaming(); });
     connect(active, &QState::exited, [=](){ device->device()->stopStreaming(); });
+    connect(active, SIGNAL(entered()), ui->spinnerStarting, SLOT(start()));
+    connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     active->addTransition(ui->buttonCapture, SIGNAL(clicked()), idle);
     active->addTransition(pipeline, SIGNAL(error(QString)), idle);
-
-    starting->assignProperty(ui->spinnerStarting, "running", true);
-    starting->assignProperty(ui->buttonCapture, "enabled", false);
-    connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
-    starting->addTransition(pipeline, SIGNAL(started()), running);
-
-    running->assignProperty(ui->buttonCapture, "text", "Stop");
 
     machine->start();
 }

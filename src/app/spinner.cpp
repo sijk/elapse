@@ -19,15 +19,27 @@ bool Spinner::running() const
 }
 
 /*!
+ * Show and run the spinner animation.
+ */
+void Spinner::start()
+{
+    setMovie(animation);
+    animation->start();
+}
+
+/*!
+ * Hide and stop the spinner animation.
+ */
+void Spinner::stop()
+{
+    animation->stop();
+    setText(" ");
+}
+
+/*!
  * Set whether the spinner animation is visible and running.
  */
 void Spinner::setRunning(bool run)
 {
-    if (run) {
-        setMovie(animation);
-        animation->start();
-    } else {
-        animation->stop();
-        setText(" ");
-    }
+    run ? start() : stop();
 }
