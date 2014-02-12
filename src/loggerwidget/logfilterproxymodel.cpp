@@ -3,12 +3,12 @@
 #include "logfilterproxymodel.h"
 
 /*!
- * Construct a new LogFilterProxyModel as a child of the givena parent.
+ * Construct a new LogFilterProxyModel as a child of the given parent.
  */
 LogFilterProxyModel::LogFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent)
 {
-    QVariant savedLevel(QSettings().value("log-level", QxtLogger::InfoLevel));
+    QVariant savedLevel(QSettings().value("logview/level", QxtLogger::InfoLevel));
     minLevel = QxtLogger::LogLevel(savedLevel.toInt());
 }
 
@@ -20,7 +20,7 @@ void LogFilterProxyModel::setMinimumLogLevel(QxtLogger::LogLevel level)
 {
     minLevel = level;
     invalidateFilter();
-    QSettings().setValue("log-level", int(level));
+    QSettings().setValue("logview/level", int(level));
 }
 
 /*!

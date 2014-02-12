@@ -1,4 +1,5 @@
 #include <QStringListModel>
+#include <QSettings>
 #include <QxtLogger>
 #include "tablemodelloggerengine.h"
 #include "logfilterproxymodel.h"
@@ -44,6 +45,9 @@ LogView::LogView(QWidget *parent) :
 
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(setFilterLevel(int)));
+
+    if (QSettings().value("logview/show", false).toBool())
+        QMetaObject::invokeMethod(this, "show", Qt::QueuedConnection);
 }
 
 /*!
@@ -69,4 +73,31 @@ QxtLoggerEngine *LogView::loggerEngine()
 void LogView::setFilterLevel(int idx)
 {
     proxyModel->setMinimumLogLevel(levels[idx]);
+}
+
+/*!
+ * \fn void LogView::visibilityChanged(bool visible)
+ * Emitted when the visibility of the window changes.
+ */
+
+/*!
+ * Save the visibility of the LogView and emit visibilityChanged().
+ */
+void LogView::showEvent(QShowEvent *)
+{
+    QSettings settings;
+    settings.setValue("logview/show", true);
+    restoreGeometry(settings.value("logview/geometry").toByteArray());
+    emit visibilityChanged(true);
+}
+
+/*!
+ * Save the visibility of the LogView and emit visibilityChanged().
+ */
+void LogView::hideEvent(QHideEvent *)
+{
+    QSettings settings;
+    settings.setValue("logview/show", false);
+    settings.setValue("logview/geometry", saveGeometry());
+    emit visibilityChanged(false);
 }

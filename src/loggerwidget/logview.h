@@ -28,8 +28,15 @@ public:
 
     QxtLoggerEngine *loggerEngine();
 
+signals:
+    void visibilityChanged(bool visible);
+
 private slots:
     void setFilterLevel(int idx);
+
+protected:
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
 
 private:
     Ui::LogView *ui;

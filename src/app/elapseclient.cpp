@@ -27,6 +27,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
+    connect(logView, SIGNAL(visibilityChanged(bool)),
+            ui->actionLogView, SLOT(setChecked(bool)));
 
     connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
             ui->eegPlot, SLOT(setSpacing(int)));
@@ -43,9 +45,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
 
     QSettings settings;
     qxtLog->info("Loading settings from", settings.fileName());
-
-    if (settings.value("show-log", false).toBool())
-        logView->show();
 
     pluginManager->loadPluginsFromSettings();
 
