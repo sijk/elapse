@@ -24,6 +24,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->buttonPlugins->setVisible(false);
+    ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
@@ -93,7 +95,13 @@ void ElapseClient::onBatteryLow()
  *
  * [*] -> Disconnected
  * Disconnected : enter / ui.showPage(0)
- * Disconnected -> Connecting : connect
+ * Disconnected --> Connecting : connect
+ * state Disconnected {
+ *      [*] -> noElements
+ *      noElements : enter / loadPluginsFromSettings()
+ *      noElements -> elementsLoaded : pluginsLoaded
+ *      elementsLoaded : enter / connect.enable()
+ * }
  *
  * Connecting : enter / device.connect()
  * Connecting : enter / spinner.run()
@@ -124,6 +132,8 @@ void ElapseClient::buildStateMachine()
     machine->setGlobalRestorePolicy(QState::RestoreProperties);
 
     auto disconnected = new QState(machine);
+    auto noElements = new QState(disconnected);
+    auto elementsLoaded = new QState(disconnected);
     auto connecting = new QState(machine);
     auto connected = new QState(machine);
     auto idle = new QState(connected);
@@ -131,6 +141,12 @@ void ElapseClient::buildStateMachine()
 
     machine->setInitialState(disconnected);
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
+    disconnected->setInitialState(noElements);
+    connect(noElements, SIGNAL(entered()), pluginManager, SLOT(loadPluginsFromSettings()));
+    noElements->addTransition(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)), elementsLoaded);
+    noElements->assignProperty(ui->actionConnect, "enabled", false);
+    noElements->assignProperty(ui->buttonConnect, "visible", false);
+    noElements->assignProperty(ui->buttonPlugins, "visible", true);
 
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
@@ -153,8 +169,8 @@ void ElapseClient::buildStateMachine()
     connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
     // We need to delay evaluation of device->device() by wrapping it in a
     // closure since it is not valid until the device is connected.
-    connect(active, &QState::entered, [=](){ device->device()->startStreaming(); });
-    connect(active, &QState::exited, [=](){ device->device()->stopStreaming(); });
+    connect(active, &QState::entered, [=]{ device->device()->startStreaming(); });
+    connect(active, &QState::exited, [=]{ device->device()->stopStreaming(); });
     connect(active, SIGNAL(entered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     active->addTransition(ui->buttonCapture, SIGNAL(clicked()), idle);

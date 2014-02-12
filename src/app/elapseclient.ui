@@ -36,6 +36,16 @@
          </spacer>
         </item>
         <item alignment="Qt::AlignHCenter">
+         <widget class="QToolButton" name="buttonPlugins">
+          <property name="text">
+           <string>Load elements</string>
+          </property>
+          <property name="toolButtonStyle">
+           <enum>Qt::ToolButtonTextBesideIcon</enum>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
          <widget class="QToolButton" name="buttonConnect">
           <property name="text">
            <string>Connect</string>
@@ -226,10 +236,10 @@
     </iconset>
    </property>
    <property name="text">
-    <string>&amp;Plugins</string>
+    <string>Load &amp;elements</string>
    </property>
    <property name="toolTip">
-    <string>Load plugins</string>
+    <string>Load pipeline elements</string>
    </property>
   </action>
   <action name="actionConnect">
