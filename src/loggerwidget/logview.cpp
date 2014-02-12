@@ -36,7 +36,7 @@ LogView::LogView(QWidget *parent) :
     ui->tableView->setModel(proxyModel);
 
     connect(proxyModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
-            ui->tableView, SLOT(resizeColumnsToContents()));
+            ui->tableView, SLOT(resizeRowsToContents()));
     connect(proxyModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
             ui->tableView, SLOT(scrollToBottom()));
 

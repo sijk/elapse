@@ -23,6 +23,7 @@ struct LogItem {
 
 /*!
  * \brief The LogModel class stores LogItems in a table model.
+ * \ingroup logging
  */
 
 class LogModel : public QAbstractTableModel
