@@ -184,6 +184,7 @@ void ElapseClient::setupElements()
     // Configure hardware
 
     eeg->setSampleRate(250);
+    eeg->setSamplesPerChunk(20);
     eeg->setUseRefElec(true);
     eeg->setAllChannels({{"enabled", true},
                          {"gain", 24},
