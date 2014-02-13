@@ -24,6 +24,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    qxtLog->info("Using settings from", QSettings().fileName());
+
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
@@ -44,14 +46,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
 
     buildStateMachine();
-
-    QSettings settings;
-    qxtLog->info("Loading settings from", settings.fileName());
-
-    pluginManager->loadPluginsFromSettings();
-
-    if (settings.value("auto-connect", true).toBool() && pipeline->elements())
-        QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 }
 
 /*!
@@ -102,6 +96,12 @@ void ElapseClient::onBatteryLow()
                          "The device's battery is low. Power it off soon.");
 }
 
+void ElapseClient::maybeAutoConnect()
+{
+    if (QSettings().value("auto-connect", true).toBool())
+        QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
+}
+
 /*!
  * \page elapseclient-fsm ElapseClient State Machine
  *
@@ -110,22 +110,19 @@ void ElapseClient::onBatteryLow()
  *
  * @startuml{elapseclient-fsm.png}
  *
- * [*] -> Disconnected
- * Disconnected : enter / ui.showPage(0)
+ * [*] -> Uninitialised
+ * Uninitialised : enter / loadPluginsFromSettings()
+ * Uninitialised --> Disconnected : pluginsLoaded
+ * Disconnected : enter / connect.enable()
+ * Disconnected : enter / autoConnect()
  * Disconnected --> Connecting : connect
- * state Disconnected {
- *      [*] -> noElements
- *      noElements : enter / loadPluginsFromSettings()
- *      noElements -> elementsLoaded : pluginsLoaded
- *      elementsLoaded : enter / connect.enable()
- * }
  *
  * Connecting : enter / device.connect()
  * Connecting : enter / spinner.run()
  * Connecting --> Disconnected : device.error
  * Connecting --> Connected : connected
  *
- * Connected : enter / ui.showPage(1)
+ * Connected : enter / ui.showPage(connected)
  * Connected : exit / device.disconnect()
  * Connected --> Disconnected : disconnect
  * Connected --> Disconnected : device.error
@@ -148,22 +145,22 @@ void ElapseClient::buildStateMachine()
     machine = new QStateMachine(this);
     machine->setGlobalRestorePolicy(QState::RestoreProperties);
 
+    auto uninitialised = new QState(machine);
     auto disconnected = new QState(machine);
-    auto noElements = new QState(disconnected);
-    auto elementsLoaded = new QState(disconnected);
     auto connecting = new QState(machine);
     auto connected = new QState(machine);
     auto idle = new QState(connected);
     auto active = new QState(connected);
 
-    machine->setInitialState(disconnected);
+    machine->setInitialState(uninitialised);
+    uninitialised->assignProperty(ui->actionConnect, "enabled", false);
+    uninitialised->assignProperty(ui->buttonConnect, "visible", false);
+    uninitialised->assignProperty(ui->buttonPlugins, "visible", true);
+    auto initialised = uninitialised->addTransition(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)), disconnected);
+    connect(uninitialised, SIGNAL(entered()), pluginManager, SLOT(loadPluginsFromSettings()));
+    connect(initialised, SIGNAL(triggered()), SLOT(maybeAutoConnect()));
+
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
-    disconnected->setInitialState(noElements);
-    connect(noElements, SIGNAL(entered()), pluginManager, SLOT(loadPluginsFromSettings()));
-    noElements->addTransition(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)), elementsLoaded);
-    noElements->assignProperty(ui->actionConnect, "enabled", false);
-    noElements->assignProperty(ui->buttonConnect, "visible", false);
-    noElements->assignProperty(ui->buttonPlugins, "visible", true);
 
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);

@@ -43,6 +43,7 @@ private slots:
     void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
     void onBatteryLow();
+    void maybeAutoConnect();
     void setupElements();
 
 private:
