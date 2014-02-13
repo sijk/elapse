@@ -72,6 +72,21 @@ void HeadWidget::setZRotation(int angle)
     }
 }
 
+void HeadWidget::setXRotation(double radians)
+{
+    setXRotation(int(radians * 180 / M_PI * 16));
+}
+
+void HeadWidget::setYRotation(double radians)
+{
+    setYRotation(int(radians * 180 / M_PI * 16));
+}
+
+void HeadWidget::setZRotation(double radians)
+{
+    setZRotation(int(radians * 180 / M_PI * 16));
+}
+
 void HeadWidget::initializeGL()
 {
     qglClearColor(bgndColour);

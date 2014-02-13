@@ -71,7 +71,18 @@ void ElapseClient::onEegSample(SamplePtr sample)
 void ElapseClient::onImuSample(SamplePtr sample)
 {
     auto imu = sample.staticCast<const ImuSample>();
-    qxtLog->trace(imu->acc.z());
+
+    // Calculate the direction of the acceleration vector.
+    // By assuming this is purely due to gravity, we get an approximation
+    // of the head orientation (though with no information about z rotation).
+    float ax = imu->acc.x();
+    float ay = imu->acc.y();
+    float az = imu->acc.z();
+    double theta = atan2(ax, az);
+    double phi = atan2(ay, sqrt(ax*ax + az*az));
+
+    ui->headWidget->setXRotation(-theta);
+    ui->headWidget->setZRotation(phi);
 }
 
 void ElapseClient::onVideoSample(SamplePtr sample)

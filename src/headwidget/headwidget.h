@@ -20,6 +20,9 @@ public slots:
     void setXRotation(int angle);
     void setYRotation(int angle);
     void setZRotation(int angle);
+    void setXRotation(double radians);
+    void setYRotation(double radians);
+    void setZRotation(double radians);
 
 signals:
     void xRotationChanged(int angle);
