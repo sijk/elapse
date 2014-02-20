@@ -194,6 +194,7 @@ void ElapseClient::buildStateMachine()
     connect(active, &QState::exited, [=]{ device->device()->stopStreaming(); });
     connect(active, SIGNAL(entered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
+    connect(active, SIGNAL(exited()), ui->spinnerStarting, SLOT(stop()));
     active->addTransition(ui->buttonCapture, SIGNAL(clicked()), idle);
     active->addTransition(pipeline, SIGNAL(error(QString)), idle);
 
