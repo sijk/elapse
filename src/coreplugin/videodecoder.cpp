@@ -1,4 +1,3 @@
-#include <QQueue>
 #include <QxtLogger>
 #include <QGst/Init>
 #include <QGlib/Connect>
@@ -10,7 +9,7 @@
 #include <QGst/Bus>
 #include <QGst/Parse>
 #include <QGst/Message>
-#include <gst/gst.h>
+#include "util/gstwrappedbuffer.h"
 #include "sampletypes.h"
 #include "videodecoder.h"
 
@@ -68,10 +67,8 @@ public:
     QGst::PipelinePtr pipeline;
     QGst::Utils::ApplicationSource appsrc;
     QGst::Utils::ApplicationSink appsink;
-    QQueue<QByteArray> datastore;
 
     void onData(QByteArray data);
-    static void deleteData(VideoDecoderPrivate *self);
     QGst::FlowReturn onFrameDecoded();
     void onVideoError(const QGst::MessagePtr &msg);
 };
@@ -129,46 +126,10 @@ VideoDecoderPrivate::~VideoDecoderPrivate()
 /*!
  * Called when there is data available to be decoded. Wraps the data in a
  * GstBuffer and pushes it into the pipeline.
- *
- * To avoid copying, the GstBuffer points to the data in the given QByteArray.
- * We therefore need to keep a reference to the QByteArray so that it doesn't
- * get destroyed before the GstBuffer is finished with it's data. We push the
- * array into a queue from which it automatically gets removed when the
- * GstBuffer is destroyed.
- *
- * \see VideoDecoderPrivate::deleteData()
  */
 void VideoDecoderPrivate::onData(QByteArray data)
 {
-    // Store the QByteArray since we aren't going to copy the data into the
-    // GstBuffer. Adding a QByteArray to a queue doesn't cause a deep copy
-    // because it is implicitly shared.
-    datastore.enqueue(data);
-
-    // Unfortunately QtGStreamer doesn't expose the ability to create buffers
-    // without allocating data; we have to revert to the C API.
-    GstBuffer *buff = gst_buffer_new();
-    gst_buffer_set_data(buff, (guint8*)data.data(), data.size());
-
-    // Abuse the 'malloc_data' field to call our own cleanup function
-    GST_BUFFER_MALLOCDATA(buff) = (guint8*)this;
-    GST_BUFFER_FREE_FUNC(buff) = (GFreeFunc)&VideoDecoderPrivate::deleteData;
-
-    // Push the buffer into the decoder pipeline
-    QGst::BufferPtr buffp = QGst::BufferPtr::wrap(buff, false);
-
-    appsrc.pushBuffer(buffp);
-}
-
-/*!
- * Called when a QGst::Buffer is destroyed. Removes the oldest QByteArray from
- * the queue.
- *
- * \see VideoDecoderPrivate::onData()
- */
-void VideoDecoderPrivate::deleteData(VideoDecoderPrivate *self)
-{
-    self->datastore.dequeue();
+    appsrc.pushBuffer(QGst::bufferFromBytes(data));
 }
 
 /*!
