@@ -161,7 +161,7 @@ GstVideoSample::GstVideoSample(QGst::BufferPtr buffer) :
 
     timestamp = buff->timeStamp();
     w = caps->value("width").toInt();
-    w = caps->value("height").toInt();
+    h = caps->value("height").toInt();
     data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
 }
 
