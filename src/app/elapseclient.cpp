@@ -90,6 +90,12 @@ void ElapseClient::showErrorMessage(QString message)
     QMessageBox::warning(this, "Error", message);
 }
 
+void ElapseClient::checkBattery()
+{
+    if (device->battery()->isLow())
+        onBatteryLow();
+}
+
 void ElapseClient::onBatteryLow()
 {
     QMessageBox::warning(this, "Low battery",
@@ -174,6 +180,7 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
+    connect(connected, SIGNAL(entered()), this, SLOT(checkBattery()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
 
     idle->addTransition(ui->buttonCapture, SIGNAL(clicked()), active);
