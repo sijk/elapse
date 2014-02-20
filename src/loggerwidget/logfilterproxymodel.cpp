@@ -10,6 +10,9 @@ LogFilterProxyModel::LogFilterProxyModel(QObject *parent) :
 {
     QVariant savedLevel(QSettings().value("logview/level", QxtLogger::InfoLevel));
     minLevel = QxtLogger::LogLevel(savedLevel.toInt());
+
+    setFilterKeyColumn(2);
+    setFilterCaseSensitivity(Qt::CaseInsensitive);
 }
 
 /*!
@@ -40,5 +43,9 @@ bool LogFilterProxyModel::filterAcceptsRow(int srcRow,
 {
     QModelIndex idx = sourceModel()->index(srcRow, 1, srcParent);
     int level = sourceModel()->data(idx, LOG_LEVEL_ROLE).toInt();
-    return level >= minLevel;
+
+    if (level >= minLevel)
+        return QSortFilterProxyModel::filterAcceptsRow(srcRow, srcParent);
+
+    return false;
 }

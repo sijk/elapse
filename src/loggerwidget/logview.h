@@ -37,6 +37,7 @@ private slots:
 protected:
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
+    void keyPressEvent(QKeyEvent *event);
 
 private:
     Ui::LogView *ui;

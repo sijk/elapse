@@ -1,5 +1,7 @@
 #include <QStringListModel>
 #include <QSettings>
+#include <QShortcut>
+#include <QKeyEvent>
 #include <QxtLogger>
 #include "tablemodelloggerengine.h"
 #include "logfilterproxymodel.h"
@@ -45,6 +47,13 @@ LogView::LogView(QWidget *parent) :
 
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(setFilterLevel(int)));
+
+    connect(ui->searchText, SIGNAL(textChanged(QString)),
+            proxyModel, SLOT(setFilterRegExp(QString)));
+
+    QShortcut *findShortcut = new QShortcut(QKeySequence::Find, this);
+    connect(findShortcut, SIGNAL(activated()),
+            ui->searchText, SLOT(setFocus()));
 
     if (QSettings().value("logview/show", false).toBool())
         QMetaObject::invokeMethod(this, "show", Qt::QueuedConnection);
@@ -100,4 +109,13 @@ void LogView::hideEvent(QHideEvent *)
     settings.setValue("logview/show", false);
     settings.setValue("logview/geometry", saveGeometry());
     emit visibilityChanged(false);
+}
+
+/*!
+ * Don't reject() when Esc is pressed.
+ */
+void LogView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() != Qt::Key_Escape)
+        QDialog::keyPressEvent(event);
 }
