@@ -111,10 +111,10 @@ void ElapseClient::maybeAutoConnect()
  * @startuml{elapseclient-fsm.png}
  *
  * [*] -> Uninitialised
+ * Uninitialised : enter / connect.disable()
  * Uninitialised : enter / loadPluginsFromSettings()
- * Uninitialised --> Disconnected : pluginsLoaded
+ * Uninitialised --> Disconnected : pluginsLoaded / maybeAutoConnect()
  * Disconnected : enter / connect.enable()
- * Disconnected : enter / autoConnect()
  * Disconnected --> Connecting : connect
  *
  * Connecting : enter / device.connect()
