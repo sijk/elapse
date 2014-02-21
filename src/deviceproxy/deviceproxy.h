@@ -8,6 +8,11 @@
 #include "eeg_interface.h"
 
 
+/*!
+ * \brief The DeviceProxy class provides an interface to the device over D-Bus.
+ * \ingroup app
+ */
+
 class DeviceProxy : public QObject
 {
     Q_OBJECT
