@@ -1,4 +1,6 @@
 #include <QDBusConnection>
+#include <QTcpSocket>
+#include <QHostAddress>
 #include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QxtLogger>
@@ -47,9 +49,14 @@ Eeg::EegChannel *DeviceProxy::eeg_channel(uint i) const
     return _eeg_channels.at(i);
 }
 
-QString DeviceProxy::host() const
+QString DeviceProxy::deviceAddress() const
 {
     return QSettings().value("host", DEFAULT_HOST).toString();
+}
+
+QString DeviceProxy::localAddress() const
+{
+    return localAddr;
 }
 
 void DeviceProxy::connect()
@@ -60,8 +67,12 @@ void DeviceProxy::connect()
 void DeviceProxy::connectInBackground()
 {
     QSettings settings;
+    QString host = deviceAddress();
     uint port = settings.value("port", DEFAULT_PORT).toUInt();
-    QString address = QString("tcp:host=%1,port=%2").arg(host()).arg(port);
+    QString address = QString("tcp:host=%1,port=%2").arg(host).arg(port);
+
+    if (!detectLocalAddressByConnectingTo(host, port))
+        return;
 
     // Connect to the remote session bus
     auto connection = QDBusConnection::connectToBus(address, "elapse-bus");
@@ -111,4 +122,20 @@ void DeviceProxy::disconnect()
     _eeg_channels.clear();
 
     emit disconnected();
+}
+
+bool DeviceProxy::detectLocalAddressByConnectingTo(const QString &host,
+                                                     quint16 port)
+{
+    QTcpSocket sock;
+    sock.connectToHost(host, port);
+
+    if (!sock.waitForConnected(5000)) {
+        qxtLog->error("Connect:", sock.errorString());
+        emit error("Could not connect to the device.");
+        return false;
+    }
+
+    localAddr = sock.localAddress().toString();
+    return true;
 }

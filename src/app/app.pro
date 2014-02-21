@@ -1,6 +1,6 @@
 include(../../global.pri)
 
-QT           += core gui widgets opengl dbus
+QT           += core gui widgets opengl dbus network
 CONFIG       += qwt qxt
 QXT          += core
 

@@ -1,6 +1,6 @@
 include(../staticlib.pri)
 
-QT      += dbus
+QT      += dbus network
 
 SOURCES += deviceproxy.cpp
 
