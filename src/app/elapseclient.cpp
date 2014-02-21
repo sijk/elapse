@@ -12,7 +12,7 @@
 
 
 /*!
- * Construct a ElapseClient as a child of the given \a parent widget.
+ * Construct an ElapseClient as a child of the given \a parent widget.
  */
 ElapseClient::ElapseClient(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +29,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
+
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
     connect(logView, SIGNAL(visibilityChanged(bool)),
@@ -40,7 +41,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             pipeline, SLOT(setElements(ElementSetPtr)));
-    connect(device, SIGNAL(connected()), SLOT(setupElements()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -90,12 +90,6 @@ void ElapseClient::showErrorMessage(QString message)
     QMessageBox::warning(this, "Error", message);
 }
 
-void ElapseClient::checkBattery()
-{
-    if (device->battery()->isLow())
-        onBatteryLow();
-}
-
 void ElapseClient::onBatteryLow()
 {
     QMessageBox::warning(this, "Low battery",
@@ -117,26 +111,26 @@ void ElapseClient::maybeAutoConnect()
  * @startuml{elapseclient-fsm.png}
  *
  * [*] -> Uninitialised
- * Uninitialised : enter / connect.disable()
+ * Uninitialised : enter / connectButton.disable()
  * Uninitialised : enter / loadPluginsFromSettings()
  * Uninitialised --> Disconnected : pluginsLoaded / maybeAutoConnect()
- * Disconnected : enter / connect.enable()
- * Disconnected --> Connecting : connect
+ * Disconnected : enter / connectButton.enable()
+ * Disconnected --> Connecting : connectButton / device.connect()
  *
- * Connecting : enter / device.connect()
  * Connecting : enter / spinner.run()
  * Connecting --> Disconnected : device.error
- * Connecting --> Connected : connected
+ * Connecting --> Connected : device.connected
  *
  * Connected : enter / ui.showPage(connected)
+ * Connected : enter / configure()
  * Connected : exit / device.disconnect()
  * Connected --> Disconnected : disconnect
  * Connected --> Disconnected : device.error
  *
  * state Connected {
  *      [*] -> Idle
- *      Idle -> Active : capture
- *      Active -> Idle : stop
+ *      Idle -> Active : startStopButton
+ *      Active -> Idle : startStopButton
  *      Active -> Idle : pipeline.error
  *      Active : enter / device.startStreaming()
  *      Active : enter / pipeline.start()
@@ -168,10 +162,10 @@ void ElapseClient::buildStateMachine()
 
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
 
+    connect(connecting, SIGNAL(entered()), device, SLOT(connect()));
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
-    connect(connecting, SIGNAL(entered()), device, SLOT(connect()));
     connecting->addTransition(device, SIGNAL(error(QString)), disconnected);
     connecting->addTransition(device, SIGNAL(connected()), connected);
 
@@ -180,7 +174,7 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
-    connect(connected, SIGNAL(entered()), this, SLOT(checkBattery()));
+    connect(connected, SIGNAL(entered()), this, SLOT(configure()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
 
     idle->addTransition(ui->buttonCapture, SIGNAL(clicked()), active);
@@ -201,7 +195,7 @@ void ElapseClient::buildStateMachine()
     machine->start();
 }
 
-void ElapseClient::setupElements()
+void ElapseClient::configure()
 {
     auto elements = pipeline->elements();
     Q_ASSERT(elements);
@@ -218,7 +212,7 @@ void ElapseClient::setupElements()
 
     // Configure pipeline to match
 
-    elements->dataSource->setProperty("host", device->host());
+    elements->dataSource->setProperty("host", device->deviceAddress());
 
     elements->sampleDecoders[EEG]->setProperty("gain", 24);
     elements->sampleDecoders[EEG]->setProperty("vref", eeg->vref());
@@ -239,5 +233,10 @@ void ElapseClient::setupElements()
     connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(SamplePtr)),
             SLOT(onVideoSample(SamplePtr)));
 
+    qxtLog->debug("Notifying server that our address is", device->localAddress());
+    device->device()->setClientAddress(device->localAddress());
+
     connect(device->battery(), SIGNAL(batteryLow()), SLOT(onBatteryLow()));
+    if (device->battery()->isLow())
+        onBatteryLow();
 }

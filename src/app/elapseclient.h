@@ -42,10 +42,9 @@ private slots:
     void onImuSample(SamplePtr sample);
     void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
-    void checkBattery();
     void onBatteryLow();
     void maybeAutoConnect();
-    void setupElements();
+    void configure();
 
 private:
     void buildStateMachine();
