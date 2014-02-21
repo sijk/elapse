@@ -1,29 +1,30 @@
 #include "udpdatasource.h"
 
+#define EEG_PORT    5000
+#define IMU_PORT    6000
+#define VIDEO_PORT  7000
+
+
 /*!
  * Construct a new UdpDataSource as a child of the given \a parent.
  */
 UdpDataSource::UdpDataSource(QObject *parent) :
-    DataSource(parent),
-    eegPort(5000),
-    imuPort(6000),
-    videoPort(7000)
+    DataSource(parent)
 {
-    connect(&eegSock, SIGNAL(readyRead()), this, SLOT(onEegReady()));
+    connect(&eegSock,   SIGNAL(readyRead()), SLOT(readAndEmit()));
+    connect(&imuSock,   SIGNAL(readyRead()), SLOT(readAndEmit()));
+    connect(&videoSock, SIGNAL(readyRead()), SLOT(readAndEmit()));
+
     connect(&eegSock, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(onSocketError(QAbstractSocket::SocketError)));
-
-    connect(&imuSock, SIGNAL(readyRead()), this, SLOT(onImuReady()));
     connect(&imuSock, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(onSocketError(QAbstractSocket::SocketError)));
-
-    connect(&videoSock, SIGNAL(readyRead()), this, SLOT(onVideoReady()));
     connect(&videoSock, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(onSocketError(QAbstractSocket::SocketError)));
 
     startedSignals.addSignal(&eegSock, SIGNAL(readyRead()));
     startedSignals.addSignal(&imuSock, SIGNAL(readyRead()));
-//    startedSignals.addSignal(&videoSock, SIGNAL(readyRead()));
+    startedSignals.addSignal(&videoSock, SIGNAL(readyRead()));
 
     connect(&startedSignals, SIGNAL(allSignalsReceived()), SIGNAL(started()));
     connect(this, SIGNAL(started()), &startedSignals, SLOT(reset()));
@@ -35,9 +36,9 @@ UdpDataSource::UdpDataSource(QObject *parent) :
  */
 void UdpDataSource::start()
 {
-    eegSock.bind(QHostAddress::AnyIPv4, eegPort);
-    imuSock.bind(QHostAddress::AnyIPv4, imuPort);
-    videoSock.bind(videoPort);
+    eegSock.bind(QHostAddress::AnyIPv4, EEG_PORT);
+    imuSock.bind(QHostAddress::AnyIPv4, IMU_PORT);
+    videoSock.bind(QHostAddress::AnyIPv4, VIDEO_PORT);
 }
 
 /*!
@@ -48,44 +49,30 @@ void UdpDataSource::stop()
     eegSock.close();
     imuSock.close();
     videoSock.close();
+
+    startedSignals.reset();
 }
 
 /*!
- * Read EEG data from the socket and emit the eegReady() signal.
+ * Read data from the socket which called this slot and emit the appropriate
+ * signal.
  */
-void UdpDataSource::onEegReady()
+void UdpDataSource::readAndEmit()
 {
-    while (eegSock.hasPendingDatagrams()) {
-        QByteArray dgram;
-        dgram.resize(eegSock.pendingDatagramSize());
-        eegSock.readDatagram(dgram.data(), dgram.size());
-        emit eegReady(dgram);
-    }
-}
+    QUdpSocket *sock = qobject_cast<QUdpSocket*>(sender());
+    Q_ASSERT(sock);
 
-/*!
- * Read IMU data from the socket and emit the imuReady() signal.
- */
-void UdpDataSource::onImuReady()
-{
-    while (imuSock.hasPendingDatagrams()) {
+    while (sock->hasPendingDatagrams()) {
         QByteArray dgram;
-        dgram.resize(imuSock.pendingDatagramSize());
-        imuSock.readDatagram(dgram.data(), dgram.size());
-        emit imuReady(dgram);
-    }
-}
+        dgram.resize(sock->pendingDatagramSize());
+        sock->readDatagram(dgram.data(), dgram.size());
 
-/*!
- * Read video data from the socket and emit the videoReady() signal.
- */
-void UdpDataSource::onVideoReady()
-{
-    while (videoSock.hasPendingDatagrams()) {
-        QByteArray dgram;
-        dgram.resize(videoSock.pendingDatagramSize());
-        videoSock.readDatagram(dgram.data(), dgram.size());
-        emit videoReady(dgram);
+        if (sock == &eegSock)
+            emit eegReady(dgram);
+        else if (sock == &imuSock)
+            emit imuReady(dgram);
+        else if (sock == &videoSock)
+            emit videoReady(dgram);
     }
 }
 
