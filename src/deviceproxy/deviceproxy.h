@@ -29,7 +29,7 @@ public:
     QString localAddress() const;
 
 public slots:
-    void connect();
+    void connectTo(const QString &hostname);
     void disconnect();
 
 signals:
@@ -45,6 +45,7 @@ private:
     org::nzbri::elapse::Battery *_battery;
     org::nzbri::elapse::Eeg::EegAdc *_eeg;
     QList<org::nzbri::elapse::Eeg::EegChannel*> _eeg_channels;
+    QString deviceAddr;
     QString localAddr;
 };
 

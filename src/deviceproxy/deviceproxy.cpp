@@ -6,7 +6,6 @@
 #include <QxtLogger>
 #include "deviceproxy.h"
 
-#define DEFAULT_HOST    "overo.local"
 #define DEFAULT_PORT    9000
 #define SERVICE         "org.nzbri.elapse"
 
@@ -68,11 +67,13 @@ Eeg::EegChannel *DeviceProxy::eeg_channel(uint i) const
 }
 
 /*!
- * \return the address of the device to connect to.
+ * \return the address of the connected device.
+ *
+ * The return value is only valid after the proxy is connected().
  */
 QString DeviceProxy::deviceAddress() const
 {
-    return QSettings().value("host", DEFAULT_HOST).toString();
+    return deviceAddr;
 }
 
 /*!
@@ -86,11 +87,14 @@ QString DeviceProxy::localAddress() const
 }
 
 /*!
- * Asynchronously connect to the device. The connected() signal will be emitted
- * if connecting succeeds, otherwise an error() will be emitted.
+ * Asynchronously connect to the \a device. The connected() signal will be
+ * emitted if connecting succeeds, otherwise an error() will be emitted.
+ *
+ * The \a device argument can be an IP address or a hostname.
  */
-void DeviceProxy::connect()
+void DeviceProxy::connectTo(const QString &device)
 {
+    deviceAddr = device;
     QtConcurrent::run(this, &DeviceProxy::connectInBackground);
 }
 
@@ -101,11 +105,10 @@ void DeviceProxy::connect()
 void DeviceProxy::connectInBackground()
 {
     QSettings settings;
-    QString host = deviceAddress();
     uint port = settings.value("port", DEFAULT_PORT).toUInt();
-    QString address = QString("tcp:host=%1,port=%2").arg(host).arg(port);
+    QString address = QString("tcp:host=%1,port=%2").arg(deviceAddr).arg(port);
 
-    if (!detectLocalAddressByConnectingTo(host, port))
+    if (!detectLocalAddressByConnectingTo(deviceAddr, port))
         return;
 
     // Connect to the remote session bus
@@ -171,7 +174,7 @@ void DeviceProxy::disconnect()
  * \return whether it successfully connected to the device.
  */
 bool DeviceProxy::detectLocalAddressByConnectingTo(const QString &host,
-                                                     quint16 port)
+                                                   quint16 port)
 {
     QTcpSocket sock;
     sock.connectToHost(host, port);

@@ -10,6 +10,8 @@
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
 
+#define DEFAULT_ADDR    "overo.local"
+
 
 /*!
  * Construct an ElapseClient as a child of the given \a parent widget.
@@ -24,11 +26,15 @@ ElapseClient::ElapseClient(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    qxtLog->info("Using settings from", QSettings().fileName());
+    QSettings settings;
+    qxtLog->info("Using settings from", settings.fileName());
 
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
+
+    QString defaultAddress = settings.value("host", DEFAULT_ADDR).toString();
+    ui->deviceAddress->setText(defaultAddress);
 
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
@@ -154,7 +160,7 @@ void ElapseClient::buildStateMachine()
 
     machine->setInitialState(uninitialised);
     uninitialised->assignProperty(ui->actionConnect, "enabled", false);
-    uninitialised->assignProperty(ui->buttonConnect, "visible", false);
+    uninitialised->assignProperty(ui->groupConnect, "visible", false);
     uninitialised->assignProperty(ui->buttonPlugins, "visible", true);
     auto initialised = uninitialised->addTransition(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)), disconnected);
     connect(uninitialised, SIGNAL(entered()), pluginManager, SLOT(loadPluginsFromSettings()));
@@ -162,7 +168,8 @@ void ElapseClient::buildStateMachine()
 
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
 
-    connect(connecting, SIGNAL(entered()), device, SLOT(connect()));
+    connect(connecting, &QState::entered,
+            [=]{ device->connectTo(ui->deviceAddress->text()); });
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
