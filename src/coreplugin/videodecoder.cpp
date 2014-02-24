@@ -254,7 +254,7 @@ void VideoDecoderPrivate::onVideoError(GstBus *bus, GstMessage *msg,
 /*!
  * Create a new VideoDecoder as a child of the given \a parent.
  *
- * Internally, the VideoDecoder uses a GStreamer pipeline to decode the video
+ * Internally, the VideoDecoder uses a QGst::Pipeline to decode the video
  * stream.
  */
 VideoDecoder::VideoDecoder(QObject *parent) :
