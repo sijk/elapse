@@ -4,12 +4,12 @@
 #include <QGst/Buffer>
 
 /*!
- * \brief Local additions to QtGstreamer.
+ * \file
+ * Supplementary functions for QGst.
  */
-namespace QGst {
 
-QGst::BufferPtr bufferFromBytes(const QByteArray &bytes);
+enum class CopyMethod { Shallow, Deep };
 
-}
+QGst::BufferPtr gstBufferFromBytes(const QByteArray &bytes, CopyMethod copy);
 
 #endif // GSTWRAPPEDBUFFER_H

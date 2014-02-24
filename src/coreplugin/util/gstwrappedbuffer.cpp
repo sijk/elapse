@@ -1,7 +1,9 @@
 #include <gst/gst.h>
+#include <cstring>
 #include <QHash>
 #include <QxtLogger>
 #include "gstwrappedbuffer.h"
+
 
 static void freeFunc(GstBuffer *buff);
 static QHash<GstBuffer *, QByteArray> cache;
@@ -20,7 +22,7 @@ static QHash<GstBuffer *, QByteArray> cache;
  *
  * \return a \c QGst::BufferPtr to the new buffer.
  */
-QGst::BufferPtr QGst::bufferFromBytes(const QByteArray &bytes)
+QGst::BufferPtr gstBufferFromBytes_shallow(const QByteArray &bytes)
 {
     GstBuffer *buff = gst_buffer_new();
     gst_buffer_set_data(buff, (guint8*)bytes.data(), bytes.size());
@@ -28,12 +30,13 @@ QGst::BufferPtr QGst::bufferFromBytes(const QByteArray &bytes)
     GST_BUFFER_MALLOCDATA(buff) = (guint8*)buff;
     GST_BUFFER_FREE_FUNC(buff) = (GFreeFunc)freeFunc;
 
-    if (cache.contains(buff))
-        qxtLog->debug() << qulonglong(buff) << "already in the cache!";
+    Q_ASSERT(!cache.contains(buff));
 
     cache.insert(buff, bytes);
+    auto gstBuff = QGst::BufferPtr::wrap(buff, false);
 
-    return QGst::BufferPtr::wrap(buff, false);
+    Q_ASSERT(cache.contains(buff));
+    return gstBuff;
 }
 
 /*!
@@ -42,8 +45,39 @@ QGst::BufferPtr QGst::bufferFromBytes(const QByteArray &bytes)
  */
 void freeFunc(GstBuffer *buff)
 {
-    if (!cache.contains(buff))
-        qxtLog->debug() << qulonglong(buff) << "not found in cache!";
-
+    Q_ASSERT(cache.contains(buff));
     cache.remove(buff);
+    Q_ASSERT(!cache.contains(buff));
+}
+
+
+/*!
+ * Create a new GStreamer buffer with a copy of the given \bytes.
+ *
+ * \return a \c QGst::BufferPtr to the new buffer.
+ */
+QGst::BufferPtr gstBufferFromBytes_deep(const QByteArray &bytes)
+{
+    QGst::BufferPtr buff = QGst::Buffer::create(bytes.size());
+    std::memcpy(buff->data(), bytes.constData(), bytes.size());
+    return buff;
+}
+
+
+/*!
+ * Create a new QGst::Buffer from the given \a bytes.
+ *
+ * - If \a copy is \c Deep, the contents of the \c QByteArray are copied
+ *   into the newly-allocated buffer.
+ * - If \a copy is \c Shallow, the buffer's data pointer will point to
+ *   the contents of the QByteArray; i.e. the data won't be copied. In this
+ *   case the QByteArray is added to an internal cache to ensure that it
+ *   is not destroyed until the buffer is destroyed.
+ *
+ * \return a QGst::BufferPtr to the new buffer.
+ */
+QGst::BufferPtr gstBufferFromBytes(const QByteArray &bytes, CopyMethod copy)
+{
+    return (copy == CopyMethod::Deep) ? gstBufferFromBytes_deep(bytes)
+                                      : gstBufferFromBytes_shallow(bytes);
 }

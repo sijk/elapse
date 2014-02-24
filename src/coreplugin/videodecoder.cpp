@@ -125,11 +125,11 @@ VideoDecoderPrivate::~VideoDecoderPrivate()
 
 /*!
  * Called when there is data available to be decoded. Wraps the data in a
- * GstBuffer and pushes it into the pipeline.
+ * QGst::Buffer and pushes it into the pipeline.
  */
 void VideoDecoderPrivate::onData(QByteArray data)
 {
-    appsrc.pushBuffer(QGst::bufferFromBytes(data));
+    appsrc.pushBuffer(gstBufferFromBytes(data, CopyMethod::Deep));
 }
 
 /*!
@@ -153,6 +153,8 @@ QGst::FlowReturn VideoDecoderPrivate::onFrameDecoded()
 
 /*!
  * Construct a GstVideoSample which wraps the given \a buffer.
+ *
+ * This avoids the need to copy data from the QGst::Buffer into the VideoSample.
  */
 GstVideoSample::GstVideoSample(QGst::BufferPtr buffer) :
     buff(buffer)
