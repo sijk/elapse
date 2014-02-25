@@ -21,6 +21,7 @@ DeviceProxy::DeviceProxy(QObject *parent) :
     _battery(nullptr),
     _eeg(nullptr)
 {
+    connect(&connectionChecker, SIGNAL(timeout()), SLOT(checkConnectivity()));
 }
 
 /*!
@@ -143,6 +144,8 @@ void DeviceProxy::connectInBackground()
     }
 
     emit connected();
+
+    connectionChecker.start(2000);
 }
 
 /*!
@@ -150,6 +153,8 @@ void DeviceProxy::connectInBackground()
  */
 void DeviceProxy::disconnect()
 {
+    connectionChecker.stop();
+
     delete _device;
     _device = nullptr;
 
@@ -163,6 +168,19 @@ void DeviceProxy::disconnect()
     _eeg_channels.clear();
 
     emit disconnected();
+}
+
+/*!
+ * Poll device.isAccessible() periodically.
+ */
+void DeviceProxy::checkConnectivity()
+{
+    Q_ASSERT(_device);
+    if (!_device->isAccessible()) {
+        qxtLog->error("Device connectivity check failed");
+        emit error("The connection to the device was lost");
+        disconnect();
+    }
 }
 
 /*!

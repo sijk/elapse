@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QTimer>
 
 #include "elapse_interface.h"
 #include "eeg_interface.h"
@@ -37,6 +38,9 @@ signals:
     void disconnected();
     void error(QString msg);
 
+private slots:
+    void checkConnectivity();
+
 private:
     void connectInBackground();
     bool detectLocalAddressByConnectingTo(const QString& host, quint16 port);
@@ -47,6 +51,7 @@ private:
     QList<org::nzbri::elapse::Eeg::EegChannel*> _eeg_channels;
     QString deviceAddr;
     QString localAddr;
+    QTimer connectionChecker;
 };
 
 
