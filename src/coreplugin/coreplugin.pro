@@ -2,7 +2,7 @@ include(../../global.pri)
 
 TEMPLATE      = lib
 CONFIG       += plugin link_pkgconfig qxt
-QT           += network
+QT           += network opengl
 DESTDIR       = ../../plugins/
 PKGCONFIG     = gstreamer-1.0 gstreamer-app-1.0
 QXT          += core
@@ -36,3 +36,8 @@ HEADERS      += coreplugin.h \
                 plugin.h
 
 TARGET        = $$qtLibraryTarget(coreplugin)
+
+LIBS            += -L$$OUT_PWD/../headwidget/ -lheadwidget
+INCLUDEPATH     += $$PWD/../headwidget
+DEPENDPATH      += $$PWD/../headwidget
+PRE_TARGETDEPS  += $$OUT_PWD/../headwidget/libheadwidget.a

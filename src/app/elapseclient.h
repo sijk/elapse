@@ -39,7 +39,6 @@ public:
 
 private slots:
     void onEegSample(SamplePtr sample);
-    void onImuSample(SamplePtr sample);
     void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
     void onBatteryLow();

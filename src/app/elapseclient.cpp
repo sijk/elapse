@@ -77,23 +77,6 @@ void ElapseClient::onEegSample(SamplePtr sample)
     ui->eegPlot->appendData(eeg->values);
 }
 
-void ElapseClient::onImuSample(SamplePtr sample)
-{
-    auto imu = sample.staticCast<const ImuSample>();
-
-    // Calculate the direction of the acceleration vector.
-    // By assuming this is purely due to gravity, we get an approximation
-    // of the head orientation (though with no information about z rotation).
-    float ax = imu->acc.x();
-    float ay = imu->acc.y();
-    float az = imu->acc.z();
-    double theta = atan2(ax, az);
-    double phi = atan2(ay, sqrt(ax*ax + az*az));
-
-    ui->headWidget->setXRotation(-theta);
-    ui->headWidget->setZRotation(phi);
-}
-
 void ElapseClient::onVideoSample(SamplePtr sample)
 {
     auto frame = sample.staticCast<const VideoSample>();
@@ -296,8 +279,6 @@ void ElapseClient::configure()
 
     connect(elements->sampleDecoders[EEG], SIGNAL(newSample(SamplePtr)),
             SLOT(onEegSample(SamplePtr)));
-    connect(elements->sampleDecoders[IMU], SIGNAL(newSample(SamplePtr)),
-            SLOT(onImuSample(SamplePtr)));
     connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(SamplePtr)),
             SLOT(onVideoSample(SamplePtr)));
 
