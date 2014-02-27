@@ -16,6 +16,7 @@ SOURCES      += main.cpp \
 HEADERS      += elapseclient.h \
                 spinner.h \
                 eegfilesink.h \
+                displayable.h \
                 elements.h
 FORMS        += elapseclient.ui
 RESOURCES    += ../../elapse.qrc

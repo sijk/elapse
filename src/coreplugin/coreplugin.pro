@@ -32,6 +32,7 @@ HEADERS      += coreplugin.h \
                 elements/decoder.h \
                 elements/featurextractor.h \
                 elements/classifier.h \
+                displayable.h \
                 plugin.h
 
 TARGET        = $$qtLibraryTarget(coreplugin)

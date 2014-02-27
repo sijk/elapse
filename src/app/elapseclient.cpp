@@ -1,5 +1,6 @@
 #include <QStateMachine>
 #include <QMessageBox>
+#include <QDockWidget>
 #include <QSettings>
 #include <QxtLogger>
 #include "pipeline.h"
@@ -7,6 +8,7 @@
 #include "deviceproxy.h"
 #include "stripchart.h"
 #include "logview.h"
+#include "displayable.h"
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
 
@@ -52,6 +54,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             pipeline, SLOT(setElements(ElementSetPtr)));
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+            SLOT(loadElementWidgets(ElementSetPtr)));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -188,8 +192,10 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
+    connect(connected, SIGNAL(entered()), SLOT(showElementWidgets()));
     connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
+    connect(connected, SIGNAL(exited()), SLOT(hideElementWidgets()));
 
     idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
@@ -208,6 +214,53 @@ void ElapseClient::buildStateMachine()
     active->addTransition(pipeline, SIGNAL(error(QString)), idle);
 
     machine->start();
+}
+
+/*!
+ * For each element that implements the Displayable interface, add a
+ * QDockWidget containing the widget exported by the element.
+ */
+void ElapseClient::loadElementWidgets(ElementSetPtr elements)
+{
+    foreach (QObject *element, elements->allElements()) {
+        QString className = element->metaObject()->className();
+
+        auto displayable = dynamic_cast<Displayable*>(element);
+        if (!displayable) {
+            qxtLog->debug(className, "is not displayable");
+            continue;
+        }
+
+        qxtLog->debug("Adding widget provided by", className);
+
+        auto widget = displayable->getWidget();
+        Q_ASSERT(widget);
+
+        auto dockWidget = new QDockWidget(className, this);
+        dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+        dockWidget->setFeatures(QDockWidget::DockWidgetMovable);
+        dockWidget->setWidget(widget);
+        addDockWidget(Qt::TopDockWidgetArea, dockWidget);
+        dockWidget->hide();
+        connect(element, SIGNAL(destroyed()), dockWidget, SLOT(deleteLater()));
+        connect(element, &QObject::destroyed, []{
+            qxtLog->info("element destroyed");
+        });
+    }
+}
+
+void ElapseClient::showElementWidgets()
+{
+    auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
+    foreach (QDockWidget* dockWidget, dockWidgets)
+        dockWidget->show();
+}
+
+void ElapseClient::hideElementWidgets()
+{
+    auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
+    foreach (auto dockWidget, dockWidgets)
+        dockWidget->hide();
 }
 
 void ElapseClient::configure()

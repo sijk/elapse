@@ -44,6 +44,9 @@ private slots:
     void showErrorMessage(QString message);
     void onBatteryLow();
     void maybeAutoConnect();
+    void loadElementWidgets(ElementSetPtr elements);
+    void showElementWidgets();
+    void hideElementWidgets();
     void configure();
 
 private:
