@@ -394,16 +394,11 @@ ElementSetPtr PluginManagerPrivate::doLoadElements(ElementLoader loader)
     // Populate the ElementSet
     (this->*loader)(elements);
 
-    if (!elements->dataSource ||
-        !elements->sampleDecoders[EEG] ||
-        !elements->sampleDecoders[VIDEO] ||
-        !elements->sampleDecoders[IMU] ||
-        !elements->featureExtractors[EEG] ||
-        !elements->featureExtractors[VIDEO] ||
-        !elements->featureExtractors[IMU] ||
-        !elements->classifier) {
-        qxtLog->warning("Failed to load all elements from plugins.");
-        return ElementSetPtr();
+    foreach (QObject *element, elements->allElements()) {
+        if (!element) {
+            qxtLog->warning("Failed to load all elements from plugins.");
+            return ElementSetPtr();
+        }
     }
 
     qxtLog->info("Successfully loaded all elements from plugins.");
