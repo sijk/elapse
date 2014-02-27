@@ -32,6 +32,11 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
+    connect(ui->deviceAddress, SIGNAL(returnPressed()),
+            ui->actionConnect, SLOT(trigger()));
+
+    ui->connectedToolBar->setVisible(false);
+    ui->connectedToolBar->addWidget(ui->spinnerStarting);
 
     QString defaultAddress = settings.value("host", DEFAULT_ADDR).toString();
     ui->deviceAddress->setText(defaultAddress);
@@ -178,15 +183,18 @@ void ElapseClient::buildStateMachine()
 
     connected->setInitialState(idle);
     connected->assignProperty(ui->stackedWidget, "currentIndex", 1);
+    connected->assignProperty(ui->disconnectedToolBar, "visible", false);
+    connected->assignProperty(ui->connectedToolBar, "visible", true);
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
-    connect(connected, SIGNAL(entered()), this, SLOT(configure()));
+    connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
 
-    idle->addTransition(ui->buttonCapture, SIGNAL(clicked()), active);
+    idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
-    active->assignProperty(ui->buttonCapture, "text", "Stop");
+    active->assignProperty(ui->actionCapture, "text", "Stop");
+    active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
     connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
     connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
     // We need to delay evaluation of device->device() by wrapping it in a
@@ -196,7 +204,7 @@ void ElapseClient::buildStateMachine()
     connect(active, SIGNAL(entered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     connect(active, SIGNAL(exited()), ui->spinnerStarting, SLOT(stop()));
-    active->addTransition(ui->buttonCapture, SIGNAL(clicked()), idle);
+    active->addTransition(ui->actionCapture, SIGNAL(triggered()), idle);
     active->addTransition(pipeline, SIGNAL(error(QString)), idle);
 
     machine->start();
