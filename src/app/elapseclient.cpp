@@ -170,15 +170,14 @@ void ElapseClient::buildStateMachine()
 
     connected->setInitialState(idle);
     connected->assignProperty(ui->stackedWidget, "currentIndex", 1);
+    connected->assignProperty(this, "elementWidgetsVisible", true);
     connected->assignProperty(ui->disconnectedToolBar, "visible", false);
     connected->assignProperty(ui->connectedToolBar, "visible", true);
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
-    connect(connected, SIGNAL(entered()), SLOT(showElementWidgets()));
     connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
-    connect(connected, SIGNAL(exited()), SLOT(hideElementWidgets()));
 
     idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
@@ -232,18 +231,17 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
     }
 }
 
-void ElapseClient::showElementWidgets()
+bool ElapseClient::elementWidgetsVisible() const
 {
-    auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
-    foreach (QDockWidget* dockWidget, dockWidgets)
-        dockWidget->show();
+    auto dockWidget = findChild<QDockWidget*>("", Qt::FindDirectChildrenOnly);
+    return dockWidget && dockWidget->isVisible();
 }
 
-void ElapseClient::hideElementWidgets()
+void ElapseClient::setElementWidgetsVisible(bool visible)
 {
     auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
     foreach (auto dockWidget, dockWidgets)
-        dockWidget->hide();
+        dockWidget->setVisible(visible);
 }
 
 void ElapseClient::configure()

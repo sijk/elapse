@@ -32,6 +32,8 @@ class ElapseClient;
 class ElapseClient : public QMainWindow
 {
     Q_OBJECT
+    Q_PROPERTY(bool elementWidgetsVisible
+               READ elementWidgetsVisible WRITE setElementWidgetsVisible)
 
 public:
     explicit ElapseClient(QWidget *parent = nullptr);
@@ -44,11 +46,11 @@ private slots:
     void onBatteryLow();
     void maybeAutoConnect();
     void loadElementWidgets(ElementSetPtr elements);
-    void showElementWidgets();
-    void hideElementWidgets();
     void configure();
 
 private:
+    bool elementWidgetsVisible() const;
+    void setElementWidgetsVisible(bool visible);
     void buildStateMachine();
 
     Ui::ElapseClient *ui;
