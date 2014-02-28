@@ -1,11 +1,14 @@
+#include <QPointer>
 #include <QxtLogger>
 #include <QGst/Init>
 #include <QGlib/Connect>
 #include <QGlib/Error>
 #include <QGst/Pipeline>
 #include <QGst/Element>
+#include <QGst/Pad>
 #include <QGst/Utils/ApplicationSource>
 #include <QGst/Utils/ApplicationSink>
+#include <QGst/Ui/VideoWidget>
 #include <QGst/Bus>
 #include <QGst/Parse>
 #include <QGst/Message>
@@ -22,7 +25,8 @@
 
 #define PIPELINE \
     "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
-    "ffdec_h264 ! appsink name=sink"
+    "ffdec_h264 ! tee name=t  ! queue ! appsink name=appsink " \
+                          "t. ! queue ! xvimagesink name=displaysink sync=false"
 
 // TODO: Use an rtpjitterbuffer?
 
@@ -67,10 +71,13 @@ public:
     QGst::PipelinePtr pipeline;
     QGst::Utils::ApplicationSource appsrc;
     QGst::Utils::ApplicationSink appsink;
+    QPointer<QGst::Ui::VideoWidget> displaysink;
+    QSize videoSize;
 
     void onData(QByteArray data);
     QGst::FlowReturn onFrameDecoded();
     void onVideoError(const QGst::MessagePtr &msg);
+    void onStateChange(const QGst::MessagePtr &msg);
 };
 
 
@@ -97,7 +104,7 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     appsrc.setLive(true);
     appsrc.element()->setProperty("do-timestamp", true);
 
-    appsink.setElement(pipeline->getElementByName("sink"));
+    appsink.setElement(pipeline->getElementByName("appsink"));
     appsink.element()->setProperty("sync", false);
     appsink.element()->setProperty("emit-signals", true);
     QGlib::connect(appsink.element(), "new-buffer",
@@ -106,6 +113,8 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     pipeline->bus()->addSignalWatch();
     QGlib::connect(pipeline->bus(), "message::error",
                    this, &VideoDecoderPrivate::onVideoError);
+    QGlib::connect(pipeline->bus(), "message::state-change",
+                   this, &VideoDecoderPrivate::onStateChange);
 
     pipeline->setState(QGst::StatePlaying);
 }
@@ -184,6 +193,26 @@ void VideoDecoderPrivate::onVideoError(const QGst::MessagePtr &msg)
     pipeline->setState(QGst::StateNull);
 }
 
+/*!
+ * Inspect the negotiated caps of the appsink once playback has started
+ * and use this information to set the video widget size.
+ */
+void VideoDecoderPrivate::onStateChange(const QGst::MessagePtr &msg)
+{
+    if (msg->source() != pipeline || msg->type() != QGst::MessageStateChanged)
+        return;
+
+    auto stateChange = msg.staticCast<QGst::StateChangedMessage>();
+    if (stateChange->newState() == QGst::StatePlaying) {
+        auto sink = appsink.element()->getStaticPad("sink");
+        auto caps = sink->negotiatedCaps()->internalStructure(0);
+        videoSize = { caps->value("width").toInt(),
+                      caps->value("height").toInt() };
+        if (displaysink)
+            displaysink->setMinimumSize(videoSize);
+    }
+}
+
 
 /*!
  * Create a new VideoDecoder as a child of the given \a parent.
@@ -214,6 +243,23 @@ void VideoDecoder::onData(QByteArray data)
 {
     Q_D(VideoDecoder);
     d->onData(data);
+}
+
+/*!
+ * \return a widget displaying the decoded video.
+ */
+QWidget *VideoDecoder::getWidget()
+{
+    Q_D(VideoDecoder);
+    if (!d->displaysink) {
+        d->displaysink = new QGst::Ui::VideoWidget;
+        d->displaysink->setVideoSink(d->pipeline->getElementByName("displaysink"));
+
+        QSize size = d->videoSize.isValid() ? d->videoSize : QSize(160, 240);
+        d->displaysink->setMinimumSize(size);
+        d->displaysink->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+    return d->displaysink;
 }
 
 #include "videodecoder.moc" // because VideoDecoderPrivate inherits from QObject
