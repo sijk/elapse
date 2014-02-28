@@ -31,11 +31,6 @@ INCLUDEPATH     += $$PWD/../pluginmanager
 DEPENDPATH      += $$PWD/../pluginmanager
 PRE_TARGETDEPS  += $$OUT_PWD/../pluginmanager/libpluginmanager.a
 
-LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
-INCLUDEPATH     += $$PWD/../pluginmanager
-DEPENDPATH      += $$PWD/../pluginmanager
-PRE_TARGETDEPS  += $$OUT_PWD/../pluginmanager/libpluginmanager.a
-
 LIBS            += -L$$OUT_PWD/../deviceproxy/ -ldeviceproxy
 INCLUDEPATH     += $$PWD/../deviceproxy
 DEPENDPATH      += $$PWD/../deviceproxy
