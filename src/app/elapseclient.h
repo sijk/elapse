@@ -6,7 +6,6 @@
 
 class Pipeline;
 class PluginManager;
-class Sample;
 class DeviceProxy;
 class LogView;
 class QStateMachine;
@@ -32,21 +31,23 @@ class ElapseClient;
 class ElapseClient : public QMainWindow
 {
     Q_OBJECT
+    Q_PROPERTY(bool elementWidgetsVisible
+               READ elementWidgetsVisible WRITE setElementWidgetsVisible)
 
 public:
     explicit ElapseClient(QWidget *parent = nullptr);
     ~ElapseClient();
 
 private slots:
-    void onEegSample(SamplePtr sample);
-    void onImuSample(SamplePtr sample);
-    void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
     void onBatteryLow();
     void maybeAutoConnect();
+    void loadElementWidgets(ElementSetPtr elements);
     void configure();
 
 private:
+    bool elementWidgetsVisible() const;
+    void setElementWidgetsVisible(bool visible);
     void buildStateMachine();
 
     Ui::ElapseClient *ui;

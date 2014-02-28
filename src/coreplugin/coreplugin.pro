@@ -1,8 +1,8 @@
 include(../../global.pri)
 
 TEMPLATE      = lib
-CONFIG       += plugin link_pkgconfig qxt
-QT           += network
+CONFIG       += plugin link_pkgconfig qwt qxt
+QT           += network opengl
 DESTDIR       = ../../plugins/
 PKGCONFIG     = gstreamer-1.0 gstreamer-app-1.0
 QXT          += core
@@ -32,6 +32,17 @@ HEADERS      += coreplugin.h \
                 elements/decoder.h \
                 elements/featurextractor.h \
                 elements/classifier.h \
+                displayable.h \
                 plugin.h
 
 TARGET        = $$qtLibraryTarget(coreplugin)
+
+LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
+INCLUDEPATH     += $$PWD/../stripchart
+DEPENDPATH      += $$PWD/../stripchart
+PRE_TARGETDEPS  += $$OUT_PWD/../stripchart/libstripchart.a
+
+LIBS            += -L$$OUT_PWD/../headwidget/ -lheadwidget
+INCLUDEPATH     += $$PWD/../headwidget
+DEPENDPATH      += $$PWD/../headwidget
+PRE_TARGETDEPS  += $$OUT_PWD/../headwidget/libheadwidget.a

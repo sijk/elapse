@@ -1,7 +1,7 @@
 include(../../global.pri)
 
-QT           += core gui widgets opengl dbus network
-CONFIG       += qwt qxt
+QT           += core gui widgets dbus network
+CONFIG       += qxt
 QXT          += core
 
 TARGET        = elapse
@@ -16,6 +16,7 @@ SOURCES      += main.cpp \
 HEADERS      += elapseclient.h \
                 spinner.h \
                 eegfilesink.h \
+                displayable.h \
                 elements.h
 FORMS        += elapseclient.ui
 RESOURCES    += ../../elapse.qrc
@@ -29,11 +30,6 @@ LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
 INCLUDEPATH     += $$PWD/../pluginmanager
 DEPENDPATH      += $$PWD/../pluginmanager
 PRE_TARGETDEPS  += $$OUT_PWD/../pluginmanager/libpluginmanager.a
-
-LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
-INCLUDEPATH     += $$PWD/../stripchart
-DEPENDPATH      += $$PWD/../stripchart
-PRE_TARGETDEPS  += $$OUT_PWD/../stripchart/libstripchart.a
 
 LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
 INCLUDEPATH     += $$PWD/../pluginmanager
@@ -50,8 +46,3 @@ LIBS            += -L$$OUT_PWD/../loggerwidget/ -lloggerwidget
 INCLUDEPATH     += $$PWD/../loggerwidget
 DEPENDPATH      += $$PWD/../loggerwidget
 PRE_TARGETDEPS  += $$OUT_PWD/../loggerwidget/libloggerwidget.a
-
-LIBS            += -L$$OUT_PWD/../headwidget/ -lheadwidget
-INCLUDEPATH     += $$PWD/../headwidget
-DEPENDPATH      += $$PWD/../headwidget
-PRE_TARGETDEPS  += $$OUT_PWD/../headwidget/libheadwidget.a

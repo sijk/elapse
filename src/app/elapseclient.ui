@@ -14,145 +14,38 @@
    <string>Elapse</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QStackedWidget" name="stackedWidget">
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="pageDisconnected">
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="8,0,0,10">
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item alignment="Qt::AlignHCenter">
-         <widget class="QToolButton" name="buttonPlugins">
-          <property name="text">
-           <string>Load elements</string>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
-          </property>
-         </widget>
-        </item>
-        <item alignment="Qt::AlignHCenter">
-         <widget class="QWidget" name="groupConnect" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="deviceAddress">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="placeholderText">
-              <string>Device address</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="buttonConnect">
-             <property name="text">
-              <string>Connect</string>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Spinner" name="spinnerConnecting">
-             <property name="minimumSize">
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="pageConnected">
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <widget class="QWidget" name="pageDisconnected" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QToolButton" name="buttonPlugins">
+         <property name="text">
+          <string>Load elements</string>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignHCenter">
+        <widget class="QWidget" name="groupConnect" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="StripChart" name="eegPlot" native="true"/>
-          </item>
-          <item>
-           <widget class="HeadWidget" name="headWidget" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0">
-          <item>
-           <spacer name="horizontalSpacer">
+           <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -161,60 +54,37 @@
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>10</width>
+              <width>20</width>
               <height>20</height>
              </size>
             </property>
            </spacer>
           </item>
           <item>
-           <widget class="QSlider" name="spacingSlider">
-            <property name="minimum">
-             <number>1</number>
+           <widget class="QLineEdit" name="deviceAddress">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-            <property name="singleStep">
-             <number>100</number>
-            </property>
-            <property name="pageStep">
-             <number>1000</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+            <property name="placeholderText">
+             <string>Device address</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="spacingValue">
+           <widget class="QToolButton" name="buttonConnect">
             <property name="text">
-             <string/>
+             <string>Connect</string>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>uV</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="spacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="Spinner" name="spinnerStarting">
+           <widget class="Spinner" name="spinnerConnecting">
             <property name="minimumSize">
              <size>
               <width>20</width>
@@ -226,17 +96,36 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="buttonCapture">
-            <property name="text">
-             <string>Capture</string>
-            </property>
-           </widget>
-          </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="Spinner" name="spinnerStarting">
+      <property name="minimumSize">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
      </widget>
     </item>
    </layout>
@@ -267,6 +156,54 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
+  </widget>
+  <widget class="QToolBar" name="connectedToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionConnect"/>
+   <addaction name="separator"/>
+   <addaction name="actionCapture"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="disconnectedToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionConnect"/>
+   <addaction name="separator"/>
+   <addaction name="actionPlugins"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionQuit">
    <property name="icon">
@@ -308,6 +245,11 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset>
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Message &amp;Log</string>
    </property>
@@ -315,25 +257,26 @@
     <string>Show the message log</string>
    </property>
   </action>
+  <action name="actionCapture">
+   <property name="icon">
+    <iconset theme="media-playback-start">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Capture</string>
+   </property>
+   <property name="toolTip">
+    <string>Start/stop data capture</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>StripChart</class>
-   <extends>QWidget</extends>
-   <header>stripchart.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>Spinner</class>
    <extends>QLabel</extends>
    <header>spinner.h</header>
-  </customwidget>
-  <customwidget>
-   <class>HeadWidget</class>
-   <extends>QWidget</extends>
-   <header>headwidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -351,22 +294,6 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spacingSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spacingValue</receiver>
-   <slot>setNum(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>92</x>
-     <y>283</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>168</x>
-     <y>283</y>
     </hint>
    </hints>
   </connection>
