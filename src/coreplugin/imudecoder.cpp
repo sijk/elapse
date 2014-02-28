@@ -3,12 +3,19 @@
 #include "headwidget.h"
 #include "imudecoder.h"
 
+/*!
+ * Create a new ImuDecoder as a child of the given \a parent.
+ */
 ImuDecoder::ImuDecoder(QObject *parent) :
     SampleDecoder(parent),
     headWidget(nullptr)
 {
 }
 
+/*!
+ * \return a 3D head model widget whose orientation matches that
+ * measured by the IMU.
+ */
 QWidget *ImuDecoder::getWidget()
 {
     if (!headWidget)
@@ -42,6 +49,9 @@ void ImuDecoder::onData(QByteArray data)
     emit newSample(SamplePtr(sample));
 }
 
+/*!
+ * Update the orientation of the head widget with the given \a sample.
+ */
 void ImuDecoder::updateHeadWidget(const ImuSample *sample)
 {
     // Calculate the direction of the acceleration vector.

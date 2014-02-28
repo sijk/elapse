@@ -226,6 +226,10 @@ void EegDecoder::onData(QByteArray data)
     }
 }
 
+/*!
+ * \return a StripChart displaying the measured EEG data, along with
+ * associated widgets to adjust the plot scale.
+ */
 QWidget *EegDecoder::getWidget()
 {
     Q_D(EegDecoder);

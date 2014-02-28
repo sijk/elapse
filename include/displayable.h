@@ -11,6 +11,10 @@ class QWidget;
 class Displayable
 {
 public:
+    /*!
+     * Classes implementing the Displayable interface should implement this
+     * method to return a widget that depicts the state of the object.
+     */
     virtual QWidget *getWidget() = 0;
 };
 
