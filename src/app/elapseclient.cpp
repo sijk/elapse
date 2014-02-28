@@ -230,21 +230,26 @@ void ElapseClient::configure()
 {
     auto elements = pipeline->elements();
     Q_ASSERT(elements);
+    QSettings settings;
 
     // Configure hardware
 
-    device->eeg()->setSampleRate(250);
-    device->eeg()->setSamplesPerChunk(20);
+    uint eegSampleRate = settings.value("eeg/samplerate", 250).toUInt();
+    uint eegChunkSize  = settings.value("eeg/chunksize", 20).toUInt();
+    uint eegGain       = settings.value("eeg/gain", 24).toUInt();
+
+    device->eeg()->setSampleRate(eegSampleRate);
+    device->eeg()->setSamplesPerChunk(eegChunkSize);
     device->eeg()->setUseRefElec(true);
     device->eeg()->setAllChannels({{"enabled", true},
-                                   {"gain", 24},
+                                   {"gain", eegGain},
                                    {"inputMux", "Normal"}});
 
     // Configure pipeline to match
 
     elements->dataSource->setProperty("host", device->deviceAddress());
 
-    elements->sampleDecoders[EEG]->setProperty("gain", 24);
+    elements->sampleDecoders[EEG]->setProperty("gain", eegGain);
     elements->sampleDecoders[EEG]->setProperty("vref", device->eeg()->vref());
     elements->sampleDecoders[EEG]->setProperty("nChannels", device->eeg()->nChannels());
 
