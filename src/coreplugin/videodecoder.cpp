@@ -1,8 +1,18 @@
-#include <QQueue>
+#include <QPointer>
 #include <QxtLogger>
-#include <gst/gst.h>
-#include <gst/app/gstappsrc.h>
-#include <gst/app/gstappsink.h>
+#include <QGst/Init>
+#include <QGlib/Connect>
+#include <QGlib/Error>
+#include <QGst/Pipeline>
+#include <QGst/Element>
+#include <QGst/Pad>
+#include <QGst/Utils/ApplicationSource>
+#include <QGst/Utils/ApplicationSink>
+#include <QGst/Ui/VideoWidget>
+#include <QGst/Bus>
+#include <QGst/Parse>
+#include <QGst/Message>
+#include "util/gstwrappedbuffer.h"
 #include "sampletypes.h"
 #include "videodecoder.h"
 
@@ -15,23 +25,25 @@
 
 #define PIPELINE \
     "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
-    "avdec_h264 ! appsink name=sink"
+    "ffdec_h264 ! tee name=t  ! queue ! appsink name=appsink " \
+                          "t. ! queue ! xvimagesink name=displaysink sync=false"
 
 // TODO: Use an rtpjitterbuffer?
 
 
 /*!
- * \brief The GstVideoSample struct makes a GstSample look like a VideoSample.
+ * \brief The GstVideoSample struct makes a QGst::Buffer look like a VideoSample.
+ *
+ * It keeps a reference to the QGst::Buffer in order to keep it alive until
+ * the VideoSample is destroyed.
  */
 
 struct GstVideoSample : VideoSample
 {
-    GstVideoSample(GstSample *sample);
-    ~GstVideoSample();
+    GstVideoSample(QGst::BufferPtr buffer);
 
 private:
-    GstBuffer *buff;
-    GstMapInfo map;
+    QGst::BufferPtr buff;
 };
 
 
@@ -40,27 +52,32 @@ private:
  * VideoDecoder.
  *
  * It manages the GStreamer pipeline that does the actual video decoding.
+ *
+ * This class must inherit from QObject in order for QGlib::connect() to be
+ * able to connect to its instance methods.
  */
 
-class VideoDecoderPrivate
+class VideoDecoderPrivate : public QObject
 {
+    Q_OBJECT
+
+    VideoDecoder * const q_ptr;
+    Q_DECLARE_PUBLIC(VideoDecoder)
+
 public:
     VideoDecoderPrivate(VideoDecoder *q);
     ~VideoDecoderPrivate();
 
-    GstElement *pipeline;
-    GstAppSrc *appsrc;
-    GstAppSink *appsink;
-    GstBus *bus;
-    QQueue<QByteArray> datastore;
+    QGst::PipelinePtr pipeline;
+    QGst::Utils::ApplicationSource appsrc;
+    QGst::Utils::ApplicationSink appsink;
+    QPointer<QGst::Ui::VideoWidget> displaysink;
+    QSize videoSize;
 
     void onData(QByteArray data);
-    static void deleteData(VideoDecoderPrivate *self);
-    static GstFlowReturn onFrameDecoded(GstAppSink *sink, VideoDecoderPrivate *self);
-    static void onVideoError(GstBus *bus, GstMessage *msg, VideoDecoderPrivate *self);
-
-    VideoDecoder * const q_ptr;
-    Q_DECLARE_PUBLIC(VideoDecoder)
+    QGst::FlowReturn onFrameDecoded();
+    void onVideoError(const QGst::MessagePtr &msg);
+    void onStateChange(const QGst::MessagePtr &msg);
 };
 
 
@@ -71,48 +88,35 @@ public:
 VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     q_ptr(q)
 {
-    if (!gst_is_initialized()) {
-        int argc = 0;
-        gst_init(&argc, nullptr);
-    }
+    QGst::init();
 
-    // Create the pipeline
-    GError *gerror = nullptr;
-    pipeline = gst_parse_launch(PIPELINE, &gerror);
-    if (gerror) {
-        qxtLog->error(gerror->message);
-        g_clear_error(&gerror);
-        if (pipeline)
-            gst_object_unref(pipeline);
-        pipeline = nullptr;
+    try {
+        pipeline = QGst::Parse::launch(PIPELINE).dynamicCast<QGst::Pipeline>();
+    } catch (QGlib::Error &e) {
+        qxtLog->error("VideoDecoder:", e.message());
         return;
     }
 
-    // Store references to the appsrc/sink
-    appsrc = GST_APP_SRC(gst_bin_get_by_name(GST_BIN(pipeline), "src"));
-    appsink = GST_APP_SINK(gst_bin_get_by_name(GST_BIN(pipeline), "sink"));
+    appsrc.setElement(pipeline->getElementByName("src"));
+    appsrc.setCaps(QGst::Caps::fromString(SRC_CAPS));
+    appsrc.setStreamType(QGst::AppStreamTypeStream);
+    appsrc.setFormat(QGst::FormatTime);
+    appsrc.setLive(true);
+    appsrc.element()->setProperty("do-timestamp", true);
 
-    // Configure the appsrc
-    gst_app_src_set_stream_type(appsrc, GST_APP_STREAM_TYPE_STREAM);
-    GstCaps *caps = gst_caps_from_string(SRC_CAPS);
-    g_object_set(appsrc, "caps", caps,
-                         "format", GST_FORMAT_TIME,
-                         "is-live", true,
-                         "do-timestamp", true,
-                         NULL);
-    gst_caps_unref(caps);
+    appsink.setElement(pipeline->getElementByName("appsink"));
+    appsink.element()->setProperty("sync", false);
+    appsink.element()->setProperty("emit-signals", true);
+    QGlib::connect(appsink.element(), "new-buffer",
+                   this, &VideoDecoderPrivate::onFrameDecoded);
 
-    // Configure the appsink
-    g_object_set(appsink, "emit-signals", true, "sync", false, NULL);
-    g_signal_connect(appsink, "new-sample", G_CALLBACK(onFrameDecoded), this);
+    pipeline->bus()->addSignalWatch();
+    QGlib::connect(pipeline->bus(), "message::error",
+                   this, &VideoDecoderPrivate::onVideoError);
+    QGlib::connect(pipeline->bus(), "message::state-change",
+                   this, &VideoDecoderPrivate::onStateChange);
 
-    // Listen for error messages from the pipeline
-    bus = gst_element_get_bus(pipeline);
-    gst_bus_add_signal_watch(bus);
-    g_signal_connect(bus, "message::error", G_CALLBACK(onVideoError), this);
-
-    // Start the pipeline
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    pipeline->setState(QGst::StatePlaying);
 }
 
 /*!
@@ -120,53 +124,21 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
  */
 VideoDecoderPrivate::~VideoDecoderPrivate()
 {
-    g_signal_handlers_disconnect_by_data(appsink, this);
-    g_signal_handlers_disconnect_by_data(bus, this);
-    gst_bus_remove_signal_watch(bus);
-    g_object_unref(bus);
-
-    gst_element_set_state(pipeline, GST_STATE_NULL);
-    gst_object_unref(pipeline);
+    if (pipeline) {
+        QGlib::disconnect(appsink.element());
+        QGlib::disconnect(pipeline->bus());
+        pipeline->bus()->removeSignalWatch();
+        pipeline->setState(QGst::StateNull);
+    }
 }
 
 /*!
  * Called when there is data available to be decoded. Wraps the data in a
- * GstBuffer and pushes it into the pipeline.
- *
- * To avoid copying, the GstBuffer points to the data in the given QByteArray.
- * We therefore need to keep a reference to the QByteArray so that it doesn't
- * get destroyed before the GstBuffer is finished with it's data. We push the
- * array into a queue from which it automatically gets removed when the
- * GstBuffer is destroyed.
- *
- * \see VideoDecoderPrivate::deleteData()
+ * QGst::Buffer and pushes it into the pipeline.
  */
 void VideoDecoderPrivate::onData(QByteArray data)
 {
-    // Store the QByteArray since we aren't going to copy the data into the
-    // GstBuffer. Adding a QByteArray to a queue doesn't cause a deep copy
-    // because it is implicitly shared.
-    datastore.enqueue(data);
-
-    // Create a GstBuffer pointing to the given data
-    GstBuffer *buff = gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY,
-                                                  (gpointer) data.data(),
-                                                  data.size(), 0, data.size(),
-                                                  this,
-                                                  (GDestroyNotify) deleteData);
-    // Push the buffer into the pipeline
-    gst_app_src_push_buffer(appsrc, buff);
-}
-
-/*!
- * Called when a GstBuffer is destroyed. Removes the oldest QByteArray from
- * the queue.
- *
- * \see VideoDecoderPrivate::onData()
- */
-void VideoDecoderPrivate::deleteData(VideoDecoderPrivate *self)
-{
-    self->datastore.dequeue();
+    appsrc.pushBuffer(gstBufferFromBytes(data, CopyMethod::Deep));
 }
 
 /*!
@@ -174,80 +146,71 @@ void VideoDecoderPrivate::deleteData(VideoDecoderPrivate *self)
  * frame out of the pipeline, wraps it in a VideoSample, and emits the
  * newSample() signal.
  */
-GstFlowReturn VideoDecoderPrivate::onFrameDecoded(GstAppSink *sink,
-                                                  VideoDecoderPrivate *self)
+QGst::FlowReturn VideoDecoderPrivate::onFrameDecoded()
 {
-    // Can't use Q_Q() because this is a static method
-    VideoDecoder * const q = self->q_func();
+    Q_Q(VideoDecoder);
 
-    // Pull the decoded buffer from the appsink
-    GstSample *sample = gst_app_sink_pull_sample(sink);
-    if (!sample)
-        return GST_FLOW_ERROR;
+    QGst::BufferPtr buff = appsink.pullBuffer();
+    if (!buff)
+        return QGst::FlowError;
 
-    // Wrap it up in a VideoSample and send it on its way
-    auto frame = new GstVideoSample(sample);
+    auto frame = new GstVideoSample(buff);
     emit q->newSample(SamplePtr(frame));
 
-    gst_sample_unref(sample);
-    return GST_FLOW_OK;
+    return QGst::FlowOk;
 }
 
 /*!
- * Construct a GstVideoSample which wraps the given \a sample.
+ * Construct a GstVideoSample which wraps the given \a buffer.
  *
- * The GstBuffer contained in the given GstSample is extracted and kept alive
- * until this GstVideoSample is destroyed.
+ * This avoids the need to copy data from the QGst::Buffer into the VideoSample.
  */
-GstVideoSample::GstVideoSample(GstSample *sample)
+GstVideoSample::GstVideoSample(QGst::BufferPtr buffer) :
+    buff(buffer)
 {
-    buff = gst_sample_get_buffer(sample);
-    gst_buffer_ref(buff);
+    auto caps = buff->caps()->internalStructure(0);
 
-    // Get frame timestamp
-    timestamp = buff->dts;
-
-    // Get frame dimensions
-    GstCaps *caps = gst_sample_get_caps(sample);
-    GstStructure *capstruct = gst_caps_get_structure(caps, 0);
-    gst_structure_get_int(capstruct, "width", &w);
-    gst_structure_get_int(capstruct, "height", &h);
-
-    // Get pointer to frame data
-    gst_buffer_map(buff, &map, GST_MAP_READ);
-    data = QByteArray::fromRawData((const char*)map.data, map.size);
-}
-
-/*!
- * Destroy this GstVideoSample and the GstBuffer it contains.
- */
-GstVideoSample::~GstVideoSample()
-{
-    gst_buffer_unmap(buff, &map);
-    gst_buffer_unref(buff);
+    timestamp = buff->timeStamp();
+    w = caps->value("width").toInt();
+    h = caps->value("height").toInt();
+    data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
 }
 
 /*!
  * Called when an error occurs in the GStreamer pipeline. Extracts the error
  * message and emits it as an error() signal.
  */
-void VideoDecoderPrivate::onVideoError(GstBus *bus, GstMessage *msg,
-                                       VideoDecoderPrivate *self)
+void VideoDecoderPrivate::onVideoError(const QGst::MessagePtr &msg)
 {
-    Q_UNUSED(bus);
-//    VideoDecoder * const q = self->q_func();
-    GError *gerror;
-    gchar *debugInfo;
-    gst_message_parse_error(msg, &gerror, &debugInfo);
+//    Q_Q(VideoDecoder);
+    auto err = msg.staticCast<QGst::ErrorMessage>();
 
     QString message("VideoDecoder error from %1: %2");
-    message = message.arg(GST_OBJECT_NAME(msg->src)).arg(gerror->message);
-//    emit q->error(message);
+    message = message.arg(err->source()->name()).arg(err->error().message());
     qxtLog->error(message);
+//    emit q->error(message);
 
-    g_clear_error(&gerror);
-    g_free(debugInfo);
-    gst_element_set_state(self->pipeline, GST_STATE_NULL);
+    pipeline->setState(QGst::StateNull);
+}
+
+/*!
+ * Inspect the negotiated caps of the appsink once playback has started
+ * and use this information to set the video widget size.
+ */
+void VideoDecoderPrivate::onStateChange(const QGst::MessagePtr &msg)
+{
+    if (msg->source() != pipeline || msg->type() != QGst::MessageStateChanged)
+        return;
+
+    auto stateChange = msg.staticCast<QGst::StateChangedMessage>();
+    if (stateChange->newState() == QGst::StatePlaying) {
+        auto sink = appsink.element()->getStaticPad("sink");
+        auto caps = sink->negotiatedCaps()->internalStructure(0);
+        videoSize = { caps->value("width").toInt(),
+                      caps->value("height").toInt() };
+        if (displaysink)
+            displaysink->setMinimumSize(videoSize);
+    }
 }
 
 
@@ -281,3 +244,22 @@ void VideoDecoder::onData(QByteArray data)
     Q_D(VideoDecoder);
     d->onData(data);
 }
+
+/*!
+ * \return a widget displaying the decoded video.
+ */
+QWidget *VideoDecoder::getWidget()
+{
+    Q_D(VideoDecoder);
+    if (!d->displaysink) {
+        d->displaysink = new QGst::Ui::VideoWidget;
+        d->displaysink->setVideoSink(d->pipeline->getElementByName("displaysink"));
+
+        QSize size = d->videoSize.isValid() ? d->videoSize : QSize(160, 240);
+        d->displaysink->setMinimumSize(size);
+        d->displaysink->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+    return d->displaysink;
+}
+
+#include "videodecoder.moc" // because VideoDecoderPrivate inherits from QObject

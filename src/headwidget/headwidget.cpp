@@ -26,12 +26,12 @@ HeadWidget::~HeadWidget()
 
 QSize HeadWidget::minimumSizeHint() const
 {
-    return QSize(50, 50);
+    return QSize(40, 50);
 }
 
 QSize HeadWidget::sizeHint() const
 {
-    return QSize(400, 400);
+    return QSize(200, 250);
 }
 
 static void qNormalizeAngle(int &angle)

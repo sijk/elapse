@@ -4,7 +4,7 @@ TEMPLATE      = lib
 CONFIG       += plugin link_pkgconfig qwt qxt
 QT           += network opengl
 DESTDIR       = ../../plugins/
-PKGCONFIG     = gstreamer-1.0 gstreamer-app-1.0
+PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10
 QXT          += core
 
 HEADERS       = udpdatasource.h \
@@ -15,7 +15,8 @@ HEADERS       = udpdatasource.h \
                 dummyeegfeatureextractor.h \
                 dummyvideofeatureextractor.h \
                 dummyimufeatureextractor.h \
-                dummyclassifier.h
+                dummyclassifier.h \
+                util/gstwrappedbuffer.h
 
 SOURCES       = udpdatasource.cpp \
                 dummyeegsource.cpp \
@@ -25,7 +26,8 @@ SOURCES       = udpdatasource.cpp \
                 dummyeegfeatureextractor.cpp \
                 dummyvideofeatureextractor.cpp \
                 dummyimufeatureextractor.cpp \
-                dummyclassifier.cpp
+                dummyclassifier.cpp \
+                util/gstwrappedbuffer.cpp
 
 HEADERS      += coreplugin.h \
                 elements/datasource.h \

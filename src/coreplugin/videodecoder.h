@@ -2,6 +2,7 @@
 #define VIDEODECODER_H
 
 #include "elements/decoder.h"
+#include "displayable.h"
 
 
 class VideoDecoderPrivate;
@@ -12,7 +13,7 @@ class VideoDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class VideoDecoder : public SampleDecoder
+class VideoDecoder : public SampleDecoder, public Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SampleType", "VIDEO")
@@ -20,6 +21,8 @@ class VideoDecoder : public SampleDecoder
 public:
     Q_INVOKABLE explicit VideoDecoder(QObject *parent = nullptr);
     ~VideoDecoder();
+
+    QWidget *getWidget();
 
 public slots:
     void onData(QByteArray data);
