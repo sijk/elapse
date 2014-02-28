@@ -1,7 +1,7 @@
 include(../../global.pri)
 
 QT           += core gui widgets dbus network
-CONFIG       += qwt qxt
+CONFIG       += qxt
 QXT          += core
 
 TARGET        = elapse
@@ -30,11 +30,6 @@ LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
 INCLUDEPATH     += $$PWD/../pluginmanager
 DEPENDPATH      += $$PWD/../pluginmanager
 PRE_TARGETDEPS  += $$OUT_PWD/../pluginmanager/libpluginmanager.a
-
-LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
-INCLUDEPATH     += $$PWD/../stripchart
-DEPENDPATH      += $$PWD/../stripchart
-PRE_TARGETDEPS  += $$OUT_PWD/../stripchart/libstripchart.a
 
 LIBS            += -L$$OUT_PWD/../pluginmanager/ -lpluginmanager
 INCLUDEPATH     += $$PWD/../pluginmanager

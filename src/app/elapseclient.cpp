@@ -6,7 +6,6 @@
 #include "pipeline.h"
 #include "pluginmanager.h"
 #include "deviceproxy.h"
-#include "stripchart.h"
 #include "logview.h"
 #include "displayable.h"
 #include "elapseclient.h"
@@ -27,6 +26,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     device(new DeviceProxy(this))
 {
     ui->setupUi(this);
+    setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
 
     QSettings settings;
     qxtLog->info("Using settings from", settings.fileName());
@@ -34,22 +34,19 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
-    connect(ui->deviceAddress, SIGNAL(returnPressed()),
-            ui->actionConnect, SLOT(trigger()));
-
     ui->connectedToolBar->setVisible(false);
     ui->connectedToolBar->addWidget(ui->spinnerStarting);
 
     QString defaultAddress = settings.value("host", DEFAULT_ADDR).toString();
     ui->deviceAddress->setText(defaultAddress);
+    connect(ui->deviceAddress, SIGNAL(returnPressed()),
+            ui->actionConnect, SLOT(trigger()));
 
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
     connect(logView, SIGNAL(visibilityChanged(bool)),
             ui->actionLogView, SLOT(setChecked(bool)));
 
-    connect(ui->spacingSlider, SIGNAL(valueChanged(int)),
-            ui->eegPlot, SLOT(setSpacing(int)));
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
@@ -69,18 +66,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
 ElapseClient::~ElapseClient()
 {
     delete ui;
-}
-
-void ElapseClient::onEegSample(SamplePtr sample)
-{
-    auto eeg = sample.staticCast<const EegSample>();
-    ui->eegPlot->appendData(eeg->values);
-}
-
-void ElapseClient::onVideoSample(SamplePtr sample)
-{
-    auto frame = sample.staticCast<const VideoSample>();
-    qxtLog->trace(frame->timestamp);
 }
 
 void ElapseClient::showErrorMessage(QString message)
@@ -169,7 +154,7 @@ void ElapseClient::buildStateMachine()
     connecting->addTransition(device, SIGNAL(connected()), connected);
 
     connected->setInitialState(idle);
-    connected->assignProperty(ui->stackedWidget, "currentIndex", 1);
+    connected->assignProperty(ui->centralWidget, "visible", false);
     connected->assignProperty(this, "elementWidgetsVisible", true);
     connected->assignProperty(ui->disconnectedToolBar, "visible", false);
     connected->assignProperty(ui->connectedToolBar, "visible", true);
@@ -225,9 +210,6 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
         addDockWidget(Qt::TopDockWidgetArea, dockWidget);
         dockWidget->hide();
         connect(element, SIGNAL(destroyed()), dockWidget, SLOT(deleteLater()));
-        connect(element, &QObject::destroyed, []{
-            qxtLog->info("element destroyed");
-        });
     }
 }
 
@@ -248,37 +230,25 @@ void ElapseClient::configure()
 {
     auto elements = pipeline->elements();
     Q_ASSERT(elements);
-    auto eeg = device->eeg();
 
     // Configure hardware
 
-    eeg->setSampleRate(250);
-    eeg->setSamplesPerChunk(20);
-    eeg->setUseRefElec(true);
-    eeg->setAllChannels({{"enabled", true},
-                         {"gain", 24},
-                         {"inputMux", "Normal"}});
+    device->eeg()->setSampleRate(250);
+    device->eeg()->setSamplesPerChunk(20);
+    device->eeg()->setUseRefElec(true);
+    device->eeg()->setAllChannels({{"enabled", true},
+                                   {"gain", 24},
+                                   {"inputMux", "Normal"}});
 
     // Configure pipeline to match
 
     elements->dataSource->setProperty("host", device->deviceAddress());
 
     elements->sampleDecoders[EEG]->setProperty("gain", 24);
-    elements->sampleDecoders[EEG]->setProperty("vref", eeg->vref());
-    elements->sampleDecoders[EEG]->setProperty("nChannels", eeg->nChannels());
+    elements->sampleDecoders[EEG]->setProperty("vref", device->eeg()->vref());
+    elements->sampleDecoders[EEG]->setProperty("nChannels", device->eeg()->nChannels());
 
-    // Configure GUI
-
-    ui->eegPlot->setNStrips(eeg->nChannels());
-    ui->eegPlot->setNSamples(5 * eeg->sampleRate());
-    ui->spacingSlider->setValue(6e3);
-
-    // Connect signals to GUI
-
-    connect(elements->sampleDecoders[EEG], SIGNAL(newSample(SamplePtr)),
-            SLOT(onEegSample(SamplePtr)));
-    connect(elements->sampleDecoders[VIDEO], SIGNAL(newSample(SamplePtr)),
-            SLOT(onVideoSample(SamplePtr)));
+    // Other setup
 
     qxtLog->debug("Notifying server that our address is", device->localAddress());
     device->device()->setClientAddress(device->localAddress());

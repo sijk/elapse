@@ -6,7 +6,6 @@
 
 class Pipeline;
 class PluginManager;
-class Sample;
 class DeviceProxy;
 class LogView;
 class QStateMachine;
@@ -40,8 +39,6 @@ public:
     ~ElapseClient();
 
 private slots:
-    void onEegSample(SamplePtr sample);
-    void onVideoSample(SamplePtr sample);
     void showErrorMessage(QString message);
     void onBatteryLow();
     void maybeAutoConnect();
