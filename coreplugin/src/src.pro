@@ -17,6 +17,7 @@ HEADERS       = udpdatasource.h \
                 dummyvideofeatureextractor.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h \
+                util/bigendian24.h \
                 util/gstwrappedbuffer.h
 
 SOURCES       = udpdatasource.cpp \
