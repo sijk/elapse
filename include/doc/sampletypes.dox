@@ -67,20 +67,8 @@
 */
 
 /*!
-    \var EegSample::loff_stat_p
-    \brief The lead-off status (positive side).
-*/
-
-/*!
-    \var EegSample::loff_stat_n
-    \brief The lead-off status (negative side).
-*/
-
-/*!
-    \var EegSample::gpio
-    \brief The status of the four GPIO pins.
-
-    Pins 0..4 correspond to the lowest 4 bits of this field.
+    \var EegSample::leadOff
+    \brief Bit mask indicating the lead-off status (1 = off).
 */
 
 /*!

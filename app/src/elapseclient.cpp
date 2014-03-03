@@ -88,8 +88,7 @@ void ElapseClient::maybeAutoConnect()
 /*!
  * \page elapseclient-fsm ElapseClient State Machine
  *
- * The behaviour of the ElapseClient is driven by the following hierarchical
- * state machine.
+ * The behaviour of the ElapseClient is driven by the following state machine.
  *
  * @startuml{elapseclient-fsm.png}
  *
@@ -104,9 +103,10 @@ void ElapseClient::maybeAutoConnect()
  * Connecting --> Disconnected : device.error
  * Connecting --> Connected : device.connected
  *
- * Connected : enter / ui.showPage(connected)
+ * Connected : enter / showElementWidgets()
  * Connected : enter / configure()
  * Connected : exit / device.disconnect()
+ * Connected : exit / hideElementWidgets()
  * Connected --> Disconnected : disconnect
  * Connected --> Disconnected : device.error
  *

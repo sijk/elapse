@@ -101,6 +101,8 @@ REPEAT_BRIEF           = YES
 # "represents" "a" "an" "the"
 
 ABBREVIATE_BRIEF       = "The $name class" \
+                         "The $name struct" \
+                         "The $name interface" \
                          "The $name widget" \
                          "The $name file" \
                          is \
@@ -1696,7 +1698,7 @@ TEMPLATE_RELATIONS     = NO
 # file showing the direct and indirect include dependencies of the file with 
 # other documented files.
 
-INCLUDE_GRAPH          = YES
+INCLUDE_GRAPH          = NO
 
 # If the ENABLE_PREPROCESSING, SEARCH_INCLUDES, INCLUDED_BY_GRAPH, and 
 # HAVE_DOT tags are set to YES then doxygen will generate a graph for each 

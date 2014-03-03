@@ -6,6 +6,15 @@
 /*!
  * \brief The BigEndian24 class parses 24-bit big-endian integers from a
  * QDataStream.
+ *
+ * \code
+ * QDataStream stream(...);
+ * BigEndian24 value24;
+ * qint32 value32;
+ *
+ * stream >> value24;
+ * value32 = value24.to32bit();
+ * \endcode
  */
 
 class BigEndian24
