@@ -1,4 +1,4 @@
-include(../global.pri)
+include(global.pri)
 
 TARGET   = $$basename(_PRO_FILE_PWD_)
 

@@ -1,4 +1,4 @@
-include(../staticlib.pri)
+include(../../../staticlib.pri)
 
 CONFIG  += qwt
 QT      += widgets

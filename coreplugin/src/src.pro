@@ -1,5 +1,6 @@
 include(../../global.pri)
 
+TARGET        = coreplugin
 TEMPLATE      = lib
 CONFIG       += plugin link_pkgconfig qwt qxt
 QT           += network opengl
@@ -37,14 +38,5 @@ HEADERS      += coreplugin.h \
                 displayable.h \
                 plugin.h
 
-TARGET        = $$qtLibraryTarget(coreplugin)
-
-LIBS            += -L$$OUT_PWD/../stripchart/ -lstripchart
-INCLUDEPATH     += $$PWD/../stripchart
-DEPENDPATH      += $$PWD/../stripchart
-PRE_TARGETDEPS  += $$OUT_PWD/../stripchart/libstripchart.a
-
-LIBS            += -L$$OUT_PWD/../headwidget/ -lheadwidget
-INCLUDEPATH     += $$PWD/../headwidget
-DEPENDPATH      += $$PWD/../headwidget
-PRE_TARGETDEPS  += $$OUT_PWD/../headwidget/libheadwidget.a
+linkStaticlib(stripchart)
+linkStaticlib(headwidget)
