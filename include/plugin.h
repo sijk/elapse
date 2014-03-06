@@ -29,7 +29,7 @@ public:
 /*!
  * \brief The interface ID of the PluginInterface.
  *
- * All \ref Plugin "Plugins" must include the line
+ * All Plugin%s must include the line
  * \code Q_PLUGIN_METADATA(IID PluginInterface_iid) \endcode after the
  * \c Q_OBJECT macro.
  *

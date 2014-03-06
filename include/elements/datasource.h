@@ -10,7 +10,7 @@ class QByteArray;
  * from the device over the network.
  *
  * Each Pipeline has one DataSource which provides data to several
- * \ref SampleDecoder "SampleDecoders".
+ * SampleDecoder%s.
  *
  * \ingroup pipeline-elements
  */

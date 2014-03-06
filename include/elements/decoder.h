@@ -9,9 +9,9 @@ class QByteArray;
 
 /*!
  * \brief The SampleDecoder class is the base class for elements that decode a
- * QByteArray to one or more \ref Sample "Samples".
+ * QByteArray to one or more Sample%s.
  *
- * Each Pipeline has several SampleDecoders: one per \ref SampleType.
+ * Each Pipeline has several SampleDecoder%s: one per \ref SampleType.
  *
  * \ingroup pipeline-elements
  */
@@ -35,8 +35,7 @@ public slots:
      * Executed when \a data is available for decoding. Classes that inherit
      * from SampleDecoder must implement this slot and ensure that newSample()
      * is emitted for every decoded sample. Note that there is not necessarily
-     * a one-to-one mapping between the incoming \a data and outgoing
-     * \ref Sample "Samples".
+     * a one-to-one mapping between the incoming \a data and outgoing Sample%s.
      */
     virtual void onData(QByteArray data) = 0;
 };

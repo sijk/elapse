@@ -7,8 +7,7 @@ class Sample;
 
 
 /*!
- * \brief The DummyImuFeatureExtractor class is a black hole for
- * \ref ImuSample "ImuSamples".
+ * \brief The DummyImuFeatureExtractor class is a black hole for ImuSample%s.
  *
  * \ingroup core-plugin
  */

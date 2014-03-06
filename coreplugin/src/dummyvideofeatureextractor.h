@@ -8,7 +8,7 @@ class Sample;
 
 /*!
  * \brief The DummyVideoFeatureExtractor class is a black hole for
- * \ref VideoSample "VideoSamples".
+ * VideoSample%s.
  *
  * \ingroup core-plugin
  */

@@ -7,9 +7,9 @@
 
 /*!
  * \brief The FeatureExtractor class is the base class for elements that
- * analyse a time series of \ref Sample "Samples" to extract a FeatureVector.
+ * analyse a time series of Sample%s to extract a FeatureVector.
  *
- * Each Pipeline has several FeatureExtractors: one per \ref SampleType.
+ * Each Pipeline has several FeatureExtractor%s: one per \ref SampleType.
  *
  * \ingroup pipeline-elements
  */

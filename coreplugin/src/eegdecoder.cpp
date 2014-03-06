@@ -192,7 +192,7 @@ void EegDecoder::setNChannels(uint nChannels)
 }
 
 /*!
- * Decode the given \a data and emit \ref EegSample "EegSamples".
+ * Decode the given \a data and emit EegSample%s.
  */
 void EegDecoder::onData(QByteArray data)
 {

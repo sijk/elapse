@@ -24,7 +24,7 @@ QWidget *ImuDecoder::getWidget()
 }
 
 /*!
- * Decode the given \a data and emit \ref ImuSample "ImuSamples".
+ * Decode the given \a data and emit ImuSample%s.
  */
 void ImuDecoder::onData(QByteArray data)
 {

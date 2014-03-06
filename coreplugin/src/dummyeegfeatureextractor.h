@@ -7,8 +7,7 @@ class Sample;
 
 
 /*!
- * \brief The DummyEegFeatureExtractor class is a black hole for
- * \ref EegSample "EegSamples".
+ * \brief The DummyEegFeatureExtractor class is a black hole for EegSample%s.
  *
  * \ingroup core-plugin
  */
