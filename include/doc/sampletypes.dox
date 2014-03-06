@@ -106,3 +106,19 @@
     \var ImuSample::gyr
     \brief The angular rates in degrees per second.
 */
+
+
+/* ========================================================================== */
+
+/*!
+    \typedef FeatureVector
+    \ingroup signal-pipeline
+
+    \brief The FeatureVector class holds a set of meaningful values extracted
+    from a sequence of Sample%s.
+
+    Each FeatureExtractor outputs a FeatureVector for each window of Sample%s
+    that it analyses. The number of elements and the meaning of each element
+    in the vector is left entirely up to each feature extractor (which will, of
+    course, document these in detail).
+*/
