@@ -103,6 +103,13 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->dataSource, SIGNAL(imuReady(QByteArray)),
             _elements->sampleDecoders[SampleType::IMU], SLOT(onData(QByteArray)));
 
+    connect(_elements->sampleDecoders[SampleType::EEG], SIGNAL(newSample(SamplePtr)),
+            _elements->featureExtractors[SampleType::EEG], SLOT(onSample(SamplePtr)));
+    connect(_elements->sampleDecoders[SampleType::VIDEO], SIGNAL(newSample(SamplePtr)),
+            _elements->featureExtractors[SampleType::VIDEO], SLOT(onSample(SamplePtr)));
+    connect(_elements->sampleDecoders[SampleType::IMU], SIGNAL(newSample(SamplePtr)),
+            _elements->featureExtractors[SampleType::IMU], SLOT(onSample(SamplePtr)));
+
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
     connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));

@@ -78,4 +78,7 @@ struct ImuSample : Sample
 };
 
 
+typedef QVector<double> FeatureVector;
+
+
 #endif // SAMPLETYPES_H

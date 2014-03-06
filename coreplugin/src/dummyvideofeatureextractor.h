@@ -3,8 +3,6 @@
 
 #include "elements/featurextractor.h"
 
-class Sample;
-
 
 /*!
  * \brief The DummyVideoFeatureExtractor class is a black hole for
@@ -20,6 +18,10 @@ class DummyVideoFeatureExtractor : public FeatureExtractor
 
 public:
     Q_INVOKABLE explicit DummyVideoFeatureExtractor(QObject *parent = nullptr);
+
+    void setStartTime(quint64 timestamp);
+    void setWindowLength(uint ms);
+    void setWindowStep(uint ms);
 
 public slots:
     void onSample(SamplePtr sample);
