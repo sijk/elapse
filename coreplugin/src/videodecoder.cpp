@@ -48,6 +48,24 @@ private:
 
 
 /*!
+ * \brief The ApplicationSink class turns the "new-buffer" GStreamer signal
+ * into a Qt signal.
+ *
+ * For some reason, using QGlib::connect() on the "new-buffer" appsink signal
+ * doesn't work, even if "emit-signals" is true. This class is a work-around.
+ */
+
+class ApplicationSink : public QObject, public QGst::Utils::ApplicationSink
+{
+    Q_OBJECT
+protected:
+    QGst::FlowReturn newBuffer() { emit bufferReady(); return QGst::FlowOk; }
+signals:
+    void bufferReady();
+};
+
+
+/*!
  * \brief The VideoDecoderPrivate class hides the implementation details of the
  * VideoDecoder.
  *
@@ -70,12 +88,12 @@ public:
 
     QGst::PipelinePtr pipeline;
     QGst::Utils::ApplicationSource appsrc;
-    QGst::Utils::ApplicationSink appsink;
+    ApplicationSink appsink;
     QPointer<QGst::Ui::VideoWidget> displaysink;
     QSize videoSize;
 
     void onData(QByteArray data);
-    QGst::FlowReturn onFrameDecoded();
+    Q_SLOT void onFrameDecoded();
     void onVideoError(const QGst::MessagePtr &msg);
     void onStateChange(const QGst::MessagePtr &msg);
 };
@@ -106,9 +124,7 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
 
     appsink.setElement(pipeline->getElementByName("appsink"));
     appsink.element()->setProperty("sync", false);
-    appsink.element()->setProperty("emit-signals", true);
-    QGlib::connect(appsink.element(), "new-buffer",
-                   this, &VideoDecoderPrivate::onFrameDecoded);
+    connect(&appsink, SIGNAL(bufferReady()), SLOT(onFrameDecoded()));
 
     pipeline->bus()->addSignalWatch();
     QGlib::connect(pipeline->bus(), "message::error",
@@ -146,18 +162,16 @@ void VideoDecoderPrivate::onData(QByteArray data)
  * frame out of the pipeline, wraps it in a VideoSample, and emits the
  * newSample() signal.
  */
-QGst::FlowReturn VideoDecoderPrivate::onFrameDecoded()
+void VideoDecoderPrivate::onFrameDecoded()
 {
     Q_Q(VideoDecoder);
 
     QGst::BufferPtr buff = appsink.pullBuffer();
     if (!buff)
-        return QGst::FlowError;
+        return;
 
     auto frame = new GstVideoSample(buff);
     emit q->newSample(SamplePtr(frame));
-
-    return QGst::FlowOk;
 }
 
 /*!
