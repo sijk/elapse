@@ -18,7 +18,8 @@ HEADERS       = udpdatasource.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h \
                 util/bigendian24.h \
-                util/gstwrappedbuffer.h
+                util/gstwrappedbuffer.h \
+                util/timestampedvalues.h
 
 SOURCES       = udpdatasource.cpp \
                 dummyeegsource.cpp \

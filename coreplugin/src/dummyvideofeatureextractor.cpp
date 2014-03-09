@@ -1,26 +1,59 @@
+#include <algorithm>
+#include <QxtLogger>
 #include "dummyvideofeatureextractor.h"
 
+
+template<class Container, class T = double>
+T sum(const Container &c)
+{
+    return std::accumulate(c.constBegin(), c.constEnd(), T());
+}
+
+
+/*!
+ * Create a DummyVideoFeatureExtractor as a child of the given \a parent.
+ */
 DummyVideoFeatureExtractor::DummyVideoFeatureExtractor(QObject *parent) :
-    FeatureExtractor(parent)
+    BaseFeatureExtractor(parent)
 {
 }
 
 void DummyVideoFeatureExtractor::setStartTime(quint64 timestamp)
 {
-    Q_UNUSED(timestamp)
+    BaseFeatureExtractor::setStartTime(timestamp);
+    means.clear();
 }
 
-void DummyVideoFeatureExtractor::setWindowLength(uint ms)
+/*!
+ * Calculate the mean intensity of the pixels in the given \a sample.
+ */
+void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
 {
-    Q_UNUSED(ms)
+    auto frame = sample.staticCast<const VideoSample>();
+    double meanIntensity = sum(frame->data) / (frame->w * frame->h);
+    means.insert(frame->timestamp, meanIntensity);
 }
 
-void DummyVideoFeatureExtractor::setWindowStep(uint ms)
+/*!
+ * \return the feature vector for the current window. See the class overview
+ * for details of the contents of the feature vector.
+ */
+FeatureVector DummyVideoFeatureExtractor::featureVector()
 {
-    Q_UNUSED(ms)
+    double meanIntensity = sum(means) / means.size();
+
+    double sumSqDiff = std::accumulate(means.cbegin(), means.cend(), 0.0,
+        [=](double acc, double x) {
+            return acc + (meanIntensity - x) * (meanIntensity - x);
+        });
+    double meanSqDiff = sumSqDiff / means.size();
+
+    FeatureVector features;
+    features << meanIntensity << meanSqDiff;
+    return features;
 }
 
-void DummyVideoFeatureExtractor::onSample(SamplePtr sample)
+void DummyVideoFeatureExtractor::removeDataBefore(quint64 time)
 {
-    Q_UNUSED(sample)
+    means.removeValuesBefore(time);
 }
