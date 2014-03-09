@@ -6,12 +6,42 @@
 #include <QVector3D>
 #include <QByteArray>
 #include <QSharedPointer>
+#include <QMetaEnum>
 
 
-enum SampleType
+/*!
+ * \brief The SampleType class is a wrapper which provides introspection
+ * of the SampleType::Type enum.
+ * \ingroup signal-datatypes
+ */
+class SampleType
 {
-    EEG, VIDEO, IMU,
-    N_SAMPLE_TYPES
+    Q_GADGET
+    Q_ENUMS(Type)
+public:
+    /*!
+     * \brief The Type enum allows you to refer to a subclass of Sample by name.
+     */
+    enum Type { EEG, VIDEO, IMU };
+
+    /*! \return the given \a type as a string. */
+    static QString toString(Type type)
+    { return typeEnum().valueToKey(type); }
+
+    /*! \return the given \a type as a #Type, or -1 if invalid. */
+    static Type fromString(const char *type)
+    { return Type(typeEnum().keyToValue(type)); }
+
+    /*! \return the number of #Type%s in the enum. */
+    static int count()
+    { return typeEnum().keyCount(); }
+
+private:
+    static QMetaEnum typeEnum()
+    {
+        int ienum = staticMetaObject.indexOfEnumerator("Type");
+        return staticMetaObject.enumerator(ienum);
+    }
 };
 
 

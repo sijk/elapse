@@ -36,6 +36,7 @@ HEADERS      += coreplugin.h \
                 elements/decoder.h \
                 elements/featurextractor.h \
                 elements/classifier.h \
+                sampletypes.h \
                 displayable.h \
                 plugin.h
 

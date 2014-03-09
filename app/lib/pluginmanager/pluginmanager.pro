@@ -10,6 +10,7 @@ HEADERS += pluginmanager.h \
            pluginfilterproxymodel.h \
 
 HEADERS += plugin.h \
+           sampletypes.h \
            elements.h \
            elements/datasource.h \
            elements/decoder.h \

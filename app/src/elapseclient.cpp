@@ -249,9 +249,9 @@ void ElapseClient::configure()
 
     elements->dataSource->setProperty("host", device->deviceAddress());
 
-    elements->sampleDecoders[EEG]->setProperty("gain", eegGain);
-    elements->sampleDecoders[EEG]->setProperty("vref", device->eeg()->vref());
-    elements->sampleDecoders[EEG]->setProperty("nChannels", device->eeg()->nChannels());
+    elements->sampleDecoders[SampleType::EEG]->setProperty("gain", eegGain);
+    elements->sampleDecoders[SampleType::EEG]->setProperty("vref", device->eeg()->vref());
+    elements->sampleDecoders[SampleType::EEG]->setProperty("nChannels", device->eeg()->nChannels());
 
     // Other setup
 
