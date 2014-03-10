@@ -70,6 +70,7 @@
 
 /*!
     \defgroup signal-pipeline Signal Pipeline
+    \ingroup app
 
     These classes relate to the signal processing pipeline.
 
@@ -101,6 +102,7 @@
 
 /*!
     \defgroup plugins-int Internal Plugin Management
+    \ingroup app
 
     These classes enable the core application to search for and load plugins.
     They also provide the base classes for the plugins themselves. 

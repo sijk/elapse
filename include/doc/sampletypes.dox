@@ -1,21 +1,30 @@
 /*!
-    \enum SampleType
-    \relates Sample
+    \class Signal
     \ingroup signal-datatypes
 
-    \brief Allows you to refer to a subclass of Sample by a numeric index.
+    \brief The Signal class is a wrapper which provides introspection
+    of the Signal::Type enum.
+*/
 
-    \var SampleType EEG
-    Relates to EegSample
+/*!
+    \enum Signal::Type
+    \brief The Signal::Type enum lists the types of signals captured
+    by the device.
+*/
 
-    \var SampleType VIDEO
-    Relates to VideoSample
+/*!
+    \fn Signal::toString()
+    \return the given \a type as a string.
+*/
 
-    \var SampleType IMU
-    Relates to ImuSample
+/*!
+    \fn Signal::fromString()
+    \return the given \a type as a Signal::Type, or -1 if invalid.
+*/
 
-    \var SampleType N_SAMPLE_TYPES
-    The number of different SampleTypes
+/*!
+    \fn Signal::count()
+    \return the number of Signal::Type%s in the enum.
 */
 
 /* ========================================================================== */
@@ -84,6 +93,23 @@
     \ingroup signal-datatypes
 
     \brief The VideoSample class holds the data for one frame of video.
+*/
+
+/*!
+    \var VideoSample::w
+    \brief The width of the frame in pixels.
+*/
+
+/*!
+    \var VideoSample::h
+    \brief The height of the frame in pixels.
+*/
+
+/*!
+    \var VideoSample::data
+    \brief The video frame data.
+
+    The data format is 8 bits per pixel greyscale in row-major order.
 */
 
 

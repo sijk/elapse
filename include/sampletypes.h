@@ -9,31 +9,19 @@
 #include <QMetaEnum>
 
 
-/*!
- * \brief The Signal class is a wrapper which provides introspection
- * of the Signal::Type enum.
- * \ingroup signal-datatypes
- */
 class Signal
 {
     Q_GADGET
     Q_ENUMS(Type)
 public:
-    /*!
-     * \brief The Signal::Type enum lists the types of signals captured
-     * by the device.
-     */
     enum Type { EEG, VIDEO, IMU };
 
-    /*! \return the given \a type as a string. */
     static QString toString(Type type)
     { return typeEnum().valueToKey(type); }
 
-    /*! \return the given \a type as a Signal::Type, or -1 if invalid. */
     static Type fromString(const char *type)
     { return Type(typeEnum().keyToValue(type)); }
 
-    /*! \return the number of Signal::Type%s in the enum. */
     static int count()
     { return typeEnum().keyCount(); }
 
