@@ -413,12 +413,12 @@ ElementSetPtr PluginManagerPrivate::doLoadElements(ElementLoader loader)
 void PluginManagerPrivate::loadElementSetFromSelection(ElementSetPtr elements)
 {
     loadElement(elements->dataSource,                           getSelectedElement(ui->treeSource));
-    loadElement(elements->sampleDecoders[SampleType::EEG],      getSelectedElement(ui->treeDecoderEeg));
-    loadElement(elements->sampleDecoders[SampleType::VIDEO],    getSelectedElement(ui->treeDecoderVideo));
-    loadElement(elements->sampleDecoders[SampleType::IMU],      getSelectedElement(ui->treeDecoderImu));
-    loadElement(elements->featureExtractors[SampleType::EEG],   getSelectedElement(ui->treeFeatEeg));
-    loadElement(elements->featureExtractors[SampleType::VIDEO], getSelectedElement(ui->treeFeatVideo));
-    loadElement(elements->featureExtractors[SampleType::IMU],   getSelectedElement(ui->treeFeatImu));
+    loadElement(elements->sampleDecoders[Signal::EEG],      getSelectedElement(ui->treeDecoderEeg));
+    loadElement(elements->sampleDecoders[Signal::VIDEO],    getSelectedElement(ui->treeDecoderVideo));
+    loadElement(elements->sampleDecoders[Signal::IMU],      getSelectedElement(ui->treeDecoderImu));
+    loadElement(elements->featureExtractors[Signal::EEG],   getSelectedElement(ui->treeFeatEeg));
+    loadElement(elements->featureExtractors[Signal::VIDEO], getSelectedElement(ui->treeFeatVideo));
+    loadElement(elements->featureExtractors[Signal::IMU],   getSelectedElement(ui->treeFeatImu));
     loadElement(elements->classifier,                           getSelectedElement(ui->treeClassifier));
 }
 
@@ -430,12 +430,12 @@ void PluginManagerPrivate::loadElementSetFromSelection(ElementSetPtr elements)
 void PluginManagerPrivate::loadElementSetFromSettings(ElementSetPtr elements)
 {
     loadElement(elements->dataSource,                           getSavedElement("data-source"));
-    loadElement(elements->sampleDecoders[SampleType::EEG],      getSavedElement("eeg-decoder"));
-    loadElement(elements->sampleDecoders[SampleType::VIDEO],    getSavedElement("video-decoder"));
-    loadElement(elements->sampleDecoders[SampleType::IMU],      getSavedElement("imu-decoder"));
-    loadElement(elements->featureExtractors[SampleType::EEG],   getSavedElement("eeg-featex"));
-    loadElement(elements->featureExtractors[SampleType::VIDEO], getSavedElement("video-featex"));
-    loadElement(elements->featureExtractors[SampleType::IMU],   getSavedElement("imu-featex"));
+    loadElement(elements->sampleDecoders[Signal::EEG],      getSavedElement("eeg-decoder"));
+    loadElement(elements->sampleDecoders[Signal::VIDEO],    getSavedElement("video-decoder"));
+    loadElement(elements->sampleDecoders[Signal::IMU],      getSavedElement("imu-decoder"));
+    loadElement(elements->featureExtractors[Signal::EEG],   getSavedElement("eeg-featex"));
+    loadElement(elements->featureExtractors[Signal::VIDEO], getSavedElement("video-featex"));
+    loadElement(elements->featureExtractors[Signal::IMU],   getSavedElement("imu-featex"));
     loadElement(elements->classifier,                           getSavedElement("classifier"));
 }
 

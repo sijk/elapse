@@ -97,18 +97,18 @@ void Pipeline::setElements(ElementSetPtr newElements)
 
     // Connect elements
     connect(_elements->dataSource, SIGNAL(eegReady(QByteArray)),
-            _elements->sampleDecoders[SampleType::EEG], SLOT(onData(QByteArray)));
+            _elements->sampleDecoders[Signal::EEG], SLOT(onData(QByteArray)));
     connect(_elements->dataSource, SIGNAL(videoReady(QByteArray)),
-            _elements->sampleDecoders[SampleType::VIDEO], SLOT(onData(QByteArray)));
+            _elements->sampleDecoders[Signal::VIDEO], SLOT(onData(QByteArray)));
     connect(_elements->dataSource, SIGNAL(imuReady(QByteArray)),
-            _elements->sampleDecoders[SampleType::IMU], SLOT(onData(QByteArray)));
+            _elements->sampleDecoders[Signal::IMU], SLOT(onData(QByteArray)));
 
-    connect(_elements->sampleDecoders[SampleType::EEG], SIGNAL(newSample(SamplePtr)),
-            _elements->featureExtractors[SampleType::EEG], SLOT(onSample(SamplePtr)));
-    connect(_elements->sampleDecoders[SampleType::VIDEO], SIGNAL(newSample(SamplePtr)),
-            _elements->featureExtractors[SampleType::VIDEO], SLOT(onSample(SamplePtr)));
-    connect(_elements->sampleDecoders[SampleType::IMU], SIGNAL(newSample(SamplePtr)),
-            _elements->featureExtractors[SampleType::IMU], SLOT(onSample(SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(SamplePtr)),
+            _elements->featureExtractors[Signal::EEG], SLOT(onSample(SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::VIDEO], SIGNAL(newSample(SamplePtr)),
+            _elements->featureExtractors[Signal::VIDEO], SLOT(onSample(SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(SamplePtr)),
+            _elements->featureExtractors[Signal::IMU], SLOT(onSample(SamplePtr)));
 
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));

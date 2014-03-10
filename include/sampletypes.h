@@ -10,17 +10,18 @@
 
 
 /*!
- * \brief The SampleType class is a wrapper which provides introspection
- * of the SampleType::Type enum.
+ * \brief The Signal class is a wrapper which provides introspection
+ * of the Signal::Type enum.
  * \ingroup signal-datatypes
  */
-class SampleType
+class Signal
 {
     Q_GADGET
     Q_ENUMS(Type)
 public:
     /*!
-     * \brief The Type enum allows you to refer to a subclass of Sample by name.
+     * \brief The Signal::Type enum lists the types of signals captured
+     * by the device.
      */
     enum Type { EEG, VIDEO, IMU };
 
@@ -28,15 +29,16 @@ public:
     static QString toString(Type type)
     { return typeEnum().valueToKey(type); }
 
-    /*! \return the given \a type as a #Type, or -1 if invalid. */
+    /*! \return the given \a type as a Signal::Type, or -1 if invalid. */
     static Type fromString(const char *type)
     { return Type(typeEnum().keyToValue(type)); }
 
-    /*! \return the number of #Type%s in the enum. */
+    /*! \return the number of Signal::Type%s in the enum. */
     static int count()
     { return typeEnum().keyCount(); }
 
 private:
+    Signal() = delete;
     static QMetaEnum typeEnum()
     {
         int ienum = staticMetaObject.indexOfEnumerator("Type");

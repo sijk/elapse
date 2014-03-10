@@ -23,8 +23,8 @@
 struct ElementSet
 {
     DataSource *dataSource;
-    QMap<SampleType::Type, SampleDecoder*> sampleDecoders;
-    QMap<SampleType::Type, FeatureExtractor*> featureExtractors;
+    QMap<Signal::Type, SampleDecoder*> sampleDecoders;
+    QMap<Signal::Type, FeatureExtractor*> featureExtractors;
     Classifier *classifier;
 
     QList<QObject*> allElements() const;
