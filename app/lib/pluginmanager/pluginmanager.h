@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QDir>
-#include "elements.h"
+#include "elementset.h"
 
 class PluginManagerPrivate;
 

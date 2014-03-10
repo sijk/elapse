@@ -11,7 +11,7 @@ HEADERS += pluginmanager.h \
 
 HEADERS += plugin.h \
            sampletypes.h \
-           elements.h \
+           elementset.h \
            elements/datasource.h \
            elements/decoder.h \
            elements/featurextractor.h \

@@ -2,7 +2,7 @@
 #define PIPELINE_H
 
 #include <QObject>
-#include "elements.h"
+#include "elementset.h"
 
 
 /*!

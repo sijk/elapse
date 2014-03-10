@@ -2,7 +2,7 @@
 #define ELAPSECLIENT_H
 
 #include <QMainWindow>
-#include "elements.h"
+#include "elementset.h"
 
 class Pipeline;
 class PluginManager;

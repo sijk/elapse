@@ -17,7 +17,7 @@ HEADERS      += elapseclient.h \
                 spinner.h \
                 eegfilesink.h \
                 displayable.h \
-                elements.h
+                elementset.h
 FORMS        += elapseclient.ui
 RESOURCES    += ../img/images.qrc
 
