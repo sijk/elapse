@@ -120,7 +120,6 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
     appsrc.setStreamType(QGst::AppStreamTypeStream);
     appsrc.setFormat(QGst::FormatTime);
     appsrc.setLive(true);
-    appsrc.element()->setProperty("do-timestamp", true);
 
     appsink.setElement(pipeline->getElementByName("appsink"));
     appsink.element()->setProperty("sync", false);
