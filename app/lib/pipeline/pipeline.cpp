@@ -1,4 +1,5 @@
 #include <QVariant>
+#include <QxtLogger>
 #include "pipeline.h"
 
 /*!
@@ -146,6 +147,7 @@ void Pipeline::start()
     connect(_elements->sampleDecoders[Signal::EEG],
             SIGNAL(newSample(SamplePtr)), SLOT(setStartTime(SamplePtr)));
 
+    qxtLog->info("Starting pipeline");
     _elements->dataSource->start();
 }
 
@@ -157,6 +159,7 @@ void Pipeline::stop()
     if (!_elements)
         return;
 
+    qxtLog->info("Stopping pipeline");
     _elements->dataSource->stop();
     emit stopped();
 

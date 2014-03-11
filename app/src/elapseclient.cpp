@@ -194,11 +194,11 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 
         auto displayable = dynamic_cast<Displayable*>(element);
         if (!displayable) {
-            qxtLog->debug(className, "is not displayable");
+            qxtLog->trace(className, "is not displayable");
             continue;
         }
 
-        qxtLog->debug("Adding widget provided by", className);
+        qxtLog->trace("Adding widget provided by", className);
 
         auto widget = displayable->getWidget();
         Q_ASSERT(widget);
