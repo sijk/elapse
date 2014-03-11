@@ -62,7 +62,7 @@ class BaseFeatureExtractor : public FeatureExtractor
 public:
     /*! Create a BaseFeatureExtractor as a child of the given \a parent. */
     explicit BaseFeatureExtractor(QObject *parent = nullptr) :
-        FeatureExtractor(parent), windowStart(0), signalType(Signal::Type(-1))
+        FeatureExtractor(parent), windowStart(0), signalType(Signal::INVALID)
     { }
 
     void setStartTime(quint64 timestamp)
@@ -84,7 +84,7 @@ public slots:
     {
         if (windowStart == 0)
             return;
-        Q_ASSERT(signalType >= 0);
+        Q_ASSERT(signalType != Signal::INVALID);
 
         if (sample->timestamp < windowStart)
             return;

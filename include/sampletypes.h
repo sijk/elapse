@@ -14,7 +14,7 @@ class Signal
     Q_GADGET
     Q_ENUMS(Type)
 public:
-    enum Type { EEG, VIDEO, IMU };
+    enum Type { EEG, VIDEO, IMU, INVALID = -1 };
 
     static QString toString(Type type)
     { return typeEnum().valueToKey(type); }
@@ -23,7 +23,7 @@ public:
     { return Type(typeEnum().keyToValue(type)); }
 
     static int count()
-    { return typeEnum().keyCount(); }
+    { return typeEnum().keyCount() - 1; }
 
 private:
     Signal() = delete;
