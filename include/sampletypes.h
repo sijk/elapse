@@ -75,5 +75,7 @@ struct FeatureVector
     QVector<double> features;
 };
 
+typedef QVector<double> CognitiveState;
+
 
 #endif // SAMPLETYPES_H

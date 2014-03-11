@@ -2,11 +2,12 @@
 #define CLASSIFIER_H
 
 #include <QObject>
+#include "sampletypes.h"
 
 
 /*!
- * \brief The Classifier class is the base class for elements that take in one
- * or more FeatureVectors and classify the CognitiveState of the device user.
+ * \brief The Classifier class is the base class for elements that take in
+ * #FeatureVector%s and classify the #CognitiveState of the device user.
  *
  * Each Pipeline has one Classifier.
  *
@@ -23,6 +24,22 @@ public:
 
     /*! Destroy this Classifier. */
     virtual ~Classifier() {}
+
+public slots:
+    /*!
+     * Called when \a features are available for classification. This slot will
+     * be called by each FeatureExtractor, and it is the responsibility of
+     * Classifier subclasses to match up and process the corresponding
+     * FeatureVector%s.
+     */
+    virtual void onFeatures(FeatureVector features) = 0;
+
+signals:
+    /*!
+     * Emitted when the CognitiveState has been classified from the latest
+     * set of #FeatureVector%s.
+     */
+    void newState(CognitiveState state);
 };
 
 #endif // CLASSIFIER_H

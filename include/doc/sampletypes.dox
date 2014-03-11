@@ -167,3 +167,19 @@
     The number and meaning of features in this list is left up to each
     FeatureExtractor.
 */
+
+
+/* ========================================================================== */
+
+/*!
+    \typedef CognitiveState
+    \ingroup signal-pipeline
+
+    \brief The CognitiveState class holds a set of values representing
+    the user's cognitive state.
+
+    A Classifier calculates the CognitiveState from a set of #FeatureVector%s.
+    The number of fields and the meaning of each field in the CognitiveState
+    data structure is left entirely up to each Classifier implementation (which
+    will, of course, document these in detail).
+*/
