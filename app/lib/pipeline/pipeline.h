@@ -23,6 +23,9 @@ public:
 
     ElementSetPtr elements() const;
 
+    void setWindowLength(uint ms);
+    void setWindowStep(uint ms);
+
 public slots:
     void setElements(ElementSetPtr newElements);
 
@@ -33,6 +36,9 @@ signals:
     void started();
     void stopped();
     void error(QString msg);
+
+private slots:
+    void setStartTime(SamplePtr sample);
 
 private:
     ElementSetPtr _elements;

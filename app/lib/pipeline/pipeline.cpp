@@ -81,6 +81,24 @@ ElementSetPtr Pipeline::elements() const
 }
 
 /*!
+ * Set the window length of all of the FeatutreExtractor%s in \a ms.
+ */
+void Pipeline::setWindowLength(uint ms)
+{
+    foreach(auto featureExtractor, _elements->featureExtractors)
+        featureExtractor->setWindowLength(ms);
+}
+
+/*!
+ * Set the window step of all of the FeatutreExtractor%s in \a ms.
+ */
+void Pipeline::setWindowStep(uint ms)
+{
+    foreach(auto featureExtractor, _elements->featureExtractors)
+        featureExtractor->setWindowStep(ms);
+}
+
+/*!
  * Provide a new set of elements to the Pipeline.
  *
  * This method also sets up the connections between the elements and propagates
@@ -125,6 +143,9 @@ void Pipeline::start()
         return;
     }
 
+    connect(_elements->sampleDecoders[Signal::EEG],
+            SIGNAL(newSample(SamplePtr)), SLOT(setStartTime(SamplePtr)));
+
     _elements->dataSource->start();
 }
 
@@ -138,6 +159,26 @@ void Pipeline::stop()
 
     _elements->dataSource->stop();
     emit stopped();
+
+    disconnect(_elements->sampleDecoders[Signal::EEG],
+               SIGNAL(newSample(SamplePtr)), this, 0);
+}
+
+/*!
+ * Called when the first \a sample is decoded. Sets the start timestamp for
+ * the FeatureExtractor%s to one second after that to give all of the sensors
+ * time to start up.
+ */
+void Pipeline::setStartTime(SamplePtr sample)
+{
+    quint64 startTime = sample->timestamp + 1e9;
+
+    qxtLog->debug("Setting start time to", startTime / 1e9);
+    foreach (auto featureExtractor, _elements->featureExtractors)
+        featureExtractor->setStartTime(startTime);
+
+    disconnect(_elements->sampleDecoders[Signal::EEG],
+               SIGNAL(newSample(SamplePtr)), this, 0);
 }
 
 /*!

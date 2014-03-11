@@ -253,6 +253,9 @@ void ElapseClient::configure()
     elements->sampleDecoders[Signal::EEG]->setProperty("vref", device->eeg()->vref());
     elements->sampleDecoders[Signal::EEG]->setProperty("nChannels", device->eeg()->nChannels());
 
+    pipeline->setWindowLength(1000);
+    pipeline->setWindowStep(500);
+
     // Other setup
 
     qxtLog->debug("Notifying server that our address is", device->localAddress());
