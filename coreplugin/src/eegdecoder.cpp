@@ -36,6 +36,7 @@ public:
 EegDecoderPrivate::EegDecoderPrivate() :
     vref(0),
     gain(1),
+    nChannels(8),
     widgetContainer(nullptr)
 {
 }
