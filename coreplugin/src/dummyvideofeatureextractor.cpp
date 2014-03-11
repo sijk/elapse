@@ -38,7 +38,7 @@ void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
  * \return the feature vector for the current window. See the class overview
  * for details of the contents of the feature vector.
  */
-FeatureVector DummyVideoFeatureExtractor::featureVector()
+QVector<double> DummyVideoFeatureExtractor::features()
 {
     double meanIntensity = sum(means) / means.size();
 
@@ -48,7 +48,7 @@ FeatureVector DummyVideoFeatureExtractor::featureVector()
         });
     double meanSqDiff = sumSqDiff / means.size();
 
-    FeatureVector features;
+    QVector<double> features;
     features << meanIntensity << meanSqDiff;
     return features;
 }

@@ -1,26 +1,21 @@
 #include "dummyimufeatureextractor.h"
 
 DummyImuFeatureExtractor::DummyImuFeatureExtractor(QObject *parent) :
-    FeatureExtractor(parent)
+    BaseFeatureExtractor(parent)
 {
 }
 
-void DummyImuFeatureExtractor::setStartTime(quint64 timestamp)
+void DummyImuFeatureExtractor::analyseSample(SamplePtr sample)
 {
-    Q_UNUSED(timestamp)
+    sampleFlags.insert(sample->timestamp, 1);
 }
 
-void DummyImuFeatureExtractor::setWindowLength(uint ms)
+QVector<double> DummyImuFeatureExtractor::features()
 {
-    Q_UNUSED(ms)
+    return QVector<double>() << sampleFlags.size();
 }
 
-void DummyImuFeatureExtractor::setWindowStep(uint ms)
+void DummyImuFeatureExtractor::removeDataBefore(quint64 time)
 {
-    Q_UNUSED(ms)
-}
-
-void DummyImuFeatureExtractor::onSample(SamplePtr sample)
-{
-    Q_UNUSED(sample)
+    sampleFlags.removeValuesBefore(time);
 }

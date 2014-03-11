@@ -68,7 +68,12 @@ struct ImuSample : Sample
 };
 
 
-typedef QVector<double> FeatureVector;
+struct FeatureVector
+{
+    Signal::Type signalType;
+    quint64 startTime;
+    QVector<double> features;
+};
 
 
 #endif // SAMPLETYPES_H

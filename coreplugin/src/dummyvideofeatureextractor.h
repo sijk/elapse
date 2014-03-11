@@ -28,7 +28,7 @@ public:
 
 protected:
     void analyseSample(SamplePtr sample);
-    FeatureVector featureVector();
+    QVector<double> features();
     void removeDataBefore(quint64 time);
 
 private:

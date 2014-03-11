@@ -40,7 +40,7 @@ public slots:
 
 signals:
     /*! Emitted when a complete window has been analysed. */
-    void newFeatures(SampleType::Type sampleType, FeatureVector features);
+    void newFeatures(FeatureVector features);
 };
 
 
@@ -61,10 +61,16 @@ class BaseFeatureExtractor : public FeatureExtractor
     Q_OBJECT
 public:
     /*! Create a BaseFeatureExtractor as a child of the given \a parent. */
-    explicit BaseFeatureExtractor(QObject *parent = nullptr)
-        : FeatureExtractor(parent) {}
+    explicit BaseFeatureExtractor(QObject *parent = nullptr) :
+        FeatureExtractor(parent), windowStart(0), signalType(Signal::Type(-1))
+    { }
 
-    void setStartTime(quint64 timestamp) { windowStart = timestamp; }
+    void setStartTime(quint64 timestamp)
+    {
+        windowStart = timestamp;
+        signalType = findSignalType();
+    }
+
     void setWindowLength(uint ms) { windowLength = ms; }
     void setWindowStep(uint ms) { windowStep = ms; }
 
@@ -76,6 +82,10 @@ public slots:
      */
     void onSample(SamplePtr sample)
     {
+        if (windowStart == 0)
+            return;
+        Q_ASSERT(signalType >= 0);
+
         if (sample->timestamp < windowStart)
             return;
 
@@ -83,7 +93,7 @@ public slots:
         quint64 nextWindowStart = windowStart + windowStep * 1e6;
 
         if (sample->timestamp >= windowEnd) {
-            emit newFeatures(sampleType(), featureVector());
+            emit newFeatures({signalType, windowStart, features()});
             removeDataBefore(nextWindowStart);
             windowStart = nextWindowStart;
         }
@@ -101,10 +111,10 @@ protected:
     virtual void analyseSample(SamplePtr sample) = 0;
 
     /*!
-     * \return a FeatureVector calculated from the previously analysed Samples
-     * in the current window.
+     * \return a list of features calculated from the previously analysed
+     * Sample%s in the current window.
      */
-    virtual FeatureVector featureVector() = 0;
+    virtual QVector<double> features() = 0;
 
     /*!
      * Remove any internal data that is related to samples occurring before
@@ -116,16 +126,17 @@ private:
     quint64 windowStart;
     uint windowLength;
     uint windowStep;
+    Signal::Type signalType;
 
     /*!
-     * \return the SampleType this FeatureExtractor works with.
-     * This is retrieved from the "SampleType" class info field.
+     * \return the Signal::Type this FeatureExtractor works with, as defined
+     * by the "SampleType" class info field.
      */
-    SampleType::Type sampleType() const
+    Signal::Type findSignalType() const
     {
-        int info = metaObject()->indexOfClassInfo("SampleType");
-        const char *type = metaObject()->classInfo(info).value();
-        return SampleType::fromString(type);
+        const int index = metaObject()->indexOfClassInfo("SampleType");
+        const char *info = metaObject()->classInfo(index).value();
+        return Signal::fromString(info);
     }
 };
 

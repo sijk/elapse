@@ -137,14 +137,33 @@
 /* ========================================================================== */
 
 /*!
-    \typedef FeatureVector
+    \struct FeatureVector
     \ingroup signal-pipeline
 
-    \brief The FeatureVector class holds a set of meaningful values extracted
+    \brief The FeatureVector struct holds a set of meaningful values extracted
     from a sequence of Sample%s.
 
     Each FeatureExtractor outputs a FeatureVector for each window of Sample%s
     that it analyses. The number of elements and the meaning of each element
     in the vector is left entirely up to each feature extractor (which will, of
     course, document these in detail).
+*/
+
+/*!
+    \var FeatureVector::signalType
+    \brief The type of signal the features were extracted from.
+*/
+
+/*!
+    \var FeatureVector::startTime
+    \brief The start time of the window from which the features were extracted
+    (in ns).
+*/
+
+/*!
+    \var FeatureVector::features
+    \brief The list of extracted features.
+
+    The number and meaning of features in this list is left up to each
+    FeatureExtractor.
 */

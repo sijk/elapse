@@ -2,6 +2,7 @@
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
 #include "elements/featurextractor.h"
+#include "util/timestampedvalues.h"
 
 
 /*!
@@ -10,7 +11,7 @@
  * \ingroup core-plugin
  */
 
-class DummyImuFeatureExtractor : public FeatureExtractor
+class DummyImuFeatureExtractor : public BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SampleType", "IMU")
@@ -18,12 +19,13 @@ class DummyImuFeatureExtractor : public FeatureExtractor
 public:
     Q_INVOKABLE explicit DummyImuFeatureExtractor(QObject *parent = nullptr);
 
-    void setStartTime(quint64 timestamp);
-    void setWindowLength(uint ms);
-    void setWindowStep(uint ms);
+protected:
+    void analyseSample(SamplePtr sample);
+    QVector<double> features();
+    void removeDataBefore(quint64 time);
 
-public slots:
-    void onSample(SamplePtr sample);
+private:
+    TimestampedValues<int> sampleFlags;
 };
 
 #endif // DUMMYIMUFEATUREEXTRACTOR_H

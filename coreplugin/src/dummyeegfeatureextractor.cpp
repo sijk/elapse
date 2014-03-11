@@ -1,26 +1,21 @@
 #include "dummyeegfeatureextractor.h"
 
 DummyEegFeatureExtractor::DummyEegFeatureExtractor(QObject *parent) :
-    FeatureExtractor(parent)
+    BaseFeatureExtractor(parent)
 {
 }
 
-void DummyEegFeatureExtractor::setStartTime(quint64 timestamp)
+void DummyEegFeatureExtractor::analyseSample(SamplePtr sample)
 {
-    Q_UNUSED(timestamp)
+    sampleFlags.insert(sample->timestamp, 1);
 }
 
-void DummyEegFeatureExtractor::setWindowLength(uint ms)
+QVector<double> DummyEegFeatureExtractor::features()
 {
-    Q_UNUSED(ms)
+    return QVector<double>() << sampleFlags.size();
 }
 
-void DummyEegFeatureExtractor::setWindowStep(uint ms)
+void DummyEegFeatureExtractor::removeDataBefore(quint64 time)
 {
-    Q_UNUSED(ms)
-}
-
-void DummyEegFeatureExtractor::onSample(SamplePtr sample)
-{
-    Q_UNUSED(sample)
+    sampleFlags.removeValuesBefore(time);
 }
