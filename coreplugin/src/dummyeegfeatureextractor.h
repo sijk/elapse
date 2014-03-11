@@ -14,7 +14,7 @@
 class DummyEegFeatureExtractor : public BaseFeatureExtractor
 {
     Q_OBJECT
-    Q_CLASSINFO("SampleType", "EEG")
+    Q_CLASSINFO("SignalType", "EEG")
 
 public:
     Q_INVOKABLE explicit DummyEegFeatureExtractor(QObject *parent = nullptr);

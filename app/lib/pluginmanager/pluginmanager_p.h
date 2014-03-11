@@ -10,7 +10,7 @@
 
 enum PluginItemDataRole
 {
-    SAMPLETYPE_ROLE = Qt::UserRole,
+    SIGNALTYPE_ROLE = Qt::UserRole,
     FILEPATH_ROLE
 };
 

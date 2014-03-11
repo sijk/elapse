@@ -16,7 +16,7 @@ class VideoDecoderPrivate;
 class VideoDecoder : public SampleDecoder, public Displayable
 {
     Q_OBJECT
-    Q_CLASSINFO("SampleType", "VIDEO")
+    Q_CLASSINFO("SignalType", "VIDEO")
 
 public:
     Q_INVOKABLE explicit VideoDecoder(QObject *parent = nullptr);

@@ -38,9 +38,9 @@
  * FooTcpDataSource --|> DataSource
  * FooUdpDataSource --|> DataSource
  *
- * FooEegDecoder : SampleType : "EEG"
- * BarEegDecoder : SampleType : "EEG"
- * BarVideoDecoder : SampleType : "VIDEO"
+ * FooEegDecoder : SignalType : "EEG"
+ * BarEegDecoder : SignalType : "EEG"
+ * BarVideoDecoder : SignalType : "VIDEO"
  *
  * @enduml
  *
@@ -63,7 +63,7 @@
  * \endcode
  *
  * If a PluginFilterProxyModel was defined with the arguments
- * \c elementType = "SampleDecoder" and \c sampleType = "EEG", then the filtered
+ * \c elementType = "SampleDecoder" and \c signalType = "EEG", then the filtered
  * model would have the following structure:
  *
  * \code
@@ -75,7 +75,7 @@
  * \endcode
  *
  * That is, it would include all of the classes implementing \c SampleDecoder
- * which apply to the \c sampleType "EEG".
+ * which apply to the \c signalType "EEG".
  */
 
 
@@ -263,17 +263,17 @@ QStandardItem *PluginManagerPrivate::createPluginItem(const QString &name,
  * Helper function for building the internal plugin model.
  * \return a QStandardItem representing an element class provided by a plugin.
  *
- * If the class provides a Q_CLASSINFO entry with the key "SampleType", the
- * value of this entry is stored as item data with the role SAMPLETYPE_ROLE.
+ * If the class provides a Q_CLASSINFO entry with the key "SignalType", the
+ * value of this entry is stored as item data with the role SIGNALTYPE_ROLE.
  */
 QStandardItem *PluginManagerPrivate::createElementItem(const QMetaObject &obj)
 {
     auto item = new QStandardItem(obj.className());
 
-    int typeIdx = obj.indexOfClassInfo("SampleType");
+    int typeIdx = obj.indexOfClassInfo("SignalType");
     if (typeIdx >= 0) {
-        QString sampleType = obj.classInfo(typeIdx).value();
-        item->setData(sampleType, SAMPLETYPE_ROLE);
+        const char *signalType = obj.classInfo(typeIdx).value();
+        item->setData(Signal::fromString(signalType), SIGNALTYPE_ROLE);
     }
 
     item->setEditable(false);
@@ -316,9 +316,9 @@ const QMetaObject *PluginManagerPrivate::baseClass(const QMetaObject *obj)
 void PluginManagerPrivate::attachViews()
 {
     auto setupTreeView = [this](QTreeView *tree, const QString &elementType,
-                                const QString &sampleType = QString()) {
-        // Filter model by element type and sample type
-        auto filteredModel = new PluginFilterProxyModel(elementType, sampleType);
+                                Signal::Type signalType = Signal::INVALID) {
+        // Filter model by element type and signal type
+        auto filteredModel = new PluginFilterProxyModel(elementType, signalType);
         filteredModel->setSourceModel(model);
 
         // Connect filtered model to view
@@ -341,12 +341,12 @@ void PluginManagerPrivate::attachViews()
     };
 
     setupTreeView(ui->treeSource,       "DataSource");
-    setupTreeView(ui->treeDecoderEeg,   "SampleDecoder",    "EEG");
-    setupTreeView(ui->treeDecoderVideo, "SampleDecoder",    "VIDEO");
-    setupTreeView(ui->treeDecoderImu,   "SampleDecoder",    "IMU");
-    setupTreeView(ui->treeFeatEeg,      "FeatureExtractor", "EEG");
-    setupTreeView(ui->treeFeatVideo,    "FeatureExtractor", "VIDEO");
-    setupTreeView(ui->treeFeatImu,      "FeatureExtractor", "IMU");
+    setupTreeView(ui->treeDecoderEeg,   "SampleDecoder",    Signal::EEG);
+    setupTreeView(ui->treeDecoderVideo, "SampleDecoder",    Signal::VIDEO);
+    setupTreeView(ui->treeDecoderImu,   "SampleDecoder",    Signal::IMU);
+    setupTreeView(ui->treeFeatEeg,      "FeatureExtractor", Signal::EEG);
+    setupTreeView(ui->treeFeatVideo,    "FeatureExtractor", Signal::VIDEO);
+    setupTreeView(ui->treeFeatImu,      "FeatureExtractor", Signal::IMU);
     setupTreeView(ui->treeClassifier,   "Classifier");
 }
 
@@ -412,14 +412,14 @@ ElementSetPtr PluginManagerPrivate::doLoadElements(ElementLoader loader)
  */
 void PluginManagerPrivate::loadElementSetFromSelection(ElementSetPtr elements)
 {
-    loadElement(elements->dataSource,                           getSelectedElement(ui->treeSource));
+    loadElement(elements->dataSource,                       getSelectedElement(ui->treeSource));
     loadElement(elements->sampleDecoders[Signal::EEG],      getSelectedElement(ui->treeDecoderEeg));
     loadElement(elements->sampleDecoders[Signal::VIDEO],    getSelectedElement(ui->treeDecoderVideo));
     loadElement(elements->sampleDecoders[Signal::IMU],      getSelectedElement(ui->treeDecoderImu));
     loadElement(elements->featureExtractors[Signal::EEG],   getSelectedElement(ui->treeFeatEeg));
     loadElement(elements->featureExtractors[Signal::VIDEO], getSelectedElement(ui->treeFeatVideo));
     loadElement(elements->featureExtractors[Signal::IMU],   getSelectedElement(ui->treeFeatImu));
-    loadElement(elements->classifier,                           getSelectedElement(ui->treeClassifier));
+    loadElement(elements->classifier,                       getSelectedElement(ui->treeClassifier));
 }
 
 /*!
@@ -429,14 +429,14 @@ void PluginManagerPrivate::loadElementSetFromSelection(ElementSetPtr elements)
  */
 void PluginManagerPrivate::loadElementSetFromSettings(ElementSetPtr elements)
 {
-    loadElement(elements->dataSource,                           getSavedElement("data-source"));
+    loadElement(elements->dataSource,                       getSavedElement("data-source"));
     loadElement(elements->sampleDecoders[Signal::EEG],      getSavedElement("eeg-decoder"));
     loadElement(elements->sampleDecoders[Signal::VIDEO],    getSavedElement("video-decoder"));
     loadElement(elements->sampleDecoders[Signal::IMU],      getSavedElement("imu-decoder"));
     loadElement(elements->featureExtractors[Signal::EEG],   getSavedElement("eeg-featex"));
     loadElement(elements->featureExtractors[Signal::VIDEO], getSavedElement("video-featex"));
     loadElement(elements->featureExtractors[Signal::IMU],   getSavedElement("imu-featex"));
-    loadElement(elements->classifier,                           getSavedElement("classifier"));
+    loadElement(elements->classifier,                       getSavedElement("classifier"));
 }
 
 /*!

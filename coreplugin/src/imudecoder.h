@@ -16,7 +16,7 @@ class HeadWidget;
 class ImuDecoder : public SampleDecoder, public Displayable
 {
     Q_OBJECT
-    Q_CLASSINFO("SampleType", "IMU")
+    Q_CLASSINFO("SignalType", "IMU")
 
 public:
     Q_INVOKABLE explicit ImuDecoder(QObject *parent = nullptr);

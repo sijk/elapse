@@ -11,7 +11,7 @@ class QByteArray;
  * \brief The SampleDecoder class is the base class for elements that decode a
  * QByteArray to one or more Sample%s.
  *
- * Each Pipeline has several SampleDecoder%s: one per \ref SampleType.
+ * Each Pipeline has several SampleDecoder%s: one per Signal::Type.
  *
  * \ingroup pipeline-elements
  */

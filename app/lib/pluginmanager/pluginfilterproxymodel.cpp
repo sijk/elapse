@@ -5,19 +5,19 @@
 /*!
  * Create a new PluginFilterProxyModel as a child of the given \a parent.
  * The model will only include classes that implement the given
- * \a elementType and which are applicable to the given \a sampleType.
- * If \a sampleType is empty, all classes implementing the \a elementType
- * will be included. If a class doesn't declare which \a sampleType it is
+ * \a elementType and which are applicable to the given \a signalType.
+ * If \a signalType is invalid, all classes implementing the \a elementType
+ * will be included. If a class doesn't declare which \a signalType it is
  * applicable to, it will also be included.
  *
  * \see \ref pluginmanager-model for a detailed description of the data model.
  */
 PluginFilterProxyModel::PluginFilterProxyModel(const QString &elementType,
-                                               const QString &sampleType,
+                                               Signal::Type signalType,
                                                QObject *parent) :
     QSortFilterProxyModel(parent),
     desiredElementType(elementType),
-    desiredSampleType(sampleType)
+    desiredSignalType(signalType)
 {
 }
 
@@ -39,10 +39,10 @@ bool PluginFilterProxyModel::filterAcceptsRow(int row,
     if (isPluginItem)
         return true;
 
-    // Exclude classes that explicitly don't work with the given sampleType
-    QString sampleType = index.data(SAMPLETYPE_ROLE).toString();
-    if (!desiredSampleType.isEmpty() && !sampleType.isEmpty())
-        return sampleType == desiredSampleType;
+    // Exclude classes that explicitly don't work with the given signalType
+    QVariant signalType = index.data(SIGNALTYPE_ROLE);
+    if (desiredSignalType != Signal::INVALID && signalType.isValid())
+        return signalType.toInt() == desiredSignalType;
 
     return true;
 }

@@ -14,7 +14,7 @@
 class DummyImuFeatureExtractor : public BaseFeatureExtractor
 {
     Q_OBJECT
-    Q_CLASSINFO("SampleType", "IMU")
+    Q_CLASSINFO("SignalType", "IMU")
 
 public:
     Q_INVOKABLE explicit DummyImuFeatureExtractor(QObject *parent = nullptr);

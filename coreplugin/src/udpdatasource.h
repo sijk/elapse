@@ -8,7 +8,7 @@
 
 /*!
  * \brief The UdpDataSource class receives data from the device over
- * several UDP sockets - one for each SampleType::Type.
+ * several UDP sockets - one for each Signal::Type.
  *
  * \ingroup core-plugin
  */

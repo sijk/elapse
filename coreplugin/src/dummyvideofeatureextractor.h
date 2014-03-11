@@ -19,7 +19,7 @@
 class DummyVideoFeatureExtractor : public BaseFeatureExtractor
 {
     Q_OBJECT
-    Q_CLASSINFO("SampleType", "VIDEO")
+    Q_CLASSINFO("SignalType", "VIDEO")
 
 public:
     Q_INVOKABLE explicit DummyVideoFeatureExtractor(QObject *parent = nullptr);

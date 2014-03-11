@@ -9,7 +9,7 @@
  * \brief The FeatureExtractor class is the base class for elements that
  * analyse a time series of Sample%s to extract a FeatureVector.
  *
- * Each Pipeline has several FeatureExtractor%s: one per \ref SampleType.
+ * Each Pipeline has several FeatureExtractor%s: one per Signal::Type.
  *
  * \ingroup pipeline-elements
  */
@@ -130,11 +130,11 @@ private:
 
     /*!
      * \return the Signal::Type this FeatureExtractor works with, as defined
-     * by the "SampleType" class info field.
+     * by the "SignalType" class info field.
      */
     Signal::Type findSignalType() const
     {
-        const int index = metaObject()->indexOfClassInfo("SampleType");
+        const int index = metaObject()->indexOfClassInfo("SignalType");
         const char *info = metaObject()->classInfo(index).value();
         return Signal::fromString(info);
     }
