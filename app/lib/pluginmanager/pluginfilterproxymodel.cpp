@@ -1,5 +1,5 @@
 #include <QModelIndex>
-#include "pluginmanager_p.h"
+#include "pluginmanager_def.h"
 #include "pluginfilterproxymodel.h"
 
 /*!
