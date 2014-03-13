@@ -31,14 +31,14 @@ public:
 };
 
 
-TEST_F(PluginManagerTest, CanSetSearchPath)
+TEST_F(PluginManagerTest, SetSearchPath)
 {
     QDir newPath("/tmp");
     manager->setSearchPath(newPath);
     EXPECT_EQ(manager->searchPath(), newPath);
 }
 
-TEST_F(PluginManagerTest, PopulatesPluginModel)
+TEST_F(PluginManagerTest, PopulatePluginModel)
 {
     auto model = priv->model;
     ASSERT_NE(model, nullptr);
@@ -165,3 +165,45 @@ TEST_F(PluginManagerTest, ProxyModelForDataSources)
     EXPECT_EQ(proxy.data(fooSrcIdx).toString(), "FooDummySource");
 }
 
+TEST_F(PluginManagerTest, ManuallyLoadInvalidPathReturnsNull)
+{
+    PluginManagerPrivate::ClassInfo classInfo = {
+        manager->searchPath().absoluteFilePath("libinvalid.so"),
+        ""
+    };
+
+    SampleDecoder *instance = nullptr;
+    priv->loadElement(instance, classInfo);
+    ASSERT_EQ(instance, nullptr);
+}
+
+TEST_F(PluginManagerTest, ManuallyLoadInvalidElementReturnsNull)
+{
+    PluginManagerPrivate::ClassInfo classInfo = {
+        manager->searchPath().absoluteFilePath("libfooplugin.so"),
+        "BarEegDecoder"
+    };
+
+    SampleDecoder *instance = nullptr;
+    priv->loadElement(instance, classInfo);
+    ASSERT_EQ(instance, nullptr);
+}
+
+TEST_F(PluginManagerTest, ManuallyLoadFooEegDecoder)
+{
+    PluginManagerPrivate::ClassInfo classInfo = {
+        manager->searchPath().absoluteFilePath("libfooplugin.so"),
+        "FooEegDecoder"
+    };
+
+    SampleDecoder *instance = nullptr;
+    priv->loadElement(instance, classInfo);
+    ASSERT_NE(instance, nullptr);
+
+    // Ensure element is deleted even if assertions fail
+    QScopedPointer<SampleDecoder> fooEegDecoder(instance);
+
+    EXPECT_STREQ(fooEegDecoder->metaObject()->className(), "FooEegDecoder");
+    EXPECT_EQ(PluginManagerPrivate::baseClass(fooEegDecoder->metaObject()),
+              &SampleDecoder::staticMetaObject);
+}

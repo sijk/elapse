@@ -80,12 +80,6 @@
  */
 
 
-struct PluginManagerPrivate::ClassInfo
-{
-    QString pluginPath;
-    QString className;
-};
-
 const QString PluginManagerPrivate::pathSetting("elements/%1/plugin-path");
 const QString PluginManagerPrivate::classSetting("elements/%1/class-name");
 

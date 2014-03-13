@@ -53,4 +53,10 @@ public:
     static const QString classSetting;
 };
 
+struct PluginManagerPrivate::ClassInfo
+{
+    QString pluginPath;
+    QString className;
+};
+
 #endif // PLUGINMANAGER_P_H
