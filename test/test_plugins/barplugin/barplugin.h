@@ -3,6 +3,7 @@
 
 #include "plugin.h"
 #include "bareegdecoder.h"
+#include "barvideodecoder.h"
 
 
 class BarPlugin : public Plugin
@@ -13,7 +14,8 @@ public:
     ClassList classes()
     {
         return {
-            BarEegDecoder::staticMetaObject
+            BarEegDecoder::staticMetaObject,
+            BarVideoDecoder::staticMetaObject
         };
     }
 };

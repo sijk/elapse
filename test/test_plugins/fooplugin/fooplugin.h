@@ -3,6 +3,7 @@
 
 #include "plugin.h"
 #include "fooeegdecoder.h"
+#include "foodummysource.h"
 
 
 class FooPlugin : public Plugin
@@ -13,7 +14,8 @@ public:
     ClassList classes()
     {
         return {
-            FooEegDecoder::staticMetaObject
+            FooEegDecoder::staticMetaObject,
+            FooDummySource::staticMetaObject
         };
     }
 };

@@ -180,6 +180,7 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
         loader.unload();
     }
 
+    model->sort(0);
     attachViews();
 }
 
