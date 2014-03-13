@@ -17,8 +17,16 @@ INCLUDEPATH  += $$proFileSubdir()/include
 VPATH        += $$proFileSubdir()/include
 
 defineTest(linkStaticlib) {
-    libname = $$1
-    subdir = $$proFileSubdir()
+    isEmpty(2) {
+        # e.g. linkStaticlib(pipeline)
+        libname = $$1
+        subdir = $$proFileSubdir()
+    }
+    !isEmpty(2) {
+        # e.g. linkStaticlib(app, pipeline)
+        libname = $$2
+        subdir = $$ROOT/$$1
+    }
     outdir = $$shadowed($$subdir)
 
     LIBS            += -L$$outdir/lib/$${libname}/ -l$${libname}

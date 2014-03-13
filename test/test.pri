@@ -1,4 +1,7 @@
-QT        = core testlib
-CONFIG   += testcase c++11
+include(../global.pri)
+include(gmock/gmock.pri)
 
-TARGET    = tst_$$basename(_PRO_FILE_PWD_)
+CONFIG += testcase
+
+SOURCES += $$PWD/test_main.cpp
+

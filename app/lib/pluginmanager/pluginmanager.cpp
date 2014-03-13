@@ -207,7 +207,7 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
                 pluginItem->appendRow(classItem);
             }
         } else {
-            qxtLog->error(loader.errorString());
+            qxtLog->debug(loader.errorString());
         }
 
         loader.unload();
