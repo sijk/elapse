@@ -1,4 +1,2 @@
 TEMPLATE    = subdirs
-SUBDIRS	    = sineplugin \
-              cosineplugin \
-              loggerplugin
+SUBDIRS	    = fooplugin barplugin

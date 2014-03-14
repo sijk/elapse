@@ -1,4 +1,4 @@
 TEMPLATE    = subdirs
-SUBDIRS	    = app coreplugin #test
+SUBDIRS	    = app coreplugin test
 
 include(doc/doc.pri)

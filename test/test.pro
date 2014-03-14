@@ -1,7 +1,8 @@
 TEMPLATE = subdirs
 
-SUBDIRS += test_plugins pluginloader
-pluginloader.depends += test_plugins
+SUBDIRS += gmock
+SUBDIRS += test_plugins
 
-SUBDIRS += eegdecoder
-SUBDIRS += bigendian24
+SUBDIRS += pluginmanager
+pluginmanager.depends = test_plugins
+

@@ -6,8 +6,9 @@
 #include <QxtLogger>
 #include "plugin.h"
 #include "pluginfilterproxymodel.h"
-#include "pluginmanager_p.h"
 #include "pluginmanager.h"
+#include "pluginmanager_p.h"
+#include "pluginmanager_def.h"
 #include "ui_pluginmanager.h"
 
 
@@ -79,54 +80,6 @@
  */
 
 
-class PluginManagerPrivate
-{
-public:
-    PluginManagerPrivate(PluginManager *q);
-    ~PluginManagerPrivate();
-
-    struct ClassInfo;
-    typedef void (PluginManagerPrivate::*ElementLoader)(ElementSetPtr);
-
-    void setSearchPath(QDir newPath);
-
-    static QStandardItem *createElementTypeItem(const QString &name);
-    static QStandardItem *createPluginItem(const QString &name,
-                                           const QFileInfo &file);
-    static QStandardItem *createElementItem(const QMetaObject &obj);
-    static const QMetaObject *baseClass(const QMetaObject *obj);
-    static QStandardItem *childWithText(const QStandardItem *item,
-                                        const QString &name);
-    void attachViews();
-
-    ElementSetPtr loadSelectedElements();
-    ElementSetPtr loadSavedElements();
-    ElementSetPtr doLoadElements(ElementLoader loader);
-
-    void loadElementSetFromSelection(ElementSetPtr elements);
-    void loadElementSetFromSettings(ElementSetPtr elements);
-
-    template<class ElementType>
-    static void loadElement(ElementType &element, ClassInfo info);
-
-    static ClassInfo getSelectedElement(QTreeView *tree);
-    static ClassInfo getSavedElement(QString elementName);
-
-    void saveSelectedElements();
-    void selectSavedElements();
-
-    Ui::PluginManager *ui;
-    QDir path;
-    QStandardItemModel *model;
-    static const QString pathSetting;
-    static const QString classSetting;
-};
-
-struct PluginManagerPrivate::ClassInfo {
-    QString pluginPath;
-    QString className;
-};
-
 const QString PluginManagerPrivate::pathSetting("elements/%1/plugin-path");
 const QString PluginManagerPrivate::classSetting("elements/%1/class-name");
 
@@ -158,6 +111,14 @@ PluginManagerPrivate::~PluginManagerPrivate()
 
     delete model;
     delete ui;
+}
+
+/*!
+ * Enable testing code to access the d_ptr of the public class.
+ */
+PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
+{
+    return manager->d_func();
 }
 
 /*!
@@ -207,12 +168,13 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
                 pluginItem->appendRow(classItem);
             }
         } else {
-            qxtLog->error(loader.errorString());
+            qxtLog->debug(loader.errorString());
         }
 
         loader.unload();
     }
 
+    model->sort(0);
     attachViews();
 }
 

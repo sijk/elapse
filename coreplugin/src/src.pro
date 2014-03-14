@@ -1,10 +1,8 @@
-include(../../global.pri)
+include(../../plugin.pri)
 
 TARGET        = coreplugin
-TEMPLATE      = lib
-CONFIG       += plugin link_pkgconfig qwt qxt
+CONFIG       += link_pkgconfig qwt qxt
 QT           += network opengl
-DESTDIR       = ../../plugins/
 PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10
 QXT          += core
 
