@@ -6,6 +6,7 @@
 #include <QxtLogger>
 #include "plugin.h"
 #include "pluginfilterproxymodel.h"
+#include "elementsetfactory.h"
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
 #include "pluginmanager_def.h"
@@ -80,14 +81,12 @@
  */
 
 
-const QString PluginManagerPrivate::pathSetting("elements/%1/plugin-path");
-const QString PluginManagerPrivate::classSetting("elements/%1/class-name");
-
 /*!
  * Create the private data for the given PluginManager. Set the search path to
  * the default and populate the plugin model from that path.
  */
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
+    q_ptr(q),
     ui(new Ui::PluginManager),
     model(new QStandardItemModel)
 {
@@ -99,16 +98,6 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
 
 PluginManagerPrivate::~PluginManagerPrivate()
 {
-    // Delete PluginFilterProxyModels
-    delete ui->treeSource->model();
-    delete ui->treeDecoderEeg->model();
-    delete ui->treeDecoderVideo->model();
-    delete ui->treeDecoderImu->model();
-    delete ui->treeFeatEeg->model();
-    delete ui->treeFeatVideo->model();
-    delete ui->treeFeatImu->model();
-    delete ui->treeClassifier->model();
-
     delete model;
     delete ui;
 }
@@ -280,7 +269,7 @@ void PluginManagerPrivate::attachViews()
     auto setupTreeView = [this](QTreeView *tree, const QString &elementType,
                                 Signal::Type signalType = Signal::INVALID) {
         // Filter model by element type and signal type
-        auto filteredModel = new PluginFilterProxyModel(elementType, signalType);
+        auto filteredModel = new PluginFilterProxyModel(elementType, signalType, tree);
         filteredModel->setSourceModel(model);
 
         // Connect filtered model to view
@@ -302,148 +291,20 @@ void PluginManagerPrivate::attachViews()
             });
     };
 
-    setupTreeView(ui->treeSource,       "DataSource");
-    setupTreeView(ui->treeDecoderEeg,   "SampleDecoder",    Signal::EEG);
-    setupTreeView(ui->treeDecoderVideo, "SampleDecoder",    Signal::VIDEO);
-    setupTreeView(ui->treeDecoderImu,   "SampleDecoder",    Signal::IMU);
-    setupTreeView(ui->treeFeatEeg,      "FeatureExtractor", Signal::EEG);
-    setupTreeView(ui->treeFeatVideo,    "FeatureExtractor", Signal::VIDEO);
-    setupTreeView(ui->treeFeatImu,      "FeatureExtractor", Signal::IMU);
-    setupTreeView(ui->treeClassifier,   "Classifier");
-}
-
-/*!
- * \see PluginManager::loadPluginsFromSelection()
- */
-ElementSetPtr PluginManagerPrivate::loadSelectedElements()
-{
-    qxtLog->info("Loading the selected set of elements");
-    auto elements = doLoadElements(&PluginManagerPrivate::loadElementSetFromSelection);
-
-    if (elements)
-        saveSelectedElements();
-
-    return elements;
-}
-
-/*!
- * \see PluginManager::loadPluginsFromSettings()
- */
-ElementSetPtr PluginManagerPrivate::loadSavedElements()
-{
-    if (!QSettings().childGroups().contains("elements")) {
-        qxtLog->debug("No saved elements to load");
-        return ElementSetPtr();
-    }
-
-    qxtLog->info("Loading the saved set of elements");
-    auto elements = doLoadElements(&PluginManagerPrivate::loadElementSetFromSettings);
-
-    if (elements)
-        selectSavedElements();
-
-    return elements;
-}
-
-/*!
- * Load elements with the given \a loader and check whether it succeeded.
- * If so, return the ElementSet, otherwise return \c NULL.
- */
-ElementSetPtr PluginManagerPrivate::doLoadElements(ElementLoader loader)
-{
-    auto elements = ElementSetPtr::create();
-
-    // Populate the ElementSet
-    (this->*loader)(elements);
-
-    foreach (QObject *element, elements->allElements()) {
-        if (!element) {
-            qxtLog->warning("Failed to load all elements from plugins.");
-            return ElementSetPtr();
-        }
-    }
-
-    qxtLog->info("Successfully loaded all elements from plugins.");
-    return elements;
-}
-
-/*!
- * Populate the given \a elements with the classes selected in the tree-views.
- *
- * \see loadElement()
- */
-void PluginManagerPrivate::loadElementSetFromSelection(ElementSetPtr elements)
-{
-    loadElement(elements->dataSource,                       getSelectedElement(ui->treeSource));
-    loadElement(elements->sampleDecoders[Signal::EEG],      getSelectedElement(ui->treeDecoderEeg));
-    loadElement(elements->sampleDecoders[Signal::VIDEO],    getSelectedElement(ui->treeDecoderVideo));
-    loadElement(elements->sampleDecoders[Signal::IMU],      getSelectedElement(ui->treeDecoderImu));
-    loadElement(elements->featureExtractors[Signal::EEG],   getSelectedElement(ui->treeFeatEeg));
-    loadElement(elements->featureExtractors[Signal::VIDEO], getSelectedElement(ui->treeFeatVideo));
-    loadElement(elements->featureExtractors[Signal::IMU],   getSelectedElement(ui->treeFeatImu));
-    loadElement(elements->classifier,                       getSelectedElement(ui->treeClassifier));
-}
-
-/*!
- * Populate the given \a elements with the classes saved in the settings file.
- *
- * \see loadElement()
- */
-void PluginManagerPrivate::loadElementSetFromSettings(ElementSetPtr elements)
-{
-    loadElement(elements->dataSource,                       getSavedElement("data-source"));
-    loadElement(elements->sampleDecoders[Signal::EEG],      getSavedElement("eeg-decoder"));
-    loadElement(elements->sampleDecoders[Signal::VIDEO],    getSavedElement("video-decoder"));
-    loadElement(elements->sampleDecoders[Signal::IMU],      getSavedElement("imu-decoder"));
-    loadElement(elements->featureExtractors[Signal::EEG],   getSavedElement("eeg-featex"));
-    loadElement(elements->featureExtractors[Signal::VIDEO], getSavedElement("video-featex"));
-    loadElement(elements->featureExtractors[Signal::IMU],   getSavedElement("imu-featex"));
-    loadElement(elements->classifier,                       getSavedElement("classifier"));
-}
-
-/*!
- * Load the plugin from \a info.pluginPath and instantiate an object of class
- * \a info.className. If the plugin cannot be loaded, the class cannot be
- * instantiated, or casting the instance to the requested ElementType fails,
- * \a element will be \c NULL. Otherwise \a element will hold the newly-created
- * element.
- */
-template<class ElementType>
-void PluginManagerPrivate::loadElement(ElementType &element, ClassInfo info)
-{
-    Q_STATIC_ASSERT(std::is_pointer<ElementType>::value);
-
-    element = nullptr;
-
-    if (info.pluginPath.isEmpty() || info.className.isEmpty())
-        return;
-
-    QPluginLoader loader(info.pluginPath);
-    Plugin *plugin = static_cast<Plugin*>(loader.instance());
-
-    if (!plugin) {
-        qxtLog->debug("Could not load plugin", info.pluginPath);
-        return;
-    }
-
-    foreach (const QMetaObject &obj, plugin->classes()) {
-        if (obj.className() == info.className) {
-            QObject *instance = obj.newInstance();
-            element = qobject_cast<ElementType>(instance);
-            if (instance && !element)
-                delete instance;
-            break;
-        }
-    }
-
-    qxtLog->trace(element ? "Loaded" : "Failed to load", info.className,
-                  "from", QFileInfo(info.pluginPath).fileName());
+    setupTreeView(ui->dataSource,            "DataSource");
+    setupTreeView(ui->sampleDecoderEeg,      "SampleDecoder",    Signal::EEG);
+    setupTreeView(ui->sampleDecoderVideo,    "SampleDecoder",    Signal::VIDEO);
+    setupTreeView(ui->sampleDecoderImu,      "SampleDecoder",    Signal::IMU);
+    setupTreeView(ui->featureExtractorEeg,   "FeatureExtractor", Signal::EEG);
+    setupTreeView(ui->featureExtractorVideo, "FeatureExtractor", Signal::VIDEO);
+    setupTreeView(ui->featureExtractorImu,   "FeatureExtractor", Signal::IMU);
+    setupTreeView(ui->classifier,            "Classifier");
 }
 
 /*!
  * \return the details of the class that is selected in the given \a tree view.
  */
-PluginManagerPrivate::ClassInfo PluginManagerPrivate::getSelectedElement(QTreeView *tree)
+ClassInfo PluginManagerPrivate::getSelectedElement(const QTreeView *tree)
 {
     ClassInfo info;
 
@@ -458,41 +319,22 @@ PluginManagerPrivate::ClassInfo PluginManagerPrivate::getSelectedElement(QTreeVi
 }
 
 /*!
- * \return the details of the saved class with the given \c elementName.
- */
-PluginManagerPrivate::ClassInfo PluginManagerPrivate::getSavedElement(QString elementName)
-{
-    ClassInfo info;
-
-    QSettings settings;
-    info.pluginPath = settings.value(pathSetting.arg(elementName)).toString();
-    info.className = settings.value(classSetting.arg(elementName)).toString();
-
-    return info;
-}
-
-/*!
  * Inspect the tree views and save the details of the selected elements to
  * the settings file.
  */
 void PluginManagerPrivate::saveSelectedElements()
 {
+    Q_Q(PluginManager);
     QSettings settings;
+    auto trees = q->findChildren<QTreeView*>();
 
-    auto saveElement = [&](QTreeView *tree, const QString &name) {
+    foreach (const QTreeView *tree, trees) {
         ClassInfo info = getSelectedElement(tree);
+        QString name = tree->objectName();
+
         settings.setValue(pathSetting.arg(name), info.pluginPath);
         settings.setValue(classSetting.arg(name), info.className);
-    };
-
-    saveElement(ui->treeSource,       "data-source");
-    saveElement(ui->treeDecoderEeg,   "eeg-decoder");
-    saveElement(ui->treeDecoderVideo, "video-decoder");
-    saveElement(ui->treeDecoderImu,   "imu-decoder");
-    saveElement(ui->treeFeatEeg,      "eeg-featex");
-    saveElement(ui->treeFeatVideo,    "video-featex");
-    saveElement(ui->treeFeatImu,      "imu-featex");
-    saveElement(ui->treeClassifier,   "classifier");
+    }
 
     qxtLog->info("Saved current element selection");
 }
@@ -503,12 +345,15 @@ void PluginManagerPrivate::saveSelectedElements()
  */
 void PluginManagerPrivate::selectSavedElements()
 {
+    Q_Q(PluginManager);
     QSettings settings;
+    auto trees = q->findChildren<QTreeView*>();
 
-    auto selectSavedElement = [&](QTreeView *tree, const QString &name) {
+    foreach (const QTreeView *tree, trees) {
         QAbstractItemModel *model = tree->model();
+        QString name = tree->objectName();
         QItemSelectionModel *selection = tree->selectionModel();
-        PluginManagerPrivate::ClassInfo info;
+        ClassInfo info;
 
         info.pluginPath = settings.value(pathSetting.arg(name)).toString();
         info.className = settings.value(classSetting.arg(name)).toString();
@@ -532,16 +377,7 @@ void PluginManagerPrivate::selectSavedElements()
                 }
             }
         }
-    };
-
-    selectSavedElement(ui->treeSource,       "data-source");
-    selectSavedElement(ui->treeDecoderEeg,   "eeg-decoder");
-    selectSavedElement(ui->treeDecoderVideo, "video-decoder");
-    selectSavedElement(ui->treeDecoderImu,   "imu-decoder");
-    selectSavedElement(ui->treeFeatEeg,      "eeg-featex");
-    selectSavedElement(ui->treeFeatVideo,    "video-featex");
-    selectSavedElement(ui->treeFeatImu,      "imu-featex");
-    selectSavedElement(ui->treeClassifier,   "classifier");
+    }
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -606,9 +442,15 @@ void PluginManager::selectPluginsToLoad()
 void PluginManager::loadPluginsFromSettings()
 {
     Q_D(PluginManager);
-    auto elements = d->loadSavedElements();
-    if (elements)
+
+    qxtLog->info("Loading the saved set of elements");
+    SelectElementsFromSettings selectFromSettings;
+    auto elements = ElementSetFactory::loadUsingStrategy(&selectFromSettings);
+
+    if (elements) {
+        d->selectSavedElements();
         emit pluginsLoaded(elements);
+    }
 }
 
 /*!
@@ -618,9 +460,15 @@ void PluginManager::loadPluginsFromSettings()
 void PluginManager::loadPluginsFromSelection()
 {
     Q_D(PluginManager);
-    auto elements = d->loadSelectedElements();
-    if (elements)
+
+    qxtLog->info("Loading the selected set of elements");
+    SelectElementsFromGui selectFromGui(this);
+    auto elements = ElementSetFactory::loadUsingStrategy(&selectFromGui);
+
+    if (elements) {
+        d->saveSelectedElements();
         emit pluginsLoaded(elements);
+    }
 }
 
 /*!
@@ -631,3 +479,4 @@ void PluginManager::loadPluginsFromSelection()
  * using a QSharedPointer to refer to it. As soon as the last reference to the
  * ElementSet is dropped it will be deleted automatically.
  */
+

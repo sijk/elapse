@@ -3,12 +3,14 @@ include(../../../staticlib.pri)
 QT      += gui widgets
 
 SOURCES += pluginmanager.cpp \
-           pluginfilterproxymodel.cpp
+           pluginfilterproxymodel.cpp \
+           elementsetfactory.cpp
 
 HEADERS += pluginmanager.h \
            pluginmanager_p.h \
            pluginmanager_def.h \
-           pluginfilterproxymodel.h
+           pluginfilterproxymodel.h \
+           elementsetfactory.h
 
 HEADERS += plugin.h \
            sampletypes.h \
