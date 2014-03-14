@@ -19,7 +19,7 @@ class ElementSelectionStrategy;
 class ElementSetFactory
 {
 public:
-    static ElementSetPtr loadUsingStrategy(ElementSelectionStrategy *strategy);
+    static ElementSetPtr loadUsingStrategy(ElementSelectionStrategy *selection);
 
 protected:
     template<class ElementType>
@@ -34,10 +34,8 @@ protected:
  * \ingroup plugins-int
  */
 
-class ElementSelectionStrategy
+struct ElementSelectionStrategy
 {
-public:
-    virtual bool canLoadElements() { return true; }
     virtual ClassInfo getElementInfo(const char *elementName) = 0;
 };
 
@@ -49,9 +47,8 @@ public:
  * \ingroup plugins-int
  */
 
-class SelectElementsFromSettings : public ElementSelectionStrategy
+struct SelectElementsFromSettings : public ElementSelectionStrategy
 {
-    bool canLoadElements();
     ClassInfo getElementInfo(const char *elementName);
 };
 
@@ -63,9 +60,8 @@ class SelectElementsFromSettings : public ElementSelectionStrategy
  * \ingroup plugins-int
  */
 
-class SelectElementsFromGui : public ElementSelectionStrategy
+struct SelectElementsFromGui : public ElementSelectionStrategy
 {
-public:
     SelectElementsFromGui(const QWidget *ui);
     ClassInfo getElementInfo(const char *elementName);
 

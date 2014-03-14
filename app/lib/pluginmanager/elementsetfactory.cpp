@@ -9,21 +9,18 @@
  * selected classes, and load those classes from plugins. If everything
  * succeeded, return the ElementSet, otherwise return \c NULL.
  */
-ElementSetPtr ElementSetFactory::loadUsingStrategy(ElementSelectionStrategy *strategy)
+ElementSetPtr ElementSetFactory::loadUsingStrategy(ElementSelectionStrategy *selection)
 {
-    if (!strategy->canLoadElements())
-        return ElementSetPtr();
-
     auto elements = ElementSetPtr::create();
 
-    loadElement(elements->dataSource,                       strategy->getElementInfo("dataSource"));
-    loadElement(elements->sampleDecoders[Signal::EEG],      strategy->getElementInfo("sampleDecoderEeg"));
-    loadElement(elements->sampleDecoders[Signal::VIDEO],    strategy->getElementInfo("sampleDecoderVideo"));
-    loadElement(elements->sampleDecoders[Signal::IMU],      strategy->getElementInfo("sampleDecoderImu"));
-    loadElement(elements->featureExtractors[Signal::EEG],   strategy->getElementInfo("featureExtractorEeg"));
-    loadElement(elements->featureExtractors[Signal::VIDEO], strategy->getElementInfo("featureExtractorVideo"));
-    loadElement(elements->featureExtractors[Signal::IMU],   strategy->getElementInfo("featureExtractorImu"));
-    loadElement(elements->classifier,                       strategy->getElementInfo("classifier"));
+    loadElement(elements->dataSource,                       selection->getElementInfo("dataSource"));
+    loadElement(elements->sampleDecoders[Signal::EEG],      selection->getElementInfo("sampleDecoderEeg"));
+    loadElement(elements->sampleDecoders[Signal::VIDEO],    selection->getElementInfo("sampleDecoderVideo"));
+    loadElement(elements->sampleDecoders[Signal::IMU],      selection->getElementInfo("sampleDecoderImu"));
+    loadElement(elements->featureExtractors[Signal::EEG],   selection->getElementInfo("featureExtractorEeg"));
+    loadElement(elements->featureExtractors[Signal::VIDEO], selection->getElementInfo("featureExtractorVideo"));
+    loadElement(elements->featureExtractors[Signal::IMU],   selection->getElementInfo("featureExtractorImu"));
+    loadElement(elements->classifier,                       selection->getElementInfo("classifier"));
 
     foreach (QObject *element, elements->allElements()) {
         if (!element) {
@@ -98,14 +95,6 @@ void ElementSetFactory::loadElement(ElementType &element, ClassInfo info)
  * ElementSet.
  */
 
-
-/*!
- * \return \c true iff the QSettings file contains element details.
- */
-bool SelectElementsFromSettings::canLoadElements()
-{
-    return QSettings().childGroups().contains("elements");
-}
 
 /*!
  * \return the ClassInfo of the given \a elementName as stored in QSettings.
