@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Plugin Manager</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="layout">
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -21,7 +21,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QTreeView" name="treeSource">
+       <widget class="QTreeView" name="dataSource">
         <property name="alternatingRowColors">
          <bool>true</bool>
         </property>
@@ -55,7 +55,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QTreeView" name="treeDecoderEeg">
+          <widget class="QTreeView" name="sampleDecoderEeg">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -83,7 +83,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QTreeView" name="treeDecoderVideo">
+          <widget class="QTreeView" name="sampleDecoderVideo">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -111,7 +111,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
-          <widget class="QTreeView" name="treeDecoderImu">
+          <widget class="QTreeView" name="sampleDecoderImu">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -148,7 +148,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QTreeView" name="treeFeatEeg">
+          <widget class="QTreeView" name="featureExtractorEeg">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -176,7 +176,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
-          <widget class="QTreeView" name="treeFeatVideo">
+          <widget class="QTreeView" name="featureExtractorVideo">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -204,7 +204,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
-          <widget class="QTreeView" name="treeFeatImu">
+          <widget class="QTreeView" name="featureExtractorImu">
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
@@ -235,7 +235,7 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QTreeView" name="treeClassifier">
+       <widget class="QTreeView" name="classifier">
         <property name="alternatingRowColors">
          <bool>true</bool>
         </property>

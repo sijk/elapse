@@ -14,4 +14,14 @@ enum PluginItemDataRole
     FILEPATH_ROLE
 };
 
+
+struct ClassInfo
+{
+    QString pluginPath;
+    QString className;
+};
+
+const QString pathSetting("elements/%1/plugin-path");
+const QString classSetting("elements/%1/class-name");
+
 #endif // PLUGINMANAGER_DEF_H
