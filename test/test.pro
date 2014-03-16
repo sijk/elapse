@@ -6,3 +6,4 @@ SUBDIRS += test_plugins
 SUBDIRS += pluginmanager
 pluginmanager.depends = test_plugins
 
+SUBDIRS += bigendian24
