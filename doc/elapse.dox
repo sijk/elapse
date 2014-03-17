@@ -87,10 +87,10 @@
 */
 
 /*!
-    \defgroup signal-datatypes Signal Datatypes
+    \defgroup signal-datatypes Pipeline Datatypes
     \ingroup signal-pipeline
 
-    These classes define the datatypes for the signals flowing through the
+    These classes define the types of data flowing through the
     \ref signal-pipeline "pipeline".
 */
 

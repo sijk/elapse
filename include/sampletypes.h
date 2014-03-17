@@ -75,7 +75,13 @@ struct FeatureVector
     QVector<double> features;
 };
 
-typedef QVector<double> CognitiveState;
+
+struct CognitiveState
+{
+    quint64 startTime;
+    QVector<double> state;
+};
+
 
 
 #endif // SAMPLETYPES_H
