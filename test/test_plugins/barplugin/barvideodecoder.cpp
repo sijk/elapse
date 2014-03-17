@@ -1,5 +1,8 @@
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "barvideodecoder.h"
+
+using elapse::VideoSample;
+using elapse::SamplePtr;
 
 
 BarVideoDecoder::BarVideoDecoder(QObject *parent) :

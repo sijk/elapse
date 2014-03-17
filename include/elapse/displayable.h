@@ -3,6 +3,8 @@
 
 class QWidget;
 
+namespace elapse {
+
 /*!
  * \brief The Displayable interface can be implemented by any class that wants
  * to expose a GUI widget.
@@ -17,5 +19,7 @@ public:
      */
     virtual QWidget *getWidget() = 0;
 };
+
+} // namespace elapse
 
 #endif // DISPLAYABLE_H

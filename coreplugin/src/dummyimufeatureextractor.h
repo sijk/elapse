@@ -1,7 +1,7 @@
 #ifndef DUMMYIMUFEATUREEXTRACTOR_H
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
-#include "elements/featurextractor.h"
+#include <elapse/elements/featurextractor.h>
 #include "util/timestampedvalues.h"
 
 
@@ -11,7 +11,7 @@
  * \ingroup core-plugin
  */
 
-class DummyImuFeatureExtractor : public BaseFeatureExtractor
+class DummyImuFeatureExtractor : public elapse::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "IMU")
@@ -19,8 +19,10 @@ class DummyImuFeatureExtractor : public BaseFeatureExtractor
 public:
     Q_INVOKABLE explicit DummyImuFeatureExtractor(QObject *parent = nullptr);
 
+    void setStartTime(quint64 timestamp);
+
 protected:
-    void analyseSample(SamplePtr sample);
+    void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
     void removeDataBefore(quint64 time);
 

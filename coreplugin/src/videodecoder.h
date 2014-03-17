@@ -1,8 +1,8 @@
 #ifndef VIDEODECODER_H
 #define VIDEODECODER_H
 
-#include "elements/decoder.h"
-#include "displayable.h"
+#include <elapse/elements/decoder.h>
+#include <elapse/displayable.h>
 
 
 class VideoDecoderPrivate;
@@ -13,7 +13,7 @@ class VideoDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class VideoDecoder : public SampleDecoder, public Displayable
+class VideoDecoder : public elapse::SampleDecoder, public elapse::Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")

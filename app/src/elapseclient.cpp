@@ -7,7 +7,7 @@
 #include "pluginmanager.h"
 #include "deviceproxy.h"
 #include "logview.h"
-#include "displayable.h"
+#include "elapse/displayable.h"
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
 
@@ -192,7 +192,7 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
     foreach (QObject *element, elements->allElements()) {
         QString className = element->metaObject()->className();
 
-        auto displayable = dynamic_cast<Displayable*>(element);
+        auto displayable = dynamic_cast<elapse::Displayable*>(element);
         if (!displayable) {
             qxtLog->trace(className, "is not displayable");
             continue;

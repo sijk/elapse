@@ -1,5 +1,8 @@
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "bareegdecoder.h"
+
+using elapse::EegSample;
+using elapse::SamplePtr;
 
 
 BarEegDecoder::BarEegDecoder(QObject *parent) :

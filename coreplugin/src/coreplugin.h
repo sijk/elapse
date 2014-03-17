@@ -1,7 +1,7 @@
 #ifndef COREPLUGIN_H
 #define COREPLUGIN_H
 
-#include "plugin.h"
+#include <elapse/plugin.h>
 #include "udpdatasource.h"
 #include "dummyeegsource.h"
 #include "eegdecoder.h"
@@ -23,10 +23,10 @@
  * \ingroup core-plugin
  */
 
-class CorePlugin : public Plugin
+class CorePlugin : public elapse::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID PluginInterface_iid)
+    Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid)
 public:
     ClassList classes()
     {

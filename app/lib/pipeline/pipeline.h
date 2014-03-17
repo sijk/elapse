@@ -38,7 +38,7 @@ signals:
     void error(QString msg);
 
 private slots:
-    void setStartTime(SamplePtr sample);
+    void setStartTime(elapse::SamplePtr sample);
 
 private:
     ElementSetPtr _elements;

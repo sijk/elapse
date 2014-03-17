@@ -1,5 +1,8 @@
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "fooeegdecoder.h"
+
+using elapse::EegSample;
+using elapse::SamplePtr;
 
 
 FooEegDecoder::FooEegDecoder(QObject *parent) :

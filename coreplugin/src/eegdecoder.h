@@ -1,8 +1,8 @@
 #ifndef EEGDECODER_H
 #define EEGDECODER_H
 
-#include "elements/decoder.h"
-#include "displayable.h"
+#include <elapse/elements/decoder.h>
+#include <elapse/displayable.h>
 
 class EegDecoderPrivate;
 
@@ -13,7 +13,7 @@ class EegDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class EegDecoder : public SampleDecoder, public Displayable
+class EegDecoder : public elapse::SampleDecoder, public elapse::Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")

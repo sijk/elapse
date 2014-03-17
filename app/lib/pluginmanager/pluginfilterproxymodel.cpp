@@ -2,6 +2,9 @@
 #include "pluginmanager_def.h"
 #include "pluginfilterproxymodel.h"
 
+using elapse::Signal;
+
+
 /*!
  * Create a new PluginFilterProxyModel as a child of the given \a parent.
  * The model will only include classes that implement the given

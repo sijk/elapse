@@ -6,7 +6,7 @@ QT           += network opengl
 PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10
 QXT          += core
 
-HEADERS       = udpdatasource.h \
+HEADERS      += udpdatasource.h \
                 dummyeegsource.h \
                 eegdecoder.h \
                 videodecoder.h \
@@ -19,7 +19,7 @@ HEADERS       = udpdatasource.h \
                 util/gstwrappedbuffer.h \
                 util/timestampedvalues.h
 
-SOURCES       = udpdatasource.cpp \
+SOURCES      += udpdatasource.cpp \
                 dummyeegsource.cpp \
                 eegdecoder.cpp \
                 videodecoder.cpp \
@@ -30,14 +30,7 @@ SOURCES       = udpdatasource.cpp \
                 dummyclassifier.cpp \
                 util/gstwrappedbuffer.cpp
 
-HEADERS      += coreplugin.h \
-                elements/datasource.h \
-                elements/decoder.h \
-                elements/featurextractor.h \
-                elements/classifier.h \
-                sampletypes.h \
-                displayable.h \
-                plugin.h
+HEADERS      += coreplugin.h
 
 linkStaticlib(stripchart)
 linkStaticlib(headwidget)

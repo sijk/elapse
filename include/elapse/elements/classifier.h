@@ -2,8 +2,9 @@
 #define CLASSIFIER_H
 
 #include <QObject>
-#include "sampletypes.h"
+#include "elapse/sampletypes.h"
 
+namespace elapse {
 
 /*!
  * \brief The Classifier class is the base class for elements that take in
@@ -41,5 +42,7 @@ signals:
      */
     void newState(CognitiveState state);
 };
+
+} // namespace elapse
 
 #endif // CLASSIFIER_H

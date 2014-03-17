@@ -12,9 +12,11 @@
 #include <QGst/Bus>
 #include <QGst/Parse>
 #include <QGst/Message>
+#include <elapse/sampletypes.h>
 #include "util/gstwrappedbuffer.h"
-#include "sampletypes.h"
 #include "videodecoder.h"
+
+using elapse::SamplePtr;
 
 
 #define SRC_CAPS \
@@ -38,7 +40,7 @@
  * the VideoSample is destroyed.
  */
 
-struct GstVideoSample : VideoSample
+struct GstVideoSample : elapse::VideoSample
 {
     GstVideoSample(QGst::BufferPtr buffer);
 

@@ -4,7 +4,7 @@
 #include <QPluginLoader>
 #include <QStandardItemModel>
 #include <QxtLogger>
-#include "plugin.h"
+#include "elapse/plugin.h"
 #include "pluginfilterproxymodel.h"
 #include "elementsetfactory.h"
 #include "pluginmanager.h"
@@ -130,13 +130,15 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
     foreach (QFileInfo file, newPath.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
-        auto factory = static_cast<Plugin*>(plugin);
+        auto factory = static_cast<elapse::Plugin*>(plugin);
 
         if (factory) {
             QString pluginName = loader.metaData()["className"].toString();
 
             foreach (const QMetaObject &obj, factory->classes()) {
                 QString elementName = baseClass(&obj)->className();
+                // Remove namespace qualifiers
+                elementName = elementName.remove(0, elementName.lastIndexOf(':') + 1);
 
                 // Find or create element item
                 auto elementItem = childWithText(rootItem, elementName);

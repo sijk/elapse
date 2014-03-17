@@ -1,10 +1,10 @@
 #ifndef FOOEEGDECODER_H
 #define FOOEEGDECODER_H
 
-#include "elements/decoder.h"
+#include <elapse/elements/decoder.h>
 
 
-class FooEegDecoder : public SampleDecoder
+class FooEegDecoder : public elapse::SampleDecoder
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")

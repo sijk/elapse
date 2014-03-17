@@ -1,7 +1,11 @@
 #include <QDataStream>
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "headwidget.h"
 #include "imudecoder.h"
+
+using elapse::ImuSample;
+using elapse::SamplePtr;
+
 
 /*!
  * Create a new ImuDecoder as a child of the given \a parent.

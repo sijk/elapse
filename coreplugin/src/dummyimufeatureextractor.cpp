@@ -5,7 +5,7 @@ DummyImuFeatureExtractor::DummyImuFeatureExtractor(QObject *parent) :
 {
 }
 
-void DummyImuFeatureExtractor::analyseSample(SamplePtr sample)
+void DummyImuFeatureExtractor::analyseSample(elapse::SamplePtr sample)
 {
     sampleFlags.insert(sample->timestamp, 1);
 }

@@ -2,8 +2,9 @@
 #define FEATUREXTRACTOR_H
 
 #include <QObject>
-#include "sampletypes.h"
+#include "elapse/sampletypes.h"
 
+namespace elapse {
 
 /*!
  * \brief The FeatureExtractor class is the base class for elements that
@@ -139,5 +140,7 @@ private:
         return Signal::fromString(info);
     }
 };
+
+} // namespace elapse
 
 #endif // FEATUREXTRACTOR_H

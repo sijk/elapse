@@ -5,7 +5,7 @@ DummyEegFeatureExtractor::DummyEegFeatureExtractor(QObject *parent) :
 {
 }
 
-void DummyEegFeatureExtractor::analyseSample(SamplePtr sample)
+void DummyEegFeatureExtractor::analyseSample(elapse::SamplePtr sample)
 {
     sampleFlags.insert(sample->timestamp, 1);
 }

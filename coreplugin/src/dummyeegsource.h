@@ -2,7 +2,7 @@
 #define DUMMYEEGSOURCE_H
 
 #include <QTimer>
-#include "elements/datasource.h"
+#include <elapse/elements/datasource.h>
 
 
 /*!
@@ -12,7 +12,7 @@
  * \ingroup core-plugin
  */
 
-class DummyEegSource : public DataSource
+class DummyEegSource : public elapse::DataSource
 {
     Q_OBJECT
 public:

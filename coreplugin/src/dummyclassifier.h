@@ -1,7 +1,7 @@
 #ifndef DUMMYCLASSIFIER_H
 #define DUMMYCLASSIFIER_H
 
-#include "elements/classifier.h"
+#include <elapse/elements/classifier.h>
 
 
 /*!
@@ -10,14 +10,14 @@
  * \ingroup core-plugin
  */
 
-class DummyClassifier : public Classifier
+class DummyClassifier : public elapse::Classifier
 {
     Q_OBJECT
 public:
     Q_INVOKABLE explicit DummyClassifier(QObject *parent = nullptr);
 
 public slots:
-    void onFeatures(FeatureVector features);
+    void onFeatures(elapse::FeatureVector features);
 };
 
 #endif // DUMMYCLASSIFIER_H

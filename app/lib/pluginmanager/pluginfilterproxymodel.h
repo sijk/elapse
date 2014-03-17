@@ -2,7 +2,8 @@
 #define PLUGINFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
-#include "sampletypes.h"
+#include "elapse/sampletypes.h"
+
 
 /*!
  * \brief The PluginFilterProxyModel class provides a filtered view of part of
@@ -19,14 +20,14 @@ class PluginFilterProxyModel : public QSortFilterProxyModel
     Q_OBJECT
 public:
     PluginFilterProxyModel(const QString &elementType,
-                           Signal::Type signalType,
+                           elapse::Signal::Type signalType,
                            QObject *parent = nullptr);
 protected:
     bool filterAcceptsRow(int row, const QModelIndex &parent) const;
 
 private:
     QString desiredElementType;
-    Signal::Type desiredSignalType;
+    elapse::Signal::Type desiredSignalType;
 };
 
 #endif // PLUGINFILTERPROXYMODEL_H

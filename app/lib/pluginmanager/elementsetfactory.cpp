@@ -1,7 +1,7 @@
 #include <QPluginLoader>
 #include <QTreeView>
 #include <QxtLogger>
-#include "plugin.h"
+#include "elapse/plugin.h"
 #include "elementsetfactory.h"
 
 
@@ -52,7 +52,7 @@ void ElementSetFactory::loadElement(ElementType &element, ClassInfo info)
         return;
 
     QPluginLoader loader(info.pluginPath);
-    Plugin *plugin = static_cast<Plugin*>(loader.instance());
+    elapse::Plugin *plugin = static_cast<elapse::Plugin*>(loader.instance());
 
     if (!plugin) {
         qxtLog->debug("Could not load plugin", info.pluginPath);

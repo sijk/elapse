@@ -3,7 +3,7 @@
 
 #include <QUdpSocket>
 #include <QxtSignalGroup>
-#include "elements/datasource.h"
+#include <elapse/elements/datasource.h>
 
 
 /*!
@@ -13,7 +13,7 @@
  * \ingroup core-plugin
  */
 
-class UdpDataSource : public DataSource
+class UdpDataSource : public elapse::DataSource
 {
     Q_OBJECT
 public:

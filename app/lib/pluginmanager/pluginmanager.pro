@@ -12,12 +12,12 @@ HEADERS += pluginmanager.h \
            pluginfilterproxymodel.h \
            elementsetfactory.h
 
-HEADERS += plugin.h \
-           sampletypes.h \
-           elementset.h \
-           elements/datasource.h \
-           elements/decoder.h \
-           elements/featurextractor.h \
-           elements/classifier.h
+HEADERS += elementset.h \
+           elapse/plugin.h \
+           elapse/sampletypes.h \
+           elapse/elements/datasource.h \
+           elapse/elements/decoder.h \
+           elapse/elements/featurextractor.h \
+           elapse/elements/classifier.h
 
 FORMS   += pluginmanager.ui

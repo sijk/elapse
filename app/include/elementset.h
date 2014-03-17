@@ -2,11 +2,13 @@
 #define ELEMENTS_H
 
 #include <QSharedPointer>
-#include "sampletypes.h"
-#include "elements/datasource.h"
-#include "elements/decoder.h"
-#include "elements/featurextractor.h"
-#include "elements/classifier.h"
+#include "elapse/sampletypes.h"
+#include "elapse/elements/datasource.h"
+#include "elapse/elements/decoder.h"
+#include "elapse/elements/featurextractor.h"
+#include "elapse/elements/classifier.h"
+
+using elapse::Signal;
 
 
 /*!
@@ -22,10 +24,10 @@
 
 struct ElementSet
 {
-    DataSource *dataSource;
-    QMap<Signal::Type, SampleDecoder*> sampleDecoders;
-    QMap<Signal::Type, FeatureExtractor*> featureExtractors;
-    Classifier *classifier;
+    elapse::DataSource *dataSource;
+    QMap<Signal::Type, elapse::SampleDecoder*> sampleDecoders;
+    QMap<Signal::Type, elapse::FeatureExtractor*> featureExtractors;
+    elapse::Classifier *classifier;
 
     QList<QObject*> allElements() const;
     ~ElementSet();
