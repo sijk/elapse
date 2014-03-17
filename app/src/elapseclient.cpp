@@ -192,7 +192,7 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
     foreach (QObject *element, elements->allElements()) {
         QString className = element->metaObject()->className();
 
-        auto displayable = dynamic_cast<Displayable*>(element);
+        auto displayable = dynamic_cast<elapse::Displayable*>(element);
         if (!displayable) {
             qxtLog->trace(className, "is not displayable");
             continue;

@@ -6,6 +6,7 @@
 
 class QByteArray;
 
+namespace elapse {
 
 /*!
  * \brief The SampleDecoder class is the base class for elements that decode a
@@ -39,5 +40,7 @@ public slots:
      */
     virtual void onData(QByteArray data) = 0;
 };
+
+} // namespace elapse
 
 #endif // DECODER_H

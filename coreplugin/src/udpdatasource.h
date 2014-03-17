@@ -13,7 +13,7 @@
  * \ingroup core-plugin
  */
 
-class UdpDataSource : public DataSource
+class UdpDataSource : public elapse::DataSource
 {
     Q_OBJECT
 public:

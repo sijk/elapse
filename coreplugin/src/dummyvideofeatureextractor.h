@@ -16,7 +16,7 @@
  * \ingroup core-plugin
  */
 
-class DummyVideoFeatureExtractor : public BaseFeatureExtractor
+class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")
@@ -27,7 +27,7 @@ public:
     void setStartTime(quint64 timestamp);
 
 protected:
-    void analyseSample(SamplePtr sample);
+    void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
     void removeDataBefore(quint64 time);
 

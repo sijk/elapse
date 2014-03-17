@@ -4,7 +4,7 @@
 #include <elapse/elements/decoder.h>
 
 
-class BarVideoDecoder : public SampleDecoder
+class BarVideoDecoder : public elapse::SampleDecoder
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")

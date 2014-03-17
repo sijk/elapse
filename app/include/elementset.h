@@ -8,6 +8,8 @@
 #include "elapse/elements/featurextractor.h"
 #include "elapse/elements/classifier.h"
 
+using elapse::Signal;
+
 
 /*!
  * \brief The ElementSet struct holds pointers to a complete set of
@@ -22,10 +24,10 @@
 
 struct ElementSet
 {
-    DataSource *dataSource;
-    QMap<Signal::Type, SampleDecoder*> sampleDecoders;
-    QMap<Signal::Type, FeatureExtractor*> featureExtractors;
-    Classifier *classifier;
+    elapse::DataSource *dataSource;
+    QMap<Signal::Type, elapse::SampleDecoder*> sampleDecoders;
+    QMap<Signal::Type, elapse::FeatureExtractor*> featureExtractors;
+    elapse::Classifier *classifier;
 
     QList<QObject*> allElements() const;
     ~ElementSet();

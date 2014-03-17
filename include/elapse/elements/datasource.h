@@ -4,6 +4,7 @@
 #include <QObject>
 class QByteArray;
 
+namespace elapse {
 
 /*!
  * \brief The DataSource class is the base class for elements that receive data
@@ -70,5 +71,7 @@ public slots:
 protected:
     QString _host;
 };
+
+} // namespace elapse
 
 #endif // DATASOURCE_H

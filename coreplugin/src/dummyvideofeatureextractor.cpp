@@ -2,6 +2,9 @@
 #include <QxtLogger>
 #include "dummyvideofeatureextractor.h"
 
+using elapse::VideoSample;
+using elapse::SamplePtr;
+
 
 template<class Container, class T = double>
 T sum(const Container &c)

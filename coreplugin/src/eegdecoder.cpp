@@ -8,6 +8,9 @@
 #include "stripchart.h"
 #include "eegdecoder.h"
 
+using elapse::EegSample;
+using elapse::SamplePtr;
+
 #define CHANNELS_PER_CHIP   8
 
 

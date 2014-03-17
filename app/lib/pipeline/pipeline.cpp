@@ -70,7 +70,7 @@ Pipeline::Pipeline(QObject *parent) :
     QObject(parent),
     _elements(nullptr)
 {
-    qRegisterMetaType<SamplePtr>("SamplePtr");
+    qRegisterMetaType<elapse::SamplePtr>("SamplePtr");
 }
 
 /*!
@@ -172,7 +172,7 @@ void Pipeline::stop()
  * the FeatureExtractor%s to one second after that to give all of the sensors
  * time to start up.
  */
-void Pipeline::setStartTime(SamplePtr sample)
+void Pipeline::setStartTime(elapse::SamplePtr sample)
 {
     quint64 startTime = sample->timestamp + 1e9;
 

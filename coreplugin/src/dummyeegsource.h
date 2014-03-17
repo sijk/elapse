@@ -12,7 +12,7 @@
  * \ingroup core-plugin
  */
 
-class DummyEegSource : public DataSource
+class DummyEegSource : public elapse::DataSource
 {
     Q_OBJECT
 public:

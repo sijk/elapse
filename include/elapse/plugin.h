@@ -3,6 +3,7 @@
 
 #include <QtPlugin>
 
+namespace elapse {
 
 /*!
  * \brief The PluginInterface class is implemented by all plugins.
@@ -25,20 +26,24 @@ public:
     virtual ClassList classes() = 0;
 };
 
+} // namespace elapse
+
 
 /*!
- * \brief The interface ID of the PluginInterface.
+ * \brief The interface ID of the elapse::PluginInterface.
  *
  * All Plugin%s must include the line
- * \code Q_PLUGIN_METADATA(IID PluginInterface_iid) \endcode after the
+ * \code Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid) \endcode after the
  * \c Q_OBJECT macro.
  *
  * \ingroup plugins-ext
  */
 
-#define PluginInterface_iid "org.nzbri.elapse.PluginInterface"
-Q_DECLARE_INTERFACE(PluginInterface, PluginInterface_iid)
+#define ElapsePluginInterface_iid "org.nzbri.elapse.PluginInterface"
+Q_DECLARE_INTERFACE(elapse::PluginInterface, ElapsePluginInterface_iid)
 
+
+namespace elapse {
 
 /*!
  * \brief The Plugin class is the base class for all plugins.
@@ -51,8 +56,10 @@ Q_DECLARE_INTERFACE(PluginInterface, PluginInterface_iid)
 class Plugin : public QObject, public PluginInterface
 {
     Q_OBJECT
-    Q_INTERFACES(PluginInterface)
+    Q_INTERFACES(elapse::PluginInterface)
 };
+
+} // namespace elapse
 
 
 #endif // PLUGIN_H

@@ -2,6 +2,8 @@
 #include <gtest/gtest.h>
 #include "elementsetfactory.h"
 
+using elapse::DataSource;
+
 
 ClassInfo getClass(const char *plugin, const char *className)
 {

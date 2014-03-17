@@ -8,6 +8,7 @@
 #include <QSharedPointer>
 #include <QMetaEnum>
 
+namespace elapse {
 
 class Signal
 {
@@ -82,6 +83,6 @@ struct CognitiveState
     QVector<double> state;
 };
 
-
+} // namespace elapse
 
 #endif // SAMPLETYPES_H

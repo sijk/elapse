@@ -11,7 +11,7 @@
  * \ingroup core-plugin
  */
 
-class DummyEegFeatureExtractor : public BaseFeatureExtractor
+class DummyEegFeatureExtractor : public elapse::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")
@@ -20,7 +20,7 @@ public:
     Q_INVOKABLE explicit DummyEegFeatureExtractor(QObject *parent = nullptr);
 
 protected:
-    void analyseSample(SamplePtr sample);
+    void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
     void removeDataBefore(quint64 time);
 

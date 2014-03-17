@@ -6,10 +6,10 @@
 #include "barvideodecoder.h"
 
 
-class BarPlugin : public Plugin
+class BarPlugin : public elapse::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID PluginInterface_iid)
+    Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid)
 public:
     ClassList classes()
     {

@@ -16,6 +16,8 @@
 #include "util/gstwrappedbuffer.h"
 #include "videodecoder.h"
 
+using elapse::SamplePtr;
+
 
 #define SRC_CAPS \
     "application/x-rtp, media=(string)video, "\
@@ -38,7 +40,7 @@
  * the VideoSample is destroyed.
  */
 
-struct GstVideoSample : VideoSample
+struct GstVideoSample : elapse::VideoSample
 {
     GstVideoSample(QGst::BufferPtr buffer);
 
