@@ -30,20 +30,17 @@ class CorePlugin : public elapse::Plugin
 public:
     ClassList classes()
     {
-        return {
-            UdpDataSource::staticMetaObject,
-            DummyEegSource::staticMetaObject,
-
-            EegDecoder::staticMetaObject,
-            VideoDecoder::staticMetaObject,
-            ImuDecoder::staticMetaObject,
-
-            DummyEegFeatureExtractor::staticMetaObject,
-            DummyVideoFeatureExtractor::staticMetaObject,
-            DummyImuFeatureExtractor::staticMetaObject,
-
-            DummyClassifier::staticMetaObject
-        };
+        return ELAPSE_CLASSLIST(
+            UdpDataSource,
+            DummyEegSource,
+            EegDecoder,
+            VideoDecoder,
+            ImuDecoder,
+            DummyEegFeatureExtractor,
+            DummyVideoFeatureExtractor,
+            DummyImuFeatureExtractor,
+            DummyClassifier
+        );
     }
 };
 

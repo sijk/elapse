@@ -13,10 +13,7 @@ class BarPlugin : public elapse::Plugin
 public:
     ClassList classes()
     {
-        return {
-            BarEegDecoder::staticMetaObject,
-            BarVideoDecoder::staticMetaObject
-        };
+        return ELAPSE_CLASSLIST(BarEegDecoder, BarVideoDecoder);
     }
 };
 

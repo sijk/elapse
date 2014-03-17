@@ -13,10 +13,7 @@ class FooPlugin : public elapse::Plugin
 public:
     ClassList classes()
     {
-        return {
-            FooEegDecoder::staticMetaObject,
-            FooDummySource::staticMetaObject
-        };
+        return ELAPSE_CLASSLIST(FooEegDecoder, FooDummySource);
     }
 };
 
