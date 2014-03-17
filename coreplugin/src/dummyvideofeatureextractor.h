@@ -1,7 +1,7 @@
 #ifndef DUMMYVIDEOFEATUREEXTRACTOR_H
 #define DUMMYVIDEOFEATUREEXTRACTOR_H
 
-#include "elements/featurextractor.h"
+#include <elapse/elements/featurextractor.h>
 #include "util/timestampedvalues.h"
 
 

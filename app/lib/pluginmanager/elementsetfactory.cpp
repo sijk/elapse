@@ -1,7 +1,7 @@
 #include <QPluginLoader>
 #include <QTreeView>
 #include <QxtLogger>
-#include "plugin.h"
+#include "elapse/plugin.h"
 #include "elementsetfactory.h"
 
 

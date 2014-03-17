@@ -1,7 +1,7 @@
 #ifndef DUMMYCLASSIFIER_H
 #define DUMMYCLASSIFIER_H
 
-#include "elements/classifier.h"
+#include <elapse/elements/classifier.h>
 
 
 /*!

@@ -7,7 +7,7 @@
 #include "pluginmanager.h"
 #include "deviceproxy.h"
 #include "logview.h"
-#include "displayable.h"
+#include "elapse/displayable.h"
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
 

@@ -2,11 +2,11 @@
 #define ELEMENTS_H
 
 #include <QSharedPointer>
-#include "sampletypes.h"
-#include "elements/datasource.h"
-#include "elements/decoder.h"
-#include "elements/featurextractor.h"
-#include "elements/classifier.h"
+#include "elapse/sampletypes.h"
+#include "elapse/elements/datasource.h"
+#include "elapse/elements/decoder.h"
+#include "elapse/elements/featurextractor.h"
+#include "elapse/elements/classifier.h"
 
 
 /*!

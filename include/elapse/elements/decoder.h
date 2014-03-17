@@ -2,7 +2,7 @@
 #define DECODER_H
 
 #include <QObject>
-#include "sampletypes.h"
+#include "elapse/sampletypes.h"
 
 class QByteArray;
 

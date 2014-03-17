@@ -1,7 +1,7 @@
 #ifndef COREPLUGIN_H
 #define COREPLUGIN_H
 
-#include "plugin.h"
+#include <elapse/plugin.h>
 #include "udpdatasource.h"
 #include "dummyeegsource.h"
 #include "eegdecoder.h"

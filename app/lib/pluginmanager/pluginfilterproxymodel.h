@@ -2,7 +2,7 @@
 #define PLUGINFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
-#include "sampletypes.h"
+#include "elapse/sampletypes.h"
 
 /*!
  * \brief The PluginFilterProxyModel class provides a filtered view of part of

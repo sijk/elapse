@@ -1,8 +1,8 @@
 #ifndef EEGDECODER_H
 #define EEGDECODER_H
 
-#include "elements/decoder.h"
-#include "displayable.h"
+#include <elapse/elements/decoder.h>
+#include <elapse/displayable.h>
 
 class EegDecoderPrivate;
 

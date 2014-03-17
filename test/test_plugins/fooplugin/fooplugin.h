@@ -1,7 +1,7 @@
 #ifndef FOOPLUGIN_H
 #define FOOPLUGIN_H
 
-#include "plugin.h"
+#include <elapse/plugin.h>
 #include "fooeegdecoder.h"
 #include "foodummysource.h"
 

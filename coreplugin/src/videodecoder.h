@@ -1,8 +1,8 @@
 #ifndef VIDEODECODER_H
 #define VIDEODECODER_H
 
-#include "elements/decoder.h"
-#include "displayable.h"
+#include <elapse/elements/decoder.h>
+#include <elapse/displayable.h>
 
 
 class VideoDecoderPrivate;

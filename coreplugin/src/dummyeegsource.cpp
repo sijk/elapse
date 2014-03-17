@@ -3,7 +3,7 @@
 #include <QDataStream>
 #include <QtEndian>
 #include <QTimer>
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "dummyeegsource.h"
 
 #define SAMPLE_SIZE     39

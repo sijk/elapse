@@ -4,7 +4,7 @@
 #include <QPluginLoader>
 #include <QStandardItemModel>
 #include <QxtLogger>
-#include "plugin.h"
+#include "elapse/plugin.h"
 #include "pluginfilterproxymodel.h"
 #include "elementsetfactory.h"
 #include "pluginmanager.h"

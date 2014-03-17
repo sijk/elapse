@@ -1,7 +1,7 @@
 #ifndef BAREEGDECODER_H
 #define BAREEGDECODER_H
 
-#include "elements/decoder.h"
+#include <elapse/elements/decoder.h>
 
 
 class BarEegDecoder : public SampleDecoder

@@ -1,7 +1,7 @@
 #ifndef FOOEEGDECODER_H
 #define FOOEEGDECODER_H
 
-#include "elements/decoder.h"
+#include <elapse/elements/decoder.h>
 
 
 class FooEegDecoder : public SampleDecoder

@@ -1,7 +1,7 @@
 #ifndef BARPLUGIN_H
 #define BARPLUGIN_H
 
-#include "plugin.h"
+#include <elapse/plugin.h>
 #include "bareegdecoder.h"
 #include "barvideodecoder.h"
 

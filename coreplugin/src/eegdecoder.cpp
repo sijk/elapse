@@ -3,7 +3,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QxtLogger>
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "util/bigendian24.h"
 #include "stripchart.h"
 #include "eegdecoder.h"

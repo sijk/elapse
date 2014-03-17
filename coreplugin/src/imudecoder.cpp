@@ -1,5 +1,5 @@
 #include <QDataStream>
-#include "sampletypes.h"
+#include <elapse/sampletypes.h>
 #include "headwidget.h"
 #include "imudecoder.h"
 

@@ -3,7 +3,7 @@
 
 #include <QUdpSocket>
 #include <QxtSignalGroup>
-#include "elements/datasource.h"
+#include <elapse/elements/datasource.h>
 
 
 /*!

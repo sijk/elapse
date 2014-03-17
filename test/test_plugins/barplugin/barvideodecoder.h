@@ -1,7 +1,7 @@
 #ifndef BARVIDEODECODER_H
 #define BARVIDEODECODER_H
 
-#include "elements/decoder.h"
+#include <elapse/elements/decoder.h>
 
 
 class BarVideoDecoder : public SampleDecoder

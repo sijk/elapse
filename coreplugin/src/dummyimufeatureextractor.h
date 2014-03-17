@@ -1,7 +1,7 @@
 #ifndef DUMMYIMUFEATUREEXTRACTOR_H
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
-#include "elements/featurextractor.h"
+#include <elapse/elements/featurextractor.h>
 #include "util/timestampedvalues.h"
 
 

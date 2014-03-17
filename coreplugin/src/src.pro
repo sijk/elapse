@@ -30,14 +30,7 @@ SOURCES       = udpdatasource.cpp \
                 dummyclassifier.cpp \
                 util/gstwrappedbuffer.cpp
 
-HEADERS      += coreplugin.h \
-                elements/datasource.h \
-                elements/decoder.h \
-                elements/featurextractor.h \
-                elements/classifier.h \
-                sampletypes.h \
-                displayable.h \
-                plugin.h
+HEADERS      += coreplugin.h
 
 linkStaticlib(stripchart)
 linkStaticlib(headwidget)

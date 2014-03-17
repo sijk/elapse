@@ -2,7 +2,7 @@
 #define FEATUREXTRACTOR_H
 
 #include <QObject>
-#include "sampletypes.h"
+#include "elapse/sampletypes.h"
 
 
 /*!
