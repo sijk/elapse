@@ -15,6 +15,9 @@ class DummyClassifier : public Classifier
     Q_OBJECT
 public:
     Q_INVOKABLE explicit DummyClassifier(QObject *parent = nullptr);
+
+public slots:
+    void onFeatures(FeatureVector features);
 };
 
 #endif // DUMMYCLASSIFIER_H

@@ -1,5 +1,6 @@
 #include <QPluginLoader>
 #include <QTreeView>
+#include <QxtLogger>
 #include "plugin.h"
 #include "elementsetfactory.h"
 
