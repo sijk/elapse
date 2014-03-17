@@ -63,12 +63,17 @@ class Plugin : public QObject, public PluginInterface
 template<typename... Args> struct MetaObjects;
 
 /*!
- * The MetaObjects struct is a recursive variadic template that extracts the
- * staticMetaObjects from the classes passed as template arguments. The
- * template arguments must be subclasses of QObject.
+ * \brief The MetaObjects struct extracts staticMetaObjects from the classes
+ * passed as template arguments.
+ *
+ * This is a helper for implementing Plugin%s — see ELAPSE_CLASSLIST() for a
+ * friendlier interface to this functionality.
+ *
+ * It is implemented as a recursive variadic template, so requires a compiler
+ * with C++11 support. The template arguments must be subclasses of QObject
+ * (enforced at compile time).
  *
  * \ingroup plugins-ext
- * \sa ELAPSE_CLASSLIST
  */
 template <typename T1, typename... Tn>
 struct MetaObjects<T1, Tn...>
@@ -94,7 +99,7 @@ template<> struct MetaObjects<>
 
 
 /*!
- * Syntactic sugar for elapse::MetaObjects<>::get().
+ * Syntactic sugar for elapse::MetaObjects<...>::get().
  * \ingroup plugins-ext
  */
 #define ELAPSE_CLASSLIST(classes...) elapse::MetaObjects<classes>::get()

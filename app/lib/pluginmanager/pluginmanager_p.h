@@ -10,6 +10,8 @@ class QTreeView;
 namespace Ui { class PluginManager; }
 
 
+/*! \private */
+
 class PluginManagerPrivate
 {
     PluginManager * const q_ptr;

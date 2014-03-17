@@ -60,6 +60,11 @@
 */
 
 /*!
+    \namespace elapse
+    \brief The public interface to the application.
+*/
+
+/*!
     \defgroup app Elapse Application
 
     These classes relate to the core Elapse application.

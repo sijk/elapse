@@ -9,7 +9,7 @@
  * \brief The DummyVideoFeatureExtractor class is a placeholder
  * FeatureExtractor for VideoSample%s.
  *
- * It outputs a two-element #FeatureVector containing:
+ * It outputs a two-element FeatureVector containing:
  *   -# the mean pixel intensity of all of the frames in the window,
  *   -# the variance of the mean pixel intensity of each frame in the window.
  *

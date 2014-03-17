@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QColor>
 
+/*! \private */
+
 class HeadMesh : public QObject
 {
 public:

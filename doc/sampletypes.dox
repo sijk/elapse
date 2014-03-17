@@ -1,5 +1,5 @@
 /*!
-    \class Signal
+    \class elapse::Signal
     \ingroup signal-datatypes
 
     \brief The Signal class is a wrapper which provides introspection
@@ -7,30 +7,30 @@
 */
 
 /*!
-    \enum Signal::Type
+    \enum elapse::Signal::Type
     \brief The Signal::Type enum lists the types of signals captured
     by the device.
 */
 
 /*!
-    \fn Signal::toString()
+    \fn elapse::Signal::toString()
     \return the given \a type as a string.
 */
 
 /*!
-    \fn Signal::fromString()
+    \fn elapse::Signal::fromString()
     \return the given \a type as a Signal::Type, or -1 if invalid.
 */
 
 /*!
-    \fn Signal::count()
+    \fn elapse::Signal::count()
     \return the number of Signal::Type%s in the enum.
 */
 
 /* ========================================================================== */
 
 /*!
-    \class Sample
+    \class elapse::Sample
     \ingroup signal-datatypes
 
     \brief The Sample class is the base class for all samples acquired from
@@ -38,7 +38,7 @@
 */
 
 /*!
-    \fn Sample::~Sample()
+    \fn elapse::Sample::~Sample()
     \brief Destroy this Sample.
 
     Providing a virtual destructor means that elements can implement their own
@@ -47,7 +47,7 @@
 */
 
 /*!
-    \var Sample::timestamp
+    \var elapse::Sample::timestamp
     \brief The time at which the Sample was captured on the device.
 
     It is measured in nanoseconds from an arbitrary point in time.
@@ -58,7 +58,7 @@
 /* ========================================================================== */
 
 /*!
-    \class EegSample
+    \class elapse::EegSample
     \ingroup signal-datatypes
 
     \brief The EegSample class holds the data for one multi-channel sample of
@@ -66,7 +66,7 @@
 */
 
 /*!
-    \var EegSample::seqnum
+    \var elapse::EegSample::seqnum
     \brief A monotonically increasing sequence number.
 
     The seqnum of each EegSample should be exactly 1 greater than the seqnum of
@@ -76,12 +76,12 @@
 */
 
 /*!
-    \var EegSample::leadOff
+    \var elapse::EegSample::leadOff
     \brief Bit mask indicating the lead-off status (1 = off).
 */
 
 /*!
-    \var EegSample::values
+    \var elapse::EegSample::values
     \brief The voltage readings in microvolts.
 */
 
@@ -89,24 +89,24 @@
 /* ========================================================================== */
 
 /*!
-    \class VideoSample
+    \class elapse::VideoSample
     \ingroup signal-datatypes
 
     \brief The VideoSample class holds the data for one frame of video.
 */
 
 /*!
-    \var VideoSample::w
+    \var elapse::VideoSample::w
     \brief The width of the frame in pixels.
 */
 
 /*!
-    \var VideoSample::h
+    \var elapse::VideoSample::h
     \brief The height of the frame in pixels.
 */
 
 /*!
-    \var VideoSample::data
+    \var elapse::VideoSample::data
     \brief The video frame data.
 
     The data format is 8 bits per pixel greyscale in row-major order.
@@ -116,7 +116,7 @@
 /* ========================================================================== */
 
 /*!
-    \class ImuSample
+    \class elapse::ImuSample
     \ingroup signal-datatypes
 
     \brief The ImuSample class holds the data for one 6-axis sample from
@@ -124,12 +124,12 @@
 */
 
 /*!
-    \var ImuSample::acc
+    \var elapse::ImuSample::acc
     \brief The linear accelerations in \e g.
 */
 
 /*!
-    \var ImuSample::gyr
+    \var elapse::ImuSample::gyr
     \brief The angular rates in degrees per second.
 */
 
@@ -137,7 +137,7 @@
 /* ========================================================================== */
 
 /*!
-    \struct FeatureVector
+    \struct elapse::FeatureVector
     \ingroup signal-datatypes
 
     \brief The FeatureVector struct holds a set of meaningful values extracted
@@ -150,18 +150,18 @@
 */
 
 /*!
-    \var Signal::Type FeatureVector::signalType
+    \var elapse::Signal::Type elapse::FeatureVector::signalType
     \brief The type of signal the features were extracted from.
 */
 
 /*!
-    \var quint64 FeatureVector::startTime
+    \var quint64 elapse::FeatureVector::startTime
     \brief The start time of the window from which the features were extracted
     (in ns).
 */
 
 /*!
-    \var QVector<double> FeatureVector::features
+    \var QVector<double> elapse::FeatureVector::features
     \brief The list of extracted features.
 
     The number and meaning of features in this list are left up to each
@@ -172,26 +172,26 @@
 /* ========================================================================== */
 
 /*!
-    \struct CognitiveState
+    \struct elapse::CognitiveState
     \ingroup signal-datatypes
 
     \brief The CognitiveState class holds a set of values representing
     the user's cognitive state.
 
-    A Classifier calculates the CognitiveState from a set of #FeatureVector%s.
+    A Classifier calculates the CognitiveState from a set of FeatureVector%s.
     The number of fields and the meaning of each field in the CognitiveState
     data structure is left entirely up to each Classifier implementation (which
     will, of course, document these in detail).
 */
 
 /*!
-    \var quint64 CognitiveState::startTime
+    \var quint64 elapse::CognitiveState::startTime
     \brief The start time of the window from which the FeatureVector%s were
     extracted (in ns).
 */
 
 /*!
-    \var QVector<double> CognitiveState::state
+    \var QVector<double> elapse::CognitiveState::state
     \brief Values representing the user's cognitive state.
 
     The number and meaning of items in this list are left up to each

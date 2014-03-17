@@ -8,7 +8,7 @@ namespace elapse {
 
 /*!
  * \brief The Classifier class is the base class for elements that take in
- * #FeatureVector%s and classify the #CognitiveState of the device user.
+ * FeatureVector%s and classify the CognitiveState of the device user.
  *
  * Each Pipeline has one Classifier.
  *
@@ -38,7 +38,7 @@ public slots:
 signals:
     /*!
      * Emitted when the CognitiveState has been classified from the latest
-     * set of #FeatureVector%s.
+     * set of FeatureVector%s.
      */
     void newState(CognitiveState state);
 };
