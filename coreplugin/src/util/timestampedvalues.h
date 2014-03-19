@@ -17,10 +17,15 @@ class TimestampedValues : public QMap<quint64, T>
 public:
     /*!
      * Remove all values which have timestamps less than the given \a time.
+     *
+     * Relies on the fact that QMaps are sorted by their keys.
      */
     void removeValuesBefore(quint64 time)
     {
-        for (auto i = this->begin(); i != this->lowerBound(time); )
+        auto i = this->begin();
+        auto end = this->lowerBound(time);
+
+        while (i != end)
             i = this->erase(i);
     }
 };
