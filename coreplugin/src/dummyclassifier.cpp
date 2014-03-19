@@ -17,8 +17,7 @@ CognitiveState DummyClassifier::classify(QList<FeatureVector> featureVectors)
 {
     qxtLog->debug() << "Classify cognitive state";
 
-    CognitiveState cog;
-    cog.startTime = featureVectors.first().startTime;
+    CognitiveState cog(featureVectors.first().startTime);
     cog.state << 1.0;
     return cog;
 }

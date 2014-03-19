@@ -95,7 +95,10 @@ public slots:
         quint64 nextWindowStart = windowStart + windowStep * 1e6;
 
         if (sample->timestamp >= windowEnd) {
-            emit newFeatures({signalType, windowStart, features()});
+            FeatureVector featureVector(signalType, windowStart);
+            featureVector.features = features();
+            emit newFeatures(featureVector);
+
             removeDataBefore(nextWindowStart);
             windowStart = nextWindowStart;
         }
