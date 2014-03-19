@@ -177,7 +177,7 @@ void Pipeline::stop()
  * the FeatureExtractor%s to one second after that to give all of the sensors
  * time to start up.
  */
-void Pipeline::setStartTime(elapse::SamplePtr sample)
+void Pipeline::setStartTime(SamplePtr sample)
 {
     quint64 startTime = sample->timestamp + 1e9;
 
