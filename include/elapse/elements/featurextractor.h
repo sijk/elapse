@@ -68,6 +68,7 @@ public:
 
     void setStartTime(quint64 timestamp)
     {
+        reset();
         windowStart = timestamp;
         signalType = findSignalType();
     }
@@ -122,6 +123,15 @@ protected:
      * the given \a time.
      */
     virtual void removeDataBefore(quint64 time) = 0;
+
+    /*!
+     * Reset any internal state. Defaults to calling removeDataBefore() with
+     * the maximum value a quint64 can hold.
+     */
+    virtual void reset()
+    {
+        removeDataBefore(std::numeric_limits<quint64>::max());
+    }
 
 private:
     quint64 windowStart;

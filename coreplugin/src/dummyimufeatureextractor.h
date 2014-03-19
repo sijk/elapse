@@ -19,8 +19,6 @@ class DummyImuFeatureExtractor : public elapse::BaseFeatureExtractor
 public:
     Q_INVOKABLE explicit DummyImuFeatureExtractor(QObject *parent = nullptr);
 
-    void setStartTime(quint64 timestamp);
-
 protected:
     void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
