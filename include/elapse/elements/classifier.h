@@ -35,6 +35,11 @@ public slots:
      */
     virtual void onFeatures(FeatureVector features) = 0;
 
+    /*!
+     * Called when the pipeline starts to reset any internal state.
+     */
+    virtual void reset() = 0;
+
 signals:
     /*!
      * Emitted when the CognitiveState has been classified from the latest

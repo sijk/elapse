@@ -146,15 +146,13 @@ void Pipeline::setElements(ElementSetPtr newElements)
  */
 void Pipeline::start()
 {
-    if (!_elements) {
-        emit error("The pipeline is not configured.");
-        return;
-    }
+    Q_ASSERT(_elements);
 
     connect(_elements->sampleDecoders[Signal::EEG],
             SIGNAL(newSample(SamplePtr)), SLOT(setStartTime(SamplePtr)));
 
     qxtLog->info("Starting pipeline");
+    _elements->classifier->reset();
     _elements->dataSource->start();
 }
 
