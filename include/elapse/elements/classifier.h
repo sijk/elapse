@@ -48,6 +48,66 @@ signals:
     void newState(CognitiveState state);
 };
 
+
+/*!
+ * \brief The BaseClassifier class provides a base implementation of a generic
+ * classifier that takes care of aggregating related FeatureVector%s internally.
+ *
+ * To implement a BaseClassifier, inherit from this class and implement
+ * classify(). It is possible to inherit directly from Classifier, though
+ * this should be unnecessary and if you do it you must ensure the onFeatures
+ * signals are handled correctly.
+ */
+
+class BaseClassifier : public Classifier
+{
+    Q_OBJECT
+public:
+    /*! Construct a new BaseClassifier as a child of the given \a parent. */
+    explicit BaseClassifier(QObject *parent = nullptr) : Classifier(parent) {}
+
+public slots:
+    void onFeatures(FeatureVector featVect)
+    {
+        Q_ASSERT(featVect.startTime > 0);
+
+        // Add the current feature vector to the queue
+        auto &featureSet = timestampedFeatureSets[featVect.startTime];
+        Q_ASSERT(!featureSet.contains(featVect.signalType));
+        featureSet.insert(featVect.signalType, featVect);
+
+        // If we have a complete set of feature vectors for this time point...
+        if (featureSet.size() == Signal::count()) {
+            // If there are incomplete feature sets from windows earlier
+            // than the current one, assume they'll remain forever incomplete
+            // and remove them.
+            auto first = timestampedFeatureSets.begin();
+            auto current = timestampedFeatureSets.find(featVect.startTime);
+            while (first != current)
+                first = timestampedFeatureSets.erase(first);
+
+            // Analyse the feature set
+            emit newState(classify(featureSet.values()));
+            timestampedFeatureSets.remove(featVect.startTime);
+        }
+    }
+
+    void reset()
+    {
+        timestampedFeatureSets.clear();
+    }
+
+protected:
+    /*!
+     * Derived classes should implement this method to classify the user's
+     * current CognitiveState given the list of \a featureVectors.
+     */
+    virtual CognitiveState classify(QList<FeatureVector> featureVectors) = 0;
+
+private:
+    QMap<quint64, QMap<Signal::Type, FeatureVector>> timestampedFeatureSets;
+};
+
 } // namespace elapse
 
 #endif // CLASSIFIER_H

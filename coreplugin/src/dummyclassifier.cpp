@@ -1,15 +1,24 @@
+#include <QxtLogger>
 #include "dummyclassifier.h"
 
 using elapse::FeatureVector;
 using elapse::CognitiveState;
 
 
+/*!
+ * Create a new DummyClassifier as a child of the given \a parent.
+ */
 DummyClassifier::DummyClassifier(QObject *parent) :
-    Classifier(parent)
+    BaseClassifier(parent)
 {
 }
 
-void DummyClassifier::onFeatures(FeatureVector features)
+CognitiveState DummyClassifier::classify(QList<FeatureVector> featureVectors)
 {
-    Q_UNUSED(features)
+    qxtLog->debug() << "Classify cognitive state";
+
+    CognitiveState cog;
+    cog.startTime = featureVectors.first().startTime;
+    cog.state << 1.0;
+    return cog;
 }
