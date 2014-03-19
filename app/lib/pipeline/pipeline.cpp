@@ -129,6 +129,13 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(SamplePtr)),
             _elements->featureExtractors[Signal::IMU], SLOT(onSample(SamplePtr)));
 
+    connect(_elements->featureExtractors[Signal::EEG], SIGNAL(newFeatures(FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+    connect(_elements->featureExtractors[Signal::VIDEO], SIGNAL(newFeatures(FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+    connect(_elements->featureExtractors[Signal::IMU], SIGNAL(newFeatures(FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
     connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));
