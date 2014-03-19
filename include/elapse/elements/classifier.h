@@ -71,8 +71,16 @@ public slots:
     {
         Q_ASSERT(featVect.startTime > 0);
 
+        // Ensure we're not adding a FeatureVector to a feature set that was
+        // previously removed for being incomplete
+        auto firstSet = timestampedFeatureSets.constBegin();
+        auto lastSet = timestampedFeatureSets.constEnd();
+        Q_ASSERT((firstSet != lastSet)
+                 ? (featVect.startTime >= firstSet.key())
+                 : true);
+
         // Add the current feature vector to the queue
-        auto &featureSet = timestampedFeatureSets[featVect.startTime];
+        FeatureSet &featureSet = timestampedFeatureSets[featVect.startTime];
         Q_ASSERT(!featureSet.contains(featVect.signalType));
         featureSet.insert(featVect.signalType, featVect);
 
@@ -105,7 +113,8 @@ protected:
     virtual CognitiveState classify(QList<FeatureVector> featureVectors) = 0;
 
 private:
-    QMap<quint64, QMap<Signal::Type, FeatureVector>> timestampedFeatureSets;
+    typedef QMap<Signal::Type, FeatureVector> FeatureSet;
+    QMap<quint64, FeatureSet> timestampedFeatureSets;
 };
 
 } // namespace elapse
