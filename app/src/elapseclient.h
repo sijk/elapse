@@ -31,8 +31,8 @@ class ElapseClient;
 class ElapseClient : public QMainWindow
 {
     Q_OBJECT
-    Q_PROPERTY(bool elementWidgetsVisible
-               READ elementWidgetsVisible WRITE setElementWidgetsVisible)
+    Q_PROPERTY(bool dockWidgetsVisible
+               READ dockWidgetsVisible WRITE setDockWidgetsVisible)
 
 public:
     explicit ElapseClient(QWidget *parent = nullptr);
@@ -46,8 +46,9 @@ private slots:
     void configure();
 
 private:
-    bool elementWidgetsVisible() const;
-    void setElementWidgetsVisible(bool visible);
+    void addDockWidgetFrom(QObject *object);
+    bool dockWidgetsVisible() const;
+    void setDockWidgetsVisible(bool visible);
     void buildStateMachine();
 
     Ui::ElapseClient *ui;

@@ -155,7 +155,7 @@ void ElapseClient::buildStateMachine()
 
     connected->setInitialState(idle);
     connected->assignProperty(ui->centralWidget, "visible", false);
-    connected->assignProperty(this, "elementWidgetsVisible", true);
+    connected->assignProperty(this, "dockWidgetsVisible", true);
     connected->assignProperty(ui->disconnectedToolBar, "visible", false);
     connected->assignProperty(ui->connectedToolBar, "visible", true);
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
@@ -184,42 +184,51 @@ void ElapseClient::buildStateMachine()
 }
 
 /*!
- * For each element that implements the Displayable interface, add a
- * QDockWidget containing the widget exported by the element.
+ * Add widgets from Displayable elements.
  */
 void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 {
-    foreach (QObject *element, elements->allElements()) {
-        QString className = element->metaObject()->className();
-
-        auto displayable = dynamic_cast<elapse::Displayable*>(element);
-        if (!displayable) {
-            qxtLog->trace(className, "is not displayable");
-            continue;
-        }
-
-        qxtLog->trace("Adding widget provided by", className);
-
-        auto widget = displayable->getWidget();
-        Q_ASSERT(widget);
-
-        auto dockWidget = new QDockWidget(className, this);
-        dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
-        dockWidget->setFeatures(QDockWidget::DockWidgetMovable);
-        dockWidget->setWidget(widget);
-        addDockWidget(Qt::TopDockWidgetArea, dockWidget);
-        dockWidget->hide();
-        connect(element, SIGNAL(destroyed()), dockWidget, SLOT(deleteLater()));
-    }
+    foreach (QObject *element, elements->allElements())
+        addDockWidgetFrom(element);
 }
 
-bool ElapseClient::elementWidgetsVisible() const
+/*!
+ * If the given \a object implements the Displayable interface, create a
+ * QDockWidget containing the exported widget. The dock widget is initialy
+ * hidden.
+ */
+void ElapseClient::addDockWidgetFrom(QObject *object)
+{
+    QString className = object->metaObject()->className();
+
+    auto displayable = dynamic_cast<elapse::Displayable*>(object);
+    if (!displayable) {
+        qxtLog->trace(className, "is not displayable");
+        return;
+    }
+
+    qxtLog->trace("Adding widget provided by", className);
+
+    auto widget = displayable->getWidget();
+    Q_ASSERT(widget);
+
+    auto dockWidget = new QDockWidget(className, this);
+    dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+    dockWidget->setFeatures(QDockWidget::DockWidgetMovable);
+    dockWidget->setWidget(widget);
+    addDockWidget(Qt::TopDockWidgetArea, dockWidget);
+    dockWidget->hide();
+
+    connect(object, SIGNAL(destroyed()), dockWidget, SLOT(deleteLater()));
+}
+
+bool ElapseClient::dockWidgetsVisible() const
 {
     auto dockWidget = findChild<QDockWidget*>("", Qt::FindDirectChildrenOnly);
     return dockWidget && dockWidget->isVisible();
 }
 
-void ElapseClient::setElementWidgetsVisible(bool visible)
+void ElapseClient::setDockWidgetsVisible(bool visible)
 {
     auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
     foreach (auto dockWidget, dockWidgets)
@@ -265,3 +274,4 @@ void ElapseClient::configure()
     if (device->battery()->isLow())
         onBatteryLow();
 }
+
