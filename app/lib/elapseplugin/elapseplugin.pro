@@ -7,7 +7,11 @@ QXT     += core
 
 TARGET   = elapseplugin
 
-SOURCES += classifier.cpp
+SOURCES += \
+    featurextractor.cpp \
+    classifier.cpp \
 
-HEADERS += elapse/elements/classifier.h
+HEADERS += \
+    elapse/elements/featurextractor.h \
+    elapse/elements/classifier.h
 
