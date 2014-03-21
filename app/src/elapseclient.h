@@ -8,6 +8,7 @@ class Pipeline;
 class PluginManager;
 class DeviceProxy;
 class LogView;
+class BatteryMonitor;
 class QStateMachine;
 
 namespace Ui {
@@ -57,6 +58,7 @@ private:
     PluginManager *pluginManager;
     Pipeline *pipeline;
     DeviceProxy *device;
+    BatteryMonitor *batteryMonitor;
 };
 
 #endif // ELAPSECLIENT_H

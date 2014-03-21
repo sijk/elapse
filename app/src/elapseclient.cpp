@@ -7,6 +7,7 @@
 #include "pluginmanager.h"
 #include "deviceproxy.h"
 #include "logview.h"
+#include "batterymonitor.h"
 #include "elapse/displayable.h"
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
@@ -23,7 +24,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
     logView(new LogView(this)),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
-    device(new DeviceProxy(this))
+    device(new DeviceProxy(this)),
+    batteryMonitor(new BatteryMonitor(this))
 {
     ui->setupUi(this);
     setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
@@ -36,6 +38,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->buttonConnect->setDefaultAction(ui->actionConnect);
     ui->connectedToolBar->setVisible(false);
     ui->connectedToolBar->addWidget(ui->spinnerStarting);
+
+    addDockWidgetFrom(batteryMonitor);
 
     QString defaultAddress = settings.value("host", DEFAULT_ADDR).toString();
     ui->deviceAddress->setText(defaultAddress);
@@ -270,6 +274,7 @@ void ElapseClient::configure()
     qxtLog->debug("Notifying server that our address is", device->localAddress());
     device->device()->setClientAddress(device->localAddress());
 
+    batteryMonitor->setBattery(device->battery());
     connect(device->battery(), SIGNAL(batteryLow()), SLOT(onBatteryLow()));
     if (device->battery()->isLow())
         onBatteryLow();

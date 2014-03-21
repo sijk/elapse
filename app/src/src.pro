@@ -1,7 +1,7 @@
 include(../../global.pri)
 
 QT           += core gui widgets dbus network
-CONFIG       += qxt
+CONFIG       += qxt qwt
 QXT          += core
 
 TARGET        = elapse
@@ -11,9 +11,11 @@ DESTDIR       = ../../
 
 SOURCES      += main.cpp \
                 elapseclient.cpp \
+                batterymonitor.cpp \
                 spinner.cpp \
                 eegfilesink.cpp
 HEADERS      += elapseclient.h \
+                batterymonitor.h \
                 spinner.h \
                 eegfilesink.h \
                 elementset.h \
