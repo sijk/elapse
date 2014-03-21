@@ -5,19 +5,19 @@
 
 
 /*!
- * \brief The DummyClassifier class is a black hole for FeatureVectors.
+ * \brief The DummyClassifier class is a black hole for FeatureVector%s.
  *
  * \ingroup core-plugin
  */
 
-class DummyClassifier : public elapse::Classifier
+class DummyClassifier : public elapse::BaseClassifier
 {
     Q_OBJECT
 public:
     Q_INVOKABLE explicit DummyClassifier(QObject *parent = nullptr);
 
-public slots:
-    void onFeatures(elapse::FeatureVector features);
+protected:
+    elapse::CognitiveState classify(QList<elapse::FeatureVector> featureVectors);
 };
 
 #endif // DUMMYCLASSIFIER_H

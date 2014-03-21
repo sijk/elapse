@@ -74,6 +74,9 @@ struct FeatureVector
     Signal::Type signalType;
     quint64 startTime;
     QVector<double> features;
+
+    FeatureVector(Signal::Type signalType, quint64 startTime) :
+        signalType(signalType), startTime(startTime) {}
 };
 
 
@@ -81,6 +84,8 @@ struct CognitiveState
 {
     quint64 startTime;
     QVector<double> state;
+
+    CognitiveState(quint64 startTime) : startTime(startTime) {}
 };
 
 } // namespace elapse

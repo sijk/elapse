@@ -129,6 +129,13 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(SamplePtr)),
             _elements->featureExtractors[Signal::IMU], SLOT(onSample(SamplePtr)));
 
+    connect(_elements->featureExtractors[Signal::EEG], SIGNAL(newFeatures(FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+    connect(_elements->featureExtractors[Signal::VIDEO], SIGNAL(newFeatures(FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+    connect(_elements->featureExtractors[Signal::IMU], SIGNAL(newFeatures(FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
     connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));
@@ -139,15 +146,13 @@ void Pipeline::setElements(ElementSetPtr newElements)
  */
 void Pipeline::start()
 {
-    if (!_elements) {
-        emit error("The pipeline is not configured.");
-        return;
-    }
+    Q_ASSERT(_elements);
 
     connect(_elements->sampleDecoders[Signal::EEG],
             SIGNAL(newSample(SamplePtr)), SLOT(setStartTime(SamplePtr)));
 
     qxtLog->info("Starting pipeline");
+    _elements->classifier->reset();
     _elements->dataSource->start();
 }
 
@@ -172,7 +177,7 @@ void Pipeline::stop()
  * the FeatureExtractor%s to one second after that to give all of the sensors
  * time to start up.
  */
-void Pipeline::setStartTime(elapse::SamplePtr sample)
+void Pipeline::setStartTime(SamplePtr sample)
 {
     quint64 startTime = sample->timestamp + 1e9;
 
