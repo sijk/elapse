@@ -40,6 +40,35 @@ private:
 };
 
 
+/*!
+ * \brief The CompactRoundScaleDraw class is a QwtRoundScaleDraw tweaked to
+ * take up less space.
+ */
+
+class CompactRoundScaleDraw : public QwtRoundScaleDraw
+{
+public:
+    CompactRoundScaleDraw() : QwtRoundScaleDraw()
+    {
+        enableComponent(QwtAbstractScaleDraw::Backbone, false);
+        setTickLength(QwtScaleDiv::MinorTick, 3);
+        setTickLength(QwtScaleDiv::MediumTick, 4);
+        setTickLength(QwtScaleDiv::MajorTick, 5);
+        setSpacing(2);
+    }
+
+protected:
+    QwtText label(double value) const
+    {
+        QwtText text = QwtRoundScaleDraw::label(value);
+        QFont font = text.font();
+        font.setPixelSize(10);
+        text.setFont(font);
+        return text;
+    }
+};
+
+
 BatteryMonitor::BatteryMonitor(QObject *parent) :
     QObject(parent),
     battery(nullptr)
@@ -52,7 +81,7 @@ BatteryMonitor::BatteryMonitor(QObject *parent) :
     gauge->setLowerBound(3.0);
     gauge->setUpperBound(4.0);
     gauge->setScaleMaxMajor(8);
-    gauge->scaleDraw()->enableComponent(QwtRoundScaleDraw::Backbone, false);
+    gauge->setScaleDraw(new CompactRoundScaleDraw);
     gauge->setNeedle(new QwtDialSimpleNeedle(QwtDialSimpleNeedle::Arrow));
 
     connect(&timer, SIGNAL(timeout()), SLOT(updateVoltage()));
