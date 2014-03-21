@@ -69,6 +69,9 @@ protected:
 };
 
 
+/*!
+ * Create a BatteryMonitor as a child of the given \a parent.
+ */
 BatteryMonitor::BatteryMonitor(QObject *parent) :
     QObject(parent),
     battery(nullptr)
@@ -87,11 +90,17 @@ BatteryMonitor::BatteryMonitor(QObject *parent) :
     connect(&timer, SIGNAL(timeout()), SLOT(updateVoltage()));
 }
 
+/*!
+ * \return the battery voltage gauge widget.
+ */
 QWidget *BatteryMonitor::getWidget()
 {
     return gauge;
 }
 
+/*!
+ * Set the DBus interface to the device's \a battery.
+ */
 void BatteryMonitor::setBattery(org::nzbri::elapse::Battery *battery)
 {
     this->battery = battery;
@@ -106,6 +115,9 @@ void BatteryMonitor::setBattery(org::nzbri::elapse::Battery *battery)
     timer.start(1000);
 }
 
+/*!
+ * Read the battery voltage from the device and display it on the gauge.
+ */
 void BatteryMonitor::updateVoltage()
 {
     Q_ASSERT(battery);

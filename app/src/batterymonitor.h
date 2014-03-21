@@ -9,6 +9,16 @@
 class DialWithSector;
 
 
+/*!
+ * \brief The BatteryMonitor class monitors the device's battery voltage and
+ * displays it on a fuel-gauge–style dial.
+ *
+ * The gauge widget is exposed via the \ref elapse::Displayable "Displayable"
+ * interface.
+ *
+ * The battery monitor polls the device's battery voltage at 1 Hz.
+ */
+
 class BatteryMonitor : public QObject, public elapse::Displayable
 {
     Q_OBJECT
