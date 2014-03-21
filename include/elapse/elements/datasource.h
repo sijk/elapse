@@ -7,7 +7,7 @@ class QByteArray;
 namespace elapse {
 
 /*!
- * \brief The DataSource class is the base class for elements that receive data
+ * \brief The DataSource interface is implemented by elements that receive data
  * from the device over the network.
  *
  * Each Pipeline has one DataSource which provides data to several

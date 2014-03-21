@@ -7,10 +7,12 @@
 namespace elapse {
 
 /*!
- * \brief The Classifier class is the base class for elements that take in
+ * \brief The Classifier interface is implemented by elements that take in
  * FeatureVector%s and classify the CognitiveState of the device user.
  *
  * Each Pipeline has one Classifier.
+ *
+ * \note To implement a Classifier, inherit from BaseClassifier.
  *
  * \ingroup pipeline-elements
  */

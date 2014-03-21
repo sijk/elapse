@@ -7,10 +7,12 @@
 namespace elapse {
 
 /*!
- * \brief The FeatureExtractor class is the base class for elements that
+ * \brief The FeatureExtractor interface is implemented by elements that
  * analyse a time series of Sample%s to extract a FeatureVector.
  *
  * Each Pipeline has several FeatureExtractor%s: one per Signal::Type.
+ *
+ * \note To implement a FeatureExtractor, inherit from BaseFeatureExtractor.
  *
  * \ingroup pipeline-elements
  */

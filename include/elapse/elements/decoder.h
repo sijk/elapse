@@ -9,10 +9,14 @@ class QByteArray;
 namespace elapse {
 
 /*!
- * \brief The SampleDecoder class is the base class for elements that decode a
+ * \brief The SampleDecoder interface is implemented by elements that decode a
  * QByteArray to one or more Sample%s.
  *
  * Each Pipeline has several SampleDecoder%s: one per Signal::Type.
+ *
+ * You are unlikely to need to implement your own SampeDecoder%s since the
+ * ones provided by the \ref core-plugin "core plugin" are already capable
+ * of decoding the data streams from the device.
  *
  * \ingroup pipeline-elements
  */
