@@ -61,49 +61,15 @@ class BaseFeatureExtractor : public FeatureExtractor
 {
     Q_OBJECT
 public:
-    /*! Create a BaseFeatureExtractor as a child of the given \a parent. */
-    explicit BaseFeatureExtractor(QObject *parent = nullptr) :
-        FeatureExtractor(parent), windowStart(0), signalType(Signal::INVALID)
-    { }
+    explicit BaseFeatureExtractor(QObject *parent = nullptr);
 
-    void setStartTime(quint64 timestamp)
-    {
-        reset();
-        windowStart = timestamp;
-        signalType = findSignalType();
-    }
+    void setStartTime(quint64 timestamp);
 
-    void setWindowLength(uint ms) { windowLength = ms; }
-    void setWindowStep(uint ms) { windowStep = ms; }
+    void setWindowLength(uint ms);
+    void setWindowStep(uint ms);
 
 public slots:
-    /*!
-     * Handle the given \a sample. This method takes care of updating the
-     * window as necessary and delegates the actual feature extraction to
-     * the protected methods.
-     */
-    void onSample(SamplePtr sample)
-    {
-        if (windowStart == 0)
-            return;
-        Q_ASSERT(signalType != Signal::INVALID);
-
-        if (sample->timestamp < windowStart)
-            return;
-
-        quint64 windowEnd = windowStart + windowLength * 1e6;
-        quint64 nextWindowStart = windowStart + windowStep * 1e6;
-
-        if (sample->timestamp >= windowEnd) {
-            FeatureVector featureVector(signalType, windowStart);
-            featureVector.features = features();
-            emit newFeatures(featureVector);
-
-            removeDataBefore(nextWindowStart);
-            windowStart = nextWindowStart;
-        }
-        analyseSample(sample);
-    }
+    void onSample(SamplePtr sample);
 
 protected:
     /*!
@@ -131,10 +97,7 @@ protected:
      * Reset any internal state. Defaults to calling removeDataBefore() with
      * the maximum value a quint64 can hold.
      */
-    virtual void reset()
-    {
-        removeDataBefore(std::numeric_limits<quint64>::max());
-    }
+    virtual void reset();
 
 private:
     quint64 windowStart;
@@ -142,16 +105,7 @@ private:
     uint windowStep;
     Signal::Type signalType;
 
-    /*!
-     * \return the Signal::Type this FeatureExtractor works with, as defined
-     * by the "SignalType" class info field.
-     */
-    Signal::Type findSignalType() const
-    {
-        const int index = metaObject()->indexOfClassInfo("SignalType");
-        const char *info = metaObject()->classInfo(index).value();
-        return Signal::fromString(info);
-    }
+    Signal::Type findSignalType() const;
 };
 
 } // namespace elapse

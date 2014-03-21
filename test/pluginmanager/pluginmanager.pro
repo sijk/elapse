@@ -9,4 +9,5 @@ SOURCES += pluginmanager_test.cpp \
 
 INCLUDEPATH += $$ROOT/app/include
 linkStaticlib(app, pluginmanager)
+linkSharedlib(app, elapseplugin, true)
 
