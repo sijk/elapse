@@ -28,4 +28,7 @@ linkStaticlib(pipeline)
 linkStaticlib(pluginmanager)
 linkStaticlib(loggerwidget)
 
+linkSharedlib(app, elapseplugin, true)
+
 INCLUDEPATH  += $$OUT_PWD/../lib/deviceproxy   # for foo_interface.h
+

@@ -1,2 +1,2 @@
 TEMPLATE    = subdirs
-SUBDIRS	    = deviceproxy loggerwidget pipeline pluginmanager
+SUBDIRS	    = deviceproxy loggerwidget pipeline pluginmanager elapseplugin
