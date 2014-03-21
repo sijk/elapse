@@ -16,26 +16,50 @@ VPATH        += $${PWD}/include
 INCLUDEPATH  += $$proFileSubdir()/include
 VPATH        += $$proFileSubdir()/include
 
-defineTest(linkStaticlib) {
-    isEmpty(2) {
-        # e.g. linkStaticlib(pipeline)
-        libname = $$1
+defineTest(linkLibrary) {
+    linkage = $$1
+    isEmpty(3) {
+        # e.g. linkLibrary("static", pipeline)
+        libname = $$2
         subdir = $$proFileSubdir()
     }
-    !isEmpty(2) {
-        # e.g. linkStaticlib(app, pipeline)
-        libname = $$2
-        subdir = $$ROOT/$$1
+    !isEmpty(3) {
+        # e.g. linkLibrary("static", app, pipeline)
+        libname = $$3
+        subdir = $$ROOT/$$2
     }
     outdir = $$shadowed($$subdir)
 
     LIBS            += -L$$outdir/lib/$${libname}/ -l$${libname}
     INCLUDEPATH     += $$subdir/lib/$${libname}
     DEPENDPATH      += $$subdir/lib/$${libname}
-    PRE_TARGETDEPS  += $$outdir/lib/$${libname}/lib$${libname}.a
 
     export(LIBS)
     export(INCLUDEPATH)
     export(DEPENDPATH)
-    export(PRE_TARGETDEPS)
+
+    equals(linkage, static) {
+        PRE_TARGETDEPS  += $$outdir/lib/$${libname}/lib$${libname}.a
+        export(PRE_TARGETDEPS)
+    }
+
+    equals(linkage, shared) {
+        !isEmpty(4) {
+            QMAKE_RPATHDIR += $$outdir/lib/$$libname
+            export(QMAKE_RPATHDIR)
+        }
+    }
+}
+
+defineTest(linkStaticlib) {
+    # linkStaticlib(libname)             link libname from current subdir
+    # linkStaticlib(app, libname)        link libname from app subdir
+    linkLibrary("static", $$1, $$2)
+}
+
+defineTest(linkSharedlib) {
+    # linkSharedlib(libname)             link libname from current subdir
+    # linkSharedlib(app, libname)        link libname from app subdir
+    # linkSharedlib(app, libname, true)  link libname from app subdir and set rpath
+    linkLibrary("shared", $$1, $$2, $$3)
 }
