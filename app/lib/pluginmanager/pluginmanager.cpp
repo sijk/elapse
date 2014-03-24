@@ -19,8 +19,9 @@
  * This page describes the structure of the PluginManager's internal data model.
  *
  * Suppose that we have two plugins, \c FooPlugin and \c BarPlugin. They each
- * provide several classes implementing DataSource and SampleDecoder element
- * types. This hypothetical situation is illustrated below.
+ * provide several classes implementing elapse::DataSource and
+ * elapse::SampleDecoder element types. This hypothetical situation is
+ * illustrated below.
  *
  * @startuml{pluginmanager-model-classes.png}
  *
@@ -65,8 +66,8 @@
  * \endcode
  *
  * If a PluginFilterProxyModel was defined with the arguments
- * \c elementType = "SampleDecoder" and \c signalType = "EEG", then the filtered
- * model would have the following structure:
+ * \c elementType = "SampleDecoder" and \c signalType = Signal::EEG, then the
+ * filtered model would have the following structure:
  *
  * \code
  * SampleDecoder
