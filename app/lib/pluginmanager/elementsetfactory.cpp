@@ -22,6 +22,7 @@ ElementSetPtr ElementSetFactory::loadUsingStrategy(ElementSelectionStrategy *sel
     loadElement(elements->featureExtractors[Signal::VIDEO], selection->getElementInfo("featureExtractorVideo"));
     loadElement(elements->featureExtractors[Signal::IMU],   selection->getElementInfo("featureExtractorImu"));
     loadElement(elements->classifier,                       selection->getElementInfo("classifier"));
+    loadElement(elements->dataSink,                         selection->getElementInfo("dataSink"));
 
     foreach (QObject *element, elements->allElements()) {
         if (!element) {

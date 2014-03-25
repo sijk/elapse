@@ -7,6 +7,7 @@
 #include "elapse/elements/decoder.h"
 #include "elapse/elements/featurextractor.h"
 #include "elapse/elements/classifier.h"
+#include "elapse/elements/datasinkdelegate.h"
 
 using elapse::Signal;
 
@@ -28,6 +29,7 @@ struct ElementSet
     QMap<Signal::Type, elapse::SampleDecoder*> sampleDecoders;
     QMap<Signal::Type, elapse::FeatureExtractor*> featureExtractors;
     elapse::Classifier *classifier;
+    elapse::DataSinkDelegate *dataSink;
 
     QList<QObject*> allElements() const;
     ~ElementSet();
@@ -47,6 +49,7 @@ inline QList<QObject*> ElementSet::allElements() const
     for (auto extractor : featureExtractors)
         elements.append(extractor);
     elements.append(classifier);
+    elements.append(dataSink);
 
     return elements;
 }
@@ -54,7 +57,8 @@ inline QList<QObject*> ElementSet::allElements() const
 /*!
  * Destroy this ElementSet and all of the elements it contains.
  */
-inline ElementSet::~ElementSet() {
+inline ElementSet::~ElementSet()
+{
     qDeleteAll(allElements());
 }
 

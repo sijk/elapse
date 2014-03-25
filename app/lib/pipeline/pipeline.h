@@ -4,6 +4,8 @@
 #include <QObject>
 #include "elementset.h"
 
+class DataSink;
+
 
 /*!
  * \brief The Pipeline class manages a set of signal processing elements.
@@ -42,6 +44,7 @@ private slots:
 
 private:
     ElementSetPtr _elements;
+    DataSink *dataSink;
 };
 
 
