@@ -167,6 +167,7 @@ void ElapseClient::buildStateMachine()
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
     connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
+    connect(connected, &QState::exited, [=]{ batteryMonitor->setBattery(nullptr); });
 
     idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
