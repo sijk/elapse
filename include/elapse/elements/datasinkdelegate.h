@@ -48,6 +48,7 @@ public:
      */
     virtual bool needsNewSessionData() = 0;
 
+public slots:
     /*!
      * Allow the user to set any metadata about the data that will be captured
      * the next time start() is called. This will normally be done by
@@ -69,6 +70,7 @@ public:
      */
     virtual bool getSessionData() = 0;
 
+public:
     /*!
      * Called when there is raw \a data of the given \a signalType to be saved.
      */
