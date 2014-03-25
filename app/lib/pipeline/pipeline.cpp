@@ -122,19 +122,19 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->dataSource, SIGNAL(imuReady(QByteArray)),
             _elements->sampleDecoders[Signal::IMU], SLOT(onData(QByteArray)));
 
-    connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(SamplePtr)),
-            _elements->featureExtractors[Signal::EEG], SLOT(onSample(SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::VIDEO], SIGNAL(newSample(SamplePtr)),
-            _elements->featureExtractors[Signal::VIDEO], SLOT(onSample(SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(SamplePtr)),
-            _elements->featureExtractors[Signal::IMU], SLOT(onSample(SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(elapse::SamplePtr)),
+            _elements->featureExtractors[Signal::EEG], SLOT(onSample(elapse::SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::VIDEO], SIGNAL(newSample(elapse::SamplePtr)),
+            _elements->featureExtractors[Signal::VIDEO], SLOT(onSample(elapse::SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(elapse::SamplePtr)),
+            _elements->featureExtractors[Signal::IMU], SLOT(onSample(elapse::SamplePtr)));
 
-    connect(_elements->featureExtractors[Signal::EEG], SIGNAL(newFeatures(FeatureVector)),
-            _elements->classifier, SLOT(onFeatures(FeatureVector)));
-    connect(_elements->featureExtractors[Signal::VIDEO], SIGNAL(newFeatures(FeatureVector)),
-            _elements->classifier, SLOT(onFeatures(FeatureVector)));
-    connect(_elements->featureExtractors[Signal::IMU], SIGNAL(newFeatures(FeatureVector)),
-            _elements->classifier, SLOT(onFeatures(FeatureVector)));
+    connect(_elements->featureExtractors[Signal::EEG], SIGNAL(newFeatures(elapse::FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(elapse::FeatureVector)));
+    connect(_elements->featureExtractors[Signal::VIDEO], SIGNAL(newFeatures(elapse::FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(elapse::FeatureVector)));
+    connect(_elements->featureExtractors[Signal::IMU], SIGNAL(newFeatures(elapse::FeatureVector)),
+            _elements->classifier, SLOT(onFeatures(elapse::FeatureVector)));
 
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
@@ -148,8 +148,8 @@ void Pipeline::start()
 {
     Q_ASSERT(_elements);
 
-    connect(_elements->sampleDecoders[Signal::EEG],
-            SIGNAL(newSample(SamplePtr)), SLOT(setStartTime(SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(elapse::SamplePtr)),
+            SLOT(setStartTime(elapse::SamplePtr)));
 
     qxtLog->info("Starting pipeline");
     _elements->classifier->reset();
@@ -169,7 +169,7 @@ void Pipeline::stop()
     emit stopped();
 
     disconnect(_elements->sampleDecoders[Signal::EEG],
-               SIGNAL(newSample(SamplePtr)), this, 0);
+               SIGNAL(newSample(elapse::SamplePtr)), this, 0);
 }
 
 /*!
@@ -177,7 +177,7 @@ void Pipeline::stop()
  * the FeatureExtractor%s to one second after that to give all of the sensors
  * time to start up.
  */
-void Pipeline::setStartTime(SamplePtr sample)
+void Pipeline::setStartTime(elapse::SamplePtr sample)
 {
     quint64 startTime = sample->timestamp + 1e9;
 
@@ -186,7 +186,7 @@ void Pipeline::setStartTime(SamplePtr sample)
         featureExtractor->setStartTime(startTime);
 
     disconnect(_elements->sampleDecoders[Signal::EEG],
-               SIGNAL(newSample(SamplePtr)), this, 0);
+               SIGNAL(newSample(elapse::SamplePtr)), this, 0);
 }
 
 /*!

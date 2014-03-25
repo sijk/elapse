@@ -4,8 +4,6 @@
 #include <QObject>
 #include "elementset.h"
 
-using elapse::SamplePtr;
-
 
 /*!
  * \brief The Pipeline class manages a set of signal processing elements.
@@ -40,7 +38,7 @@ signals:
     void error(QString msg);
 
 private slots:
-    void setStartTime(SamplePtr sample);
+    void setStartTime(elapse::SamplePtr sample);
 
 private:
     ElementSetPtr _elements;

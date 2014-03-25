@@ -35,7 +35,7 @@ public slots:
      * Classifier subclasses to match up and process the corresponding
      * FeatureVector%s.
      */
-    virtual void onFeatures(FeatureVector features) = 0;
+    virtual void onFeatures(elapse::FeatureVector features) = 0;
 
     /*!
      * Called when the pipeline starts to reset any internal state.
@@ -47,7 +47,7 @@ signals:
      * Emitted when the CognitiveState has been classified from the latest
      * set of FeatureVector%s.
      */
-    void newState(CognitiveState state);
+    void newState(elapse::CognitiveState state);
 };
 
 
@@ -68,7 +68,7 @@ public:
     explicit BaseClassifier(QObject *parent = nullptr);
 
 public slots:
-    void onFeatures(FeatureVector featVect);
+    void onFeatures(elapse::FeatureVector featVect);
     void reset();
 
 protected:

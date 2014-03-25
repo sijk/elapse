@@ -39,11 +39,11 @@ public:
 
 public slots:
     /*! Executed when the next \a sample is available for analysis. */
-    virtual void onSample(SamplePtr sample) = 0;
+    virtual void onSample(elapse::SamplePtr sample) = 0;
 
 signals:
     /*! Emitted when a complete window has been analysed. */
-    void newFeatures(FeatureVector features);
+    void newFeatures(elapse::FeatureVector features);
 };
 
 
@@ -71,7 +71,7 @@ public:
     void setWindowStep(uint ms);
 
 public slots:
-    void onSample(SamplePtr sample);
+    void onSample(elapse::SamplePtr sample);
 
 protected:
     /*!

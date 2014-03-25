@@ -33,7 +33,7 @@ public:
 
 signals:
     /*! Emitted when a \a sample has been decoded. */
-    void newSample(SamplePtr sample);
+    void newSample(elapse::SamplePtr sample);
 
 public slots:
     /*!
