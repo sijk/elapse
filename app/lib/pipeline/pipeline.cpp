@@ -178,8 +178,10 @@ void Pipeline::start()
             SLOT(setStartTime(elapse::SamplePtr)));
 
     qxtLog->info("Starting pipeline");
-    if (!dataSink->start())
+    if (!dataSink->start()) {
+        emit error();
         return;
+    }
     _elements->classifier->reset();
     _elements->dataSource->start();
 }

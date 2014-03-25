@@ -37,7 +37,7 @@ public slots:
 signals:
     void started();
     void stopped();
-    void error(QString msg);
+    void error(QString msg = QString());
 
 private slots:
     void setStartTime(elapse::SamplePtr sample);

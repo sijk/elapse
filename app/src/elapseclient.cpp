@@ -74,7 +74,8 @@ ElapseClient::~ElapseClient()
 
 void ElapseClient::showErrorMessage(QString message)
 {
-    QMessageBox::warning(this, "Error", message);
+    if (!message.isEmpty())
+        QMessageBox::warning(this, "Error", message);
 }
 
 void ElapseClient::onBatteryLow()
