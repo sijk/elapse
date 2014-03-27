@@ -8,3 +8,5 @@ pluginmanager.depends = test_plugins
 
 SUBDIRS += bigendian24
 SUBDIRS += udpdatasource
+SUBDIRS += datasink
+SUBDIRS += simplerawdatasink

@@ -15,6 +15,7 @@ HEADERS      += udpdatasource.h \
                 dummyvideofeatureextractor.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h \
+                simplerawdatasinkdelegate.h \
                 util/bigendian24.h \
                 util/gstwrappedbuffer.h \
                 util/timestampedvalues.h
@@ -28,6 +29,7 @@ SOURCES      += udpdatasource.cpp \
                 dummyvideofeatureextractor.cpp \
                 dummyimufeatureextractor.cpp \
                 dummyclassifier.cpp \
+                simplerawdatasinkdelegate.cpp \
                 util/gstwrappedbuffer.cpp
 
 HEADERS      += coreplugin.h

@@ -11,6 +11,7 @@
 #include "dummyvideofeatureextractor.h"
 #include "dummyimufeatureextractor.h"
 #include "dummyclassifier.h"
+#include "simplerawdatasinkdelegate.h"
 
 
 /*!
@@ -39,7 +40,8 @@ public:
             DummyEegFeatureExtractor,
             DummyVideoFeatureExtractor,
             DummyImuFeatureExtractor,
-            DummyClassifier
+            DummyClassifier,
+            SimpleRawDataSinkDelegate
         );
     }
 };

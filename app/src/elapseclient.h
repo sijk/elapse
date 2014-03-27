@@ -41,10 +41,11 @@ public:
 
 private slots:
     void showErrorMessage(QString message);
-    void onBatteryLow();
+    void warnBatteryLow();
     void maybeAutoConnect();
     void loadElementWidgets(ElementSetPtr elements);
     void configure();
+    void unconfigure();
 
 private:
     void addDockWidgetFrom(QObject *object);

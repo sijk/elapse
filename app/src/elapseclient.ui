@@ -178,6 +178,8 @@
    </attribute>
    <addaction name="actionConnect"/>
    <addaction name="separator"/>
+   <addaction name="actionSetSessionData"/>
+   <addaction name="separator"/>
    <addaction name="actionCapture"/>
    <addaction name="separator"/>
   </widget>
@@ -268,6 +270,14 @@
    </property>
    <property name="toolTip">
     <string>Start/stop data capture</string>
+   </property>
+  </action>
+  <action name="actionSetSessionData">
+   <property name="icon">
+    <iconset theme="document-properties"/>
+   </property>
+   <property name="text">
+    <string>Set session data</string>
    </property>
   </action>
  </widget>

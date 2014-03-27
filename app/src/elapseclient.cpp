@@ -74,10 +74,11 @@ ElapseClient::~ElapseClient()
 
 void ElapseClient::showErrorMessage(QString message)
 {
-    QMessageBox::warning(this, "Error", message);
+    if (!message.isEmpty())
+        QMessageBox::warning(this, "Error", message);
 }
 
-void ElapseClient::onBatteryLow()
+void ElapseClient::warnBatteryLow()
 {
     QMessageBox::warning(this, "Low battery",
                          "The device's battery is low. Power it off soon.");
@@ -166,10 +167,10 @@ void ElapseClient::buildStateMachine()
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(device, SIGNAL(error(QString)), disconnected);
     connect(connected, SIGNAL(entered()), SLOT(configure()));
+    connect(connected, SIGNAL(exited()), SLOT(unconfigure()));
     connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
-    connect(connected, &QState::exited, [=]{ batteryMonitor->setBattery(nullptr); });
 
-    idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
+    auto beginCapture = idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
     active->assignProperty(ui->actionCapture, "text", "Stop");
     active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
@@ -179,7 +180,7 @@ void ElapseClient::buildStateMachine()
     // closure since it is not valid until the device is connected.
     connect(active, &QState::entered, [=]{ device->device()->startStreaming(); });
     connect(active, &QState::exited, [=]{ device->device()->stopStreaming(); });
-    connect(active, SIGNAL(entered()), ui->spinnerStarting, SLOT(start()));
+    connect(beginCapture, SIGNAL(triggered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     connect(active, SIGNAL(exited()), ui->spinnerStarting, SLOT(stop()));
     active->addTransition(ui->actionCapture, SIGNAL(triggered()), idle);
@@ -276,8 +277,17 @@ void ElapseClient::configure()
     device->device()->setClientAddress(device->localAddress());
 
     batteryMonitor->setBattery(device->battery());
-    connect(device->battery(), SIGNAL(batteryLow()), SLOT(onBatteryLow()));
+    connect(device->battery(), SIGNAL(batteryLow()), SLOT(warnBatteryLow()));
     if (device->battery()->isLow())
-        onBatteryLow();
+        warnBatteryLow();
+
+    connect(ui->actionSetSessionData, SIGNAL(triggered()),
+            elements->dataSink, SLOT(getSessionData()));
+}
+
+void ElapseClient::unconfigure()
+{
+    batteryMonitor->setBattery(nullptr);
+    disconnect(ui->actionSetSessionData, SIGNAL(triggered()), 0, 0);
 }
 
