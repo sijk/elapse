@@ -73,6 +73,8 @@ void UdpDataSource::readAndEmit()
             emit imuReady(dgram);
         else if (sock == &videoSock)
             emit videoReady(dgram);
+        else
+            Q_UNREACHABLE();
     }
 }
 
@@ -92,3 +94,4 @@ void UdpDataSource::onSocketError(QAbstractSocket::SocketError err)
     QString hostDesc = QStringLiteral(" [%1:%2]").arg(_host).arg(port);
     emit error(sock->errorString() + hostDesc);
 }
+

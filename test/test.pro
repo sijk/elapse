@@ -7,3 +7,4 @@ SUBDIRS += pluginmanager
 pluginmanager.depends = test_plugins
 
 SUBDIRS += bigendian24
+SUBDIRS += udpdatasource
