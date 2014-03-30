@@ -31,7 +31,7 @@ class CorePlugin : public elapse::Plugin
 public:
     ClassList classes()
     {
-        return ELAPSE_CLASSLIST(
+        return ELAPSE_EXPORT_CLASSES(
             UdpDataSource,
             DummyEegSource,
             EegDecoder,

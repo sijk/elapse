@@ -13,7 +13,7 @@ class BarPlugin : public elapse::Plugin
 public:
     ClassList classes()
     {
-        return ELAPSE_CLASSLIST(BarEegDecoder, BarVideoDecoder);
+        return ELAPSE_EXPORT_CLASSES(BarEegDecoder, BarVideoDecoder);
     }
 };
 

@@ -13,7 +13,7 @@ class FooPlugin : public elapse::Plugin
 public:
     ClassList classes()
     {
-        return ELAPSE_CLASSLIST(FooEegDecoder, FooDummySource);
+        return ELAPSE_EXPORT_CLASSES(FooEegDecoder, FooDummySource);
     }
 };
 
