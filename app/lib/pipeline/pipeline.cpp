@@ -84,7 +84,7 @@ ElementSetPtr Pipeline::elements() const
 }
 
 /*!
- * Set the window length of all of the FeatutreExtractor%s in \a ms.
+ * Set the window length of all of the FeatureExtractor%s in \a ms.
  */
 void Pipeline::setWindowLength(uint ms)
 {
@@ -93,7 +93,7 @@ void Pipeline::setWindowLength(uint ms)
 }
 
 /*!
- * Set the window step of all of the FeatutreExtractor%s in \a ms.
+ * Set the window step of all of the FeatureExtractor%s in \a ms.
  */
 void Pipeline::setWindowStep(uint ms)
 {
@@ -222,7 +222,8 @@ void Pipeline::setStartTime(elapse::SamplePtr sample)
 
 /*!
  * \fn Pipeline::started()
- * Emitted when the DataSource has started receiving data from the device.
+ * Emitted when the elapse::DataSource has started receiving data from
+ * the device.
  */
 
 /*!
