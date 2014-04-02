@@ -6,10 +6,9 @@
 #include <QxtLogger>
 #include "deviceproxy.h"
 
-#define DEFAULT_PORT    9000
-#define SERVICE         "org.nzbri.elapse"
+#include "interfaces.h"
 
-using namespace org::nzbri::elapse;
+#define DEFAULT_PORT    9000
 
 
 /*!
@@ -17,54 +16,17 @@ using namespace org::nzbri::elapse;
  */
 DeviceProxy::DeviceProxy(QObject *parent) :
     QObject(parent),
-    _device(nullptr),
-    _battery(nullptr),
-    _eeg(nullptr)
+    dev(nullptr)
 {
     connect(&connectionChecker, SIGNAL(timeout()), SLOT(checkConnectivity()));
 }
 
 /*!
- * Destroy this DeviceProxy.
- */
-DeviceProxy::~DeviceProxy()
-{
-    qDeleteAll(_eeg_channels);
-    delete _eeg;
-    delete _battery;
-    delete _device;
-}
-
-/*!
  * \return the D-Bus interface for the root device object.
  */
-Device *DeviceProxy::device() const
+iface::Device *DeviceProxy::device() const
 {
-    return _device;
-}
-
-/*!
- * \return the D-Bus interface for the device's battery monitor.
- */
-org::nzbri::elapse::Battery *DeviceProxy::battery() const
-{
-    return _battery;
-}
-
-/*!
- * \return the D-Bus interface for the EEG ADC.
- */
-Eeg::EegAdc *DeviceProxy::eeg() const
-{
-    return _eeg;
-}
-
-/*!
- * \return the D-Bus interface for channel \a i of the EEG ADC.
- */
-Eeg::EegChannel *DeviceProxy::eeg_channel(uint i) const
-{
-    return _eeg_channels.at(i);
+    return dev;
 }
 
 /*!
@@ -120,27 +82,25 @@ void DeviceProxy::connectInBackground()
         return;
     }
 
-    _device = new Device(SERVICE, "/elapse", connection);
+    dev = new dbus::Device(connection, this);
 
     // Check whether the root object is accessible on the bus
-    auto reply = _device->isAccessible();
+    auto reply = dev->dbusInterface().isAccessible();
     reply.waitForFinished();
     if (reply.isError()) {
         qxtLog->error("DeviceProxy: The root dbus object is not accessible");
         qxtLog->error("Server:", reply.error().message());
-        qxtLog->error("Proxy:", _device->lastError().message());
+        qxtLog->error("Proxy:", dev->dbusInterface().lastError().message());
         emit error("The server is not running on the device.");
         return;
     }
 
-    _battery = new Battery(SERVICE, "/elapse/battery", connection);
-    _eeg = new Eeg::EegAdc(SERVICE, "/elapse/eeg", connection);
+    dev->iface_battery = new dbus::Battery(connection, dev);
+    dev->iface_eeg = new dbus::EegAdc(connection, dev);
 
-    for (uint i = 0; i < _eeg->nChannels(); i++) {
-        auto ch = new Eeg::EegChannel(SERVICE,
-                                      QString("/elapse/eeg/channel/%1").arg(i),
-                                      connection);
-        _eeg_channels.append(ch);
+    for (uint i = 0; i < dev->eeg()->nChannels(); i++) {
+        auto ch = new dbus::EegChannel(i, connection, dev->iface_eeg);
+        dev->iface_eeg->iface_channels.append(ch);
     }
 
     emit connected();
@@ -155,17 +115,8 @@ void DeviceProxy::disconnect()
 {
     connectionChecker.stop();
 
-    delete _device;
-    _device = nullptr;
-
-    delete _battery;
-    _battery = nullptr;
-
-    delete _eeg;
-    _eeg = nullptr;
-
-    qDeleteAll(_eeg_channels);
-    _eeg_channels.clear();
+    delete dev;
+    dev = nullptr;
 
     emit disconnected();
 }
@@ -175,8 +126,8 @@ void DeviceProxy::disconnect()
  */
 void DeviceProxy::checkConnectivity()
 {
-    Q_ASSERT(_device);
-    if (!_device->isAccessible()) {
+    Q_ASSERT(dev);
+    if (!dev->isAccessible()) {
         qxtLog->error("Device connectivity check failed");
         emit error("The connection to the device was lost");
         disconnect();

@@ -1,11 +1,11 @@
 include(../../../staticlib.pri)
+include($$ROOT/common/interfaces.pri)
 
 QT      += dbus network
 
 SOURCES += deviceproxy.cpp
 
-HEADERS += deviceproxy.h
+HEADERS += deviceproxy.h \
+           interfaces.h
 
-DBUS_INTERFACES = \
-    ../../../../elapse-server/files/src/interfaces/elapse.xml \
-    ../../../../elapse-server/files/src/interfaces/eeg.xml
+DBUS_INTERFACES = $$ELAPSE_DBUS_XML

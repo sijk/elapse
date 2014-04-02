@@ -25,7 +25,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     logView(new LogView(this)),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
-    device(new DeviceProxy(this)),
+    proxy(new DeviceProxy(this)),
     batteryMonitor(new BatteryMonitor(this))
 {
     ui->setupUi(this);
@@ -60,7 +60,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
             SLOT(loadElementWidgets(ElementSetPtr)));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
-    connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
+    connect(proxy, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
 
     buildStateMachine();
 }
@@ -152,12 +152,12 @@ void ElapseClient::buildStateMachine()
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
 
     connect(connecting, &QState::entered,
-            [=]{ device->connectTo(ui->deviceAddress->text()); });
+            [=]{ proxy->connectTo(ui->deviceAddress->text()); });
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
-    connecting->addTransition(device, SIGNAL(error(QString)), disconnected);
-    connecting->addTransition(device, SIGNAL(connected()), connected);
+    connecting->addTransition(proxy, SIGNAL(error(QString)), disconnected);
+    connecting->addTransition(proxy, SIGNAL(connected()), connected);
 
     connected->setInitialState(idle);
     connected->assignProperty(ui->centralWidget, "visible", false);
@@ -166,10 +166,10 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->connectedToolBar, "visible", true);
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
-    connected->addTransition(device, SIGNAL(error(QString)), disconnected);
+    connected->addTransition(proxy, SIGNAL(error(QString)), disconnected);
     connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), SLOT(unconfigure()));
-    connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
+    connect(connected, SIGNAL(exited()), proxy, SLOT(disconnect()));
 
     auto beginCapture = idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
@@ -177,10 +177,10 @@ void ElapseClient::buildStateMachine()
     active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
     connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
     connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
-    // We need to delay evaluation of device->device() by wrapping it in a
-    // closure since it is not valid until the device is connected.
-    connect(active, &QState::entered, [=]{ device->device()->startStreaming(); });
-    connect(active, &QState::exited, [=]{ device->device()->stopStreaming(); });
+    // We need to delay evaluation of proxy->device() by wrapping it in a
+    // closure since it is not valid until the proxy is connected.
+    connect(active, &QState::entered, [=]{ proxy->device()->startStreaming(); });
+    connect(active, &QState::exited, [=]{ proxy->device()->stopStreaming(); });
     connect(beginCapture, SIGNAL(triggered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     connect(active, SIGNAL(exited()), ui->spinnerStarting, SLOT(stop()));
@@ -254,32 +254,34 @@ void ElapseClient::configure()
     uint eegChunkSize  = settings.value("eeg/chunksize", 20).toUInt();
     uint eegGain       = settings.value("eeg/gain", 24).toUInt();
 
-    device->eeg()->setSampleRate(eegSampleRate);
-    device->eeg()->setSamplesPerChunk(eegChunkSize);
-    device->eeg()->setUseRefElec(true);
-    device->eeg()->setAllChannels({{"enabled", true},
-                                   {"gain", eegGain},
-                                   {"inputMux", "Normal"}});
+    auto eeg = proxy->device()->eeg();
+    eeg->setSampleRate(iface::EegAdc::SampleRate(eegSampleRate));
+    eeg->setSamplesPerChunk(eegChunkSize);
+    eeg->setUseRefElec(true);
+    eeg->setAllChannels({{"enabled", true},
+                         {"gain", eegGain},
+                         {"inputMux", "Normal"}});
 
     // Configure pipeline to match
 
-    elements->dataSource->setProperty("host", device->deviceAddress());
+    elements->dataSource->setProperty("host", proxy->deviceAddress());
 
     elements->sampleDecoders[Signal::EEG]->setProperty("gain", eegGain);
-    elements->sampleDecoders[Signal::EEG]->setProperty("vref", device->eeg()->vref());
-    elements->sampleDecoders[Signal::EEG]->setProperty("nChannels", device->eeg()->nChannels());
+    elements->sampleDecoders[Signal::EEG]->setProperty("vref", eeg->vref());
+    elements->sampleDecoders[Signal::EEG]->setProperty("nChannels", eeg->nChannels());
 
     pipeline->setWindowLength(1000);
     pipeline->setWindowStep(500);
 
     // Other setup
 
-    qxtLog->debug("Notifying server that our address is", device->localAddress());
-    device->device()->setClientAddress(device->localAddress());
+    qxtLog->debug("Notifying server that our address is", proxy->localAddress());
+    proxy->device()->setClientAddress(proxy->localAddress());
 
-    batteryMonitor->setBattery(device->battery());
-    connect(device->battery(), SIGNAL(batteryLow()), SLOT(warnBatteryLow()));
-    if (device->battery()->isLow())
+    auto battery = proxy->device()->battery();
+    batteryMonitor->setBattery(battery);
+    connect(battery, SIGNAL(batteryLow()), SLOT(warnBatteryLow()));
+    if (battery->isLow())
         warnBatteryLow();
 
     connect(ui->actionSetSessionData, SIGNAL(triggered()),

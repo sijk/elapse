@@ -58,7 +58,7 @@ private:
     QStateMachine *machine;
     PluginManager *pluginManager;
     Pipeline *pipeline;
-    DeviceProxy *device;
+    DeviceProxy *proxy;
     BatteryMonitor *batteryMonitor;
 };
 

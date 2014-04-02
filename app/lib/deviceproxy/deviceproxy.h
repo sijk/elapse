@@ -5,8 +5,13 @@
 #include <QList>
 #include <QTimer>
 
-#include "elapse_interface.h"
-#include "eeg_interface.h"
+#include "common/interface/device_iface.h"
+#include "common/interface/battery_iface.h"
+#include "common/interface/eegadc_iface.h"
+#include "common/interface/camera_iface.h"
+#include "common/interface/imu_iface.h"
+
+namespace dbus { class Device; }
 
 
 /*!
@@ -19,12 +24,8 @@ class DeviceProxy : public QObject
     Q_OBJECT
 public:
     explicit DeviceProxy(QObject *parent = nullptr);
-    ~DeviceProxy();
 
-    org::nzbri::elapse::Device *device() const;
-    org::nzbri::elapse::Battery *battery() const;
-    org::nzbri::elapse::Eeg::EegAdc *eeg() const;
-    org::nzbri::elapse::Eeg::EegChannel* eeg_channel(uint i) const;
+    iface::Device *device() const;
 
     QString deviceAddress() const;
     QString localAddress() const;
@@ -45,10 +46,7 @@ private:
     void connectInBackground();
     bool detectLocalAddressByConnectingTo(const QString& host, quint16 port);
 
-    org::nzbri::elapse::Device *_device;
-    org::nzbri::elapse::Battery *_battery;
-    org::nzbri::elapse::Eeg::EegAdc *_eeg;
-    QList<org::nzbri::elapse::Eeg::EegChannel*> _eeg_channels;
+    dbus::Device *dev;
     QString deviceAddr;
     QString localAddr;
     QTimer connectionChecker;
