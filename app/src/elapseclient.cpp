@@ -1,4 +1,5 @@
 #include <QStateMachine>
+#include <QSignalTransition>
 #include <QMessageBox>
 #include <QDockWidget>
 #include <QSettings>
