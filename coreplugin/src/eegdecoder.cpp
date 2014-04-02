@@ -140,6 +140,14 @@ EegDecoder::EegDecoder(QObject *parent) :
 }
 
 /*!
+ * Destroy this EegDecoder.
+ */
+EegDecoder::~EegDecoder()
+{
+    delete d_ptr;
+}
+
+/*!
  * The device's current gain setting for all channels.
  */
 quint8 EegDecoder::gain() const
