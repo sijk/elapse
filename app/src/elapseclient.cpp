@@ -264,8 +264,6 @@ void ElapseClient::configure()
 
     // Configure pipeline to match
 
-    elements->dataSource->setProperty("host", proxy->deviceAddress());
-
     elements->sampleDecoders[Signal::EEG]->setProperty("gain", eegGain);
     elements->sampleDecoders[Signal::EEG]->setProperty("vref", eeg->vref());
     elements->sampleDecoders[Signal::EEG]->setProperty("nChannels", eeg->nChannels());

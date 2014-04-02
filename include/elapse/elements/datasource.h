@@ -19,10 +19,6 @@ namespace elapse {
 class DataSource : public QObject
 {
     Q_OBJECT
-
-    /*! The device's host name. */
-    Q_PROPERTY(QString host MEMBER _host)
-
 public:
     /*! Construct a new DataSource as a child of the given \a parent. */
     explicit DataSource(QObject *parent = nullptr) : QObject(parent) {}
@@ -67,9 +63,6 @@ public slots:
      * must implement this method.
     */
     virtual void stop() = 0;
-
-protected:
-    QString _host;
 };
 
 } // namespace elapse

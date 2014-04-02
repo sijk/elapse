@@ -80,18 +80,12 @@ void UdpDataSource::readAndEmit()
 
 /*!
  * Emit an error() message when an error occurs on one of the sockets.
- * The host and port will be appended to the error string.
  */
 void UdpDataSource::onSocketError(QAbstractSocket::SocketError err)
 {
     Q_UNUSED(err)
-    auto sock = qobject_cast<QAbstractSocket*>(sender());
-
-    quint16 port = sock->peerPort();
-    if (!port)
-        port = sock->localPort();
-
-    QString hostDesc = QStringLiteral(" [%1:%2]").arg(_host).arg(port);
-    emit error(sock->errorString() + hostDesc);
+    auto sock = qobject_cast<QUdpSocket*>(sender());
+    Q_ASSERT(sock);
+    emit error(sock->errorString());
 }
 
