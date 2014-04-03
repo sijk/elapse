@@ -3,7 +3,7 @@
 
 #include <elapse/plugin.h>
 #include "udpdatasource.h"
-#include "dummyeegsource.h"
+//#include "dummyeegsource.h"
 #include "eegdecoder.h"
 #include "videodecoder.h"
 #include "imudecoder.h"
@@ -33,7 +33,7 @@ public:
     {
         return ELAPSE_EXPORT_CLASSES(
             UdpDataSource,
-            DummyEegSource,
+//            DummyEegSource,
             EegDecoder,
             VideoDecoder,
             ImuDecoder,
