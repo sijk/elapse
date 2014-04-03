@@ -79,32 +79,17 @@ void DeviceProxy::connectInBackground()
     if (!connection.isConnected()) {
         qxtLog->error("Connect:", connection.lastError().message());
         emit error("Could not connect to the device.");
+        QDBusConnection::disconnectFromBus("elapse-bus");
         return;
     }
 
-    dev = new dbus::Device(connection, this);
-
-    // Check whether the root object is accessible on the bus
-    auto reply = dev->dbusInterface().isAccessible();
-    reply.waitForFinished();
-    if (reply.isError()) {
-        qxtLog->error("DeviceProxy: The root dbus object is not accessible");
-        qxtLog->error("Server:", reply.error().message());
-        qxtLog->error("Proxy:", dev->dbusInterface().lastError().message());
+    dev = new dbus::Device(connection);
+    if (!dev->checkConnected()) {
         emit error("The server is not running on the device.");
         return;
     }
 
-    dev->iface_battery = new dbus::Battery(connection, dev);
-    dev->iface_eeg = new dbus::EegAdc(connection, dev);
-
-    for (uint i = 0; i < dev->eeg()->nChannels(); i++) {
-        auto ch = new dbus::EegChannel(i, connection, dev->iface_eeg);
-        dev->iface_eeg->iface_channels.append(ch);
-    }
-
     emit connected();
-
     connectionChecker.start(2000);
 }
 

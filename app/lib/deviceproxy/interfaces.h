@@ -1,8 +1,10 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
+#include <QxtLogger>
+
 #include "common/qenum-utils.h"
-#include "common/interface/dbus_paths.h"
+#include "common/dbus/paths.h"
 
 #include "common/interface/device_iface.h"
 #include "common/interface/battery_iface.h"
@@ -14,8 +16,12 @@
 #include "eeg_interface.h"
 #include "imu_interface.h"
 
-class DeviceProxy;
 
+/*!
+ * The dbus namespace contains implementations of the interfaces in the
+ * \c iface namespace that pass calls through to QDBusAbstractInterface
+ * subclasses generated from the XML interface definitions.
+ */
 
 namespace dbus {
 
@@ -73,7 +79,10 @@ class EegAdc : public iface::EegAdc
 public:
     EegAdc(const QDBusConnection &connection, QObject *parent = 0) :
         d(dbus::service, dbus::eegPath, connection, parent)
-    { }
+    {
+        for (uint i = 0; i < nChannels(); i++)
+            iface_channels.append(new EegChannel(i, connection, this));
+    }
 
 public:
     iface::EegChannel *channel(uint i) { return iface_channels.at(i); }
@@ -97,7 +106,6 @@ public slots:
 private:
     org::nzbri::elapse::Eeg::EegAdc d;
     QList<dbus::EegChannel*> iface_channels;
-    friend class ::DeviceProxy;
 };
 
 
@@ -126,10 +134,29 @@ class Device : public iface::Device
     Q_OBJECT
 public:
     Device(const QDBusConnection &connection, QObject *parent = 0) :
-        d(dbus::service, dbus::rootPath, connection, parent)
+        d(dbus::service, dbus::rootPath, connection, parent),
+        iface_eeg(new EegAdc(connection, this)),
+        iface_imu(new Imu(connection, this)),
+        iface_battery(new Battery(connection, this))
     { }
 
-    org::nzbri::elapse::Device &dbusInterface() { return d; }
+    ~Device()
+    {
+        qxtLog->info("dbus::Device destroyed");
+    }
+
+    bool checkConnected()
+    {
+        auto reply = d.isAccessible();
+        reply.waitForFinished();
+        if (!reply.isError())
+            return true;
+
+        qxtLog->error("The root dbus object is not accessible");
+        qxtLog->error("Interface:", d.lastError().message());
+        qxtLog->error("Server:", reply.error().message());
+        return false;
+    }
 
 public:
     iface::EegAdc *eeg() { return iface_eeg; }
@@ -149,7 +176,6 @@ private:
 //    dbus::Camera *iface_camera;
     dbus::Imu *iface_imu;
     dbus::Battery *iface_battery;
-    friend class ::DeviceProxy;
 };
 
 } // namespace dbus
