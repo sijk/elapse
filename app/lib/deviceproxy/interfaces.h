@@ -30,7 +30,8 @@ class Imu : public iface::Imu
     Q_OBJECT
 public:
     Imu(const QDBusConnection &connection, QObject *parent = 0) :
-        d(dbus::service, dbus::imuPath, connection, parent)
+        iface::Imu(parent),
+        d(dbus::service, dbus::imuPath, connection)
     { }
 
 public:
@@ -55,7 +56,8 @@ class EegChannel : public iface::EegChannel
     Q_OBJECT
 public:
     EegChannel(uint i, const QDBusConnection &connection, QObject *parent = 0) :
-        d(dbus::service, dbus::eegChanPath.arg(i), connection, parent)
+        iface::EegChannel(parent),
+        d(dbus::service, dbus::eegChanPath.arg(i), connection)
     { }
 
 public:
@@ -78,7 +80,8 @@ class EegAdc : public iface::EegAdc
     Q_OBJECT
 public:
     EegAdc(const QDBusConnection &connection, QObject *parent = 0) :
-        d(dbus::service, dbus::eegPath, connection, parent)
+        iface::EegAdc(parent),
+        d(dbus::service, dbus::eegPath, connection)
     {
         for (uint i = 0; i < nChannels(); i++)
             iface_channels.append(new EegChannel(i, connection, this));
@@ -114,7 +117,8 @@ class Battery : public iface::Battery
     Q_OBJECT
 public:
     Battery(const QDBusConnection &connection, QObject *parent = 0) :
-        d(dbus::service, dbus::batteryPath, connection, parent)
+        iface::Battery(parent),
+        d(dbus::service, dbus::batteryPath, connection)
     { }
 
 public:
@@ -134,16 +138,12 @@ class Device : public iface::Device
     Q_OBJECT
 public:
     Device(const QDBusConnection &connection, QObject *parent = 0) :
-        d(dbus::service, dbus::rootPath, connection, parent),
+        iface::Device(parent),
+        d(dbus::service, dbus::rootPath, connection),
         iface_eeg(new EegAdc(connection, this)),
         iface_imu(new Imu(connection, this)),
         iface_battery(new Battery(connection, this))
     { }
-
-    ~Device()
-    {
-        qxtLog->info("dbus::Device destroyed");
-    }
 
     bool checkConnected()
     {

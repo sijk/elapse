@@ -22,6 +22,14 @@ DeviceProxy::DeviceProxy(QObject *parent) :
 }
 
 /*!
+ * Delete this DeviceProxy.
+ */
+DeviceProxy::~DeviceProxy()
+{
+    delete dev;
+}
+
+/*!
  * \return the D-Bus interface for the root device object.
  */
 iface::Device *DeviceProxy::device() const

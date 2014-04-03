@@ -24,6 +24,7 @@ class DeviceProxy : public QObject
     Q_OBJECT
 public:
     explicit DeviceProxy(QObject *parent = nullptr);
+    ~DeviceProxy();
 
     iface::Device *device() const;
 
