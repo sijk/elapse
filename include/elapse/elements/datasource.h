@@ -6,6 +6,10 @@ class QByteArray;
 
 namespace elapse {
 
+class OfflineDataSource;
+class ConfigManager;
+
+
 /*!
  * \brief The DataSource interface is implemented by elements that receive data
  * from the device over the network.
@@ -26,14 +30,16 @@ public:
     /*! Destroy this DataSource. */
     virtual ~DataSource() {}
 
+    OfflineDataSource *asOfflineSource();
+
 signals:
-    /*! Emitted when video \a data arrives from the device. */
+    /*! Emitted when video \a data is available. */
     void videoReady(QByteArray data);
 
-    /*! Emitted when EEG \a data arrives from the device. */
+    /*! Emitted when EEG \a data is available. */
     void eegReady(QByteArray data);
 
-    /*! Emitted when IMU \a data arrives from the device. */
+    /*! Emitted when IMU \a data is available. */
     void imuReady(QByteArray data);
 
     /*!
@@ -63,6 +69,37 @@ public slots:
      * must implement this method.
     */
     virtual void stop() = 0;
+};
+
+inline OfflineDataSource *DataSource::asOfflineSource()
+{
+    return qobject_cast<OfflineDataSource*>(this);
+}
+
+
+class OfflineDataSource : public DataSource
+{
+    Q_OBJECT
+public:
+    explicit OfflineDataSource(QObject *parent = nullptr) : DataSource(parent) {}
+
+    virtual ConfigManager *config() = 0;
+};
+
+
+class ConfigManagerPrivate;
+
+class ConfigManager
+{
+public:
+    ConfigManager();
+    virtual ~ConfigManager();
+
+    virtual QVariant get(const QString &subSystem, const QString &property) = 0;
+
+private:
+    ConfigManagerPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(ConfigManager)
 };
 
 } // namespace elapse

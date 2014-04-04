@@ -21,6 +21,10 @@
  * The dbus namespace contains implementations of the interfaces in the
  * \c iface namespace that pass calls through to QDBusAbstractInterface
  * subclasses generated from the XML interface definitions.
+ *
+ * \code
+ * Client → dbus::Foo (iface::Foo) → QDBusAbstractInterface → D-Bus
+ * \endcode
  */
 
 namespace dbus {

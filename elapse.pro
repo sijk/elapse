@@ -1,4 +1,6 @@
 TEMPLATE    = subdirs
-SUBDIRS	    = app coreplugin test
+SUBDIRS	    = app common coreplugin test
+
+app.depends = common
 
 include(doc/doc.pri)
