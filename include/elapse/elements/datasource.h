@@ -95,10 +95,12 @@ public:
     ConfigManager();
     virtual ~ConfigManager();
 
+    void exposeDeviceInterface();
+
     virtual QVariant get(const QString &subSystem, const QString &property) = 0;
 
 private:
-    ConfigManagerPrivate * const d_ptr;
+    ConfigManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(ConfigManager)
 };
 

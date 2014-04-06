@@ -24,12 +24,17 @@ elapse::ConfigManagerPrivate::ConfigManagerPrivate(ConfigManager *config) :
 }
 
 elapse::ConfigManager::ConfigManager() :
-    d_ptr(new ConfigManagerPrivate(this))
+    d_ptr(nullptr)
 {
 }
 
 elapse::ConfigManager::~ConfigManager()
 {
     delete d_ptr;
+}
+
+void elapse::ConfigManager::exposeDeviceInterface()
+{
+    d_ptr = new ConfigManagerPrivate(this);
 }
 

@@ -75,23 +75,35 @@ void DeviceProxy::connectTo(const QString &device)
  */
 void DeviceProxy::connectInBackground()
 {
-    QSettings settings;
-    uint port = settings.value("port", DEFAULT_PORT).toUInt();
-    QString address = QString("tcp:host=%1,port=%2").arg(deviceAddr).arg(port);
+    QDBusConnection bus("none");
 
-    if (!detectLocalAddressByConnectingTo(deviceAddr, port))
-        return;
+    if (deviceAddr == "localhost") {
+        localAddr = "localhost";
+        bus = QDBusConnection::sessionBus();
+        if (!bus.isConnected()) {
+            qxtLog->error("Connect:", bus.lastError().message());
+            emit error("Could not connect to the device.");
+            return;
+        }
+    } else {
+        QSettings settings;
+        uint port = settings.value("port", DEFAULT_PORT).toUInt();
+        QString address = QString("tcp:host=%1,port=%2").arg(deviceAddr).arg(port);
 
-    // Connect to the remote session bus
-    auto connection = QDBusConnection::connectToBus(address, "elapse-bus");
-    if (!connection.isConnected()) {
-        qxtLog->error("Connect:", connection.lastError().message());
-        emit error("Could not connect to the device.");
-        QDBusConnection::disconnectFromBus("elapse-bus");
-        return;
+        if (!detectLocalAddressByConnectingTo(deviceAddr, port))
+            return;
+
+        // Connect to the remote session bus
+        bus = QDBusConnection::connectToBus(address, "elapse-bus");
+        if (!bus.isConnected()) {
+            qxtLog->error("Connect:", bus.lastError().message());
+            emit error("Could not connect to the device.");
+            QDBusConnection::disconnectFromBus("elapse-bus");
+            return;
+        }
     }
 
-    dev = new dbus::Device(connection);
+    dev = new dbus::Device(bus);
     if (!dev->checkConnected()) {
         emit error("The server is not running on the device.");
         return;
