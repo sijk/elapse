@@ -12,22 +12,30 @@
 #include "common/interface/camera_iface.h"
 #include "common/interface/imu_iface.h"
 
+// Generated headers
 #include "elapse_interface.h"
 #include "eeg_interface.h"
 #include "imu_interface.h"
 
 
 /*!
- * The dbus namespace contains implementations of the interfaces in the
- * \c iface namespace that pass calls through to QDBusAbstractInterface
+ * \brief Adaptors between generated D-Bus interfaces and ::iface interfaces.
+ *
+ * The ::dbus namespace contains implementations of the interfaces in the
+ * ::iface namespace that pass calls through to QDBusAbstractInterface
  * subclasses generated from the XML interface definitions.
  *
  * \code
- * Client → dbus::Foo (iface::Foo) → QDBusAbstractInterface → D-Bus
+ * Client → dbus::Foo (iface::Foo) → org::nzbri::elapse::Foo (QDBusAbstractInterface) → D-Bus
  * \endcode
  */
 
 namespace dbus {
+
+/*!
+ * \brief The Imu class makes a generated IMU D-Bus interface look like
+ * an iface::Imu.
+ */
 
 class Imu : public iface::Imu
 {
@@ -55,6 +63,11 @@ private:
 };
 
 
+/*!
+ * \brief The EegChannel class makes a generated EEG channel D-Bus interface
+ * look like an iface::EegChannel.
+ */
+
 class EegChannel : public iface::EegChannel
 {
     Q_OBJECT
@@ -78,6 +91,11 @@ private:
     org::nzbri::elapse::Eeg::EegChannel d;
 };
 
+
+/*!
+ * \brief The EegAdc class makes a generated EEG ADC D-Bus interface look like
+ * an iface::EegAdc.
+ */
 
 class EegAdc : public iface::EegAdc
 {
@@ -116,6 +134,11 @@ private:
 };
 
 
+/*!
+ * \brief The Battery class makes a generated battery D-Bus interface look like
+ * a iface::Battery.
+ */
+
 class Battery : public iface::Battery
 {
     Q_OBJECT
@@ -137,6 +160,11 @@ private:
 };
 
 
+/*!
+ * \brief The Device class makes a generated device D-Bus interface look like
+ * a iface::Device.
+ */
+
 class Device : public iface::Device
 {
     Q_OBJECT
@@ -149,6 +177,10 @@ public:
         iface_battery(new Battery(connection, this))
     { }
 
+    /*!
+     * Call isAccessible() and log any D-Bus errors if it fails.
+     * \return whether the device is accessible.
+     */
     bool checkConnected()
     {
         auto reply = d.isAccessible();

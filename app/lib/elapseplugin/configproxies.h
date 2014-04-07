@@ -11,17 +11,23 @@
 
 
 /*!
+ * \brief Adaptors between a elapse::ConfigManager and ::iface interfaces.
+ *
  * The config namespace contains implementations of the interfaces in the
- * \c iface namespace that pass calls through to a elapse::ConfigManager.
+ * ::iface namespace that pass calls through to a elapse::ConfigManager.
  * Only calls to const methods are passed through; non-const methods are
  * marked as unreachable.
  *
  * \code
- * D-Bus → QDBusAbstractAdaptor → config::Foo (iface::Foo) → ConfigManager
+ * D-Bus → FooAdaptor (QDBusAbstractAdaptor) → config::Foo (iface::Foo) → ConfigManager
  * \endcode
  */
 
 namespace config {
+
+/*!
+ * \brief The Imu class makes a elapse::ConfigManager look like an iface::Imu.
+ */
 
 class Imu : public iface::Imu
 {
@@ -51,6 +57,11 @@ private:
 };
 
 
+/*!
+ * \brief The EegChannel class makes a elapse::ConfigManager look like
+ * an iface::EegChannel.
+ */
+
 class EegChannel : public iface::EegChannel
 {
     Q_OBJECT
@@ -79,14 +90,18 @@ private:
 };
 
 
+/*!
+ * \brief The EegAdc class makes a elapse::ConfigManager look like
+ * an iface::EegAdc.
+ */
+
 class EegAdc : public iface::EegAdc
 {
     Q_OBJECT
 public:
     EegAdc(elapse::ConfigManager *config, QObject *parent = 0) :
         iface::EegAdc(parent), config(config)
-    {
-    }
+    { }
 
 public:
     uint nChannels() const
@@ -128,6 +143,11 @@ private:
 };
 
 
+/*!
+ * \brief The Battery class makes a elapse::ConfigManager look like
+ * a iface::Battery.
+ */
+
 class Battery : public iface::Battery
 {
     Q_OBJECT
@@ -151,6 +171,11 @@ private:
     elapse::ConfigManager *config;
 };
 
+
+/*!
+ * \brief The Device class makes a elapse::ConfigManager look like
+ * a iface::Device.
+ */
 
 class Device : public iface::Device
 {
