@@ -12,10 +12,10 @@ HEADERS += \
     configproxies.h
 
 SOURCES += \
+    offlinedatasource.cpp \
     featurextractor.cpp \
     classifier.cpp \
-    datasinkdelegate.cpp \
-    configmanager.cpp
+    datasinkdelegate.cpp
 
 HEADERS += \
     elapse/sampletypes.h \

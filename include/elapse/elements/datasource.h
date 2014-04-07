@@ -7,7 +7,7 @@ class QByteArray;
 namespace elapse {
 
 class OfflineDataSource;
-class ConfigManager;
+class OfflineDataSourcePrivate;
 
 
 /*!
@@ -27,10 +27,7 @@ public:
     /*! Construct a new DataSource as a child of the given \a parent. */
     explicit DataSource(QObject *parent = nullptr) : QObject(parent) {}
 
-    /*! Destroy this DataSource. */
-    virtual ~DataSource() {}
-
-    OfflineDataSource *asOfflineSource();
+    bool isOfflineSource() const;
 
 signals:
     /*! Emitted when video \a data is available. */
@@ -71,28 +68,12 @@ public slots:
     virtual void stop() = 0;
 };
 
-inline OfflineDataSource *DataSource::asOfflineSource()
-{
-    return qobject_cast<OfflineDataSource*>(this);
-}
 
-
-class ConfigManagerPrivate;
 
 class ConfigManager
 {
 public:
-    ConfigManager();
-    virtual ~ConfigManager();
-
     virtual QVariant get(const QString &subSystem, const QString &property) = 0;
-
-protected:
-    void exposeDeviceInterface();
-
-private:
-    ConfigManagerPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(ConfigManager)
 };
 
 
@@ -100,7 +81,15 @@ class OfflineDataSource : public DataSource, public ConfigManager
 {
     Q_OBJECT
 public:
-    explicit OfflineDataSource(QObject *parent = nullptr) : DataSource(parent) {}
+    explicit OfflineDataSource(QObject *parent = nullptr);
+    ~OfflineDataSource();
+
+protected:
+    void exposeDeviceInterface();
+
+private:
+    OfflineDataSourcePrivate *d_ptr;
+    Q_DECLARE_PRIVATE(OfflineDataSource)
 };
 
 } // namespace elapse
