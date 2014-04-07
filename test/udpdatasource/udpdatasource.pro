@@ -11,3 +11,4 @@ SOURCES += udpdatasource.cpp
 HEADERS += udpdatasource.h \
            elapse/elements/datasource.h
 
+linkSharedlib(app, elapseplugin, true)

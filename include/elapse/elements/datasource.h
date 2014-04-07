@@ -77,16 +77,6 @@ inline OfflineDataSource *DataSource::asOfflineSource()
 }
 
 
-class OfflineDataSource : public DataSource
-{
-    Q_OBJECT
-public:
-    explicit OfflineDataSource(QObject *parent = nullptr) : DataSource(parent) {}
-
-    virtual ConfigManager *config() = 0;
-};
-
-
 class ConfigManagerPrivate;
 
 class ConfigManager
@@ -95,13 +85,22 @@ public:
     ConfigManager();
     virtual ~ConfigManager();
 
-    void exposeDeviceInterface();
-
     virtual QVariant get(const QString &subSystem, const QString &property) = 0;
+
+protected:
+    void exposeDeviceInterface();
 
 private:
     ConfigManagerPrivate *d_ptr;
     Q_DECLARE_PRIVATE(ConfigManager)
+};
+
+
+class OfflineDataSource : public DataSource, public ConfigManager
+{
+    Q_OBJECT
+public:
+    explicit OfflineDataSource(QObject *parent = nullptr) : DataSource(parent) {}
 };
 
 } // namespace elapse

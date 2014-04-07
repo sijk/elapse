@@ -12,50 +12,37 @@ using ::testing::Return;
 using ::testing::AnyNumber;
 
 
-class MockConfigManager : public elapse::ConfigManager
-{
-public:
-    MockConfigManager()
-    {
-        EXPECT_CALL(*this, get(QString("eeg"),QString("nChannels")))
-                .WillRepeatedly(Return(QVariant::fromValue(8)));
-    }
-
-    MOCK_METHOD2(get, QVariant(const QString &, const QString &));
-};
-
-
 class MockOfflineDataSource : public elapse::OfflineDataSource
 {
 public:
     MockOfflineDataSource()
     {
-        cfg.exposeDeviceInterface();
+        EXPECT_CALL(*this, get(QString("eeg"),QString("nChannels")))
+                .WillRepeatedly(Return(QVariant::fromValue(8)));
+        exposeDeviceInterface();
     }
 
     MOCK_METHOD0(start, void());
     MOCK_METHOD0(stop, void());
-
-    MockConfigManager cfg;
-    elapse::ConfigManager *config() { return &cfg; }
+    MOCK_METHOD2(get, QVariant(const QString &, const QString &));
 };
 
 
 TEST(ConfigDBusTest, GetConfigDirectly)
 {
     MockOfflineDataSource src;
-    EXPECT_CALL(src.cfg, get(QString("imu"),QString("sampleRate")))
+    EXPECT_CALL(src, get(QString("imu"),QString("sampleRate")))
             .WillOnce(Return(QVariant::fromValue(42)));
 
-    EXPECT_EQ(src.config()->get("imu", "sampleRate").toInt(), 42);
+    EXPECT_EQ(src.get("imu", "sampleRate").toInt(), 42);
 }
 
 TEST(ConfigDBusTest, GetConfigViaDBus)
 {
     MockOfflineDataSource src;
-    EXPECT_CALL(src.cfg, get(QString("imu"),QString("sampleRate")))
+    EXPECT_CALL(src, get(QString("imu"),QString("sampleRate")))
             .WillOnce(Return(QVariant::fromValue(42)));
-    EXPECT_CALL(src.cfg, get(QString("eeg/channel/0"),QString("gain")))
+    EXPECT_CALL(src, get(QString("eeg/channel/0"),QString("gain")))
             .WillOnce(Return(QVariant::fromValue(42)));
 
     DeviceProxy proxy;
