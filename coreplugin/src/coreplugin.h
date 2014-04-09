@@ -11,6 +11,7 @@
 #include "dummyvideofeatureextractor.h"
 #include "dummyimufeatureextractor.h"
 #include "dummyclassifier.h"
+#include "blackholedatasinkdelegate.h"
 #include "simplerawdatasinkdelegate.h"
 
 
@@ -41,6 +42,7 @@ public:
             DummyVideoFeatureExtractor,
             DummyImuFeatureExtractor,
             DummyClassifier,
+            BlackHoleDataSinkDelegate,
             SimpleRawDataSinkDelegate
         );
     }
