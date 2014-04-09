@@ -10,8 +10,7 @@
  *
  * The config namespace contains implementations of the interfaces in the
  * ::iface namespace that pass calls through to a elapse::ConfigManager.
- * Only calls to const methods are passed through; non-const methods are
- * marked as unreachable.
+ * Only calls to const methods are passed through; non-const methods are NOPs.
  *
  * \code
  * D-Bus → FooAdaptor (QDBusAbstractAdaptor) → config::Foo (iface::Foo) → ConfigManager
@@ -39,13 +38,13 @@ public:
     { return AccRange(config->get("imu", "accRange").toInt()); }
     GyrRange gyrRange() const
     { return GyrRange(config->get("imu", "gyrRange").toInt()); }
-    void setSampleRate(uint hz) { Q_UNUSED(hz) Q_UNREACHABLE(); }
-    void setAccRange(AccRange range) { Q_UNUSED(range) Q_UNREACHABLE(); }
-    void setGyrRange(GyrRange range) { Q_UNUSED(range) Q_UNREACHABLE(); }
+    void setSampleRate(uint hz) { Q_UNUSED(hz) }
+    void setAccRange(AccRange range) { Q_UNUSED(range) }
+    void setGyrRange(GyrRange range) { Q_UNUSED(range) }
 
 public slots:
-    void start() { Q_UNREACHABLE(); }
-    void stop() { Q_UNREACHABLE(); }
+    void start() { }
+    void stop() { }
 
 private:
     elapse::ConfigManager *config;
@@ -75,9 +74,9 @@ public:
     }
     bool enabled() const
     { return config->get(chan, "enabled").toBool(); }
-    void setGain(Gain gain) { Q_UNUSED(gain) Q_UNREACHABLE(); }
-    void setInputMux(InputMux mux) { Q_UNUSED(mux) Q_UNREACHABLE(); }
-    void setEnabled(bool enabled) { Q_UNUSED(enabled) Q_UNREACHABLE(); }
+    void setGain(Gain gain) { Q_UNUSED(gain) }
+    void setInputMux(InputMux mux) { Q_UNUSED(mux) }
+    void setEnabled(bool enabled) { Q_UNUSED(enabled) }
 
 private:
     elapse::ConfigManager *config;
@@ -121,16 +120,15 @@ public:
         return iface_channels.at(i);
     }
 
-    void setSamplesPerChunk(uint samples) { Q_UNUSED(samples) Q_UNREACHABLE(); }
-    void setSampleRate(SampleRate rate) { Q_UNUSED(rate) Q_UNREACHABLE(); }
-    void setUseRefElec(bool use) { Q_UNUSED(use) Q_UNREACHABLE(); }
+    void setSamplesPerChunk(uint samples) { Q_UNUSED(samples) }
+    void setSampleRate(SampleRate rate) { Q_UNUSED(rate) }
+    void setUseRefElec(bool use) { Q_UNUSED(use) }
 
 public slots:
-    void start() { Q_UNREACHABLE(); }
-    void stop() { Q_UNREACHABLE(); }
-    void reset() { Q_UNREACHABLE(); }
-    void setAllChannels(const QVariantMap &properties)
-    { Q_UNUSED(properties) Q_UNREACHABLE(); }
+    void start() { }
+    void stop() { }
+    void reset() { }
+    void setAllChannels(const QVariantMap &properties) { Q_UNUSED(properties) }
 
 private:
     elapse::ConfigManager *config;
@@ -160,7 +158,7 @@ public:
     { return config->get("battery", "isLow").toBool(); }
     double voltage() const
     { return config->get("battery", "voltage").toDouble(); }
-    void setLowThresh(double value) { Q_UNUSED(value) Q_UNREACHABLE(); }
+    void setLowThresh(double value) { Q_UNUSED(value) }
 
 private:
     elapse::ConfigManager *config;
@@ -191,10 +189,9 @@ public:
     iface::Battery *battery() { return iface_battery; }
 
 public slots:
-    void setClientAddress(const QString &address)
-    { Q_UNUSED(address) Q_UNREACHABLE(); }
-    void startStreaming() { Q_UNREACHABLE(); }
-    void stopStreaming() { Q_UNREACHABLE(); }
+    void setClientAddress(const QString &address) { Q_UNUSED(address) }
+    void startStreaming() { }
+    void stopStreaming() { }
 
 private:
     elapse::ConfigManager *config;
