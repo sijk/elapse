@@ -284,6 +284,8 @@ void ElapseClient::configure()
 
     connect(ui->actionSetSessionData, SIGNAL(triggered()),
             elements->dataSink, SLOT(getSessionData()));
+
+    pipeline->dataSink()->saveDeviceConfig(proxy->readDeviceConfig());
 }
 
 void ElapseClient::unconfigure()

@@ -31,16 +31,17 @@ public:
     explicit DataSink(QObject *parent = nullptr);
 
     void setDelegate(elapse::DataSinkDelegate *delegate);
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
 
     bool start();
     void stop();
 
+public slots:
     void setSaveData(bool save);
     void setSaveSamples(bool save);
     void setSaveFeatureVectors(bool save);
     void setSaveCognitiveState(bool save);
 
-public slots:
     void onData(QByteArray data);
     void onSample(elapse::SamplePtr sample);
     void onFeatureVector(elapse::FeatureVector featureVector);
@@ -53,6 +54,7 @@ private:
     bool saveCogStateEnabled;
 
     QPointer<elapse::DataSinkDelegate> delegate;
+    QMap<QString, QVariantMap> deviceConfig;
 };
 
 
