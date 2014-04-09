@@ -31,6 +31,8 @@ public:
     QString deviceAddress() const;
     QString localAddress() const;
 
+    QMap<QString, QVariantMap> readDeviceConfig() const;
+
 public slots:
     void connectTo(const QString &hostname);
     void disconnect();

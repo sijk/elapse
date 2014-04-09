@@ -58,6 +58,52 @@ QString DeviceProxy::localAddress() const
 }
 
 /*!
+ * \return the device's configuration; i.e., the values of all of the
+ * properties of all of the device's subsystems.
+ *
+ * The result is structured like:
+ * \code
+ * { "subSystem1", {{ "prop1", value1 },
+ *                  { "prop2", value2 }},
+ *   "subSystem2", ... }
+ * \endcode
+ */
+QMap<QString, QVariantMap> DeviceProxy::readDeviceConfig() const
+{
+    Q_ASSERT(dev);
+    QMap<QString, QVariantMap> config;
+
+    auto getProperties = [](const QObject *obj) {
+        QVariantMap props;
+        if (!obj)
+            return props;
+
+        for (int i = 0; i < obj->metaObject()->propertyCount(); i++) {
+            auto prop = obj->metaObject()->property(i);
+            if (prop.isReadable() && qstrcmp(prop.name(), "objectName")) {
+                qxtLog->trace(prop.name(), prop.read(obj));
+                props.insert(prop.name(), prop.read(obj));
+            }
+        }
+        return props;
+    };
+
+    auto readConfig = [&](const QString &subSystem, const QObject *obj) {
+        qxtLog->trace("---", subSystem);
+        config.insert(subSystem, getProperties(obj));
+    };
+
+    readConfig("battery", dev->battery());
+    readConfig("imu", dev->imu());
+    readConfig("camera", dev->camera());
+    readConfig("eeg", dev->eeg());
+    for (uint i = 0; i < dev->eeg()->nChannels(); i++)
+        readConfig(QString("eeg/channel/%1").arg(i), dev->eeg()->channel(i));
+
+    return config;
+}
+
+/*!
  * Asynchronously connect to the \a device. The connected() signal will be
  * emitted if connecting succeeds, otherwise an error() will be emitted.
  *
