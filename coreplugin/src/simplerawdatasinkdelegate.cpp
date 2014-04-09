@@ -72,6 +72,15 @@ QString SimpleRawDataSinkDelegate::getDirectory() const
 }
 
 /*!
+ * Dump the \a config to the currently-open data file via a QDataStream.
+ */
+void SimpleRawDataSinkDelegate::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
+{
+    Q_ASSERT(file.isOpen());
+    stream << config;
+}
+
+/*!
  * Dump the \a signalType and \a data to the currently-open data file
  * via a QDataStream.
  */

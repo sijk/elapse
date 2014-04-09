@@ -30,6 +30,7 @@ public:
     bool needsNewSessionData();
     bool getSessionData();
 
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
     void saveData(elapse::Signal::Type signalType, QByteArray data);
 
 protected:
