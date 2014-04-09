@@ -44,6 +44,7 @@ private slots:
     void warnBatteryLow();
     void maybeAutoConnect();
     void loadElementWidgets(ElementSetPtr elements);
+    void fillDeviceAddress();
     void configure();
     void unconfigure();
 

@@ -42,8 +42,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
 
     addDockWidgetFrom(batteryMonitor);
 
-    QString defaultAddress = settings.value("host", DEFAULT_ADDR).toString();
-    ui->deviceAddress->setText(defaultAddress);
     connect(ui->deviceAddress, SIGNAL(returnPressed()),
             ui->actionConnect, SLOT(trigger()));
 
@@ -71,6 +69,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
             pipeline, SLOT(setElements(ElementSetPtr)));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             SLOT(loadElementWidgets(ElementSetPtr)));
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+            SLOT(fillDeviceAddress()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(proxy, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -168,6 +168,7 @@ void ElapseClient::buildStateMachine()
             [=]{ proxy->connectTo(ui->deviceAddress->text()); });
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
+    connecting->assignProperty(ui->actionPlugins, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
     connecting->addTransition(proxy, SIGNAL(error(QString)), disconnected);
     connecting->addTransition(proxy, SIGNAL(connected()), connected);
@@ -211,6 +212,31 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 {
     foreach (QObject *element, elements->allElements())
         addDockWidgetFrom(element);
+}
+
+/*!
+ * Fill in the device address entry appropriately depending on whether the
+ * DataSource::isOfflineSource().
+ */
+void ElapseClient::fillDeviceAddress()
+{
+    auto elements = pipeline->elements();
+    Q_ASSERT(elements);
+
+    if (elements->dataSource->isOfflineSource()) {
+        qxtLog->debug(elements->dataSource->metaObject()->className(),
+                      "is an offline data source");
+        ui->deviceAddress->setText("localhost");
+        ui->deviceAddress->setEnabled(false);
+    } else {
+        qxtLog->debug(elements->dataSource->metaObject()->className(),
+                      "is an online data source");
+        auto defaultAddr = QSettings().value("host", DEFAULT_ADDR).toString();
+        auto address = ui->deviceAddress->text();
+        if (address.isEmpty() || address == "localhost")
+            ui->deviceAddress->setText(defaultAddr);
+        ui->deviceAddress->setEnabled(true);
+    }
 }
 
 /*!
