@@ -25,6 +25,18 @@ public:
 };
 
 
+// Need to use this class to call DataSink::onData() since that slot
+// inspects the name of the signal that triggered it.
+class FakeDataSource : public QObject
+{
+    Q_OBJECT
+signals:
+    void eegReady(QByteArray data);
+    void videoReady(QByteArray data);
+    void imuReady(QByteArray data);
+};
+
+
 TEST(DataSinkTest, StartSucceedsIfSessionDataNotNeeded)
 {
     MockDataSinkDelegate d;
@@ -110,7 +122,7 @@ TEST(DataSinkTest, NewSessionDataEachTime)
     EXPECT_TRUE(sink.start());
 }
 
-TEST(DataSinktest, DelegateSaveNotCalledWhenDisabled)
+TEST(DataSinkTest, DelegateSaveNotCalledWhenDisabled)
 {
     MockDataSinkDelegate d;
     EXPECT_CALL(d, saveData(_,_)).Times(0);
@@ -132,26 +144,29 @@ TEST(DataSinktest, DelegateSaveNotCalledWhenDisabled)
     sink.onCognitiveState(elapse::CognitiveState(0));
 }
 
-TEST(DataSinktest, DelegateSaveCalledWhenEnabled)
+TEST(DataSinkTest, DelegateSaveCalledWhenEnabled)
 {
     MockDataSinkDelegate d;
-//    EXPECT_CALL(d, saveData(_,_)).Times(1);
-    EXPECT_CALL(d, saveSample(_,_)).Times(1);
+    EXPECT_CALL(d, saveData(elapse::Signal::EEG,_)).Times(1);
+    EXPECT_CALL(d, saveSample(elapse::Signal::EEG,_)).Times(1);
     EXPECT_CALL(d, saveFeatureVector(_)).Times(1);
     EXPECT_CALL(d, saveCognitiveState(_)).Times(1);
 
     DataSink sink;
+    FakeDataSource src;
     sink.setDelegate(&d);
+    sink.connect(&src, SIGNAL(eegReady(QByteArray)), SLOT(onData(QByteArray)));
 
     sink.setSaveData(true);
     sink.setSaveSamples(true);
     sink.setSaveFeatureVectors(true);
     sink.setSaveCognitiveState(true);
 
-    // Can't test onData() since it must only be called by a DataSource signal
-//    sink.onData("");
+    emit src.eegReady("");
     sink.onSample(elapse::SamplePtr(new elapse::EegSample()));
     sink.onFeatureVector(elapse::FeatureVector(elapse::Signal::EEG, 0));
     sink.onCognitiveState(elapse::CognitiveState(0));
 }
+
+#include "datasink_test.moc"
 
