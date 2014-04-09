@@ -6,6 +6,6 @@ QT      += dbus network
 SOURCES += deviceproxy.cpp
 
 HEADERS += deviceproxy.h \
-           interfaces.h
+           dbus_interfaces.h
 
 DBUS_INTERFACES = $$ELAPSE_DBUS_XML

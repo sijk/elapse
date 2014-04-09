@@ -1,12 +1,7 @@
 #ifndef CONFIGPROXIES_H
 #define CONFIGPROXIES_H
 
-#include "common/interface/device_iface.h"
-#include "common/interface/battery_iface.h"
-#include "common/interface/eegadc_iface.h"
-#include "common/interface/camera_iface.h"
-#include "common/interface/imu_iface.h"
-
+#include "common/interfaces.h"
 #include "elapse/elements/datasource.h"
 
 

@@ -4,9 +4,8 @@
 #include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QxtLogger>
+#include "dbus_interfaces.h"
 #include "deviceproxy.h"
-
-#include "interfaces.h"
 
 #define DEFAULT_PORT    9000
 

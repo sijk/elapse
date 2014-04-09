@@ -2,15 +2,9 @@
 #define INTERFACES_H
 
 #include <QxtLogger>
-
 #include "common/qenum-utils.h"
 #include "common/dbus/paths.h"
-
-#include "common/interface/device_iface.h"
-#include "common/interface/battery_iface.h"
-#include "common/interface/eegadc_iface.h"
-#include "common/interface/camera_iface.h"
-#include "common/interface/imu_iface.h"
+#include "common/interfaces.h"
 
 // Generated headers
 #include "elapse_interface.h"
