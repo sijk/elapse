@@ -52,6 +52,19 @@ ElapseClient::ElapseClient(QWidget *parent) :
     connect(logView, SIGNAL(visibilityChanged(bool)),
             ui->actionLogView, SLOT(setChecked(bool)));
 
+    connect(ui->actionSaveRawData, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveData(bool)));
+    connect(ui->actionSaveSamples, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveSamples(bool)));
+    connect(ui->actionSaveFeatureVectors, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveFeatureVectors(bool)));
+    connect(ui->actionSaveCognitiveState, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveCognitiveState(bool)));
+    ui->actionSaveRawData->setChecked(true);
+    ui->actionSaveSamples->setChecked(true);
+    ui->actionSaveFeatureVectors->setChecked(true);
+    ui->actionSaveCognitiveState->setChecked(true);
+
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
@@ -175,6 +188,7 @@ void ElapseClient::buildStateMachine()
 
     active->assignProperty(ui->actionCapture, "text", "Stop");
     active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
+    active->assignProperty(ui->actionSetSessionData, "enabled", false);
     connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
     connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
     // We need to delay evaluation of proxy->device() by wrapping it in a

@@ -14,6 +14,9 @@ void elapse::DataSinkDelegate::saveData(Signal::Type signalType, QByteArray data
 {
     Q_UNUSED(signalType)
     Q_UNUSED(data)
+    static bool warned = false;
+    if (warned) return;
+    warned = true;
     qxtLog->warning("DataSink: Raw data saving is enabled but",
                     metaObject()->className(),
                     "doesn't support saving raw data.");
@@ -24,6 +27,9 @@ void elapse::DataSinkDelegate::saveSample(Signal::Type signalType,
 {
     Q_UNUSED(signalType)
     Q_UNUSED(sample)
+    static bool warned = false;
+    if (warned) return;
+    warned = true;
     qxtLog->warning("DataSink: Sample saving is enabled but",
                     metaObject()->className(),
                     "doesn't support saving samples.");
@@ -32,6 +38,9 @@ void elapse::DataSinkDelegate::saveSample(Signal::Type signalType,
 void elapse::DataSinkDelegate::saveFeatureVector(elapse::FeatureVector featureVector)
 {
     Q_UNUSED(featureVector)
+    static bool warned = false;
+    if (warned) return;
+    warned = true;
     qxtLog->warning("DataSink: Feature vector saving is enabled but",
                     metaObject()->className(),
                     "doesn't support saving feature vectors.");
@@ -40,6 +49,9 @@ void elapse::DataSinkDelegate::saveFeatureVector(elapse::FeatureVector featureVe
 void elapse::DataSinkDelegate::saveCognitiveState(elapse::CognitiveState state)
 {
     Q_UNUSED(state)
+    static bool warned = false;
+    if (warned) return;
+    warned = true;
     qxtLog->warning("DataSink: Cognitive state saving is enabled but",
                     metaObject()->className(),
                     "doesn't support saving cognitive state.");

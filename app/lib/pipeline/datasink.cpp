@@ -9,15 +9,15 @@ using elapse::Signal;
  */
 DataSink::DataSink(QObject *parent) :
     QObject(parent),
-    saveDataEnabled(false),
-    saveSamplesEnabled(false),
-    saveFeaturesEnabled(false),
-    saveCogStateEnabled(false)
+    saveDataEnabled(true),
+    saveSamplesEnabled(true),
+    saveFeaturesEnabled(true),
+    saveCogStateEnabled(true)
 {
 }
 
 /*!
- * Set the current \a delegate for storing data to disk.
+ * Set the \a delegate for storing data to disk.
  */
 void DataSink::setDelegate(elapse::DataSinkDelegate *delegate)
 {
@@ -39,7 +39,8 @@ void DataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
  * and calls elapse::DataSinkDelegate::getSessionData() if necessary.
  *
  * If the delegate was started succssfully, the device configuration is passed
- * to the delegate to be saved (see saveDeviceConfig()).
+ * to the delegate to be saved. This means that setDeviceConfig() must be
+ * called before start().
  *
  * \return whether the delegate was able to retrieve any necessary session data
  * and start successfully.
