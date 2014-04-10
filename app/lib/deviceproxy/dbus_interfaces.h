@@ -98,13 +98,20 @@ public:
     EegAdc(const QDBusConnection &connection, QObject *parent = 0) :
         iface::EegAdc(parent),
         d(dbus::service, dbus::eegPath, connection)
-    {
-        for (uint i = 0; i < nChannels(); i++)
-            iface_channels.append(new EegChannel(i, connection, this));
-    }
+    { }
+
+    ~EegAdc() { qDeleteAll(iface_channels); }
 
 public:
-    iface::EegChannel *channel(uint i) { return iface_channels.at(i); }
+    iface::EegChannel *channel(uint i)
+    {
+        if (iface_channels.isEmpty()) {
+            uint n = nChannels();
+            for (uint i = 0; i < n; i++)
+                iface_channels.append(new EegChannel(i, d.connection()));
+        }
+        return iface_channels.at(i);
+    }
     uint nChannels() const { return d.nChannels(); }
     uint bytesPerChunk() const { return d.bytesPerChunk(); }
     double vref() const { return d.vref(); }

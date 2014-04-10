@@ -114,7 +114,8 @@ public:
     iface::EegChannel *channel(uint i)
     {
         if (iface_channels.empty()) {
-            for (uint i = 0; i < nChannels(); i++)
+            uint n = nChannels();
+            for (uint i = 0; i < n; i++)
                 iface_channels.append(new EegChannel(i, config, this));
         }
         return iface_channels.at(i);

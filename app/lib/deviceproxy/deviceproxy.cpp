@@ -96,7 +96,8 @@ QMap<QString, QVariantMap> DeviceProxy::readDeviceConfig() const
     readConfig("imu", dev->imu());
     readConfig("camera", dev->camera());
     readConfig("eeg", dev->eeg());
-    for (uint i = 0; i < dev->eeg()->nChannels(); i++)
+    uint nChannels = dev->eeg()->nChannels();
+    for (uint i = 0; i < nChannels; i++)
         readConfig(QString("eeg/channel/%1").arg(i), dev->eeg()->channel(i));
 
     return config;
