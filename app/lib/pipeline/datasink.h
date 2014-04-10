@@ -16,10 +16,10 @@ namespace elapse { class DataSinkDelegate; }
  * these connections, the DataSink passes that data on to a
  * elapse::DataSinkDelegate which handles the actual saving to disk.
  *
- * By default, the DataSink will not pass any data to its
- * elapse::DataSinkDelegate. You must individually enable which types of
- * data (raw bytes, Sample%s, FeatureVector%s, CognitiveState) you want
- * to be saved by calling the setSaveXXX() methods.
+ * By default, the DataSink will pass all data to its elapse::DataSinkDelegate.
+ * You can individually disable any types of data (raw bytes, Sample%s,
+ * FeatureVector%s, CognitiveState) you don't want to be saved by calling the
+ * setSaveXXX() methods.
  *
  * \ingroup signal-pipeline
  */
@@ -31,16 +31,17 @@ public:
     explicit DataSink(QObject *parent = nullptr);
 
     void setDelegate(elapse::DataSinkDelegate *delegate);
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
 
     bool start();
     void stop();
 
+public slots:
     void setSaveData(bool save);
     void setSaveSamples(bool save);
     void setSaveFeatureVectors(bool save);
     void setSaveCognitiveState(bool save);
 
-public slots:
     void onData(QByteArray data);
     void onSample(elapse::SamplePtr sample);
     void onFeatureVector(elapse::FeatureVector featureVector);

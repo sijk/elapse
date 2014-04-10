@@ -3,7 +3,8 @@
 
 #include <elapse/plugin.h>
 #include "udpdatasource.h"
-#include "dummyeegsource.h"
+#include "simplerawdatasource.h"
+//#include "dummyeegsource.h"
 #include "eegdecoder.h"
 #include "videodecoder.h"
 #include "imudecoder.h"
@@ -11,6 +12,7 @@
 #include "dummyvideofeatureextractor.h"
 #include "dummyimufeatureextractor.h"
 #include "dummyclassifier.h"
+#include "blackholedatasinkdelegate.h"
 #include "simplerawdatasinkdelegate.h"
 
 
@@ -33,7 +35,8 @@ public:
     {
         return ELAPSE_EXPORT_CLASSES(
             UdpDataSource,
-            DummyEegSource,
+            SimpleRawDataSource,
+//            DummyEegSource,
             EegDecoder,
             VideoDecoder,
             ImuDecoder,
@@ -41,6 +44,7 @@ public:
             DummyVideoFeatureExtractor,
             DummyImuFeatureExtractor,
             DummyClassifier,
+            BlackHoleDataSinkDelegate,
             SimpleRawDataSinkDelegate
         );
     }

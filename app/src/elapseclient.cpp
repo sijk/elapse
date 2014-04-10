@@ -1,4 +1,5 @@
 #include <QStateMachine>
+#include <QSignalTransition>
 #include <QMessageBox>
 #include <QDockWidget>
 #include <QSettings>
@@ -24,7 +25,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     logView(new LogView(this)),
     pluginManager(new PluginManager(this)),
     pipeline(new Pipeline(this)),
-    device(new DeviceProxy(this)),
+    proxy(new DeviceProxy(this)),
     batteryMonitor(new BatteryMonitor(this))
 {
     ui->setupUi(this);
@@ -41,8 +42,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
 
     addDockWidgetFrom(batteryMonitor);
 
-    QString defaultAddress = settings.value("host", DEFAULT_ADDR).toString();
-    ui->deviceAddress->setText(defaultAddress);
     connect(ui->deviceAddress, SIGNAL(returnPressed()),
             ui->actionConnect, SLOT(trigger()));
 
@@ -51,15 +50,30 @@ ElapseClient::ElapseClient(QWidget *parent) :
     connect(logView, SIGNAL(visibilityChanged(bool)),
             ui->actionLogView, SLOT(setChecked(bool)));
 
+    connect(ui->actionSaveRawData, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveData(bool)));
+    connect(ui->actionSaveSamples, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveSamples(bool)));
+    connect(ui->actionSaveFeatureVectors, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveFeatureVectors(bool)));
+    connect(ui->actionSaveCognitiveState, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveCognitiveState(bool)));
+    ui->actionSaveRawData->setChecked(true);
+    ui->actionSaveSamples->setChecked(true);
+    ui->actionSaveFeatureVectors->setChecked(true);
+    ui->actionSaveCognitiveState->setChecked(true);
+
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(selectPluginsToLoad()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             pipeline, SLOT(setElements(ElementSetPtr)));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             SLOT(loadElementWidgets(ElementSetPtr)));
+    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+            SLOT(fillDeviceAddress()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
-    connect(device, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
+    connect(proxy, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
 
     buildStateMachine();
 }
@@ -151,12 +165,13 @@ void ElapseClient::buildStateMachine()
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
 
     connect(connecting, &QState::entered,
-            [=]{ device->connectTo(ui->deviceAddress->text()); });
+            [=]{ proxy->connectTo(ui->deviceAddress->text()); });
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
+    connecting->assignProperty(ui->actionPlugins, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
-    connecting->addTransition(device, SIGNAL(error(QString)), disconnected);
-    connecting->addTransition(device, SIGNAL(connected()), connected);
+    connecting->addTransition(proxy, SIGNAL(error(QString)), disconnected);
+    connecting->addTransition(proxy, SIGNAL(connected()), connected);
 
     connected->setInitialState(idle);
     connected->assignProperty(ui->centralWidget, "visible", false);
@@ -165,21 +180,18 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->connectedToolBar, "visible", true);
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
-    connected->addTransition(device, SIGNAL(error(QString)), disconnected);
+    connected->addTransition(proxy, SIGNAL(error(QString)), disconnected);
     connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), SLOT(unconfigure()));
-    connect(connected, SIGNAL(exited()), device, SLOT(disconnect()));
+    connect(connected, SIGNAL(exited()), proxy, SLOT(disconnect()));
 
     auto beginCapture = idle->addTransition(ui->actionCapture, SIGNAL(triggered()), active);
 
     active->assignProperty(ui->actionCapture, "text", "Stop");
     active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
-    connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
-    connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
-    // We need to delay evaluation of device->device() by wrapping it in a
-    // closure since it is not valid until the device is connected.
-    connect(active, &QState::entered, [=]{ device->device()->startStreaming(); });
-    connect(active, &QState::exited, [=]{ device->device()->stopStreaming(); });
+    active->assignProperty(ui->actionSetSessionData, "enabled", false);
+    connect(active, SIGNAL(entered()), SLOT(start()));
+    connect(active, SIGNAL(exited()), SLOT(stop()));
     connect(beginCapture, SIGNAL(triggered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     connect(active, SIGNAL(exited()), ui->spinnerStarting, SLOT(stop()));
@@ -196,6 +208,31 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 {
     foreach (QObject *element, elements->allElements())
         addDockWidgetFrom(element);
+}
+
+/*!
+ * Fill in the device address entry appropriately depending on whether the
+ * DataSource::isOfflineSource().
+ */
+void ElapseClient::fillDeviceAddress()
+{
+    auto elements = pipeline->elements();
+    Q_ASSERT(elements);
+
+    if (elements->dataSource->isOfflineSource()) {
+        qxtLog->debug(elements->dataSource->metaObject()->className(),
+                      "is an offline data source");
+        ui->deviceAddress->setText("localhost");
+        ui->deviceAddress->setEnabled(false);
+    } else {
+        qxtLog->debug(elements->dataSource->metaObject()->className(),
+                      "is an online data source");
+        auto defaultAddr = QSettings().value("host", DEFAULT_ADDR).toString();
+        auto address = ui->deviceAddress->text();
+        if (address.isEmpty() || address == "localhost")
+            ui->deviceAddress->setText(defaultAddr);
+        ui->deviceAddress->setEnabled(true);
+    }
 }
 
 /*!
@@ -236,58 +273,79 @@ bool ElapseClient::dockWidgetsVisible() const
 
 void ElapseClient::setDockWidgetsVisible(bool visible)
 {
+    bool offlineSource = pipeline->elements()->dataSource->isOfflineSource();
     auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
-    foreach (auto dockWidget, dockWidgets)
-        dockWidget->setVisible(visible);
+    foreach (auto dockWidget, dockWidgets) {
+        if (dockWidget->windowTitle() == "BatteryMonitor")
+            dockWidget->setVisible(visible && !offlineSource);
+        else
+            dockWidget->setVisible(visible);
+    }
 }
 
 void ElapseClient::configure()
 {
-    auto elements = pipeline->elements();
-    Q_ASSERT(elements);
     QSettings settings;
 
-    // Configure hardware
+    // Configure the device
 
     uint eegSampleRate = settings.value("eeg/samplerate", 250).toUInt();
     uint eegChunkSize  = settings.value("eeg/chunksize", 20).toUInt();
     uint eegGain       = settings.value("eeg/gain", 24).toUInt();
 
-    device->eeg()->setSampleRate(eegSampleRate);
-    device->eeg()->setSamplesPerChunk(eegChunkSize);
-    device->eeg()->setUseRefElec(true);
-    device->eeg()->setAllChannels({{"enabled", true},
-                                   {"gain", eegGain},
-                                   {"inputMux", "Normal"}});
+    auto eeg = proxy->device()->eeg();
+    eeg->setSampleRate(iface::EegAdc::SampleRate(eegSampleRate));
+    eeg->setSamplesPerChunk(eegChunkSize);
+    eeg->setUseRefElec(true);
+    eeg->setAllChannels({{"enabled", true},
+                         {"gain", eegGain},
+                         {"inputMux", "Normal"}});
 
-    // Configure pipeline to match
-
-    elements->dataSource->setProperty("host", device->deviceAddress());
-
-    elements->sampleDecoders[Signal::EEG]->setProperty("gain", eegGain);
-    elements->sampleDecoders[Signal::EEG]->setProperty("vref", device->eeg()->vref());
-    elements->sampleDecoders[Signal::EEG]->setProperty("nChannels", device->eeg()->nChannels());
+    // Other setup
 
     pipeline->setWindowLength(1000);
     pipeline->setWindowStep(500);
 
-    // Other setup
+    qxtLog->debug("Notifying server that our address is", proxy->localAddress());
+    proxy->device()->setClientAddress(proxy->localAddress());
 
-    qxtLog->debug("Notifying server that our address is", device->localAddress());
-    device->device()->setClientAddress(device->localAddress());
-
-    batteryMonitor->setBattery(device->battery());
-    connect(device->battery(), SIGNAL(batteryLow()), SLOT(warnBatteryLow()));
-    if (device->battery()->isLow())
+    auto battery = proxy->device()->battery();
+    batteryMonitor->setBattery(battery);
+    connect(battery, SIGNAL(batteryLow()), SLOT(warnBatteryLow()));
+    if (battery->isLow())
         warnBatteryLow();
 
     connect(ui->actionSetSessionData, SIGNAL(triggered()),
-            elements->dataSink, SLOT(getSessionData()));
+            pipeline->elements()->dataSink, SLOT(getSessionData()));
 }
 
 void ElapseClient::unconfigure()
 {
     batteryMonitor->setBattery(nullptr);
     disconnect(ui->actionSetSessionData, SIGNAL(triggered()), 0, 0);
+}
+
+void ElapseClient::start()
+{
+    pipeline->start();
+
+    // Save the device configuration
+    auto cfg = proxy->readDeviceConfig();
+    pipeline->dataSink()->saveDeviceConfig(cfg);
+
+    // Do any setup that requires an offline source to have been started
+    auto eeg = proxy->device()->eeg();
+    auto eegDecoder = pipeline->elements()->sampleDecoders[Signal::EEG];
+    eegDecoder->setProperty("gain", eeg->channel(0)->gain());
+    eegDecoder->setProperty("vref", eeg->vref());
+    eegDecoder->setProperty("nChannels", eeg->nChannels());
+
+    proxy->device()->startStreaming();
+}
+
+void ElapseClient::stop()
+{
+    proxy->device()->stopStreaming();
+    pipeline->stop();
 }
 

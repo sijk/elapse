@@ -7,7 +7,8 @@ PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10
 QXT          += core
 
 HEADERS      += udpdatasource.h \
-                dummyeegsource.h \
+                simplerawdatasource.h \
+#                dummyeegsource.h \
                 eegdecoder.h \
                 videodecoder.h \
                 imudecoder.h \
@@ -15,13 +16,15 @@ HEADERS      += udpdatasource.h \
                 dummyvideofeatureextractor.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h \
+                blackholedatasinkdelegate.h \
                 simplerawdatasinkdelegate.h \
                 util/bigendian24.h \
                 util/gstwrappedbuffer.h \
                 util/timestampedvalues.h
 
 SOURCES      += udpdatasource.cpp \
-                dummyeegsource.cpp \
+                simplerawdatasource.cpp \
+#                dummyeegsource.cpp \
                 eegdecoder.cpp \
                 videodecoder.cpp \
                 imudecoder.cpp \
@@ -29,6 +32,7 @@ SOURCES      += udpdatasource.cpp \
                 dummyvideofeatureextractor.cpp \
                 dummyimufeatureextractor.cpp \
                 dummyclassifier.cpp \
+                blackholedatasinkdelegate.cpp \
                 simplerawdatasinkdelegate.cpp \
                 util/gstwrappedbuffer.cpp
 

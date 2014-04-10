@@ -44,8 +44,11 @@ private slots:
     void warnBatteryLow();
     void maybeAutoConnect();
     void loadElementWidgets(ElementSetPtr elements);
+    void fillDeviceAddress();
     void configure();
     void unconfigure();
+    void start();
+    void stop();
 
 private:
     void addDockWidgetFrom(QObject *object);
@@ -58,7 +61,7 @@ private:
     QStateMachine *machine;
     PluginManager *pluginManager;
     Pipeline *pipeline;
-    DeviceProxy *device;
+    DeviceProxy *proxy;
     BatteryMonitor *batteryMonitor;
 };
 

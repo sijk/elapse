@@ -3,6 +3,7 @@
 #include <qwt_dial.h>
 #include <qwt_dial_needle.h>
 #include <qwt_round_scale_draw.h>
+#include "common/interface/battery_iface.h"
 #include "batterymonitor.h"
 
 
@@ -101,7 +102,7 @@ QWidget *BatteryMonitor::getWidget()
 /*!
  * Set the DBus interface to the device's \a battery.
  */
-void BatteryMonitor::setBattery(org::nzbri::elapse::Battery *battery)
+void BatteryMonitor::setBattery(iface::Battery *battery)
 {
     this->battery = battery;
     if (!battery) {

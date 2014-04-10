@@ -3,8 +3,7 @@
 
 #include <QObject>
 #include "elementset.h"
-
-class DataSink;
+#include "datasink.h"
 
 
 /*!
@@ -24,6 +23,7 @@ public:
     explicit Pipeline(QObject *parent = nullptr);
 
     ElementSetPtr elements() const;
+    DataSink *dataSink() const;
 
     void setWindowLength(uint ms);
     void setWindowStep(uint ms);
@@ -44,7 +44,7 @@ private slots:
 
 private:
     ElementSetPtr _elements;
-    DataSink *dataSink;
+    DataSink *_dataSink;
 };
 
 

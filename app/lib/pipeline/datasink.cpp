@@ -9,19 +9,28 @@ using elapse::Signal;
  */
 DataSink::DataSink(QObject *parent) :
     QObject(parent),
-    saveDataEnabled(false),
-    saveSamplesEnabled(false),
-    saveFeaturesEnabled(false),
-    saveCogStateEnabled(false)
+    saveDataEnabled(true),
+    saveSamplesEnabled(true),
+    saveFeaturesEnabled(true),
+    saveCogStateEnabled(true)
 {
 }
 
 /*!
- * Set the current \a delegate for storing data to disk.
+ * Set the \a delegate for storing data to disk.
  */
 void DataSink::setDelegate(elapse::DataSinkDelegate *delegate)
 {
     this->delegate = delegate;
+}
+
+/*!
+ * Store the device \a config to be saved once the delegate start()%s.
+ */
+void DataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
+{
+    Q_ASSERT(delegate);
+    delegate->saveDeviceConfig(config);
 }
 
 /*!
@@ -30,6 +39,10 @@ void DataSink::setDelegate(elapse::DataSinkDelegate *delegate)
  * This first checks whether the elapse::DataSinkDelegate::needsNewSessionData()
  * and calls elapse::DataSinkDelegate::getSessionData() if necessary.
  *
+ * If the delegate was started succssfully, the device configuration is passed
+ * to the delegate to be saved. This means that setDeviceConfig() must be
+ * called before start().
+ *
  * \return whether the delegate was able to retrieve any necessary session data
  * and start successfully.
  */
@@ -37,10 +50,7 @@ bool DataSink::start()
 {
     Q_ASSERT(delegate);
 
-    if (!delegate->needsNewSessionData())
-        return delegate->start();
-
-    if (delegate->getSessionData())
+    if (!delegate->needsNewSessionData() || delegate->getSessionData())
         return delegate->start();
 
     return false;

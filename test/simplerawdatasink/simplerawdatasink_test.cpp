@@ -6,9 +6,6 @@
 
 class SimpleRawDataSinkDelegateNoGui : public SimpleRawDataSinkDelegate
 {
-public:
-    SimpleRawDataSinkDelegateNoGui() : SimpleRawDataSinkDelegate() {}
-
 protected:
     QString getDirectory() const
     {
@@ -58,4 +55,56 @@ TEST_F(SimpleRawDataSinkTest, OnlyNeedsNewSessionDataOnce)
     dataSink.stop();
     EXPECT_FALSE(dataSink.needsNewSessionData());
 }
+
+TEST_F(SimpleRawDataSinkTest, SavesConfig)
+{
+    const QMap<QString, QVariantMap> srcConfig = {
+        {"test", {{"prop1", 42},{"prop2",true}}}
+    };
+
+    EXPECT_TRUE(dataSink.getSessionData());
+    ASSERT_TRUE(dataSink.start());
+    dataSink.saveDeviceConfig(srcConfig);
+    dataSink.stop();
+
+    QFileInfoList files = QDir(dataDir, "*.dat").entryInfoList();
+    ASSERT_EQ(files.count(), 1);
+    QFile file(files.first().absoluteFilePath());
+    ASSERT_TRUE(file.open(QFile::ReadOnly));
+    QDataStream stream(&file);
+
+    QMap<QString, QVariantMap> destConfig;
+    stream >> destConfig;
+    EXPECT_TRUE(srcConfig == destConfig);
+    EXPECT_TRUE(stream.atEnd());
+}
+
+TEST_F(SimpleRawDataSinkTest, SavesData)
+{
+    EXPECT_TRUE(dataSink.getSessionData());
+    ASSERT_TRUE(dataSink.start());
+    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
+    dataSink.saveData(elapse::Signal::IMU, "IMU DATA");
+    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
+    dataSink.stop();
+
+    QFileInfoList files = QDir(dataDir, "*.dat").entryInfoList();
+    ASSERT_EQ(files.count(), 1);
+    QFile file(files.first().absoluteFilePath());
+    ASSERT_TRUE(file.open(QFile::ReadOnly));
+    QDataStream stream(&file);
+
+    elapse::Signal::Type signalType;
+    QByteArray data;
+    auto expectNextDataToBe = [&](elapse::Signal::Type t, const QByteArray &d) {
+        stream >> (int&)signalType >> data;
+        EXPECT_EQ(signalType, t);
+        EXPECT_EQ(data, d);
+    };
+    expectNextDataToBe(elapse::Signal::EEG, "EEG DATA");
+    expectNextDataToBe(elapse::Signal::IMU, "IMU DATA");
+    expectNextDataToBe(elapse::Signal::EEG, "EEG DATA");
+    EXPECT_TRUE(stream.atEnd());
+}
+
 

@@ -28,6 +28,7 @@ bool SimpleRawDataSinkDelegate::start()
         return false;
 
     stream.setDevice(&file);
+    time.start();
     return true;
 }
 
@@ -72,6 +73,15 @@ QString SimpleRawDataSinkDelegate::getDirectory() const
 }
 
 /*!
+ * Dump the \a config to the currently-open data file via a QDataStream.
+ */
+void SimpleRawDataSinkDelegate::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
+{
+    Q_ASSERT(file.isOpen());
+    stream << config;
+}
+
+/*!
  * Dump the \a signalType and \a data to the currently-open data file
  * via a QDataStream.
  */
@@ -79,6 +89,6 @@ void SimpleRawDataSinkDelegate::saveData(elapse::Signal::Type signalType,
                                          QByteArray data)
 {
     Q_ASSERT(file.isOpen());
-    stream << signalType << data;
+    stream << time.restart() << signalType << data;
 }
 

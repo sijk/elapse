@@ -3,9 +3,9 @@
 
 #include <QObject>
 #include <QTimer>
-#include "elapse_interface.h"
 #include "elapse/displayable.h"
 
+namespace iface { class Battery; }
 class DialWithSector;
 
 
@@ -27,13 +27,13 @@ public:
 
     QWidget *getWidget();
 
-    void setBattery(org::nzbri::elapse::Battery *battery);
+    void setBattery(iface::Battery *battery);
 
 private slots:
     void updateVoltage();
 
 private:
-    org::nzbri::elapse::Battery *battery;
+    iface::Battery *battery;
     DialWithSector *gauge;
     QTimer timer;
 };

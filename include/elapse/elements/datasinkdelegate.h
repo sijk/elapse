@@ -72,6 +72,11 @@ public slots:
 
 public:
     /*!
+     * Called when the device's current \a config needs to be saved.
+     */
+    virtual void saveDeviceConfig(const QMap<QString, QVariantMap> &config) = 0;
+
+    /*!
      * Called when there is raw \a data of the given \a signalType to be saved.
      */
     virtual void saveData(Signal::Type signalType, QByteArray data);
