@@ -7,6 +7,7 @@ PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10
 QXT          += core
 
 HEADERS      += udpdatasource.h \
+                simplerawdatasource.h \
 #                dummyeegsource.h \
                 eegdecoder.h \
                 videodecoder.h \
@@ -22,6 +23,7 @@ HEADERS      += udpdatasource.h \
                 util/timestampedvalues.h
 
 SOURCES      += udpdatasource.cpp \
+                simplerawdatasource.cpp \
 #                dummyeegsource.cpp \
                 eegdecoder.cpp \
                 videodecoder.cpp \

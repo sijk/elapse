@@ -144,6 +144,7 @@ void Pipeline::setElements(ElementSetPtr newElements)
 
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
+    connect(_elements->dataSource, SIGNAL(finished()), SIGNAL(error()));
     connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));
 
     // Connect DataSink

@@ -51,6 +51,11 @@ signals:
     void started();
 
     /*!
+     * Emitted after the DataSource produces its last piece of data.
+     */
+    void finished();
+
+    /*!
      * Emitted when an error occurs. The \a message is a human-readable string
      * which should be useful for debugging the error.
      */
