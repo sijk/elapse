@@ -3,6 +3,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QTime>
 #include <elapse/elements/datasinkdelegate.h>
 
 
@@ -14,7 +15,8 @@
  * which the data files will be saved.
  *
  * Note that this class only supports saving raw data — not Sample%s or
- * FeatureVector%s or CognitiveState.
+ * FeatureVector%s or CognitiveState. The saved data can be loaded again by a
+ * SimpleRawDataSource.
  *
  * \ingroup core-plugin
  */
@@ -40,6 +42,7 @@ private:
     QDir dataDir;
     QFile file;
     QDataStream stream;
+    QTime time;
 };
 
 #endif // SIMPLERAWDATASINKDELEGATE_H

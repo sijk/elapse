@@ -28,6 +28,7 @@ bool SimpleRawDataSinkDelegate::start()
         return false;
 
     stream.setDevice(&file);
+    time.start();
     return true;
 }
 
@@ -88,6 +89,6 @@ void SimpleRawDataSinkDelegate::saveData(elapse::Signal::Type signalType,
                                          QByteArray data)
 {
     Q_ASSERT(file.isOpen());
-    stream << signalType << data;
+    stream << time.restart() << signalType << data;
 }
 
