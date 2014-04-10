@@ -190,12 +190,8 @@ void ElapseClient::buildStateMachine()
     active->assignProperty(ui->actionCapture, "text", "Stop");
     active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
     active->assignProperty(ui->actionSetSessionData, "enabled", false);
-    connect(active, SIGNAL(entered()), pipeline, SLOT(start()));
-    connect(active, SIGNAL(exited()), pipeline, SLOT(stop()));
-    // We need to delay evaluation of proxy->device() by wrapping it in a
-    // closure since it is not valid until the proxy is connected.
-    connect(active, &QState::entered, [=]{ proxy->device()->startStreaming(); });
-    connect(active, &QState::exited, [=]{ proxy->device()->stopStreaming(); });
+    connect(active, SIGNAL(entered()), SLOT(start()));
+    connect(active, SIGNAL(exited()), SLOT(stop()));
     connect(beginCapture, SIGNAL(triggered()), ui->spinnerStarting, SLOT(start()));
     connect(pipeline, SIGNAL(started()), ui->spinnerStarting, SLOT(stop()));
     connect(active, SIGNAL(exited()), ui->spinnerStarting, SLOT(stop()));
@@ -289,11 +285,9 @@ void ElapseClient::setDockWidgetsVisible(bool visible)
 
 void ElapseClient::configure()
 {
-    auto elements = pipeline->elements();
-    Q_ASSERT(elements);
     QSettings settings;
 
-    // Configure hardware
+    // Configure the device
 
     uint eegSampleRate = settings.value("eeg/samplerate", 250).toUInt();
     uint eegChunkSize  = settings.value("eeg/chunksize", 20).toUInt();
@@ -307,16 +301,10 @@ void ElapseClient::configure()
                          {"gain", eegGain},
                          {"inputMux", "Normal"}});
 
-    // Configure pipeline to match
-
-    elements->sampleDecoders[Signal::EEG]->setProperty("gain", eegGain);
-    elements->sampleDecoders[Signal::EEG]->setProperty("vref", eeg->vref());
-    elements->sampleDecoders[Signal::EEG]->setProperty("nChannels", eeg->nChannels());
+    // Other setup
 
     pipeline->setWindowLength(1000);
     pipeline->setWindowStep(500);
-
-    // Other setup
 
     qxtLog->debug("Notifying server that our address is", proxy->localAddress());
     proxy->device()->setClientAddress(proxy->localAddress());
@@ -328,14 +316,36 @@ void ElapseClient::configure()
         warnBatteryLow();
 
     connect(ui->actionSetSessionData, SIGNAL(triggered()),
-            elements->dataSink, SLOT(getSessionData()));
-
-    pipeline->dataSink()->saveDeviceConfig(proxy->readDeviceConfig());
+            pipeline->elements()->dataSink, SLOT(getSessionData()));
 }
 
 void ElapseClient::unconfigure()
 {
     batteryMonitor->setBattery(nullptr);
     disconnect(ui->actionSetSessionData, SIGNAL(triggered()), 0, 0);
+}
+
+void ElapseClient::start()
+{
+    pipeline->start();
+
+    // Save the device configuration
+    auto cfg = proxy->readDeviceConfig();
+    pipeline->dataSink()->saveDeviceConfig(cfg);
+
+    // Do any setup that requires an offline source to have been started
+    auto eeg = proxy->device()->eeg();
+    auto eegDecoder = pipeline->elements()->sampleDecoders[Signal::EEG];
+    eegDecoder->setProperty("gain", eeg->channel(0)->gain());
+    eegDecoder->setProperty("vref", eeg->vref());
+    eegDecoder->setProperty("nChannels", eeg->nChannels());
+
+    proxy->device()->startStreaming();
+}
+
+void ElapseClient::stop()
+{
+    proxy->device()->stopStreaming();
+    pipeline->stop();
 }
 

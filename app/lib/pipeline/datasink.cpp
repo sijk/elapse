@@ -29,7 +29,8 @@ void DataSink::setDelegate(elapse::DataSinkDelegate *delegate)
  */
 void DataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
 {
-    deviceConfig = config;
+    Q_ASSERT(delegate);
+    delegate->saveDeviceConfig(config);
 }
 
 /*!
@@ -48,14 +49,10 @@ void DataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
 bool DataSink::start()
 {
     Q_ASSERT(delegate);
-    Q_ASSERT(!deviceConfig.isEmpty());
 
-    if (!delegate->needsNewSessionData() || delegate->getSessionData()) {
-        if (delegate->start()) {
-            delegate->saveDeviceConfig(deviceConfig);
-            return true;
-        }
-    }
+    if (!delegate->needsNewSessionData() || delegate->getSessionData())
+        return delegate->start();
+
     return false;
 }
 

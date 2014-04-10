@@ -54,7 +54,6 @@ private:
     bool saveCogStateEnabled;
 
     QPointer<elapse::DataSinkDelegate> delegate;
-    QMap<QString, QVariantMap> deviceConfig;
 };
 
 

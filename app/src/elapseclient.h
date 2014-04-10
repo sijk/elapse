@@ -47,6 +47,8 @@ private slots:
     void fillDeviceAddress();
     void configure();
     void unconfigure();
+    void start();
+    void stop();
 
 private:
     void addDockWidgetFrom(QObject *object);
