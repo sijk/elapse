@@ -31,8 +31,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->setupUi(this);
     setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
 
-    QSettings settings;
-    qxtLog->info("Using settings from", settings.fileName());
+    qxtLog->info("Using settings from", QSettings().fileName());
 
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
@@ -42,6 +41,8 @@ ElapseClient::ElapseClient(QWidget *parent) :
 
     addDockWidgetFrom(batteryMonitor);
 
+    connectSaveActions();
+
     connect(ui->deviceAddress, SIGNAL(returnPressed()),
             ui->actionConnect, SLOT(trigger()));
 
@@ -49,19 +50,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
             logView, SLOT(setVisible(bool)));
     connect(logView, SIGNAL(visibilityChanged(bool)),
             ui->actionLogView, SLOT(setChecked(bool)));
-
-    connect(ui->actionSaveRawData, SIGNAL(toggled(bool)),
-            pipeline->dataSink(), SLOT(setSaveData(bool)));
-    connect(ui->actionSaveSamples, SIGNAL(toggled(bool)),
-            pipeline->dataSink(), SLOT(setSaveSamples(bool)));
-    connect(ui->actionSaveFeatureVectors, SIGNAL(toggled(bool)),
-            pipeline->dataSink(), SLOT(setSaveFeatureVectors(bool)));
-    connect(ui->actionSaveCognitiveState, SIGNAL(toggled(bool)),
-            pipeline->dataSink(), SLOT(setSaveCognitiveState(bool)));
-    ui->actionSaveRawData->setChecked(true);
-    ui->actionSaveSamples->setChecked(true);
-    ui->actionSaveFeatureVectors->setChecked(true);
-    ui->actionSaveCognitiveState->setChecked(true);
 
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(selectPluginsToLoad()));
@@ -84,6 +72,47 @@ ElapseClient::ElapseClient(QWidget *parent) :
 ElapseClient::~ElapseClient()
 {
     delete ui;
+}
+
+void ElapseClient::connectSaveActions()
+{
+    // Connect actions to DataSink settings
+    connect(ui->actionSaveRawData, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveData(bool)));
+    connect(ui->actionSaveSamples, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveSamples(bool)));
+    connect(ui->actionSaveFeatureVectors, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveFeatureVectors(bool)));
+    connect(ui->actionSaveCognitiveState, SIGNAL(toggled(bool)),
+            pipeline->dataSink(), SLOT(setSaveCognitiveState(bool)));
+
+    // Update actionSaveAll when other actions change
+    auto updateActionSaveAll = [=]{
+        bool saveAll = ui->actionSaveRawData->isChecked() &&
+                       ui->actionSaveSamples->isChecked() &&
+                       ui->actionSaveFeatureVectors->isChecked() &&
+                       ui->actionSaveCognitiveState->isChecked();
+        ui->actionSaveAll->setChecked(saveAll);
+    };
+    connect(ui->actionSaveRawData, &QAction::triggered, updateActionSaveAll);
+    connect(ui->actionSaveSamples, &QAction::triggered, updateActionSaveAll);
+    connect(ui->actionSaveFeatureVectors, &QAction::triggered, updateActionSaveAll);
+    connect(ui->actionSaveCognitiveState, &QAction::triggered, updateActionSaveAll);
+
+    // Update other actions when actionSaveAll changes
+    connect(ui->actionSaveAll, &QAction::triggered, [=](bool checked){
+        ui->actionSaveRawData->setChecked(checked);
+        ui->actionSaveSamples->setChecked(checked);
+        ui->actionSaveFeatureVectors->setChecked(checked);
+        ui->actionSaveCognitiveState->setChecked(checked);
+    });
+
+    // Set initial state
+    ui->actionSaveRawData->setChecked(true);
+    ui->actionSaveSamples->setChecked(true);
+    ui->actionSaveFeatureVectors->setChecked(true);
+    ui->actionSaveCognitiveState->setChecked(true);
+    ui->actionSaveAll->setChecked(true);
 }
 
 void ElapseClient::showErrorMessage(QString message)
