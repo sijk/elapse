@@ -44,8 +44,6 @@ TEST(DataSinkTest, StartSucceedsIfSessionDataNotNeeded)
             .WillOnce(Return(false));
     EXPECT_CALL(d, start())
             .WillOnce(Return(true));
-    EXPECT_CALL(d, saveDeviceConfig(_))
-            .Times(1);
 
     DataSink sink;
     sink.setDelegate(&d);
@@ -89,8 +87,6 @@ TEST(DataSinkTest, StartSucceedsIfGetSessionDataAndDelegateStartSucceed)
             .WillOnce(Return(true));
     EXPECT_CALL(d, start())
             .WillOnce(Return(true));
-    EXPECT_CALL(d, saveDeviceConfig(_))
-            .Times(1);
 
     DataSink sink;
     sink.setDelegate(&d);
@@ -115,8 +111,6 @@ TEST(DataSinkTest, NewSessionDataEachTime)
             .WillRepeatedly(Return(true));
     EXPECT_CALL(d, stop())
             .WillRepeatedly(Assign(&needsData, true));
-    EXPECT_CALL(d, saveDeviceConfig(_))
-            .Times(2);
 
     DataSink sink;
     sink.setDelegate(&d);
