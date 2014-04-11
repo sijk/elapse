@@ -9,5 +9,5 @@ SUBDIRS += pluginmanager
 SUBDIRS += bigendian24
 SUBDIRS += udpdatasource
 SUBDIRS += datasink
-SUBDIRS += simplerawdatasink
+SUBDIRS += simplerawdatasinksource
 SUBDIRS += configdbus

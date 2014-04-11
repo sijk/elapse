@@ -1,7 +1,10 @@
 #include <gtest/gtest.h>
 #include <QApplication>
+#include <QLineEdit>
+#include <QSignalSpy>
 #include "../test_utils.h"
 #include "simplerawdatasinkdelegate.h"
+#include "simplerawdatasource.h"
 
 
 class SimpleRawDataSinkDelegateNoGui : public SimpleRawDataSinkDelegate
@@ -94,10 +97,12 @@ TEST_F(SimpleRawDataSinkTest, SavesData)
     ASSERT_TRUE(file.open(QFile::ReadOnly));
     QDataStream stream(&file);
 
+    int dt;
     elapse::Signal::Type signalType;
     QByteArray data;
     auto expectNextDataToBe = [&](elapse::Signal::Type t, const QByteArray &d) {
-        stream >> (int&)signalType >> data;
+        stream >> dt >> (int&)signalType >> data;
+        EXPECT_GE(dt, 0);
         EXPECT_EQ(signalType, t);
         EXPECT_EQ(data, d);
     };
@@ -107,4 +112,49 @@ TEST_F(SimpleRawDataSinkTest, SavesData)
     EXPECT_TRUE(stream.atEnd());
 }
 
+TEST_F(SimpleRawDataSinkTest, SinkAndSource)
+{
+    const QMap<QString, QVariantMap> config = {
+        {"test", {{"prop1", 42},{"prop2",true}}}
+    };
+
+    EXPECT_TRUE(dataSink.getSessionData());
+    ASSERT_TRUE(dataSink.start());
+    dataSink.saveDeviceConfig(config);
+    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
+    dataSink.saveData(elapse::Signal::IMU, "IMU DATA");
+    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
+    dataSink.stop();
+
+    QFileInfoList files = QDir(dataDir, "*.dat").entryInfoList();
+    ASSERT_EQ(files.count(), 1);
+    QString filePath = files.first().absoluteFilePath();
+
+    SimpleRawDataSource src;
+    QSignalSpy eegReady(&src, SIGNAL(eegReady(QByteArray)));
+    QSignalSpy imuReady(&src, SIGNAL(imuReady(QByteArray)));
+    QSignalSpy videoReady(&src, SIGNAL(videoReady(QByteArray)));
+    QSignalSpy finished(&src, SIGNAL(finished()));
+
+    auto widget = src.getWidget();
+    auto lineEdit = widget->findChild<QLineEdit*>();
+    lineEdit->setText(filePath);
+    src.start();
+
+    EXPECT_EQ(src.get("test", "prop1").toInt(), 42);
+    EXPECT_EQ(src.get("test", "prop2").toBool(), true);
+    EXPECT_FALSE(src.get("test", "prop3").isValid());
+
+    finished.wait(500);
+    ASSERT_EQ(finished.count(), 1);
+    src.stop();
+
+    EXPECT_EQ(eegReady.count(), 2);
+    EXPECT_EQ(imuReady.count(), 1);
+    EXPECT_EQ(videoReady.count(), 0);
+
+    EXPECT_EQ(eegReady.at(0).first(), "EEG DATA");
+    EXPECT_EQ(imuReady.at(0).first(), "IMU DATA");
+    EXPECT_EQ(eegReady.at(1).first(), "EEG DATA");
+}
 
