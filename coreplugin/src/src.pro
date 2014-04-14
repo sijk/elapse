@@ -8,7 +8,6 @@ QXT          += core
 
 HEADERS      += udpdatasource.h \
                 simplerawdatasource.h \
-#                dummyeegsource.h \
                 eegdecoder.h \
                 videodecoder.h \
                 imudecoder.h \
@@ -24,7 +23,6 @@ HEADERS      += udpdatasource.h \
 
 SOURCES      += udpdatasource.cpp \
                 simplerawdatasource.cpp \
-#                dummyeegsource.cpp \
                 eegdecoder.cpp \
                 videodecoder.cpp \
                 imudecoder.cpp \
