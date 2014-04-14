@@ -99,10 +99,11 @@ template<> struct MetaObjects<>
 
 
 /*!
- * Syntactic sugar for elapse::MetaObjects<...>::get().
+ * Implement elapse::Plugin::classes(), returning the staticMetaObjects of the
+ * given \a Classes.
  * \ingroup plugins-ext
  */
-#define ELAPSE_EXPORT_CLASSES(classes...) elapse::MetaObjects<classes>::get()
-
+#define ELAPSE_EXPORT_CLASSES(Classes...) \
+    ClassList classes() { return elapse::MetaObjects<Classes>::get(); }
 
 #endif // PLUGIN_H

@@ -10,11 +10,10 @@ class BarPlugin : public elapse::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid)
-public:
-    ClassList classes()
-    {
-        return ELAPSE_EXPORT_CLASSES(BarEegDecoder, BarVideoDecoder);
-    }
+    ELAPSE_EXPORT_CLASSES(
+        BarEegDecoder,
+        BarVideoDecoder
+    )
 };
 
 #endif // BARPLUGIN_H

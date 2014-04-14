@@ -29,23 +29,19 @@ class CorePlugin : public elapse::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid)
-public:
-    ClassList classes()
-    {
-        return ELAPSE_EXPORT_CLASSES(
-            UdpDataSource,
-            SimpleRawDataSource,
-            EegDecoder,
-            VideoDecoder,
-            ImuDecoder,
-            DummyEegFeatureExtractor,
-            DummyVideoFeatureExtractor,
-            DummyImuFeatureExtractor,
-            DummyClassifier,
-            BlackHoleDataSinkDelegate,
-            SimpleRawDataSinkDelegate
-        );
-    }
+    ELAPSE_EXPORT_CLASSES(
+        UdpDataSource,
+        SimpleRawDataSource,
+        EegDecoder,
+        VideoDecoder,
+        ImuDecoder,
+        DummyEegFeatureExtractor,
+        DummyVideoFeatureExtractor,
+        DummyImuFeatureExtractor,
+        DummyClassifier,
+        BlackHoleDataSinkDelegate,
+        SimpleRawDataSinkDelegate
+    )
 };
 
 #endif // COREPLUGIN_H
