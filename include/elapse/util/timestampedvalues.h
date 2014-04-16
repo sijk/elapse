@@ -1,7 +1,8 @@
 #ifndef TIMESTAMPEDVALUES_H
 #define TIMESTAMPEDVALUES_H
 
-#include <QMap>
+#include <map>
+#include <vector>
 
 /*!
  * \brief The TimestampedValues class maps timestamps to arbitrary values.
@@ -12,7 +13,7 @@
  */
 
 template<typename T>
-class TimestampedValues : public QMap<quint64, T>
+class TimestampedValues : public std::map<uint64_t, T>
 {
 public:
     /*!
@@ -20,13 +21,25 @@ public:
      *
      * Relies on the fact that QMaps are sorted by their keys.
      */
-    void removeValuesBefore(quint64 time)
+    void removeValuesBefore(uint64_t time)
     {
         auto i = this->begin();
-        auto end = this->lowerBound(time);
+        auto end = this->lower_bound(time);
 
         while (i != end)
             i = this->erase(i);
+    }
+
+    /*!
+     * \return the values as a std::vector.
+     */
+    std::vector<T> values() const
+    {
+        std::vector<T> vals;
+        vals.reserve(this->size());
+        for (auto value : *this)
+            vals.push_back(value.second);
+        return vals;
     }
 };
 

@@ -9,7 +9,7 @@ using elapse::SamplePtr;
 template<class Container, class T = double>
 T sum(const Container &c)
 {
-    return std::accumulate(c.constBegin(), c.constEnd(), T());
+    return std::accumulate(c.cbegin(), c.cend(), T());
 }
 
 
@@ -34,7 +34,7 @@ void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
 {
     auto frame = sample.staticCast<const VideoSample>();
     double meanIntensity = sum(frame->data) / (frame->w * frame->h);
-    means.insert(frame->timestamp, meanIntensity);
+    means[frame->timestamp] = meanIntensity;
 }
 
 /*!
@@ -43,13 +43,14 @@ void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
  */
 QVector<double> DummyVideoFeatureExtractor::features()
 {
-    double meanIntensity = sum(means) / means.size();
+    auto meanVals = means.values();
+    double meanIntensity = sum(meanVals) / meanVals.size();
 
-    double sumSqDiff = std::accumulate(means.cbegin(), means.cend(), 0.0,
+    double sumSqDiff = std::accumulate(meanVals.cbegin(), meanVals.cend(), 0.0,
         [=](double acc, double x) {
             return acc + (meanIntensity - x) * (meanIntensity - x);
         });
-    double meanSqDiff = sumSqDiff / means.size();
+    double meanSqDiff = sumSqDiff / meanVals.size();
 
     QVector<double> features;
     features << meanIntensity << meanSqDiff;

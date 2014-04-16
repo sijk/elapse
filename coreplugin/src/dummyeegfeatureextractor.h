@@ -2,7 +2,7 @@
 #define DUMMYEEGFEATUREEXTRACTOR_H
 
 #include <elapse/elements/featurextractor.h>
-#include "util/timestampedvalues.h"
+#include <elapse/util/timestampedvalues.h>
 
 
 /*!
