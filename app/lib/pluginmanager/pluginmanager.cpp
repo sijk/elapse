@@ -2,7 +2,6 @@
 #include <QMetaClassInfo>
 #include <QJsonObject>
 #include <QPluginLoader>
-#include <QStandardItemModel>
 #include <QxtLogger>
 #include "elapse/plugin.h"
 #include "pluginfilterproxymodel.h"
@@ -10,7 +9,6 @@
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
 #include "pluginmanager_def.h"
-#include "ui_pluginmanager.h"
 
 
 /*!
@@ -88,20 +86,12 @@
  */
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
     q_ptr(q),
-    ui(new Ui::PluginManager),
-    model(new QStandardItemModel),
     corePluginDir(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"))
 {
-    ui->setupUi(q);
+    ui.setupUi(q);
 
     QString defaultUserPluginDir = QSettings().value("plugins-path").toString();
     setSearchPath(defaultUserPluginDir);
-}
-
-PluginManagerPrivate::~PluginManagerPrivate()
-{
-    delete model;
-    delete ui;
 }
 
 /*!
@@ -119,15 +109,16 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
 {
     qxtLog->info("Searching for plugins in", newPath.absolutePath());
 
-    if (newPath == userPluginDir && model->rowCount() > 0) {
+    if (newPath == userPluginDir && model.rowCount() > 0) {
         qxtLog->debug("PluginManager search path was set to the current value. "
                       "Not doing anything...");
         return;
     }
 
     userPluginDir = newPath;
+    QSettings().setValue("plugins-path", userPluginDir.absolutePath());
 
-    model->clear();
+    model.clear();
     searchForPluginsIn(corePluginDir);
     if (userPluginDir.exists())
         searchForPluginsIn(userPluginDir);
@@ -137,7 +128,7 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
 
 void PluginManagerPrivate::searchForPluginsIn(QDir dir)
 {
-    auto rootItem = model->invisibleRootItem();
+    auto rootItem = model.invisibleRootItem();
 
     foreach (QFileInfo file, dir.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
@@ -177,7 +168,7 @@ void PluginManagerPrivate::searchForPluginsIn(QDir dir)
         loader.unload();
     }
 
-    model->sort(0);
+    model.sort(0);
 }
 
 /*!
@@ -283,7 +274,7 @@ void PluginManagerPrivate::attachViews()
                                 Signal::Type signalType = Signal::INVALID) {
         // Filter model by element type and signal type
         auto filteredModel = new PluginFilterProxyModel(elementType, signalType, tree);
-        filteredModel->setSourceModel(model);
+        filteredModel->setSourceModel(&model);
 
         // Connect filtered model to view
         tree->setModel(filteredModel);
@@ -304,15 +295,15 @@ void PluginManagerPrivate::attachViews()
             });
     };
 
-    setupTreeView(ui->dataSource,            "DataSource");
-    setupTreeView(ui->sampleDecoderEeg,      "SampleDecoder",    Signal::EEG);
-    setupTreeView(ui->sampleDecoderVideo,    "SampleDecoder",    Signal::VIDEO);
-    setupTreeView(ui->sampleDecoderImu,      "SampleDecoder",    Signal::IMU);
-    setupTreeView(ui->featureExtractorEeg,   "FeatureExtractor", Signal::EEG);
-    setupTreeView(ui->featureExtractorVideo, "FeatureExtractor", Signal::VIDEO);
-    setupTreeView(ui->featureExtractorImu,   "FeatureExtractor", Signal::IMU);
-    setupTreeView(ui->classifier,            "Classifier");
-    setupTreeView(ui->dataSink,              "DataSinkDelegate");
+    setupTreeView(ui.dataSource,            "DataSource");
+    setupTreeView(ui.sampleDecoderEeg,      "SampleDecoder",    Signal::EEG);
+    setupTreeView(ui.sampleDecoderVideo,    "SampleDecoder",    Signal::VIDEO);
+    setupTreeView(ui.sampleDecoderImu,      "SampleDecoder",    Signal::IMU);
+    setupTreeView(ui.featureExtractorEeg,   "FeatureExtractor", Signal::EEG);
+    setupTreeView(ui.featureExtractorVideo, "FeatureExtractor", Signal::VIDEO);
+    setupTreeView(ui.featureExtractorImu,   "FeatureExtractor", Signal::IMU);
+    setupTreeView(ui.classifier,            "Classifier");
+    setupTreeView(ui.dataSink,              "DataSinkDelegate");
 }
 
 /*!

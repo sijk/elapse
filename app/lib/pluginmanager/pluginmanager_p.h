@@ -1,13 +1,10 @@
 #ifndef PLUGINMANAGER_P_H
 #define PLUGINMANAGER_P_H
 
+#include <QStandardItemModel>
 #include "pluginmanager.h"
 #include "pluginmanager_def.h"
-
-class QStandardItem;
-class QStandardItemModel;
-class QTreeView;
-namespace Ui { class PluginManager; }
+#include "ui_pluginmanager.h"
 
 
 /*! \private */
@@ -19,7 +16,6 @@ class PluginManagerPrivate
 
 public:
     PluginManagerPrivate(PluginManager *q);
-    ~PluginManagerPrivate();
     static PluginManagerPrivate *expose(PluginManager *manager);
 
     void setSearchPath(QDir newPath);
@@ -39,8 +35,8 @@ public:
     void saveSelectedElements();
     void selectSavedElements();
 
-    Ui::PluginManager *ui;
-    QStandardItemModel *model;
+    Ui::PluginManager ui;
+    QStandardItemModel model;
     const QDir corePluginDir;
     QDir userPluginDir;
 };
