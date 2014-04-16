@@ -197,13 +197,13 @@ GstVideoSample::GstVideoSample(QGst::BufferPtr buffer) :
  */
 void VideoDecoderPrivate::onVideoError(const QGst::MessagePtr &msg)
 {
-//    Q_Q(VideoDecoder);
+    Q_Q(VideoDecoder);
     auto err = msg.staticCast<QGst::ErrorMessage>();
 
     QString message("VideoDecoder error from %1: %2");
     message = message.arg(err->source()->name()).arg(err->error().message());
     qxtLog->error(message);
-//    emit q->error(message);
+    emit q->error(message);
 
     pipeline->setState(QGst::StateNull);
 }

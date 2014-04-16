@@ -35,6 +35,12 @@ signals:
     /*! Emitted when a \a sample has been decoded. */
     void newSample(elapse::SamplePtr sample);
 
+    /*!
+     * Emitted when an error occurs. The \a message is a human-readable string
+     * which should be useful for debugging the error.
+     */
+    void error(QString message);
+
 public slots:
     /*!
      * Executed when \a data is available for decoding. Classes that inherit

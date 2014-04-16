@@ -146,6 +146,8 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
     connect(_elements->dataSource, SIGNAL(finished()), SIGNAL(error()));
     connect(_elements->dataSource, SIGNAL(error(QString)), SIGNAL(error(QString)));
+    foreach (auto decoder, _elements->sampleDecoders)
+        connect(decoder, SIGNAL(error(QString)), SIGNAL(error(QString)));
 
     // Connect DataSink
     _dataSink->setDelegate(_elements->dataSink);
