@@ -89,12 +89,13 @@
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
     q_ptr(q),
     ui(new Ui::PluginManager),
-    model(new QStandardItemModel)
+    model(new QStandardItemModel),
+    corePluginDir(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"))
 {
     ui->setupUi(q);
 
-    QString defaultPath(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"));
-    setSearchPath(QSettings().value("plugins-path", defaultPath).toString());
+    QString defaultUserPluginDir = QSettings().value("plugins-path").toString();
+    setSearchPath(defaultUserPluginDir);
 }
 
 PluginManagerPrivate::~PluginManagerPrivate()
@@ -118,20 +119,30 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
 {
     qxtLog->info("Searching for plugins in", newPath.absolutePath());
 
-    if (newPath == path) {
+    if (newPath == userPluginDir && model->rowCount() > 0) {
         qxtLog->debug("PluginManager search path was set to the current value. "
                       "Not doing anything...");
         return;
     }
 
-    path = newPath;
+    userPluginDir = newPath;
+
     model->clear();
+    searchForPluginsIn(corePluginDir);
+    if (userPluginDir.exists())
+        searchForPluginsIn(userPluginDir);
+
+    attachViews();
+}
+
+void PluginManagerPrivate::searchForPluginsIn(QDir dir)
+{
     auto rootItem = model->invisibleRootItem();
 
-    foreach (QFileInfo file, newPath.entryInfoList(QDir::Files)) {
+    foreach (QFileInfo file, dir.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
-        auto factory = static_cast<elapse::Plugin*>(plugin);
+        auto factory = qobject_cast<elapse::Plugin*>(plugin);
 
         if (factory) {
             QString pluginName = loader.metaData()["className"].toString();
@@ -167,7 +178,6 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
     }
 
     model->sort(0);
-    attachViews();
 }
 
 /*!
@@ -414,7 +424,7 @@ PluginManager::~PluginManager()
 QDir PluginManager::searchPath() const
 {
     Q_D(const PluginManager);
-    return d->path;
+    return d->userPluginDir;
 }
 
 /*!

@@ -23,6 +23,7 @@ public:
     static PluginManagerPrivate *expose(PluginManager *manager);
 
     void setSearchPath(QDir newPath);
+    void searchForPluginsIn(QDir dir);
 
     static QStandardItem *createElementTypeItem(const QString &name);
     static QStandardItem *createPluginItem(const QString &name,
@@ -39,8 +40,9 @@ public:
     void selectSavedElements();
 
     Ui::PluginManager *ui;
-    QDir path;
     QStandardItemModel *model;
+    const QDir corePluginDir;
+    QDir userPluginDir;
 };
 
 #endif // PLUGINMANAGER_P_H
