@@ -64,12 +64,16 @@ void DataLoader::run()
     int dt;
     elapse::Signal::Type signalType;
     QByteArray data;
+    bool first = true;
 
     while (!d->stream.atEnd() && !stopped)
     {
         d->stream >> dt >> (int&)signalType >> data;
 
-        QThread::msleep(dt);
+        if (first)
+            first = false;
+        else
+            QThread::msleep(dt);
 
         if (signalType == elapse::Signal::EEG)
             emit eegReady(data);
