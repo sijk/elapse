@@ -2,6 +2,7 @@
 #include <QMetaClassInfo>
 #include <QJsonObject>
 #include <QPluginLoader>
+#include <QFileDialog>
 #include <QxtLogger>
 #include "elapse/plugin.h"
 #include "pluginfilterproxymodel.h"
@@ -90,6 +91,12 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
 {
     ui.setupUi(q);
 
+    QObject::connect(ui.pathButton, &QPushButton::clicked, [=]{
+        QString dir = QFileDialog::getExistingDirectory(q, "Plugin path");
+        if (!dir.isEmpty())
+            setSearchPath(dir);
+    });
+
     QString defaultUserPluginDir = QSettings().value("plugins-path").toString();
     setSearchPath(defaultUserPluginDir);
 }
@@ -107,8 +114,6 @@ PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
  */
 void PluginManagerPrivate::setSearchPath(QDir newPath)
 {
-    qxtLog->info("Searching for plugins in", newPath.absolutePath());
-
     if (newPath == userPluginDir && model.rowCount() > 0) {
         qxtLog->debug("PluginManager search path was set to the current value. "
                       "Not doing anything...");
@@ -116,18 +121,21 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
     }
 
     userPluginDir = newPath;
-    QSettings().setValue("plugins-path", userPluginDir.absolutePath());
 
     model.clear();
     searchForPluginsIn(corePluginDir);
-    if (userPluginDir.exists())
+    if (userPluginDir.exists()) {
         searchForPluginsIn(userPluginDir);
+        QSettings().setValue("plugins-path", userPluginDir.absolutePath());
+    }
 
     attachViews();
 }
 
 void PluginManagerPrivate::searchForPluginsIn(QDir dir)
 {
+    qxtLog->info("Searching for plugins in", dir.absolutePath());
+
     auto rootItem = model.invisibleRootItem();
 
     foreach (QFileInfo file, dir.entryInfoList(QDir::Files)) {
