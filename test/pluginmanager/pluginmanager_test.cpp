@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <QCoreApplication>
 #include <QStandardItemModel>
-#include <QxtLogger>
 #include "../test_utils.h"
 
 #include "pluginmanager.h"
@@ -13,8 +12,6 @@ class PluginManagerTest : public testing::Test
 public:
     void SetUp()
     {
-        qxtLog->disableAllLogLevels();
-
         manager = new PluginManager;
         manager->setSearchPath(qApp->applicationDirPath() + "/../test_plugins");
 
@@ -28,6 +25,8 @@ public:
 
     PluginManager *manager;
     PluginManagerPrivate *priv;
+
+    SuppressLogging nolog;
 };
 
 

@@ -18,8 +18,7 @@ HEADERS      += udpdatasource.h \
                 blackholedatasinkdelegate.h \
                 simplerawdatasinkdelegate.h \
                 util/bigendian24.h \
-                util/gstwrappedbuffer.h \
-                util/timestampedvalues.h
+                util/gstwrappedbuffer.h
 
 SOURCES      += udpdatasource.cpp \
                 simplerawdatasource.cpp \

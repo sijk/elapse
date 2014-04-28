@@ -22,6 +22,11 @@ void PrintTo(const QString& str, std::ostream* os)
     *os << "QString(\"" << str.toStdString() << "\")";
 }
 
+void PrintTo(const QByteArray& bytes, std::ostream* os)
+{
+    *os << "QByteArray(\"" << bytes.constData() << "\")";
+}
+
 void PrintTo(const QVariant& var, std::ostream* os)
 {
     qDebugPrintTo(var, os);

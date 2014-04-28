@@ -40,7 +40,8 @@ bool BlackHoleDataSinkDelegate::needsNewSessionData()
 bool BlackHoleDataSinkDelegate::getSessionData()
 {
     QMessageBox::information(qApp->activeWindow(), "Black hole",
-                             "No session data is needed — all data is discarded.",
+                             "The black hole data sink doesn't need any\n"
+                             "session data — all data is discarded.",
                              QMessageBox::Ok);
     return true;
 }
