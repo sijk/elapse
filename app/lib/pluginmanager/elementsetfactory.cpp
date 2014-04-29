@@ -53,7 +53,7 @@ void ElementSetFactory::loadElement(ElementType &element, ClassInfo info)
         return;
 
     QPluginLoader loader(info.pluginPath);
-    elapse::Plugin *plugin = static_cast<elapse::Plugin*>(loader.instance());
+    auto plugin = qobject_cast<elapse::PluginInterface*>(loader.instance());
 
     if (!plugin) {
         qxtLog->debug("Could not load plugin", info.pluginPath);

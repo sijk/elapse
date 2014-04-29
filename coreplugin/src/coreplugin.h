@@ -25,10 +25,11 @@
  * \ingroup core-plugin
  */
 
-class CorePlugin : public elapse::Plugin
+class CorePlugin : public QObject, public elapse::PluginInterface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid)
+    Q_INTERFACES(elapse::PluginInterface)
     ELAPSE_EXPORT_CLASSES(
         UdpDataSource,
         SimpleRawDataSource,

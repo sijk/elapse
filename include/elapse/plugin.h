@@ -32,7 +32,7 @@ public:
 /*!
  * \brief The interface ID of the elapse::PluginInterface.
  *
- * All Plugin%s must include the line
+ * All plugins must include the line
  * \code Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid) \endcode after the
  * \c Q_OBJECT macro.
  *
@@ -45,28 +45,13 @@ Q_DECLARE_INTERFACE(elapse::PluginInterface, ElapsePluginInterface_iid)
 
 namespace elapse {
 
-/*!
- * \brief The Plugin class is the base class for all plugins.
- *
- * All it does is provide a QObject base class implementing the PluginInterface.
- *
- * \ingroup plugins-ext
- */
-
-class Plugin : public QObject, public PluginInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(elapse::PluginInterface)
-};
-
-
 template<typename... Args> struct MetaObjects;
 
 /*!
  * \brief The MetaObjects struct extracts staticMetaObjects from the classes
  * passed as template arguments.
  *
- * This is a helper for implementing Plugin%s — see ELAPSE_EXPORT_CLASSES()
+ * This is a helper for implementing plugins — see ELAPSE_EXPORT_CLASSES()
  * for a friendlier interface to this functionality.
  *
  * It is implemented as a recursive variadic template, so requires a compiler
@@ -81,26 +66,26 @@ struct MetaObjects<T1, Tn...>
     /*!
      * Extract the QMetaObjects from the template arguments.
      */
-    static Plugin::ClassList get()
+    static PluginInterface::ClassList get()
     {
         Q_STATIC_ASSERT((std::is_base_of<QObject,T1>::value));
-        return Plugin::ClassList() << T1::staticMetaObject
-                                   << MetaObjects<Tn...>::get();
+        return PluginInterface::ClassList() << T1::staticMetaObject
+                                            << MetaObjects<Tn...>::get();
     }
 };
 
 /*! \private */
 template<> struct MetaObjects<>
 {
-    static Plugin::ClassList get() { return {}; }
+    static PluginInterface::ClassList get() { return {}; }
 };
 
 } // namespace elapse
 
 
 /*!
- * Implement elapse::Plugin::classes(), returning the staticMetaObjects of the
- * given \a Classes.
+ * Implement elapse::PluginInterface::classes(), returning the
+ * staticMetaObjects of the given \a Classes.
  * \ingroup plugins-ext
  */
 #define ELAPSE_EXPORT_CLASSES(Classes...) \

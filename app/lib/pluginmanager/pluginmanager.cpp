@@ -141,7 +141,7 @@ void PluginManagerPrivate::searchForPluginsIn(QDir dir)
     foreach (QFileInfo file, dir.entryInfoList(QDir::Files)) {
         QPluginLoader loader(file.absoluteFilePath());
         QObject *plugin = loader.instance();
-        auto factory = qobject_cast<elapse::Plugin*>(plugin);
+        auto factory = qobject_cast<elapse::PluginInterface*>(plugin);
 
         if (factory) {
             QString pluginName = loader.metaData()["className"].toString();
