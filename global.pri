@@ -1,11 +1,18 @@
 CONFIG       += c++11
 
-ROOT = $$PWD
+isEmpty(ROOT) {
+    result = $$find(_PRO_FILE_PWD_, ^$$PWD)
+    count(result, 1) { # If pro file dir is subdir of this dir
+        ROOT = $$PWD
+    } else {
+        ROOT = $$_PRO_FILE_PWD_
+    }
+}
 
 defineReplace(proFileSubdir) {
     # Find the immediate subdirectory of this directory which is an ancestor
     # of the current pro file.
-    rel_path = $$relative_path($$_PRO_FILE_, $$ROOT)
+    rel_path = $$relative_path($$_PRO_FILE_PWD_, $$ROOT)
     subdir = $$absolute_path($$section(rel_path, /, 0, 0), $$ROOT)
     return($$subdir)
 }
