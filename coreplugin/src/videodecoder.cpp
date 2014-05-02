@@ -27,8 +27,9 @@ using elapse::SamplePtr;
 
 #define PIPELINE \
     "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
-    "ffdec_h264 ! tee name=t  ! queue ! appsink name=appsink " \
-                          "t. ! queue ! xvimagesink name=displaysink sync=false"
+    "ffdec_h264 ! videoflip method=upper-left-diagonal ! " \
+    "tee name=t  ! queue ! appsink name=appsink " \
+    "t. ! queue ! xvimagesink name=displaysink sync=false"
 
 // TODO: Use an rtpjitterbuffer?
 
@@ -114,6 +115,7 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
         pipeline = QGst::Parse::launch(PIPELINE).dynamicCast<QGst::Pipeline>();
     } catch (QGlib::Error &e) {
         qxtLog->error("VideoDecoder:", e.message());
+        emit q->error("VideoDecoder: " + e.message());
         return;
     }
 
@@ -266,12 +268,11 @@ void VideoDecoder::onData(QByteArray data)
 QWidget *VideoDecoder::getWidget()
 {
     Q_D(VideoDecoder);
+    Q_ASSERT(d->pipeline);
     if (!d->displaysink) {
         d->displaysink = new QGst::Ui::VideoWidget;
         d->displaysink->setVideoSink(d->pipeline->getElementByName("displaysink"));
-
-        QSize size = d->videoSize.isValid() ? d->videoSize : QSize(160, 240);
-        d->displaysink->setMinimumSize(size);
+        d->displaysink->setMinimumSize(100, 100);
         d->displaysink->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     return d->displaysink;
