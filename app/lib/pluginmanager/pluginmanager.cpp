@@ -311,6 +311,7 @@ void PluginManagerPrivate::attachViews()
     setupTreeView(ui.featureExtractorVideo, "FeatureExtractor", Signal::VIDEO);
     setupTreeView(ui.featureExtractorImu,   "FeatureExtractor", Signal::IMU);
     setupTreeView(ui.classifier,            "Classifier");
+    setupTreeView(ui.outputAction,          "OutputAction");
     setupTreeView(ui.dataSink,              "DataSinkDelegate");
 }
 

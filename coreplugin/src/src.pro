@@ -15,6 +15,7 @@ HEADERS      += udpdatasource.h \
                 dummyvideofeatureextractor.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h \
+                dummyaction.h \
                 blackholedatasinkdelegate.h \
                 simplerawdatasinkdelegate.h \
                 util/bigendian24.h \
@@ -29,6 +30,7 @@ SOURCES      += udpdatasource.cpp \
                 dummyvideofeatureextractor.cpp \
                 dummyimufeatureextractor.cpp \
                 dummyclassifier.cpp \
+                dummyaction.cpp \
                 blackholedatasinkdelegate.cpp \
                 simplerawdatasinkdelegate.cpp \
                 util/gstwrappedbuffer.cpp
