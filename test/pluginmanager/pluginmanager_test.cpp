@@ -39,8 +39,7 @@ TEST_F(PluginManagerTest, SetSearchPath)
 
 TEST_F(PluginManagerTest, PopulatePluginModel)
 {
-    auto model = priv->model;
-    ASSERT_NE(model, nullptr);
+    auto &model = priv->model;
 
     // [root]
     //     DataSource
@@ -53,41 +52,41 @@ TEST_F(PluginManagerTest, PopulatePluginModel)
     //         FooPlugin
     //             FooEegDecoder
 
-    ASSERT_EQ(model->rowCount(), 2);
-    auto dataSrcIdx = model->index(0, 0);
-    auto sampDecIdx = model->index(1, 0);
-    EXPECT_EQ(model->data(dataSrcIdx).toString(), "DataSource");
-    EXPECT_EQ(model->data(sampDecIdx).toString(), "SampleDecoder");
+    ASSERT_EQ(model.rowCount(), 2);
+    auto dataSrcIdx = model.index(0, 0);
+    auto sampDecIdx = model.index(1, 0);
+    EXPECT_EQ(model.data(dataSrcIdx).toString(), "DataSource");
+    EXPECT_EQ(model.data(sampDecIdx).toString(), "SampleDecoder");
 
-    ASSERT_EQ(model->rowCount(dataSrcIdx), 1);
-    auto fooPluginSrcIdx = model->index(0, 0, dataSrcIdx);
-    EXPECT_EQ(model->data(fooPluginSrcIdx).toString(), "FooPlugin");
+    ASSERT_EQ(model.rowCount(dataSrcIdx), 1);
+    auto fooPluginSrcIdx = model.index(0, 0, dataSrcIdx);
+    EXPECT_EQ(model.data(fooPluginSrcIdx).toString(), "FooPlugin");
 
-    ASSERT_EQ(model->rowCount(fooPluginSrcIdx), 1);
-    auto fooSrcIdx = model->index(0, 0, fooPluginSrcIdx);
-    EXPECT_EQ(model->data(fooSrcIdx).toString(), "FooDummySource");
+    ASSERT_EQ(model.rowCount(fooPluginSrcIdx), 1);
+    auto fooSrcIdx = model.index(0, 0, fooPluginSrcIdx);
+    EXPECT_EQ(model.data(fooSrcIdx).toString(), "FooDummySource");
 
-    ASSERT_EQ(model->rowCount(sampDecIdx), 2);
-    auto barPluginDecIdx = model->index(0, 0, sampDecIdx);
-    auto fooPluginDecIdx = model->index(1, 0, sampDecIdx);
-    EXPECT_EQ(model->data(barPluginDecIdx).toString(), "BarPlugin");
-    EXPECT_EQ(model->data(fooPluginDecIdx).toString(), "FooPlugin");
+    ASSERT_EQ(model.rowCount(sampDecIdx), 2);
+    auto barPluginDecIdx = model.index(0, 0, sampDecIdx);
+    auto fooPluginDecIdx = model.index(1, 0, sampDecIdx);
+    EXPECT_EQ(model.data(barPluginDecIdx).toString(), "BarPlugin");
+    EXPECT_EQ(model.data(fooPluginDecIdx).toString(), "FooPlugin");
 
-    ASSERT_EQ(model->rowCount(fooPluginDecIdx), 1);
-    auto fooEegIdx = model->index(0, 0, fooPluginDecIdx);
-    EXPECT_EQ(model->data(fooEegIdx).toString(), "FooEegDecoder");
+    ASSERT_EQ(model.rowCount(fooPluginDecIdx), 1);
+    auto fooEegIdx = model.index(0, 0, fooPluginDecIdx);
+    EXPECT_EQ(model.data(fooEegIdx).toString(), "FooEegDecoder");
 
-    ASSERT_EQ(model->rowCount(barPluginDecIdx), 2);
-    auto barEegIdx = model->index(0, 0, barPluginDecIdx);
-    auto barVideoIdx = model->index(1, 0, barPluginDecIdx);
-    EXPECT_EQ(model->data(barEegIdx).toString(), "BarEegDecoder");
-    EXPECT_EQ(model->data(barVideoIdx).toString(), "BarVideoDecoder");
+    ASSERT_EQ(model.rowCount(barPluginDecIdx), 2);
+    auto barEegIdx = model.index(0, 0, barPluginDecIdx);
+    auto barVideoIdx = model.index(1, 0, barPluginDecIdx);
+    EXPECT_EQ(model.data(barEegIdx).toString(), "BarEegDecoder");
+    EXPECT_EQ(model.data(barVideoIdx).toString(), "BarVideoDecoder");
 }
 
 TEST_F(PluginManagerTest, ProxyModelForEegDecoders)
 {
     PluginFilterProxyModel proxy("SampleDecoder", Signal::EEG);
-    proxy.setSourceModel(priv->model);
+    proxy.setSourceModel(&priv->model);
 
     // [root]
     //     SampleDecoder
@@ -118,7 +117,7 @@ TEST_F(PluginManagerTest, ProxyModelForEegDecoders)
 TEST_F(PluginManagerTest, ProxyModelForVideoDecoders)
 {
     PluginFilterProxyModel proxy("SampleDecoder", Signal::VIDEO);
-    proxy.setSourceModel(priv->model);
+    proxy.setSourceModel(&priv->model);
 
     // [root]
     //     SampleDecoder
@@ -144,7 +143,7 @@ TEST_F(PluginManagerTest, ProxyModelForVideoDecoders)
 TEST_F(PluginManagerTest, ProxyModelForDataSources)
 {
     PluginFilterProxyModel proxy("DataSource", Signal::INVALID);
-    proxy.setSourceModel(priv->model);
+    proxy.setSourceModel(&priv->model);
 
     // [root]
     //     DataSource
