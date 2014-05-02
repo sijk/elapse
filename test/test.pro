@@ -10,3 +10,4 @@ SUBDIRS += udpdatasource
 SUBDIRS += datasink
 SUBDIRS += simplerawdatasinksource
 SUBDIRS += configdbus
+SUBDIRS += pipeline
