@@ -2,7 +2,6 @@
 #define LOGMODEL_H
 
 #include <QAbstractTableModel>
-#include <QTime>
 #include <QxtLogger>
 
 
@@ -12,7 +11,7 @@
  */
 
 struct LogItem {
-    QTime time;
+    QString time;
     QxtLogger::LogLevel level;
     QString message;
 };
