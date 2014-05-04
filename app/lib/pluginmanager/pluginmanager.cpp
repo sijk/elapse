@@ -124,7 +124,7 @@ void PluginManagerPrivate::setSearchPath(QDir newPath)
 
     model.clear();
     searchForPluginsIn(corePluginDir);
-    if (userPluginDir.exists()) {
+    if (userPluginDir != QDir() && userPluginDir.exists()) {
         searchForPluginsIn(userPluginDir);
         QSettings().setValue("plugins-path", userPluginDir.absolutePath());
     }
