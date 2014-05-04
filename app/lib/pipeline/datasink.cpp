@@ -98,32 +98,36 @@ void DataSink::setSaveCognitiveState(bool save)
 }
 
 /*!
- * Called when the elapse::DataSource emits \a data. Finds out the
- * elapse::Signal::Type of the \a data and calls
+ * Called when the elapse::DataSource emits EEG \a data. Calls
  * elapse::DataSinkDelegate::saveData() if data saving is enabled.
  */
-void DataSink::onData(QByteArray data)
+void DataSink::onEegData(QByteArray data)
 {
     Q_ASSERT(delegate);
-
-    if (!saveDataEnabled)
-        return;
-
-    // The signal type of the data emitted by the DataSource is encoded in
-    // the name of the Qt signal. Inspect the name to extract the Signal::Type.
-    QString signal = sender()->metaObject()->method(senderSignalIndex()).name();
-
-    if (signal == "eegReady")
+    if (saveDataEnabled)
         delegate->saveData(Signal::EEG, data);
+}
 
-    else if (signal == "videoReady")
+/*!
+ * Called when the elapse::DataSource emits video \a data. Calls
+ * elapse::DataSinkDelegate::saveData() if data saving is enabled.
+ */
+void DataSink::onVideoData(QByteArray data)
+{
+    Q_ASSERT(delegate);
+    if (saveDataEnabled)
         delegate->saveData(Signal::VIDEO, data);
+}
 
-    else if (signal == "imuReady")
+/*!
+ * Called when the elapse::DataSource emits IMU \a data. Calls
+ * elapse::DataSinkDelegate::saveData() if data saving is enabled.
+ */
+void DataSink::onImuData(QByteArray data)
+{
+    Q_ASSERT(delegate);
+    if (saveDataEnabled)
         delegate->saveData(Signal::IMU, data);
-
-    else
-        Q_UNREACHABLE();
 }
 
 /*!
