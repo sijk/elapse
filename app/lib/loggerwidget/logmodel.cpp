@@ -13,6 +13,17 @@ static const QMap<QxtLogger::LogLevel, QBrush> levelColours = {
     { QxtLogger::WriteLevel,    Qt::white       },
 };
 
+static const QMap<QxtLogger::LogLevel, QString> levelNames = {
+    { QxtLogger::TraceLevel,    QStringLiteral("Trace")    },
+    { QxtLogger::DebugLevel,    QStringLiteral("Debug")    },
+    { QxtLogger::InfoLevel,     QStringLiteral("Info")     },
+    { QxtLogger::WarningLevel,  QStringLiteral("Warning")  },
+    { QxtLogger::ErrorLevel,    QStringLiteral("Error")    },
+    { QxtLogger::CriticalLevel, QStringLiteral("Critical") },
+    { QxtLogger::FatalLevel,    QStringLiteral("Fatal")    },
+    { QxtLogger::WriteLevel,    QStringLiteral("Write")    },
+};
+
 /*!
  * Construct a new LogModel as a child of the given \a parent.
  */
@@ -47,9 +58,9 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case 0:
-            return item.time.toString("hh:mm:ss.zzz");
+            return item.time;
         case 1:
-            return QxtLogger::logLevelToString(item.level).remove("Level");
+            return levelNames.value(item.level);
         case 2:
             return item.message;
         }
@@ -60,7 +71,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
     case Qt::BackgroundRole:
         switch (index.column()) {
         case 1:
-            return levelColours[item.level];
+            return levelColours.value(item.level);
         }
 
     case Qt::TextAlignmentRole:

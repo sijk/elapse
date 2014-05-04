@@ -42,7 +42,9 @@ public slots:
     void setSaveFeatureVectors(bool save);
     void setSaveCognitiveState(bool save);
 
-    void onData(QByteArray data);
+    void onEegData(QByteArray data);
+    void onVideoData(QByteArray data);
+    void onImuData(QByteArray data);
     void onSample(elapse::SamplePtr sample);
     void onFeatureVector(elapse::FeatureVector featureVector);
     void onCognitiveState(elapse::CognitiveState state);

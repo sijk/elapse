@@ -1,6 +1,7 @@
 #include "logmodel.h"
 #include "tablemodelloggerengine.h"
 
+#include <QTime>
 #include <QTextStream>
 
 /*!
@@ -45,12 +46,12 @@ bool TableModelLoggerEngine::isInitialized() const
  * Append the given \a messages to the LogModel.
  */
 void TableModelLoggerEngine::writeFormatted(QxtLogger::LogLevel level,
-                                       const QList<QVariant> &messages)
+                                            const QList<QVariant> &messages)
 {
     LogItem item;
 
     item.level = level;
-    item.time = QTime::currentTime();
+    item.time = QTime::currentTime().toString("hh:mm:ss.zzz");
 
     QTextStream message(&item.message);
     foreach (QVariant msg, messages) {

@@ -153,11 +153,11 @@ void Pipeline::setElements(ElementSetPtr newElements)
     _dataSink->setDelegate(_elements->dataSink);
 
     connect(_elements->dataSource, SIGNAL(eegReady(QByteArray)),
-            _dataSink, SLOT(onData(QByteArray)));
+            _dataSink, SLOT(onEegData(QByteArray)));
     connect(_elements->dataSource, SIGNAL(videoReady(QByteArray)),
-            _dataSink, SLOT(onData(QByteArray)));
+            _dataSink, SLOT(onVideoData(QByteArray)));
     connect(_elements->dataSource, SIGNAL(imuReady(QByteArray)),
-            _dataSink, SLOT(onData(QByteArray)));
+            _dataSink, SLOT(onImuData(QByteArray)));
     connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(elapse::SamplePtr)),
             _dataSink, SLOT(onSample(elapse::SamplePtr)));
     connect(_elements->sampleDecoders[Signal::VIDEO], SIGNAL(newSample(elapse::SamplePtr)),
