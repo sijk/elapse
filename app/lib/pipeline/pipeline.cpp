@@ -142,6 +142,9 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->featureExtractors[Signal::IMU], SIGNAL(newFeatures(elapse::FeatureVector)),
             _elements->classifier, SLOT(onFeatures(elapse::FeatureVector)));
 
+    connect(_elements->classifier, SIGNAL(newState(elapse::CognitiveState)),
+            _elements->action, SLOT(onState(elapse::CognitiveState)));
+
     // Propagate signals from elements
     connect(_elements->dataSource, SIGNAL(started()), SIGNAL(started()));
     connect(_elements->dataSource, SIGNAL(finished()), SIGNAL(error()));

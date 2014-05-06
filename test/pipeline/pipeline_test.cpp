@@ -6,6 +6,7 @@
 #include <elapse/elements/decoder.h>
 #include <elapse/elements/featurextractor.h>
 #include <elapse/elements/classifier.h>
+#include <elapse/elements/outputaction.h>
 #include <elapse/elements/datasinkdelegate.h>
 #include "elementset.h"
 #include "pipeline.h"
@@ -187,6 +188,13 @@ public:
     }
 };
 
+class MockOutputAction : public elapse::OutputAction
+{
+    Q_OBJECT
+public:
+    MOCK_METHOD1(onState, void(elapse::CognitiveState));
+};
+
 class MockDataSinkDelegate : public elapse::DataSinkDelegate
 {
     Q_OBJECT
@@ -235,6 +243,7 @@ protected:
         vidFeatEx = new MockVidFeatureExtractor;
         imuFeatEx = new MockImuFeatureExtractor;
         classifier = new MockClassifier;
+        action = new MockOutputAction;
         dataSink = new MockDataSinkDelegate;
 
         elements = ElementSetPtr::create();
@@ -246,6 +255,7 @@ protected:
         elements->featureExtractors[Signal::VIDEO] = vidFeatEx;
         elements->featureExtractors[Signal::IMU] = imuFeatEx;
         elements->classifier = classifier;
+        elements->action = action;
         elements->dataSink = dataSink;
 
         eegFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(eegFeatEx);
@@ -262,6 +272,7 @@ public:
     QPointer<MockVidFeatureExtractor> vidFeatEx;
     QPointer<MockImuFeatureExtractor> imuFeatEx;
     QPointer<MockClassifier> classifier;
+    QPointer<MockOutputAction> action;
     QPointer<MockDataSinkDelegate> dataSink;
 
     elapse::BaseFeatureExtractorPrivate *eegFeatExPriv;
@@ -582,6 +593,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
         }
 
         EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*action, onState(_));
 
         dataSource->emitEeg(2500);
         dataSource->emitVid(2500);
@@ -620,6 +632,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
         }
 
         EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*action, onState(_));
 
         dataSource->emitEeg(3000);
         dataSource->emitVid(3000);

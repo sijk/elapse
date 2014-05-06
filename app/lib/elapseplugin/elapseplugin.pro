@@ -24,6 +24,7 @@ HEADERS += \
     elapse/elements/decoder.h \
     elapse/elements/featurextractor.h \
     elapse/elements/classifier.h \
+    elapse/elements/outputaction.h \
     elapse/elements/datasinkdelegate.h
 
 LIBS += -L$$OUT_PWD/../../../common/dbus/ -ldbus

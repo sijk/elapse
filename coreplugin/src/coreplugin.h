@@ -11,6 +11,7 @@
 #include "dummyvideofeatureextractor.h"
 #include "dummyimufeatureextractor.h"
 #include "dummyclassifier.h"
+#include "dummyaction.h"
 #include "blackholedatasinkdelegate.h"
 #include "simplerawdatasinkdelegate.h"
 
@@ -40,6 +41,7 @@ class CorePlugin : public QObject, public elapse::PluginInterface
         DummyVideoFeatureExtractor,
         DummyImuFeatureExtractor,
         DummyClassifier,
+        DummyAction,
         BlackHoleDataSinkDelegate,
         SimpleRawDataSinkDelegate
     )
