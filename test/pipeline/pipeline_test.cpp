@@ -43,12 +43,18 @@ public:
     }
 };
 
+template<typename SampleType = elapse::Sample>
+elapse::SamplePtr createSample(quint64 time)
+{
+    SampleType *sample = new SampleType;
+    sample->timestamp = time * 1e6;
+    return elapse::SamplePtr(sample);
+}
+
 template<typename SampleType>
 elapse::SamplePtr createSample(const QByteArray &data)
 {
-    SampleType *sample = new SampleType;
-    sample->timestamp = data.toULongLong() * 1e6;
-    return elapse::SamplePtr(sample);
+    return createSample<SampleType>(data.toULongLong());
 }
 
 class MockEegDecoder : public elapse::SampleDecoder
@@ -315,6 +321,77 @@ public:
 
 
 /*
+ * Test BaseFeatureExtractor's windowing algorithm without a Pipeline
+ */
+TEST_F(PipelineTest, BaseFeatureExtractorWindowing)
+{
+    EXPECT_CALL(*eegFeatEx, reset());
+    EXPECT_CALL(*eegFeatEx, setStartTime(1010e6));
+    eegFeatEx->setStartTime(1010e6);
+    eegFeatEx->setWindowLength(1000);
+    eegFeatEx->setWindowStep(500);
+
+    eegFeatEx->onSample(createSample(10));
+    eegFeatEx->onSample(createSample(1000));
+
+    EXPECT_CALL(*eegFeatEx, analyseSample(_)).Times(2);
+
+    eegFeatEx->onSample(createSample(1010));
+    eegFeatEx->onSample(createSample(1020));
+
+    QVector<double> features = { 1, 2, 3 };
+    EXPECT_CALL(*eegFeatEx, features()).WillOnce(Return(features));
+    EXPECT_CALL(*eegFeatEx, removeDataBefore(_));
+    EXPECT_CALL(*eegFeatEx, analyseSample(_));
+
+    eegFeatEx->onSample(createSample(2010));
+}
+
+/*
+ * Test BaseFeatureExtractor's windowing algorithm with a Pipeline
+ */
+TEST_F(PipelineTest, BaseFeatureExtractorWindowingInPipeline)
+{
+    pipeline.setElements(elements);
+    pipeline.setWindowLength(1000);
+    pipeline.setWindowStep(500);
+    dataSink->ignoreCalls();
+    expectPipelineStart();
+    EXPECT_CALL(*eegDecoder, onData(_)).Times(5);
+
+    // Before start time
+    {
+        EXPECT_CALL(*eegFeatEx, reset());
+        EXPECT_CALL(*eegFeatEx, setStartTime(1010e6));
+        EXPECT_CALL(*vidFeatEx, reset());
+        EXPECT_CALL(*vidFeatEx, setStartTime(1010e6));
+        EXPECT_CALL(*imuFeatEx, reset());
+        EXPECT_CALL(*imuFeatEx, setStartTime(1010e6));
+
+        dataSource->emitEeg(10);
+        dataSource->emitEeg(1000);
+    }
+
+    // After start time, within first window
+    {
+        EXPECT_CALL(*eegFeatEx, analyseSample(_)).Times(2);
+
+        dataSource->emitEeg(1010);
+        dataSource->emitEeg(1020);
+    }
+
+    // After first window
+    {
+        QVector<double> features = { 1, 2, 3 };
+        EXPECT_CALL(*eegFeatEx, features()).WillOnce(Return(features));
+        EXPECT_CALL(*eegFeatEx, removeDataBefore(_));
+        EXPECT_CALL(*eegFeatEx, analyseSample(_));
+
+        dataSource->emitEeg(2010);
+    }
+}
+
+/*
  * Check that data emitted from the DataSource gets to the SampleDecoders
  * and the DataSinkDelegate.
  */
@@ -351,6 +428,58 @@ TEST_F(PipelineTest, DataSourceToDecodersAndSink)
     pipeline.stop();
 }
 
+TEST_F(PipelineTest, IgnoreSamplesBeforeStartTime)
+{
+    dataSink->ignoreCalls();
+
+    QSignalSpy error(&pipeline, SIGNAL(error(QString)));
+    pipeline.setElements(elements);
+    pipeline.setWindowLength(1000);
+    pipeline.setWindowStep(500);
+
+    // We'll set the start time and then simulate a bunch of samples with
+    // timestamps before the start time. They should all be discarded, so
+    // should never reach the feature extractors or beyond.
+    EXPECT_CALL(*classifier, classify(_)).Times(0);
+    EXPECT_CALL(*action, onState(_)).Times(0);
+
+    expectPipelineStart();
+    expectFirstSampleWithTimestamp(10);
+
+    // A bunch more samples before startTime: should all be discarded
+    {
+        EXPECT_CALL(*eegDecoder, onData(_)).Times(99);
+        EXPECT_CALL(*vidDecoder, onData(_)).Times(99);
+        EXPECT_CALL(*imuDecoder, onData(_)).Times(99);
+
+        for (uint time = 20; time < 1010; time += 10) {
+            dataSource->emitEeg(time);
+            dataSource->emitVid(time);
+            dataSource->emitImu(time);
+        }
+    }
+
+    // More samples after startTime but before first windowEnd: should be
+    // analysed but no feature vectors yet
+    {
+        EXPECT_CALL(*eegDecoder, onData(_)).Times(100);
+        EXPECT_CALL(*vidDecoder, onData(_)).Times(100);
+        EXPECT_CALL(*imuDecoder, onData(_)).Times(100);
+        EXPECT_CALL(*eegFeatEx, analyseSample(_)).Times(100);
+        EXPECT_CALL(*vidFeatEx, analyseSample(_)).Times(100);
+        EXPECT_CALL(*imuFeatEx, analyseSample(_)).Times(100);
+
+        for (uint time = 1010; time < 2010; time += 10) {
+            dataSource->emitEeg(time);
+            dataSource->emitVid(time);
+            dataSource->emitImu(time);
+        }
+    }
+
+    expectPipelineStop();
+    EXPECT_EQ(error.count(), 0);
+}
+
 TEST_F(PipelineTest, FeatureExtractorWindowing)
 {
     QVector<double> features = { 1, 2, 3 };
@@ -363,8 +492,8 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
 
     QSignalSpy error(&pipeline, SIGNAL(error(QString)));
     pipeline.setElements(elements);
-    pipeline.setWindowLength(100);
-    pipeline.setWindowStep(50);
+    pipeline.setWindowLength(1000);
+    pipeline.setWindowStep(500);
 
     expectPipelineStart();
 
@@ -397,9 +526,9 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
             EXPECT_CALL(*imuFeatEx, analyseSample(_));
         }
 
-        dataSource->emitEeg(1050);
-        dataSource->emitVid(1050);
-        dataSource->emitImu(1050);
+        dataSource->emitEeg(1500);
+        dataSource->emitVid(1500);
+        dataSource->emitImu(1500);
     }
 
     // 3: within first window: analyse
@@ -420,9 +549,9 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
             EXPECT_CALL(*imuFeatEx, analyseSample(_));
         }
 
-        dataSource->emitEeg(1100);
-        dataSource->emitVid(1100);
-        dataSource->emitImu(1100);
+        dataSource->emitEeg(2000);
+        dataSource->emitVid(2000);
+        dataSource->emitImu(2000);
     }
 
     // 4: past first window:
@@ -434,29 +563,33 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
             InSequence eeg;
             EXPECT_CALL(*eegDecoder, onData(_));
             EXPECT_CALL(*eegFeatEx, features()).WillOnce(Return(features));
-            EXPECT_CALL(*eegFeatEx, removeDataBefore(1060e6));
+            EXPECT_CALL(*eegFeatEx, removeDataBefore(1510e6));
             EXPECT_CALL(*eegFeatEx, analyseSample(_));
         }
         {
             InSequence video;
             EXPECT_CALL(*vidDecoder, onData(_));
             EXPECT_CALL(*vidFeatEx, features()).WillOnce(Return(features));
-            EXPECT_CALL(*vidFeatEx, removeDataBefore(1060e6));
+            EXPECT_CALL(*vidFeatEx, removeDataBefore(1510e6));
             EXPECT_CALL(*vidFeatEx, analyseSample(_));
         }
         {
             InSequence imu;
             EXPECT_CALL(*imuDecoder, onData(_));
             EXPECT_CALL(*imuFeatEx, features()).WillOnce(Return(features));
-            EXPECT_CALL(*imuFeatEx, removeDataBefore(1060e6));
+            EXPECT_CALL(*imuFeatEx, removeDataBefore(1510e6));
             EXPECT_CALL(*imuFeatEx, analyseSample(_));
         }
 
         EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
 
-        dataSource->emitEeg(1150);
-        dataSource->emitVid(1150);
-        dataSource->emitImu(1150);
+        dataSource->emitEeg(2500);
+        dataSource->emitVid(2500);
+        dataSource->emitImu(2500);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, 1510e6);
+        EXPECT_EQ(vidFeatExPriv->windowStart, 1510e6);
+        EXPECT_EQ(imuFeatExPriv->windowStart, 1510e6);
     }
 
     // 5: past second window:
@@ -468,29 +601,33 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
             InSequence eeg;
             EXPECT_CALL(*eegDecoder, onData(_));
             EXPECT_CALL(*eegFeatEx, features()).WillOnce(Return(features));
-            EXPECT_CALL(*eegFeatEx, removeDataBefore(1110e6));
+            EXPECT_CALL(*eegFeatEx, removeDataBefore(2010e6));
             EXPECT_CALL(*eegFeatEx, analyseSample(_));
         }
         {
             InSequence video;
             EXPECT_CALL(*vidDecoder, onData(_));
             EXPECT_CALL(*vidFeatEx, features()).WillOnce(Return(features));
-            EXPECT_CALL(*vidFeatEx, removeDataBefore(1110e6));
+            EXPECT_CALL(*vidFeatEx, removeDataBefore(2010e6));
             EXPECT_CALL(*vidFeatEx, analyseSample(_));
         }
         {
             InSequence imu;
             EXPECT_CALL(*imuDecoder, onData(_));
             EXPECT_CALL(*imuFeatEx, features()).WillOnce(Return(features));
-            EXPECT_CALL(*imuFeatEx, removeDataBefore(1110e6));
+            EXPECT_CALL(*imuFeatEx, removeDataBefore(2010e6));
             EXPECT_CALL(*imuFeatEx, analyseSample(_));
         }
 
         EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
 
-        dataSource->emitEeg(1200);
-        dataSource->emitVid(1200);
-        dataSource->emitImu(1200);
+        dataSource->emitEeg(3000);
+        dataSource->emitVid(3000);
+        dataSource->emitImu(3000);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, 2010e6);
+        EXPECT_EQ(vidFeatExPriv->windowStart, 2010e6);
+        EXPECT_EQ(imuFeatExPriv->windowStart, 2010e6);
     }
 
     expectPipelineStop();
