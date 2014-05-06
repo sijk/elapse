@@ -18,13 +18,13 @@
 int main(int argc, char** argv)
 {
     Application app(argc, argv);
-    app.setApplicationName("elapse-test-" + qAppName());
+    app.setApplicationName("elapse-test-" + app.applicationName());
     app.setOrganizationName("test");
 
     QSettings::setPath(QSettings::defaultFormat(), QSettings::SystemScope,
-                       qApp->applicationDirPath());
+                       app.applicationDirPath());
     QSettings::setPath(QSettings::defaultFormat(), QSettings::UserScope,
-                       qApp->applicationDirPath());
+                       app.applicationDirPath());
 
     QSettings settings;
     foreach (auto key, settings.allKeys())

@@ -154,5 +154,3 @@ TEST(DataSinkTest, DelegateSaveCalledWhenEnabled)
     sink.onCognitiveState(elapse::CognitiveState(0));
 }
 
-#include "datasink_test.moc"
-

@@ -19,7 +19,7 @@ public:
     /*!
      * Remove all values which have timestamps less than the given \a time.
      *
-     * Relies on the fact that QMaps are sorted by their keys.
+     * Relies on the fact that std::maps are sorted by their keys.
      */
     void removeValuesBefore(uint64_t time)
     {
