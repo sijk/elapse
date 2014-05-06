@@ -9,7 +9,8 @@ QXT     += core
 TARGET   = elapseplugin
 
 HEADERS += \
-    configproxies.h
+    configproxies.h \
+    featurextractor_p.h
 
 SOURCES += \
     offlinedatasource.cpp \

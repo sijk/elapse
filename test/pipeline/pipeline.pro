@@ -6,3 +6,5 @@ INCLUDEPATH += $$ROOT/app/include
 linkStaticlib(app, pipeline)
 linkSharedlib(app, elapseplugin, true)
 
+QMAKE_CXXFLAGS += -Wno-unused-variable
+

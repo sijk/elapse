@@ -1,4 +1,28 @@
 #include "elapse/elements/featurextractor.h"
+#include "featurextractor_p.h"
+
+
+elapse::BaseFeatureExtractorPrivate::BaseFeatureExtractorPrivate() :
+    windowStart(0),
+    signalType(Signal::INVALID)
+{
+}
+
+/*!
+ * \return the Signal::Type this FeatureExtractor works with, as defined
+ * by the "SignalType" class info field.
+ */
+elapse::Signal::Type elapse::BaseFeatureExtractorPrivate::findSignalType(BaseFeatureExtractor *q)
+{
+    const int index = q->metaObject()->indexOfClassInfo("SignalType");
+    const char *info = q->metaObject()->classInfo(index).value();
+    return Signal::fromString(info);
+}
+
+elapse::BaseFeatureExtractorPrivate *elapse::BaseFeatureExtractorPrivate::expose(BaseFeatureExtractor *q)
+{
+    return q->d_func();
+}
 
 
 /*!
@@ -6,26 +30,33 @@
  */
 elapse::BaseFeatureExtractor::BaseFeatureExtractor(QObject *parent) :
     FeatureExtractor(parent),
-    windowStart(0),
-    signalType(Signal::INVALID)
+    d_ptr(new BaseFeatureExtractorPrivate)
 {
+}
+
+elapse::BaseFeatureExtractor::~BaseFeatureExtractor()
+{
+    delete d_ptr;
 }
 
 void elapse::BaseFeatureExtractor::setStartTime(quint64 timestamp)
 {
+    Q_D(BaseFeatureExtractor);
     reset();
-    windowStart = timestamp;
-    signalType = findSignalType();
+    d->windowStart = timestamp;
+    d->signalType = BaseFeatureExtractorPrivate::findSignalType(this);
 }
 
 void elapse::BaseFeatureExtractor::setWindowLength(uint ms)
 {
-    windowLength = ms;
+    Q_D(BaseFeatureExtractor);
+    d->windowLength = ms * 1e6;
 }
 
 void elapse::BaseFeatureExtractor::setWindowStep(uint ms)
 {
-    windowStep = ms;
+    Q_D(BaseFeatureExtractor);
+    d->windowStep = ms * 1e6;
 }
 
 /*!
@@ -35,23 +66,32 @@ void elapse::BaseFeatureExtractor::setWindowStep(uint ms)
  */
 void elapse::BaseFeatureExtractor::onSample(elapse::SamplePtr sample)
 {
-    if (windowStart == 0)
-        return;
-    Q_ASSERT(signalType != Signal::INVALID);
+    Q_D(BaseFeatureExtractor);
 
-    if (sample->timestamp < windowStart)
+    if (d->windowStart == 0)
         return;
 
-    quint64 windowEnd = windowStart + windowLength * 1e6;
-    quint64 nextWindowStart = windowStart + windowStep * 1e6;
+    Q_ASSERT(d->signalType != Signal::INVALID);
+
+    if (sample->timestamp < d->windowStart) {
+        return;
+    }
+
+    quint64 windowEnd = d->windowStart + d->windowLength;
+    quint64 nextWindowStart = d->windowStart;
+    quint64 nextWindowEnd;
+    do {
+        nextWindowStart += d->windowStep;
+        nextWindowEnd = nextWindowStart + d->windowLength;
+    } while (sample->timestamp >= nextWindowEnd);
 
     if (sample->timestamp >= windowEnd) {
-        FeatureVector featureVector(signalType, windowStart);
+        FeatureVector featureVector(d->signalType, d->windowStart);
         featureVector.features = features();
         emit newFeatures(featureVector);
 
         removeDataBefore(nextWindowStart);
-        windowStart = nextWindowStart;
+        d->windowStart = nextWindowStart;
     }
 
     analyseSample(sample);
@@ -62,13 +102,3 @@ void elapse::BaseFeatureExtractor::reset()
     removeDataBefore(std::numeric_limits<quint64>::max());
 }
 
-/*!
- * \return the Signal::Type this FeatureExtractor works with, as defined
- * by the "SignalType" class info field.
- */
-elapse::Signal::Type elapse::BaseFeatureExtractor::findSignalType() const
-{
-    const int index = metaObject()->indexOfClassInfo("SignalType");
-    const char *info = metaObject()->classInfo(index).value();
-    return Signal::fromString(info);
-}
