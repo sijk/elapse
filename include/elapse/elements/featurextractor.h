@@ -47,6 +47,7 @@ signals:
 };
 
 
+class BaseFeatureExtractorPrivate;
 
 /*!
  * \brief The BaseFeatureExtractor class provides a base implementation of a
@@ -64,6 +65,7 @@ class BaseFeatureExtractor : public FeatureExtractor
     Q_OBJECT
 public:
     explicit BaseFeatureExtractor(QObject *parent = nullptr);
+    ~BaseFeatureExtractor();
 
     void setStartTime(quint64 timestamp);
 
@@ -77,7 +79,7 @@ protected:
     /*!
      * Derived classes should implement this method to analyse the given
      * \a sample. The result will need to be stored internally until the
-     * next call to featureVector().
+     * next call to features().
      * \sa TimestampedValues for a convenient data structure to store the
      * results of this analysis.
      */
@@ -102,12 +104,8 @@ protected:
     virtual void reset();
 
 private:
-    quint64 windowStart;
-    uint windowLength;
-    uint windowStep;
-    Signal::Type signalType;
-
-    Signal::Type findSignalType() const;
+    BaseFeatureExtractorPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(BaseFeatureExtractor)
 };
 
 } // namespace elapse

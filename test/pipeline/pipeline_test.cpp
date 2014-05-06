@@ -9,6 +9,7 @@
 #include <elapse/elements/datasinkdelegate.h>
 #include "elementset.h"
 #include "pipeline.h"
+#include "featurextractor_p.h"
 #include "../test_utils.h"
 
 using ::testing::_;
@@ -16,7 +17,6 @@ using ::testing::Return;
 using ::testing::Invoke;
 using ::testing::AnyNumber;
 using ::testing::InSequence;
-//using ::testing::ExpectationSet;
 using ::elapse::Signal;
 
 
@@ -241,6 +241,10 @@ protected:
         elements->featureExtractors[Signal::IMU] = imuFeatEx;
         elements->classifier = classifier;
         elements->dataSink = dataSink;
+
+        eegFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(eegFeatEx);
+        vidFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(vidFeatEx);
+        imuFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(imuFeatEx);
     }
 
 public:
@@ -253,6 +257,10 @@ public:
     QPointer<MockImuFeatureExtractor> imuFeatEx;
     QPointer<MockClassifier> classifier;
     QPointer<MockDataSinkDelegate> dataSink;
+
+    elapse::BaseFeatureExtractorPrivate *eegFeatExPriv;
+    elapse::BaseFeatureExtractorPrivate *vidFeatExPriv;
+    elapse::BaseFeatureExtractorPrivate *imuFeatExPriv;
 
     ElementSetPtr elements;
     Pipeline pipeline;
@@ -298,6 +306,10 @@ public:
         }
 
         dataSource->emitEeg(time);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, startTime);
+        EXPECT_EQ(vidFeatExPriv->windowStart, startTime);
+        EXPECT_EQ(imuFeatExPriv->windowStart, startTime);
     }
 };
 
@@ -527,6 +539,10 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
 
         for (uint time = w1start; time <= w5end; time += 10)
             dataSource->emitEeg(time);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, w6start * 1e6);
+        EXPECT_EQ(vidFeatExPriv->windowStart, w1start * 1e6);
+        EXPECT_EQ(imuFeatExPriv->windowStart, w1start * 1e6);
     }
 
     // 3: IMU samples in first window
@@ -547,6 +563,10 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
 
         for (uint time = w1start; time <= w1end; time += 100)
             dataSource->emitImu(time);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, w6start * 1e6);
+        EXPECT_EQ(vidFeatExPriv->windowStart, w1start * 1e6);
+        EXPECT_EQ(imuFeatExPriv->windowStart, w2start * 1e6);
     }
 
     // 4: Video samples in first three windows. This completes the FeatureSet
@@ -571,6 +591,10 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
 
         for (uint time = w1start; time <= w3end; time += 25)
             dataSource->emitVid(time);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, w6start * 1e6);
+        EXPECT_EQ(vidFeatExPriv->windowStart, w4start * 1e6);
+        EXPECT_EQ(imuFeatExPriv->windowStart, w2start * 1e6);
     }
 
     // 5: IMU sample after third window. Should finish second window
@@ -594,6 +618,10 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
         EXPECT_CALL(*imuFeatEx, removeDataBefore(_));
 
         dataSource->emitImu(w3end + 100);
+
+        EXPECT_EQ(eegFeatExPriv->windowStart, w6start * 1e6);
+        EXPECT_EQ(vidFeatExPriv->windowStart, w4start * 1e6);
+        EXPECT_EQ(imuFeatExPriv->windowStart, w4start * 1e6);
     }
 
     expectPipelineStop();
