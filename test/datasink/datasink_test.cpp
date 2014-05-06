@@ -127,7 +127,7 @@ TEST(DataSinkTest, DelegateSaveNotCalledWhenDisabled)
     sink.setSaveCognitiveState(false);
 
     sink.onEegData("");
-    sink.onSample(elapse::SamplePtr(new elapse::EegSample()));
+    sink.onEegSample(elapse::SamplePtr(new elapse::EegSample()));
     sink.onFeatureVector(elapse::FeatureVector(elapse::Signal::EEG, 0));
     sink.onCognitiveState(elapse::CognitiveState(0));
 }
@@ -149,7 +149,7 @@ TEST(DataSinkTest, DelegateSaveCalledWhenEnabled)
     sink.setSaveCognitiveState(true);
 
     sink.onEegData("");
-    sink.onSample(elapse::SamplePtr(new elapse::EegSample()));
+    sink.onEegSample(elapse::SamplePtr(new elapse::EegSample()));
     sink.onFeatureVector(elapse::FeatureVector(elapse::Signal::EEG, 0));
     sink.onCognitiveState(elapse::CognitiveState(0));
 }

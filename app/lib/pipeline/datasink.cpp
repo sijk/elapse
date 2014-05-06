@@ -131,28 +131,36 @@ void DataSink::onImuData(QByteArray data)
 }
 
 /*!
- * Called when a elapse::SampleDecoder emits a \a sample. Finds out the
- * elapse::Signal::Type of the \a sample and calls
+ * Called when a elapse::SampleDecoder emits an EEG \a sample. Calls
  * elapse::DataSinkDelegate::saveSample() if sample saving is enabled.
  */
-void DataSink::onSample(elapse::SamplePtr sample)
+void DataSink::onEegSample(elapse::SamplePtr sample)
 {
     Q_ASSERT(delegate);
-
-    if (!saveSamplesEnabled)
-        return;
-
-    if (sample.dynamicCast<const elapse::EegSample>())
+    if (saveSamplesEnabled)
         delegate->saveSample(Signal::EEG, sample);
+}
 
-    else if (sample.dynamicCast<const elapse::VideoSample>())
+/*!
+ * Called when a elapse::SampleDecoder emits a video \a sample. Calls
+ * elapse::DataSinkDelegate::saveSample() if sample saving is enabled.
+ */
+void DataSink::onVideoSample(elapse::SamplePtr sample)
+{
+    Q_ASSERT(delegate);
+    if (saveSamplesEnabled)
         delegate->saveSample(Signal::VIDEO, sample);
+}
 
-    else if (sample.dynamicCast<const elapse::ImuSample>())
+/*!
+ * Called when a elapse::SampleDecoder emits an IMU \a sample. Calls
+ * elapse::DataSinkDelegate::saveSample() if sample saving is enabled.
+ */
+void DataSink::onImuSample(elapse::SamplePtr sample)
+{
+    Q_ASSERT(delegate);
+    if (saveSamplesEnabled)
         delegate->saveSample(Signal::IMU, sample);
-
-    else
-        Q_UNREACHABLE();
 }
 
 /*!

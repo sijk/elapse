@@ -45,7 +45,9 @@ public slots:
     void onEegData(QByteArray data);
     void onVideoData(QByteArray data);
     void onImuData(QByteArray data);
-    void onSample(elapse::SamplePtr sample);
+    void onEegSample(elapse::SamplePtr sample);
+    void onVideoSample(elapse::SamplePtr sample);
+    void onImuSample(elapse::SamplePtr sample);
     void onFeatureVector(elapse::FeatureVector featureVector);
     void onCognitiveState(elapse::CognitiveState state);
 

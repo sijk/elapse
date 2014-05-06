@@ -159,11 +159,11 @@ void Pipeline::setElements(ElementSetPtr newElements)
     connect(_elements->dataSource, SIGNAL(imuReady(QByteArray)),
             _dataSink, SLOT(onImuData(QByteArray)));
     connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(elapse::SamplePtr)),
-            _dataSink, SLOT(onSample(elapse::SamplePtr)));
+            _dataSink, SLOT(onEegSample(elapse::SamplePtr)));
     connect(_elements->sampleDecoders[Signal::VIDEO], SIGNAL(newSample(elapse::SamplePtr)),
-            _dataSink, SLOT(onSample(elapse::SamplePtr)));
+            _dataSink, SLOT(onVideoSample(elapse::SamplePtr)));
     connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(elapse::SamplePtr)),
-            _dataSink, SLOT(onSample(elapse::SamplePtr)));
+            _dataSink, SLOT(onImuSample(elapse::SamplePtr)));
     connect(_elements->featureExtractors[Signal::EEG], SIGNAL(newFeatures(elapse::FeatureVector)),
             _dataSink, SLOT(onFeatureVector(elapse::FeatureVector)));
     connect(_elements->featureExtractors[Signal::VIDEO], SIGNAL(newFeatures(elapse::FeatureVector)),
