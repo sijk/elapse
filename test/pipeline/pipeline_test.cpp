@@ -113,16 +113,25 @@ public:
     MOCK_METHOD0(features, QVector<double>());
     MOCK_METHOD1(removeDataBefore, void(quint64));
     MOCK_METHOD1(setStartTime, void(quint64));
+    MOCK_METHOD0(reset, void());
 
     MockFeatureExtractor()
     {
         ON_CALL(*this, setStartTime(_))
                 .WillByDefault(Invoke(this, &MockFeatureExtractor::_setStartTime));
+        ON_CALL(*this, reset())
+                .WillByDefault(Invoke(this, &MockFeatureExtractor::_reset));
     }
 
     void _setStartTime(quint64 time)
     {
         BaseFeatureExtractor::setStartTime(time);
+    }
+
+    void _reset()
+    {
+        EXPECT_CALL(*this, removeDataBefore(_));
+        BaseFeatureExtractor::reset();
     }
 
     void ignoreCalls()
@@ -131,6 +140,7 @@ public:
         EXPECT_CALL(*this, features()).Times(AnyNumber());
         EXPECT_CALL(*this, removeDataBefore(_)).Times(AnyNumber());
         EXPECT_CALL(*this, setStartTime(_)).Times(AnyNumber());
+        EXPECT_CALL(*this, reset()).Times(AnyNumber());
     }
 };
 
@@ -248,6 +258,47 @@ public:
     Pipeline pipeline;
 
     SuppressLogging nolog;
+
+    void expectPipelineStart()
+    {
+        InSequence s;
+        EXPECT_CALL(*dataSink, start());
+        EXPECT_CALL(*classifier, reset());
+        EXPECT_CALL(*dataSource, start());
+        pipeline.start();
+    }
+
+    void expectPipelineStop()
+    {
+        InSequence s;
+        EXPECT_CALL(*dataSource, stop());
+        EXPECT_CALL(*dataSink, stop());
+        pipeline.stop();
+    }
+
+    void expectFirstSampleWithTimestamp(quint64 time)
+    {
+        const quint64 startTime = time * 1e6 + 1e9;
+
+        {
+            InSequence eeg;
+            EXPECT_CALL(*eegDecoder, onData(_));
+            EXPECT_CALL(*eegFeatEx, setStartTime(startTime));
+            EXPECT_CALL(*eegFeatEx, reset());
+        }
+        {
+            InSequence vid;
+            EXPECT_CALL(*vidFeatEx, setStartTime(startTime));
+            EXPECT_CALL(*vidFeatEx, reset());
+        }
+        {
+            InSequence imu;
+            EXPECT_CALL(*imuFeatEx, setStartTime(startTime));
+            EXPECT_CALL(*imuFeatEx, reset());
+        }
+
+        dataSource->emitEeg(time);
+    }
 };
 
 
@@ -293,8 +344,8 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
     QVector<double> features = { 1, 2, 3 };
     elapse::CognitiveState state = { 42 };
 
-    EXPECT_CALL(*dataSink, saveData(_,_)).Times(15);
-    EXPECT_CALL(*dataSink, saveSample(_,_)).Times(15);
+    EXPECT_CALL(*dataSink, saveData(_,_)).Times(13);
+    EXPECT_CALL(*dataSink, saveSample(_,_)).Times(13);
     EXPECT_CALL(*dataSink, saveFeatureVector(_)).Times(6);
     EXPECT_CALL(*dataSink, saveCognitiveState(_)).Times(2);
 
@@ -303,15 +354,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
     pipeline.setWindowLength(100);
     pipeline.setWindowStep(50);
 
-    // Start pipeline
-    {
-        InSequence s;
-        EXPECT_CALL(*dataSink, start());
-        EXPECT_CALL(*classifier, reset());
-        EXPECT_CALL(*dataSource, start());
-
-        pipeline.start();
-    }
+    expectPipelineStart();
 
     // Simulate 5 samples. First is used to set start time, then discarded.
     // Subsequent ones form two (and a half) windows.
@@ -322,36 +365,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
     //       |----|
 
     // 1: set start time, reset state, discard sample
-    {
-        {
-            InSequence eeg;
-
-            // First sample: reset and set start time
-            EXPECT_CALL(*eegDecoder, onData(_));
-            EXPECT_CALL(*eegFeatEx, setStartTime(10e6 + 1e9));
-            EXPECT_CALL(*eegFeatEx, removeDataBefore(_));
-        }
-        {
-            InSequence vid;
-
-            // Start time set by first EEG sample
-            EXPECT_CALL(*vidFeatEx, setStartTime(10e6 + 1e9));
-            EXPECT_CALL(*vidFeatEx, removeDataBefore(_));
-
-            // First video sample
-            EXPECT_CALL(*vidDecoder, onData(_));
-        }
-        {
-            InSequence imu;
-            EXPECT_CALL(*imuFeatEx, setStartTime(10e6 + 1e9));
-            EXPECT_CALL(*imuFeatEx, removeDataBefore(_));
-            EXPECT_CALL(*imuDecoder, onData(_));
-        }
-
-        dataSource->emitEeg(10);
-        dataSource->emitVid(30);
-        dataSource->emitImu(20);
-    }
+    expectFirstSampleWithTimestamp(10);
 
     // 2: within first window: analyse
     {
@@ -467,18 +481,124 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
         dataSource->emitImu(1200);
     }
 
-    // Stop pipeline
-    {
-        InSequence s;
-        EXPECT_CALL(*dataSource, stop());
-        EXPECT_CALL(*dataSink, stop());
-
-        pipeline.stop();
-    }
-
+    expectPipelineStop();
     EXPECT_EQ(error.count(), 0);
 }
 
+TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
+{
+    QVector<double> features = { 1, 2, 3 };
+    elapse::CognitiveState state = { 42 };
+
+    dataSink->ignoreCalls();
+    QSignalSpy error(&pipeline, SIGNAL(error(QString)));
+    pipeline.setElements(elements);
+    pipeline.setWindowLength(1000);
+    pipeline.setWindowStep(500);
+
+    expectPipelineStart();
+
+    // 1: set start time, reset state, discard sample
+    expectFirstSampleWithTimestamp(10);
+
+    // Expected window bounds
+    const uint w1start = 1010, w1end = 2010;
+    const uint w2start = 1510, w2end = 2510;
+    const uint w3start = 2010, w3end = 3010;
+    const uint w4start = 2510, w4end = 3510;
+    const uint w5start = 3010, w5end = 4010;
+    const uint w6start = 3510;
+
+    // 2: A bunch of EEG samples spanning five windows:
+    //
+    //   1   |----|
+    //   2      |----|
+    //   3         |----|
+    //   4            |----|
+    //   5               |----|
+    //  EEG  xxxxxxxxxxxxxxxxxx
+    //  VID
+    //  IMU
+    {
+        EXPECT_CALL(*eegDecoder, onData(_)).Times(301);
+        EXPECT_CALL(*eegFeatEx, analyseSample(_)).Times(301);
+        EXPECT_CALL(*eegFeatEx, features()).Times(5).WillRepeatedly(Return(features));
+        EXPECT_CALL(*eegFeatEx, removeDataBefore(_)).Times(5);
+
+        for (uint time = w1start; time <= w5end; time += 10)
+            dataSource->emitEeg(time);
+    }
+
+    // 3: IMU samples in first window
+    //
+    //   1   |----|
+    //   2      |----|
+    //   3         |----|
+    //   4            |----|
+    //   5               |----|
+    //  EEG  xxxxxxxxxxxxxxxxxx
+    //  VID
+    //  IMU  xxxxxx
+    {
+        EXPECT_CALL(*imuDecoder, onData(_)).Times(11);
+        EXPECT_CALL(*imuFeatEx, analyseSample(_)).Times(11);
+        EXPECT_CALL(*imuFeatEx, features()).WillOnce(Return(features));
+        EXPECT_CALL(*imuFeatEx, removeDataBefore(_));
+
+        for (uint time = w1start; time <= w1end; time += 100)
+            dataSource->emitImu(time);
+    }
+
+    // 4: Video samples in first three windows. This completes the FeatureSet
+    //    for the first window, so it will be classified.
+    //
+    //   1   |----|
+    //   2      |----|
+    //   3         |----|
+    //   4            |----|
+    //   5               |----|
+    //  EEG  xxxxxxxxxxxxxxxxxx
+    //  VID  xxxxxxxxxxxx
+    //  IMU  xxxxxx
+    {
+        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*action, onState(_));
+
+        EXPECT_CALL(*vidDecoder, onData(_)).Times(81);
+        EXPECT_CALL(*vidFeatEx, analyseSample(_)).Times(81);
+        EXPECT_CALL(*vidFeatEx, features()).Times(3).WillRepeatedly(Return(features));
+        EXPECT_CALL(*vidFeatEx, removeDataBefore(_)).Times(3);
+
+        for (uint time = w1start; time <= w3end; time += 25)
+            dataSource->emitVid(time);
+    }
+
+    // 5: IMU sample after third window. Should finish second window
+    //    and jump straight to start of fourth.
+    //
+    //   1   |----|
+    //   2      |----|
+    //   3         |----|
+    //   4            |----|
+    //   5               |----|
+    //  EEG  xxxxxxxxxxxxxxxxxx
+    //  VID  xxxxxxxxxxxx
+    //  IMU  xxxxxx      x
+    {
+        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*action, onState(_));
+
+        EXPECT_CALL(*imuDecoder, onData(_));
+        EXPECT_CALL(*imuFeatEx, analyseSample(_));
+        EXPECT_CALL(*imuFeatEx, features()).WillOnce(Return(features));
+        EXPECT_CALL(*imuFeatEx, removeDataBefore(_));
+
+        dataSource->emitImu(w3end + 100);
+    }
+
+    expectPipelineStop();
+    EXPECT_EQ(error.count(), 0);
+}
 
 #include "pipeline_test.moc"
 
