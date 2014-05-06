@@ -123,17 +123,14 @@ TEST_F(PluginManagerTest, ProxyModelForVideoDecoders)
     //     SampleDecoder
     //         BarPlugin
     //             BarVideoDecoder
-    //         FooPlugin
 
     ASSERT_EQ(proxy.rowCount(), 1);
     auto sampDecIdx = proxy.index(0, 0);
     EXPECT_EQ(proxy.data(sampDecIdx).toString(), "SampleDecoder");
 
-    ASSERT_EQ(proxy.rowCount(sampDecIdx), 2);
+    ASSERT_EQ(proxy.rowCount(sampDecIdx), 1);
     auto barPluginDecIdx = proxy.index(0, 0, sampDecIdx);
-    auto fooPluginDecIdx = proxy.index(1, 0, sampDecIdx);
     EXPECT_EQ(proxy.data(barPluginDecIdx).toString(), "BarPlugin");
-    EXPECT_EQ(proxy.data(fooPluginDecIdx).toString(), "FooPlugin");
 
     ASSERT_EQ(proxy.rowCount(barPluginDecIdx), 1);
     auto barEegIdx = proxy.index(0, 0, barPluginDecIdx);

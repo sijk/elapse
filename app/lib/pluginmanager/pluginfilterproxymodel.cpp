@@ -39,8 +39,13 @@ bool PluginFilterProxyModel::filterAcceptsRow(int row,
     if (isElementItem)
         return index.data().toString() == desiredElementType;
 
-    if (isPluginItem)
-        return true;
+    // Only accept plugins with >= 1 acceptable child
+    if (isPluginItem) {
+        for (int i = 0; i < sourceModel()->rowCount(index); i++)
+            if (filterAcceptsRow(i, index))
+                return true;
+        return false;
+    }
 
     // Exclude classes that explicitly don't work with the given signalType
     QVariant signalType = index.data(SIGNALTYPE_ROLE);
