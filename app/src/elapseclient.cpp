@@ -210,6 +210,7 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(proxy, SIGNAL(error(QString)), disconnected);
+    connect(connected, SIGNAL(entered()), SLOT(stop())); // in case still running
     connect(connected, SIGNAL(entered()), SLOT(configure()));
     connect(connected, SIGNAL(exited()), SLOT(unconfigure()));
     connect(connected, SIGNAL(exited()), proxy, SLOT(disconnect()));
