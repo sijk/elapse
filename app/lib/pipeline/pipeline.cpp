@@ -71,7 +71,7 @@ Pipeline::Pipeline(QObject *parent) :
     _elements(nullptr),
     _dataSink(new DataSink(this))
 {
-    qRegisterMetaType<elapse::SamplePtr>("SamplePtr");
+    qRegisterMetaType<elapse::SamplePtr>("elapse::SamplePtr");
 }
 
 /*!
@@ -199,6 +199,8 @@ void Pipeline::start()
         emit error();
         return;
     }
+    foreach (auto decoder, _elements->sampleDecoders)
+        decoder->start();
     _elements->classifier->reset();
     _elements->dataSource->start();
 }
@@ -213,6 +215,8 @@ void Pipeline::stop()
 
     qxtLog->info("Stopping pipeline");
     _elements->dataSource->stop();
+    foreach (auto decoder, _elements->sampleDecoders)
+        decoder->stop();
     _dataSink->stop();
     emit stopped();
 }

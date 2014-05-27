@@ -14,7 +14,7 @@ namespace elapse {
  *
  * Each Pipeline has several SampleDecoder%s: one per Signal::Type.
  *
- * You are unlikely to need to implement your own SampeDecoder%s since the
+ * You are unlikely to need to implement your own SampleDecoder%s since the
  * ones provided by the \ref core-plugin "core plugin" are already capable
  * of decoding the data streams from the device.
  *
@@ -42,6 +42,18 @@ signals:
     void error(QString message);
 
 public slots:
+    /*!
+     * Called when starting the Pipeline. Subclasses may override this method
+     * to do any initialisation they require.
+     */
+    virtual void start() {}
+
+    /*!
+     * Called when stopping the Pipeline. Subclasses may override this method
+     * to do any cleanup they require.
+     */
+    virtual void stop() {}
+
     /*!
      * Executed when \a data is available for decoding. Classes that inherit
      * from SampleDecoder must implement this slot and ensure that newSample()
