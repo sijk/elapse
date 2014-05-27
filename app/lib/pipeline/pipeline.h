@@ -12,6 +12,12 @@
  * It is responsible for managing the state of and connections between the
  * elements in an ElementSet.
  *
+ * All connections between elements are \c Qt::AutoConnection%s. This means
+ * that even if an element uses worker threads internally, signal propagation
+ * to other elements will still be handled through Qt's main loop. In other
+ * words, an element is allowed to emit signals directly from background
+ * threads; the connected slots will be called from the main loop.
+ *
  * \ingroup signal-pipeline
  * \see \ref pipeline-arch for an illustration of the pipeline's structure.
  */
@@ -45,6 +51,7 @@ private slots:
 private:
     ElementSetPtr _elements;
     DataSink *_dataSink;
+    bool startTimeIsSet;
 };
 
 

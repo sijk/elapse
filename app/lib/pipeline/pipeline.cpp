@@ -175,6 +175,14 @@ void Pipeline::setElements(ElementSetPtr newElements)
             _dataSink, SLOT(onFeatureVector(elapse::FeatureVector)));
     connect(_elements->classifier, SIGNAL(newState(elapse::CognitiveState)),
             _dataSink, SLOT(onCognitiveState(elapse::CognitiveState)));
+
+    // Watch for first sample to set start time
+    connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(elapse::SamplePtr)),
+            SLOT(setStartTime(elapse::SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::VIDEO], SIGNAL(newSample(elapse::SamplePtr)),
+            SLOT(setStartTime(elapse::SamplePtr)));
+    connect(_elements->sampleDecoders[Signal::IMU], SIGNAL(newSample(elapse::SamplePtr)),
+            SLOT(setStartTime(elapse::SamplePtr)));
 }
 
 /*!
@@ -184,8 +192,7 @@ void Pipeline::start()
 {
     Q_ASSERT(_elements);
 
-    connect(_elements->sampleDecoders[Signal::EEG], SIGNAL(newSample(elapse::SamplePtr)),
-            SLOT(setStartTime(elapse::SamplePtr)));
+    startTimeIsSet = false;
 
     qxtLog->info("Starting pipeline");
     if (!_dataSink->start()) {
@@ -208,26 +215,28 @@ void Pipeline::stop()
     _elements->dataSource->stop();
     _dataSink->stop();
     emit stopped();
-
-    disconnect(_elements->sampleDecoders[Signal::EEG],
-               SIGNAL(newSample(elapse::SamplePtr)), this, 0);
 }
 
 /*!
- * Called when the first \a sample is decoded. Sets the start timestamp for
- * the FeatureExtractor%s to one second after that to give all of the sensors
- * time to start up.
+ * Called whenever a \a sample is decoded. For the first sample, it sets the
+ * start timestamp for the FeatureExtractor%s to one second later to give all
+ * of the sensors time to start up. For subsequent samples it does nothing.
  */
 void Pipeline::setStartTime(elapse::SamplePtr sample)
 {
+    // Access to startTimeIsSet doesn't need special synchronisation
+    // as long as this slot is connected with Qt::AutoConnection so that
+    // it's called from the main thread (same thread as start()).
+    if (startTimeIsSet)
+        return;
+
     quint64 startTime = sample->timestamp + 1e9;
 
     qxtLog->debug("Setting start time to", startTime / 1e9);
     foreach (auto featureExtractor, _elements->featureExtractors)
         featureExtractor->setStartTime(startTime);
 
-    disconnect(_elements->sampleDecoders[Signal::EEG],
-               SIGNAL(newSample(elapse::SamplePtr)), this, 0);
+    startTimeIsSet = true;
 }
 
 /*!
