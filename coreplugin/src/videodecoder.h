@@ -25,6 +25,8 @@ public:
     QWidget *getWidget();
 
 public slots:
+    void start();
+    void stop();
     void onData(QByteArray data);
 
 private:

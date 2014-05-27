@@ -1,4 +1,6 @@
 #include <QPointer>
+#include <QQueue>
+#include <QMutexLocker>
 #include <QxtLogger>
 #include <QGst/Init>
 #include <QGlib/Connect>
@@ -29,13 +31,12 @@ using elapse::SamplePtr;
     "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
     "ffdec_h264 ! videoflip method=upper-left-diagonal ! " \
     "tee name=t  ! queue ! appsink name=appsink " \
-    "t. ! queue ! xvimagesink name=displaysink sync=false"
-
-// TODO: Use an rtpjitterbuffer?
+             "t. ! queue ! xvimagesink name=displaysink sync=false"
 
 
 /*!
- * \brief The GstVideoSample struct makes a QGst::Buffer look like a VideoSample.
+ * \brief The GstVideoSample struct makes a QGst::Buffer look like a
+ * VideoSample.
  *
  * It keeps a reference to the QGst::Buffer in order to keep it alive until
  * the VideoSample is destroyed.
@@ -43,7 +44,7 @@ using elapse::SamplePtr;
 
 struct GstVideoSample : elapse::VideoSample
 {
-    GstVideoSample(QGst::BufferPtr buffer);
+    GstVideoSample(QGst::BufferPtr buffer, quint64 ts);
 
 private:
     QGst::BufferPtr buff;
@@ -54,8 +55,9 @@ private:
  * \brief The ApplicationSink class turns the "new-buffer" GStreamer signal
  * into a Qt signal.
  *
- * For some reason, using QGlib::connect() on the "new-buffer" appsink signal
- * doesn't work, even if "emit-signals" is true. This class is a work-around.
+ * Unfortunately we can't just QGlib::connect() to the "new-buffer" signal
+ * because QtGstreamer uses _set_callbacks() internally which disables appsink
+ * signal emission.
  */
 
 class ApplicationSink : public QObject, public QGst::Utils::ApplicationSink
@@ -95,9 +97,12 @@ public:
     QPointer<QGst::Ui::VideoWidget> displaysink;
     QSize videoSize;
 
-    void onData(QByteArray data);
+    QQueue<quint64> frameTimes;
+    QMutex frameTimesLock;  ///< Serialize access to frameTimes.
+
+    void onInputData(QByteArray data);
     Q_SLOT void onFrameDecoded();
-    void onVideoError(const QGst::MessagePtr &msg);
+    void onGstError(const QGst::MessagePtr &msg);
     void onStateChange(const QGst::MessagePtr &msg);
 };
 
@@ -127,15 +132,14 @@ VideoDecoderPrivate::VideoDecoderPrivate(VideoDecoder *q) :
 
     appsink.setElement(pipeline->getElementByName("appsink"));
     appsink.element()->setProperty("sync", false);
-    connect(&appsink, SIGNAL(bufferReady()), SLOT(onFrameDecoded()));
+    connect(&appsink, SIGNAL(bufferReady()),
+            this, SLOT(onFrameDecoded()), Qt::DirectConnection);
 
     pipeline->bus()->addSignalWatch();
     QGlib::connect(pipeline->bus(), "message::error",
-                   this, &VideoDecoderPrivate::onVideoError);
+                   this, &VideoDecoderPrivate::onGstError);
     QGlib::connect(pipeline->bus(), "message::state-change",
                    this, &VideoDecoderPrivate::onStateChange);
-
-    pipeline->setState(QGst::StatePlaying);
 }
 
 /*!
@@ -155,15 +159,33 @@ VideoDecoderPrivate::~VideoDecoderPrivate()
  * Called when there is data available to be decoded. Wraps the data in a
  * QGst::Buffer and pushes it into the pipeline.
  */
-void VideoDecoderPrivate::onData(QByteArray data)
+void VideoDecoderPrivate::onInputData(QByteArray data)
 {
+    // Extract the real timestamp from the received data.
+    const quint64 time = data.right(16).toULongLong(nullptr, 16);
+    {
+        QMutexLocker lock(&frameTimesLock);
+
+        // Sanity check. This occasionally happens and I'm not sure why...
+        if (!frameTimes.isEmpty() && time < frameTimes.last()) {
+            qxtLog->warning("VideoDecoder: time went backwards!");
+            qxtLog->debug("prev =", frameTimes.last()/1e9, "this =", time/1e9);
+        }
+
+        // Store the real timestamp if it's not already stored.
+        if (frameTimes.isEmpty() || frameTimes.last() != time)
+            frameTimes.enqueue(time);
+    }
+
+    // Push the data into the decoder pipeline.
+    data.chop(16);
     appsrc.pushBuffer(gstBufferFromBytes(data, CopyMethod::Deep));
 }
 
 /*!
  * Called when the decoder pipeline has decoded a frame of video. Pulls the
  * frame out of the pipeline, wraps it in a VideoSample, and emits the
- * newSample() signal.
+ * newSample() signal. Called from an internal GStreamer thread.
  */
 void VideoDecoderPrivate::onFrameDecoded()
 {
@@ -173,21 +195,31 @@ void VideoDecoderPrivate::onFrameDecoded()
     if (!buff)
         return;
 
-    auto frame = new GstVideoSample(buff);
+    // Retrieve the real timestamp for this frame
+    quint64 timestamp;
+    {
+        QMutexLocker lock(&frameTimesLock);
+        Q_ASSERT(!frameTimes.isEmpty());
+        timestamp = frameTimes.dequeue();
+    }
+
+    auto frame = new GstVideoSample(buff, timestamp);
     emit q->newSample(SamplePtr(frame));
 }
 
 /*!
- * Construct a GstVideoSample which wraps the given \a buffer.
+ * Construct a GstVideoSample which wraps the given \a buffer and has the
+ * given \a timestamp.
  *
- * This avoids the need to copy data from the QGst::Buffer into the VideoSample.
+ * The VideoSample::data points directly to the QGst::Buffer::data() to
+ * avoid an unnecessary copy.
  */
-GstVideoSample::GstVideoSample(QGst::BufferPtr buffer) :
+GstVideoSample::GstVideoSample(QGst::BufferPtr buffer, quint64 ts) :
     buff(buffer)
 {
     auto caps = buff->caps()->internalStructure(0);
 
-    timestamp = buff->timeStamp();
+    timestamp = ts;
     w = caps->value("width").toInt();
     h = caps->value("height").toInt();
     data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
@@ -195,15 +227,15 @@ GstVideoSample::GstVideoSample(QGst::BufferPtr buffer) :
 
 /*!
  * Called when an error occurs in the GStreamer pipeline. Extracts the error
- * message and emits it as an error() signal.
+ * message, emits it as an error() signal, and stops the GStreamer pipeline.
  */
-void VideoDecoderPrivate::onVideoError(const QGst::MessagePtr &msg)
+void VideoDecoderPrivate::onGstError(const QGst::MessagePtr &msg)
 {
     Q_Q(VideoDecoder);
     auto err = msg.staticCast<QGst::ErrorMessage>();
 
-    QString message("VideoDecoder error from %1: %2");
-    message = message.arg(err->source()->name()).arg(err->error().message());
+    QString message("VideoDecoder: error from %1: %2");
+    message = message.arg(err->source()->name(), err->error().message());
     qxtLog->error(message);
     emit q->error(message);
 
@@ -212,7 +244,7 @@ void VideoDecoderPrivate::onVideoError(const QGst::MessagePtr &msg)
 
 /*!
  * Inspect the negotiated caps of the appsink once playback has started
- * and use this information to set the video widget size.
+ * and use this information to configure the video widget.
  */
 void VideoDecoderPrivate::onStateChange(const QGst::MessagePtr &msg)
 {
@@ -225,8 +257,10 @@ void VideoDecoderPrivate::onStateChange(const QGst::MessagePtr &msg)
         auto caps = sink->negotiatedCaps()->internalStructure(0);
         videoSize = { caps->value("width").toInt(),
                       caps->value("height").toInt() };
-        if (displaysink)
+        if (displaysink) {
+            displaysink->setVideoSink(pipeline->getElementByName("displaysink"));
             displaysink->setMinimumSize(videoSize);
+        }
     }
 }
 
@@ -259,7 +293,7 @@ VideoDecoder::~VideoDecoder()
 void VideoDecoder::onData(QByteArray data)
 {
     Q_D(VideoDecoder);
-    d->onData(data);
+    d->onInputData(data);
 }
 
 /*!
@@ -271,11 +305,35 @@ QWidget *VideoDecoder::getWidget()
     Q_ASSERT(d->pipeline);
     if (!d->displaysink) {
         d->displaysink = new QGst::Ui::VideoWidget;
-        d->displaysink->setVideoSink(d->pipeline->getElementByName("displaysink"));
         d->displaysink->setMinimumSize(100, 100);
         d->displaysink->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        // TODO: the displaysink shouldn't be in the gst pipeline at all
+        // unless getWidget() has been called. If it is, it will display the
+        // video in a window of its own.
     }
     return d->displaysink;
+}
+
+/*!
+ * Prepare the VideoDecoder to accept data.
+ */
+void VideoDecoder::start()
+{
+    Q_D(VideoDecoder);
+    {
+        QMutexLocker lock(&d->frameTimesLock);
+        d->frameTimes.clear();
+    }
+    d->pipeline->setState(QGst::StatePlaying);
+}
+
+/*!
+ * Stop the VideoDecoder.
+ */
+void VideoDecoder::stop()
+{
+    Q_D(VideoDecoder);
+    d->pipeline->setState(QGst::StateNull);
 }
 
 #include "videodecoder.moc" // because VideoDecoderPrivate inherits from QObject
