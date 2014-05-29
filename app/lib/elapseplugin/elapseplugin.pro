@@ -10,7 +10,8 @@ TARGET   = elapseplugin
 
 HEADERS += \
     configproxies.h \
-    featurextractor_p.h
+    featurextractor_p.h \
+    timestamps.h
 
 SOURCES += \
     offlinedatasource.cpp \
