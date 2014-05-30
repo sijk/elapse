@@ -56,6 +56,9 @@ class BaseFeatureExtractorPrivate;
  * generic feature extractor that handles most of the windowing logic
  * internally.
  *
+ * To implement a FeatureExtractor, inherit from this class and implement the
+ * protected virtual methods.
+ *
  * The windowing implementation provided by this class should be sufficient for
  * most FeatureExtractors. If you really need to, you may inherit directly from
  * FeatureExtractor, but you \b must make sure that the windowing behaviour is

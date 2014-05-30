@@ -52,6 +52,9 @@ using namespace elapse::time::literals;
  *      onFeatures()
  *      newState()
  * }
+ * class outputAction {
+ *      onState()
+ * }
  *
  * dataSource -> "sampleDecoders[EEG]" : QByteArray
  * dataSource -> "sampleDecoders[VIDEO]" : QByteArray
@@ -62,6 +65,7 @@ using namespace elapse::time::literals;
  * "featureExtractors[EEG]" -> classifier : FeatureVector
  * "featureExtractors[VIDEO]" -> classifier : FeatureVector
  * "featureExtractors[IMU]" -> classifier : FeatureVector
+ * classifier --> outputAction : CognitiveState
  *
  * @enduml
  */

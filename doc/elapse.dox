@@ -27,6 +27,7 @@
     ElementSet *-- "N" SampleDecoder
     ElementSet *-- "N" FeatureExtractor
     ElementSet *-- "1" Classifier
+    ElementSet *-- "1" OutputAction
 
     DataSource ..> QByteArray : produces
     SampleDecoder <.. QByteArray
@@ -38,6 +39,7 @@
     Classifier <.. FeatureVector
 
     Classifier ..> CognitiveState : classifies
+    OutputAction <.. CognitiveState
 
     @enduml
 
