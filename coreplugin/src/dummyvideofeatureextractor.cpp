@@ -21,7 +21,7 @@ DummyVideoFeatureExtractor::DummyVideoFeatureExtractor(QObject *parent) :
 {
 }
 
-void DummyVideoFeatureExtractor::setStartTime(quint64 timestamp)
+void DummyVideoFeatureExtractor::setStartTime(elapse::TimeStamp timestamp)
 {
     BaseFeatureExtractor::setStartTime(timestamp);
     means.clear();
@@ -57,7 +57,7 @@ QVector<double> DummyVideoFeatureExtractor::features()
     return features;
 }
 
-void DummyVideoFeatureExtractor::removeDataBefore(quint64 time)
+void DummyVideoFeatureExtractor::removeDataBefore(elapse::TimeStamp time)
 {
     means.removeValuesBefore(time);
 }

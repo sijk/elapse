@@ -19,6 +19,7 @@ SOURCES += \
     datasinkdelegate.cpp
 
 HEADERS += \
+    elapse/timestamps.h \
     elapse/sampletypes.h \
     elapse/elements/datasource.h \
     elapse/elements/decoder.h \

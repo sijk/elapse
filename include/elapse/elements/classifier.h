@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "elapse/sampletypes.h"
+#include "elapse/timestamps.h"
 
 namespace elapse {
 
@@ -84,7 +85,7 @@ protected:
 
 private:
     typedef QMap<Signal::Type, FeatureVector> FeatureSet;
-    QMap<quint64, FeatureSet> timestampedFeatureSets;
+    time::Series<FeatureSet> timestampedFeatureSets;
 };
 
 } // namespace elapse

@@ -15,7 +15,7 @@ QVector<double> DummyEegFeatureExtractor::features()
     return QVector<double>() << sampleFlags.size();
 }
 
-void DummyEegFeatureExtractor::removeDataBefore(quint64 time)
+void DummyEegFeatureExtractor::removeDataBefore(elapse::TimeStamp time)
 {
     sampleFlags.removeValuesBefore(time);
 }

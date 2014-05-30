@@ -1,6 +1,9 @@
 #include <QVariant>
 #include <QxtLogger>
+#include "elapse/timestamps.h"
 #include "pipeline.h"
+
+using namespace elapse::time::literals;
 
 /*!
  * \page pipeline-arch Signal Pipeline Structure
@@ -234,9 +237,9 @@ void Pipeline::setStartTime(elapse::SamplePtr sample)
     if (startTimeIsSet)
         return;
 
-    quint64 startTime = sample->timestamp + 1e9;
+    elapse::TimeStamp startTime = sample->timestamp + 1_s;
 
-    qxtLog->debug("Setting start time to", startTime / 1e9);
+    qxtLog->debug("Setting start time to", elapse::time::format(startTime));
     foreach (auto featureExtractor, _elements->featureExtractors)
         featureExtractor->setStartTime(startTime);
 

@@ -10,7 +10,7 @@ class BaseFeatureExtractorPrivate
 public:
     BaseFeatureExtractorPrivate();
 
-    quint64 windowStart;
+    TimeStamp windowStart;
     uint windowLength;
     uint windowStep;
     Signal::Type signalType;

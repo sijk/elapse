@@ -2,7 +2,7 @@
 #define DUMMYVIDEOFEATUREEXTRACTOR_H
 
 #include <elapse/elements/featurextractor.h>
-#include <elapse/util/timestampedvalues.h>
+#include <elapse/timestamps.h>
 
 
 /*!
@@ -24,15 +24,15 @@ class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
 public:
     Q_INVOKABLE explicit DummyVideoFeatureExtractor(QObject *parent = nullptr);
 
-    void setStartTime(quint64 timestamp);
+    void setStartTime(elapse::TimeStamp timestamp);
 
 protected:
     void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
-    void removeDataBefore(quint64 time);
+    void removeDataBefore(elapse::TimeStamp time);
 
 private:
-    TimestampedValues<double> means;
+    elapse::time::Series<double> means;
 };
 
 #endif // DUMMYVIDEOFEATUREEXTRACTOR_H

@@ -2,7 +2,7 @@
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
 #include <elapse/elements/featurextractor.h>
-#include <elapse/util/timestampedvalues.h>
+#include <elapse/timestamps.h>
 
 
 /*!
@@ -22,10 +22,10 @@ public:
 protected:
     void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
-    void removeDataBefore(quint64 time);
+    void removeDataBefore(elapse::TimeStamp time);
 
 private:
-    TimestampedValues<int> sampleFlags;
+    elapse::time::Series<int> sampleFlags;
 };
 
 #endif // DUMMYIMUFEATUREEXTRACTOR_H

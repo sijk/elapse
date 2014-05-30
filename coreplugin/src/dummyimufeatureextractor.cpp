@@ -15,7 +15,7 @@ QVector<double> DummyImuFeatureExtractor::features()
     return QVector<double>() << sampleFlags.size();
 }
 
-void DummyImuFeatureExtractor::removeDataBefore(quint64 time)
+void DummyImuFeatureExtractor::removeDataBefore(elapse::TimeStamp time)
 {
     sampleFlags.removeValuesBefore(time);
 }
