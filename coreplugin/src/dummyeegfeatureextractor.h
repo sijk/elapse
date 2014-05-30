@@ -22,7 +22,7 @@ public:
 protected:
     void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
-    void removeDataBefore(quint64 time);
+    void removeDataBefore(elapse::TimeStamp time);
 
 private:
     elapse::time::Series<int> sampleFlags;

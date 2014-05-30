@@ -44,7 +44,7 @@ using elapse::SamplePtr;
 
 struct GstVideoSample : elapse::VideoSample
 {
-    GstVideoSample(QGst::BufferPtr buffer, quint64 ts);
+    GstVideoSample(QGst::BufferPtr buffer, elapse::TimeStamp ts);
 
 private:
     QGst::BufferPtr buff;
@@ -97,7 +97,7 @@ public:
     QPointer<QGst::Ui::VideoWidget> displaysink;
     QSize videoSize;
 
-    QQueue<quint64> frameTimes;
+    QQueue<elapse::TimeStamp> frameTimes;
     QMutex frameTimesLock;  ///< Serialize access to frameTimes.
 
     void onInputData(QByteArray data);
@@ -162,14 +162,15 @@ VideoDecoderPrivate::~VideoDecoderPrivate()
 void VideoDecoderPrivate::onInputData(QByteArray data)
 {
     // Extract the real timestamp from the received data.
-    const quint64 time = data.right(16).toULongLong(nullptr, 16);
+    const elapse::TimeStamp time = data.right(16).toULongLong(nullptr, 16);
     {
         QMutexLocker lock(&frameTimesLock);
 
         // Sanity check. This occasionally happens and I'm not sure why...
         if (!frameTimes.isEmpty() && time < frameTimes.last()) {
             qxtLog->warning("VideoDecoder: time went backwards!");
-            qxtLog->debug("prev =", frameTimes.last()/1e9, "this =", time/1e9);
+            qxtLog->debug("prev =", elapse::time::format(frameTimes.last()),
+                          "this =", elapse::time::format(time));
         }
 
         // Store the real timestamp if it's not already stored.
@@ -196,7 +197,7 @@ void VideoDecoderPrivate::onFrameDecoded()
         return;
 
     // Retrieve the real timestamp for this frame
-    quint64 timestamp;
+    elapse::TimeStamp timestamp;
     {
         QMutexLocker lock(&frameTimesLock);
         Q_ASSERT(!frameTimes.isEmpty());
@@ -214,7 +215,7 @@ void VideoDecoderPrivate::onFrameDecoded()
  * The VideoSample::data points directly to the QGst::Buffer::data() to
  * avoid an unnecessary copy.
  */
-GstVideoSample::GstVideoSample(QGst::BufferPtr buffer, quint64 ts) :
+GstVideoSample::GstVideoSample(QGst::BufferPtr buffer, elapse::TimeStamp ts) :
     buff(buffer)
 {
     auto caps = buff->caps()->internalStructure(0);

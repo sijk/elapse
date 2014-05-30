@@ -115,4 +115,10 @@ public:
 
 } // namespace elapse
 
+
+inline QDataStream &operator>>(QDataStream &stream, elapse::TimeStamp &value)
+{
+    return stream >> reinterpret_cast<quint64&>(value);
+}
+
 #endif // TIMESTAMPS_H

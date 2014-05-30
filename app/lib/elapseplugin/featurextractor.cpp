@@ -40,7 +40,7 @@ elapse::BaseFeatureExtractor::~BaseFeatureExtractor()
     delete d_ptr;
 }
 
-void elapse::BaseFeatureExtractor::setStartTime(quint64 timestamp)
+void elapse::BaseFeatureExtractor::setStartTime(TimeStamp timestamp)
 {
     Q_D(BaseFeatureExtractor);
     reset();
@@ -78,9 +78,9 @@ void elapse::BaseFeatureExtractor::onSample(elapse::SamplePtr sample)
         return;
     }
 
-    quint64 windowEnd = d->windowStart + d->windowLength;
-    quint64 nextWindowStart = d->windowStart;
-    quint64 nextWindowEnd;
+    TimeStamp windowEnd = d->windowStart + d->windowLength;
+    TimeStamp nextWindowStart = d->windowStart;
+    TimeStamp nextWindowEnd;
     do {
         nextWindowStart += d->windowStep;
         nextWindowEnd = nextWindowStart + d->windowLength;
@@ -100,6 +100,6 @@ void elapse::BaseFeatureExtractor::onSample(elapse::SamplePtr sample)
 
 void elapse::BaseFeatureExtractor::reset()
 {
-    removeDataBefore(std::numeric_limits<quint64>::max());
+    removeDataBefore(std::numeric_limits<TimeStamp>::max());
 }
 

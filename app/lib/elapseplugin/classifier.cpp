@@ -18,10 +18,10 @@ void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
 
     // Ensure we're not adding a FeatureVector to a feature set that was
     // previously removed for being incomplete
-    auto firstSet = timestampedFeatureSets.constBegin();
-    auto lastSet = timestampedFeatureSets.constEnd();
+    auto firstSet = timestampedFeatureSets.cbegin();
+    auto lastSet = timestampedFeatureSets.cend();
     Q_ASSERT((firstSet != lastSet)
-             ? (featVect.startTime >= firstSet.key())
+             ? (featVect.startTime >= firstSet->first)
              : true);
 
     // Add the current feature vector to the queue
@@ -38,9 +38,9 @@ void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
         auto first = timestampedFeatureSets.begin();
         auto current = timestampedFeatureSets.find(featVect.startTime);
         if (first != current) {
-            qxtLog->debug() << "Removing" << std::distance(first, current)
+            qxtLog->debug() << "Removing" << (int)std::distance(first, current)
                             << "incomplete feature sets before complete set at"
-                            << elapse::time::format(current.key());
+                            << elapse::time::format(current->first);
 
             while (first != current)
                 first = timestampedFeatureSets.erase(first);
@@ -48,9 +48,9 @@ void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
 
         // Analyse the feature set
         emit newState(classify(featureSet.values()));
-        timestampedFeatureSets.remove(featVect.startTime);
+        timestampedFeatureSets.erase(featVect.startTime);
 
-        qxtLog->debug() << timestampedFeatureSets.size()
+        qxtLog->debug() << (uint)timestampedFeatureSets.size()
                         << "partial feature sets pending";
     }
 }

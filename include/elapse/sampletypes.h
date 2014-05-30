@@ -7,6 +7,7 @@
 #include <QByteArray>
 #include <QSharedPointer>
 #include <QMetaEnum>
+#include "timestamps.h"
 
 namespace elapse {
 
@@ -40,7 +41,7 @@ struct Sample
 {
     virtual ~Sample() {}
 
-    quint64 timestamp;
+    TimeStamp timestamp;
 };
 
 
@@ -72,20 +73,20 @@ struct ImuSample : Sample
 struct FeatureVector
 {
     Signal::Type signalType;
-    quint64 startTime;
+    TimeStamp startTime;
     QVector<double> features;
 
-    FeatureVector(Signal::Type signalType, quint64 startTime) :
+    FeatureVector(Signal::Type signalType, TimeStamp startTime) :
         signalType(signalType), startTime(startTime) {}
 };
 
 
 struct CognitiveState
 {
-    quint64 startTime;
+    TimeStamp startTime;
     QVector<double> state;
 
-    CognitiveState(quint64 startTime) : startTime(startTime) {}
+    CognitiveState(TimeStamp startTime) : startTime(startTime) {}
 };
 
 } // namespace elapse

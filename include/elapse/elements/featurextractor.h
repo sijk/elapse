@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "elapse/sampletypes.h"
+#include "elapse/timestamps.h"
 
 namespace elapse {
 
@@ -30,7 +31,7 @@ public:
     virtual ~FeatureExtractor() {}
 
     /*! Set the \a timestamp at which the first window begins. */
-    virtual void setStartTime(quint64 timestamp) = 0;
+    virtual void setStartTime(TimeStamp timestamp) = 0;
 
     /*! Set the length of each window in \a ms. */
     virtual void setWindowLength(uint ms) = 0;
@@ -71,7 +72,7 @@ public:
     explicit BaseFeatureExtractor(QObject *parent = nullptr);
     ~BaseFeatureExtractor();
 
-    void setStartTime(quint64 timestamp);
+    void setStartTime(TimeStamp timestamp);
 
     void setWindowLength(uint length);
     void setWindowStep(uint step);
@@ -99,11 +100,11 @@ protected:
      * Remove any internal data that is related to samples occurring before
      * the given \a time.
      */
-    virtual void removeDataBefore(quint64 time) = 0;
+    virtual void removeDataBefore(TimeStamp time) = 0;
 
     /*!
      * Reset any internal state. Defaults to calling removeDataBefore() with
-     * the maximum value a quint64 can hold.
+     * the maximum value a TimeStamp can hold.
      */
     virtual void reset();
 

@@ -24,12 +24,12 @@ class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
 public:
     Q_INVOKABLE explicit DummyVideoFeatureExtractor(QObject *parent = nullptr);
 
-    void setStartTime(quint64 timestamp);
+    void setStartTime(elapse::TimeStamp timestamp);
 
 protected:
     void analyseSample(elapse::SamplePtr sample);
     QVector<double> features();
-    void removeDataBefore(quint64 time);
+    void removeDataBefore(elapse::TimeStamp time);
 
 private:
     elapse::time::Series<double> means;
