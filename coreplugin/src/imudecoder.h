@@ -2,9 +2,6 @@
 #define IMUDECODER_H
 
 #include <elapse/elements/decoder.h>
-#include <elapse/displayable.h>
-
-class HeadWidget;
 
 
 /*!
@@ -13,7 +10,7 @@ class HeadWidget;
  * \ingroup core-plugin
  */
 
-class ImuDecoder : public elapse::SampleDecoder, public elapse::Displayable
+class ImuDecoder : public elapse::SampleDecoder
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "IMU")
@@ -21,14 +18,8 @@ class ImuDecoder : public elapse::SampleDecoder, public elapse::Displayable
 public:
     Q_INVOKABLE explicit ImuDecoder(QObject *parent = nullptr);
 
-    QWidget *getWidget();
-
 public slots:
     void onData(QByteArray data);
-
-private:
-    void updateHeadWidget(const elapse::ImuSample *sample);
-    HeadWidget *headWidget;
 };
 
 #endif // IMUDECODER_H
