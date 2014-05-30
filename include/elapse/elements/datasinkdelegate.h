@@ -21,6 +21,7 @@ namespace elapse {
  * alongside the saved data. For more details, see getSessionData() and
  * needsNewSessionData().
  *
+ * \headerfile elapse/elements/datasinkdelegate.h
  * \ingroup pipeline-elements
  */
 

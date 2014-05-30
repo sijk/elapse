@@ -10,6 +10,8 @@
  * This class exists primarily as a convenience for implementing
  * FeatureExtractor%s. It provides an easy way to remove all values
  * which have timestamps less than a given value.
+ *
+ * \headerfile elapse/util/timestampedvalues.h
  */
 
 template<typename T>

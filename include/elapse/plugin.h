@@ -11,6 +11,7 @@ namespace elapse {
  * A plugin is simply a shared library containing one or more classes, and the
  * PluginInterface exposes a list of those classes to the host application.
  *
+ * \headerfile elapse/plugin.h
  * \ingroup plugins-ext
  */
 
@@ -43,6 +44,8 @@ public:
 Q_DECLARE_INTERFACE(elapse::PluginInterface, ElapsePluginInterface_iid)
 
 
+#ifndef DOXYGEN
+
 namespace elapse {
 
 template<typename... Args> struct MetaObjects;
@@ -74,13 +77,14 @@ struct MetaObjects<T1, Tn...>
     }
 };
 
-/*! \private */
 template<> struct MetaObjects<>
 {
     static PluginInterface::ClassList get() { return {}; }
 };
 
 } // namespace elapse
+
+#endif
 
 
 /*!

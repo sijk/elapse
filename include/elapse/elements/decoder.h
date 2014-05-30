@@ -18,6 +18,7 @@ namespace elapse {
  * ones provided by the \ref core-plugin "core plugin" are already capable
  * of decoding the data streams from the device.
  *
+ * \headerfile elapse/elements/decoder.h
  * \ingroup pipeline-elements
  */
 

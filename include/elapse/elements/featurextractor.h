@@ -14,6 +14,7 @@ namespace elapse {
  *
  * \note To implement a FeatureExtractor, inherit from BaseFeatureExtractor.
  *
+ * \headerfile elapse/elements/featurextractor.h
  * \ingroup pipeline-elements
  */
 
@@ -58,6 +59,9 @@ class BaseFeatureExtractorPrivate;
  * most FeatureExtractors. If you really need to, you may inherit directly from
  * FeatureExtractor, but you \b must make sure that the windowing behaviour is
  * identical to that implemented here.
+ *
+ * \headerfile elapse/elements/featurextractor.h
+ * \ingroup pipeline-elements
  */
 
 class BaseFeatureExtractor : public FeatureExtractor

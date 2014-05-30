@@ -20,6 +20,7 @@ class OfflineDataSourcePrivate;
  * Each Pipeline has one DataSource which provides data to several
  * SampleDecoder%s.
  *
+ * \headerfile elapse/elements/datasource.h
  * \ingroup pipeline-elements
  * \sa OfflineDataSource
  */
@@ -81,6 +82,8 @@ public slots:
  *
  * The data is arranged as properties grouped into sub-systems, both
  * identified by strings.
+ *
+ * \headerfile elapse/elements/datasource.h
  */
 
 class ConfigManager
@@ -99,6 +102,9 @@ public:
  *
  * OfflineDataSource%s implement the ConfigManager interface and expose this
  * interface to D-Bus via the ::config classes.
+ *
+ * \headerfile elapse/elements/datasource.h
+ * \ingroup pipeline-elements
  */
 
 class OfflineDataSource : public DataSource, public ConfigManager

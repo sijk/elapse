@@ -14,6 +14,7 @@ namespace elapse {
  *
  * \note To implement a Classifier, inherit from BaseClassifier.
  *
+ * \headerfile elapse/elements/classifier.h
  * \ingroup pipeline-elements
  */
 
@@ -59,6 +60,9 @@ signals:
  * classify(). It is possible to inherit directly from Classifier, though
  * this should be unnecessary and if you do it you must ensure the onFeatures
  * signals are handled correctly.
+ *
+ * \headerfile elapse/elements/classifier.h
+ * \ingroup pipeline-elements
  */
 
 class BaseClassifier : public Classifier

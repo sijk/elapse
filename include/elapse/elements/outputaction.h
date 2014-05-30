@@ -14,6 +14,7 @@ namespace elapse {
  * \todo It should be possible to have a set of OutputAction%s that get
  * executed in parallel.
  *
+ * \headerfile elapse/elements/outputaction.h
  * \ingroup pipeline-elements
  */
 

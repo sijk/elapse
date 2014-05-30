@@ -8,6 +8,7 @@ namespace elapse {
 /*!
  * \brief The Displayable interface can be implemented by any class that wants
  * to expose a GUI widget.
+ * \headerfile elapse/displayable.h
  */
 
 class Displayable
