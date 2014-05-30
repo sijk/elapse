@@ -10,8 +10,7 @@ TARGET   = elapseplugin
 
 HEADERS += \
     configproxies.h \
-    featurextractor_p.h \
-    timestamps.h
+    featurextractor_p.h
 
 SOURCES += \
     offlinedatasource.cpp \
@@ -20,6 +19,7 @@ SOURCES += \
     datasinkdelegate.cpp
 
 HEADERS += \
+    elapse/timestamps.h \
     elapse/sampletypes.h \
     elapse/elements/datasource.h \
     elapse/elements/decoder.h \

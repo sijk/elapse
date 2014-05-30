@@ -2,7 +2,7 @@
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
 #include <elapse/elements/featurextractor.h>
-#include <elapse/util/timestampedvalues.h>
+#include <elapse/timestamps.h>
 
 
 /*!
@@ -25,7 +25,7 @@ protected:
     void removeDataBefore(quint64 time);
 
 private:
-    TimestampedValues<int> sampleFlags;
+    elapse::time::Series<int> sampleFlags;
 };
 
 #endif // DUMMYIMUFEATUREEXTRACTOR_H

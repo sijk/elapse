@@ -1,6 +1,6 @@
 #include <iterator>
 #include <QxtLogger>
-#include "timestamps.h"
+#include "elapse/timestamps.h"
 #include "elapse/elements/classifier.h"
 
 
@@ -40,7 +40,7 @@ void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
         if (first != current) {
             qxtLog->debug() << "Removing" << std::distance(first, current)
                             << "incomplete feature sets before complete set at"
-                            << timestamp::format(current.key());
+                            << elapse::time::format(current.key());
 
             while (first != current)
                 first = timestampedFeatureSets.erase(first);

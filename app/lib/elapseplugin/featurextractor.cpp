@@ -1,5 +1,5 @@
 #include "elapse/elements/featurextractor.h"
-#include "timestamps.h"
+#include "elapse/timestamps.h"
 #include "featurextractor_p.h"
 
 
@@ -48,16 +48,16 @@ void elapse::BaseFeatureExtractor::setStartTime(quint64 timestamp)
     d->signalType = BaseFeatureExtractorPrivate::findSignalType(this);
 }
 
-void elapse::BaseFeatureExtractor::setWindowLength(uint ms)
+void elapse::BaseFeatureExtractor::setWindowLength(uint length)
 {
     Q_D(BaseFeatureExtractor);
-    d->windowLength = timestamp::from_ms(ms);
+    d->windowLength = time::from_ms(length);
 }
 
-void elapse::BaseFeatureExtractor::setWindowStep(uint ms)
+void elapse::BaseFeatureExtractor::setWindowStep(uint step)
 {
     Q_D(BaseFeatureExtractor);
-    d->windowStep = timestamp::from_ms(ms);
+    d->windowStep = time::from_ms(step);
 }
 
 /*!

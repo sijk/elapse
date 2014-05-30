@@ -6,5 +6,4 @@ SOURCES += pipeline.cpp \
            datasink.cpp
 
 HEADERS += pipeline.h \
-           datasink.h \
-           timestamps.h
+           datasink.h

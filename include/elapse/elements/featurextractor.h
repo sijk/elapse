@@ -73,8 +73,8 @@ public:
 
     void setStartTime(quint64 timestamp);
 
-    void setWindowLength(uint ms);
-    void setWindowStep(uint ms);
+    void setWindowLength(uint length);
+    void setWindowStep(uint step);
 
 public slots:
     void onSample(elapse::SamplePtr sample);

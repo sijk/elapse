@@ -2,7 +2,7 @@
 #define DUMMYVIDEOFEATUREEXTRACTOR_H
 
 #include <elapse/elements/featurextractor.h>
-#include <elapse/util/timestampedvalues.h>
+#include <elapse/timestamps.h>
 
 
 /*!
@@ -32,7 +32,7 @@ protected:
     void removeDataBefore(quint64 time);
 
 private:
-    TimestampedValues<double> means;
+    elapse::time::Series<double> means;
 };
 
 #endif // DUMMYVIDEOFEATUREEXTRACTOR_H
