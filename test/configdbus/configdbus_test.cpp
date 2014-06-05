@@ -92,3 +92,19 @@ TEST(ConfigDBusTest, ReadDeviceConfig)
     EXPECT_EQ(error.count(), 0);
 }
 
+TEST(ConfigDBusTest, DetectDisconnection)
+{
+    auto src = new MockOfflineDataSource;
+
+    DeviceProxy proxy;
+    QSignalSpy connected(&proxy, SIGNAL(connected()));
+
+    proxy.connectTo("localhost");
+    connected.wait(500);
+    ASSERT_EQ(connected.count(), 1);
+
+    ASSERT_TRUE(proxy.device()->isAccessible());
+    delete src;
+    ASSERT_FALSE(proxy.device()->isAccessible());
+}
+

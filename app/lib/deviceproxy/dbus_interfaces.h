@@ -202,12 +202,13 @@ public:
     iface::Battery *battery() { return iface_battery; }
 
 public slots:
+    bool isAccessible() const { return d.isAccessible(); }
     void setClientAddress(const QString &address) { d.setClientAddress(address); }
     void startStreaming() { d.startStreaming(); }
     void stopStreaming() { d.stopStreaming(); }
 
 private:
-    org::nzbri::elapse::Device d;
+    mutable org::nzbri::elapse::Device d;
 
     dbus::EegAdc *iface_eeg;
 //    dbus::Camera *iface_camera;

@@ -190,6 +190,7 @@ public:
     iface::Battery *battery() { return iface_battery; }
 
 public slots:
+    bool isAccessible() const { return true; }
     void setClientAddress(const QString &address) { Q_UNUSED(address) }
     void startStreaming() { }
     void stopStreaming() { }
