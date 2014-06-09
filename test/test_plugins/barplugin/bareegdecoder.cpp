@@ -22,7 +22,7 @@ void BarEegDecoder::onData(QByteArray data)
         sample->leadOff = 0x00;
 
         for (int chan = 0; chan < 8; chan++)
-            sample->values.append(i * 100);
+            sample->values.push_back(i * 100);
 
         emit newSample(SamplePtr(sample));
     }

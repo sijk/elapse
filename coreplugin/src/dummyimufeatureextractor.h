@@ -28,7 +28,7 @@ public:
 
 private:
     void analyseSample(elapse::SamplePtr sample);
-    QVector<double> features();
+    std::vector<double> features();
     void removeDataBefore(elapse::TimeStamp time);
 
     void updateHeadWidget(const elapse::ImuSample *sample);

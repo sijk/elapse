@@ -26,9 +26,9 @@ void DummyImuFeatureExtractor::analyseSample(elapse::SamplePtr sample)
     sampleFlags[sample->timestamp] = 1;
 }
 
-QVector<double> DummyImuFeatureExtractor::features()
+std::vector<double> DummyImuFeatureExtractor::features()
 {
-    return QVector<double>() << sampleFlags.size();
+    return { double(sampleFlags.size()) };
 }
 
 void DummyImuFeatureExtractor::removeDataBefore(elapse::TimeStamp time)

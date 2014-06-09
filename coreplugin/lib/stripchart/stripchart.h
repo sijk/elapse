@@ -36,7 +36,7 @@ public:
     ~StripChart();
 
 public slots:
-    void appendData(const QVector<double> &data);
+    void appendData(const std::vector<double> &data);
 
     void setNStrips(uint n);
     void setNSamples(uint n);

@@ -228,7 +228,7 @@ void EegDecoder::onData(QByteArray data)
 
             for (uint channel = 0; channel < CHANNELS_PER_CHIP; channel++) {
                 stream >> be24;
-                sample->values.append(d->toMicroVolts(be24.to32bit()));
+                sample->values.push_back(d->toMicroVolts(be24.to32bit()));
             }
         }
 

@@ -2,7 +2,7 @@
 #define SAMPLETYPES_H
 
 #include <QtGlobal>
-#include <QVector>
+#include <vector>
 #include <QVector3D>
 #include <QByteArray>
 #include <QSharedPointer>
@@ -52,7 +52,7 @@ struct EegSample : Sample
 {
     quint32 seqnum;
     quint16 leadOff;
-    QVector<double> values;
+    std::vector<double> values;
 };
 
 
@@ -74,7 +74,7 @@ struct FeatureVector
 {
     Signal::Type signalType;
     TimeStamp startTime;
-    QVector<double> features;
+    std::vector<double> features;
 
     FeatureVector(Signal::Type signalType, TimeStamp startTime) :
         signalType(signalType), startTime(startTime) {}
@@ -84,7 +84,7 @@ struct FeatureVector
 struct CognitiveState
 {
     TimeStamp startTime;
-    QVector<double> state;
+    std::vector<double> state;
 
     CognitiveState(TimeStamp startTime) : startTime(startTime) {}
 };
