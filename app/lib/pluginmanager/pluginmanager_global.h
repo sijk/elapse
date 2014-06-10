@@ -7,6 +7,7 @@
 enum PluginHostID
 {
     NATIVE,
+    PYTHON,
     N_PLUGIN_HOSTS
 };
 

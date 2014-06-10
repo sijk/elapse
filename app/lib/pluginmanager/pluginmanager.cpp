@@ -1,12 +1,14 @@
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
 #include "nativepluginhost.h"
+#include "pythonpluginhost.h"
 
 
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
     q_ptr(q)
 {
     hosts[NATIVE] = new NativePluginHost;
+    hosts[PYTHON] = new PythonPluginHost;
 }
 
 PluginManagerPrivate::~PluginManagerPrivate()
