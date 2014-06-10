@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = core.pro
+SUBDIRS = core.pro elements.pro
