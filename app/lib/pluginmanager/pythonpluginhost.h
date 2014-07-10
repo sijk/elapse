@@ -10,7 +10,8 @@ public:
     ~PythonPluginHost();
 
     PluginData getInfo(const QString &pluginPath);
-    QObject *instantiateClass(const PluginInfo &plugin, const ClassInfo &cls);
+    QSharedPointer<QObject> instantiateClass(const PluginInfo &plugin,
+                                             const ClassInfo &cls);
 
 private:
     struct Private;

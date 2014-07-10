@@ -7,8 +7,8 @@ class NativePluginHost : public PluginHost
 {
 public:
     PluginData getInfo(const QString &pluginPath);
-    QObject *instantiateClass(const PluginInfo &pluginInfo,
-                              const ClassInfo &classInfo);
+    QSharedPointer<QObject> instantiateClass(const PluginInfo &pluginInfo,
+                                             const ClassInfo &classInfo);
 };
 
 #endif // NATIVEPLUGINHOST_H

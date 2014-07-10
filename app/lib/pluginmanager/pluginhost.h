@@ -16,8 +16,8 @@ public:
 
     virtual PluginData getInfo(const QString &pluginPath) = 0;
 
-    virtual QObject *instantiateClass(const PluginInfo &plugin,
-                                      const ClassInfo &cls) = 0; // FIXME: shared_ptr
+    virtual QSharedPointer<QObject>
+    instantiateClass(const PluginInfo &plugin, const ClassInfo &cls) = 0;
 };
 
 #endif // PLUGINHOST_H

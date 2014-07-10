@@ -250,16 +250,16 @@ protected:
         dataSink = new MockDataSinkDelegate;
 
         elements = ElementSetPtr::create();
-        elements->dataSource = dataSource;
-        elements->sampleDecoders[Signal::EEG] = eegDecoder;
-        elements->sampleDecoders[Signal::VIDEO] = vidDecoder;
-        elements->sampleDecoders[Signal::IMU] = imuDecoder;
-        elements->featureExtractors[Signal::EEG] = eegFeatEx;
-        elements->featureExtractors[Signal::VIDEO] = vidFeatEx;
-        elements->featureExtractors[Signal::IMU] = imuFeatEx;
-        elements->classifier = classifier;
-        elements->action = action;
-        elements->dataSink = dataSink;
+        elements->dataSource.reset(dataSource);
+        elements->sampleDecoders[Signal::EEG].reset(eegDecoder);
+        elements->sampleDecoders[Signal::VIDEO].reset(vidDecoder);
+        elements->sampleDecoders[Signal::IMU].reset(imuDecoder);
+        elements->featureExtractors[Signal::EEG].reset(eegFeatEx);
+        elements->featureExtractors[Signal::VIDEO].reset(vidFeatEx);
+        elements->featureExtractors[Signal::IMU].reset(imuFeatEx);
+        elements->classifier.reset(classifier);
+        elements->action.reset(action);
+        elements->dataSink.reset(dataSink);
 
         eegFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(eegFeatEx);
         vidFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(vidFeatEx);

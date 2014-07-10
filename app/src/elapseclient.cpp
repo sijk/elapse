@@ -236,8 +236,8 @@ void ElapseClient::buildStateMachine()
  */
 void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 {
-    foreach (QObject *element, elements->allElements())
-        addDockWidgetFrom(element);
+    foreach (auto &element, elements->allElements())
+        addDockWidgetFrom(element.data());
 }
 
 /*!
@@ -346,7 +346,7 @@ void ElapseClient::configure()
         warnBatteryLow();
 
     connect(ui->actionSetSessionData, SIGNAL(triggered()),
-            pipeline->elements()->dataSink, SLOT(getSessionData()));
+            pipeline->elements()->dataSink.data(), SLOT(getSessionData()));
 }
 
 void ElapseClient::unconfigure()

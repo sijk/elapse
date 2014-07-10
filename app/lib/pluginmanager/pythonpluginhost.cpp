@@ -35,9 +35,10 @@ PluginHost::PluginData PythonPluginHost::getInfo(const QString &pluginPath)
     return data;
 }
 
-QObject *PythonPluginHost::instantiateClass(const PluginInfo &plugin, const ClassInfo &cls)
+QSharedPointer<QObject> PythonPluginHost::instantiateClass(const PluginInfo &plugin,
+                                                           const ClassInfo &cls)
 {
     Q_UNUSED(plugin)
     Q_UNUSED(cls)
-    return nullptr;
+    return QSharedPointer<QObject>();
 }
