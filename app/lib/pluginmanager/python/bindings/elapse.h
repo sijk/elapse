@@ -1,8 +1,10 @@
+#ifndef PYTHON_ELAPSE_H
+#define PYTHON_ELAPSE_H
+
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "elapse/sampletypes.h"
-
-using namespace boost::python;
+#include "elements.h"
 
 
 struct VideoSample_wrap : elapse::VideoSample
@@ -17,13 +19,22 @@ struct QVector3DConverter
 {
     static PyObject *convert(const QVector3D &vec)
     {
+        using namespace boost::python;
         return incref(make_tuple(vec.x(), vec.y(), vec.z()).ptr());
     }
 };
 
 
-BOOST_PYTHON_MODULE(_core)
+BOOST_PYTHON_MODULE(elapse)
 {
+    using namespace boost::python;
+
+    // Turn this module into a package
+    scope().attr("__path__") = "elapse";
+
+    // Export the 'elapse.elements' module
+    export_elements();
+
     {
         scope Signal = class_<elapse::Signal>("Signal", no_init)
             .def("toString", &elapse::Signal::toString)
@@ -80,3 +91,5 @@ BOOST_PYTHON_MODULE(_core)
 
     to_python_converter<QVector3D, QVector3DConverter>();
 }
+
+#endif // PYTHON_ELAPSE_H

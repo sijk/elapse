@@ -1,5 +1,4 @@
 TEMPLATE    = subdirs
-SUBDIRS	    = src lib bindings
+SUBDIRS	    = src lib
 
 src.depends = lib
-lib.depends = bindings

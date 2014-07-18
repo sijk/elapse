@@ -1,12 +1,14 @@
+#ifndef PYTHON_ELEMENTS_H
+#define PYTHON_ELEMENTS_H
+
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "elapse/elements/featurextractor.h"
 
-using namespace boost::python;
+namespace py = boost::python;
 
 
 struct FeatureExtractorWrap : elapse::FeatureExtractor,
-                              wrapper<elapse::FeatureExtractor>
+                              py::wrapper<elapse::FeatureExtractor>
 {
     void setStartTime(elapse::TimeStamp timestamp) {
         this->get_override("setStartTime")(timestamp);
@@ -34,7 +36,7 @@ public:
 };
 
 struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
-                                  wrapper<BaseFeatureExtractorPublic>
+                                  py::wrapper<BaseFeatureExtractorPublic>
 {
     void analyseSample(elapse::SamplePtr sample) {
         this->get_override("analyseSample")(sample);
@@ -46,7 +48,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
         this->get_override("removeDataBefore")(time);
     }
     void reset() {
-        if (override fn = this->get_override("reset"))
+        if (py::override fn = this->get_override("reset"))
             fn();
         return BaseFeatureExtractorPublic::reset();
     }
@@ -56,8 +58,15 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
 };
 
 
-BOOST_PYTHON_MODULE(elements)
+void export_elements()
 {
+    using namespace boost::python;
+
+    // Make this a sub-module of 'elapse'
+    object elements(handle<>(borrowed(PyImport_AddModule("elapse.elements"))));
+    scope().attr("elements") = elements;
+    scope elements_scope = elements;
+
     class_<FeatureExtractorWrap, boost::noncopyable>("FeatureExtractor")
         .def("setStartTime", pure_virtual(&elapse::FeatureExtractor::setStartTime))
         .def("setWindowLength", pure_virtual(&elapse::FeatureExtractor::setWindowLength))
@@ -73,3 +82,5 @@ BOOST_PYTHON_MODULE(elements)
         .def("reset", &BaseFeatureExtractorPublic::reset,
                       &BaseFeatureExtractorWrap::default_reset);
 }
+
+#endif // PYTHON_ELEMENTS_H

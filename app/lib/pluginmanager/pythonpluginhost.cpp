@@ -1,44 +1,64 @@
-#include <QApplication>
+#include <QDir>
+#include <QxtLogger>
 #include <boost/python.hpp>
 #include "pythonpluginhost.h"
+#include "python/util.h"
 
-namespace py = boost::python;
 
-
-struct PythonPluginHost::Private
+PythonPluginHost::PythonPluginHost()
 {
-    py::object main_module;
-    py::object main_ns;
-};
-
-
-PythonPluginHost::PythonPluginHost() :
-    d(new Private)
-{
-    char *name = const_cast<char*>(qPrintable(qApp->applicationName()));
-    Py_SetProgramName(name);
-    Py_Initialize();
-
-    d->main_module = py::import("__main__");
-    d->main_ns = d->main_module.attr("__dict__");
-}
-
-PythonPluginHost::~PythonPluginHost()
-{
-    delete d;
+    pyhost::initPython();
 }
 
 PluginHost::PluginData PythonPluginHost::getInfo(const QString &pluginPath)
 {
-    Q_UNUSED(pluginPath)
     PluginData data;
+    QDir dir(pluginPath);
+    QString moduleName(dir.dirName());
+
+    if (!dir.exists("__init__.py")) {
+        qxtLog->debug(pluginPath + " is not a Python plugin");
+        return data;
+    }
+
+    try {
+        data.plugin.host = PYTHON;
+        data.plugin.path = pluginPath;
+        data.plugin.name = moduleName;
+
+        pyhost::addParentToPythonPath(dir);
+        auto classes = pyhost::getClasses(moduleName);
+
+        for (auto i = classes.cbegin(); i != classes.cend(); i++) {
+            ClassInfo cls;
+            cls.elementClass = pyhost::baseClassName(i.value());
+            cls.signalType = pyhost::signalType(i.value());
+            cls.className = i.key();
+            data.classes.append(cls);
+        }
+    } catch (const boost::python::error_already_set &) {
+        PyErr_Print();
+        return PluginData();
+    }
+
     return data;
 }
 
 QSharedPointer<QObject> PythonPluginHost::instantiateClass(const PluginInfo &plugin,
                                                            const ClassInfo &cls)
 {
-    Q_UNUSED(plugin)
-    Q_UNUSED(cls)
-    return QSharedPointer<QObject>();
+    QObject *obj;
+    QDir dir(plugin.path);
+
+    try {
+        auto classes = pyhost::getClasses(dir.dirName());
+        boost::python::object pyobj = classes[cls.className]();
+        obj = pyhost::extractQObject(pyobj, cls.elementClass);
+        pyhost::instances[obj] = pyobj;
+    } catch (const boost::python::error_already_set&) {
+        PyErr_Print();
+        return QSharedPointer<QObject>();
+    }
+
+    return QSharedPointer<QObject>(obj, &pyhost::removeInstance);
 }

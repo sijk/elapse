@@ -65,6 +65,6 @@ TEST_F(NativePluginHostTest, InstantiateFooEegDecoder)
     auto info = host.getInfo(fooPluginPath);
     auto cls = info.classes[0];
     auto instance = host.instantiateClass(info.plugin, cls);
-    ASSERT_NE(instance, nullptr);
+    ASSERT_FALSE(instance.isNull());
     EXPECT_EQ(instance->metaObject()->className(), cls.className);
 }
