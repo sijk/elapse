@@ -13,7 +13,7 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
     hosts[NATIVE] = new NativePluginHost;
     hosts[PYTHON] = new PythonPluginHost;
 
-    QObject::connect(ui.pathButton, &QPushButton::clicked, [=]{
+    QObject::connect(ui.pathButton, &QPushButton::clicked, [q]{
         QString dir = QFileDialog::getExistingDirectory(q, "Plugin path");
         if (!dir.isEmpty())
             q->setSearchPath(dir);
@@ -50,9 +50,9 @@ void PluginManagerPrivate::searchForPlugins()
 void PluginManagerPrivate::populateModels()
 {
     auto populateModel =
-        [=](QStandardItemModel *model, const QString &elementClass,
+        [=](QStandardItemModel &model, const QString &elementClass,
             elapse::Signal::Type signalType = elapse::Signal::INVALID) {
-        model->clear();
+        model.clear();
 
         for (int i = 0; i < pluginData.size(); i++) {
             const PluginData &info = pluginData.at(i);
@@ -75,7 +75,7 @@ void PluginManagerPrivate::populateModels()
                         QFont font = pluginItem->font();
                         font.setItalic(true);
                         pluginItem->setFont(font);
-                        model->appendRow(pluginItem);
+                        model.appendRow(pluginItem);
                     }
                     QStandardItem *element = new QStandardItem(cls.className);
                     element->setData(j);
@@ -86,16 +86,16 @@ void PluginManagerPrivate::populateModels()
         }
     };
 
-    populateModel(&dataSourceModel,   "DataSource");
-    populateModel(&dataSinkModel,     "DataSink");
-    populateModel(&eegDecoderModel,   "SampleDecoder",    elapse::Signal::EEG);
-    populateModel(&vidDecoderModel,   "SampleDecoder",    elapse::Signal::VIDEO);
-    populateModel(&imuDecoderModel,   "SampleDecoder",    elapse::Signal::IMU);
-    populateModel(&eegFeatExModel,    "FeatureExtractor", elapse::Signal::EEG);
-    populateModel(&vidFeatExModel,    "FeatureExtractor", elapse::Signal::VIDEO);
-    populateModel(&imuFeatExModel,    "FeatureExtractor", elapse::Signal::IMU);
-    populateModel(&classifierModel,   "Classifier");
-    populateModel(&outputActionModel, "OutputAction");
+    populateModel(dataSourceModel,   "DataSource");
+    populateModel(dataSinkModel,     "DataSink");
+    populateModel(eegDecoderModel,   "SampleDecoder",    elapse::Signal::EEG);
+    populateModel(vidDecoderModel,   "SampleDecoder",    elapse::Signal::VIDEO);
+    populateModel(imuDecoderModel,   "SampleDecoder",    elapse::Signal::IMU);
+    populateModel(eegFeatExModel,    "FeatureExtractor", elapse::Signal::EEG);
+    populateModel(vidFeatExModel,    "FeatureExtractor", elapse::Signal::VIDEO);
+    populateModel(imuFeatExModel,    "FeatureExtractor", elapse::Signal::IMU);
+    populateModel(classifierModel,   "Classifier");
+    populateModel(outputActionModel, "OutputAction");
 }
 
 void PluginManagerPrivate::attachModelViews()
@@ -103,6 +103,18 @@ void PluginManagerPrivate::attachModelViews()
     auto attach = [](QTreeView *tree, QStandardItemModel &model) {
         tree->setModel(&model);
         tree->expandAll();
+
+        // Select the first item by default
+        auto first = model.index(0,0).child(0,0);
+        tree->selectionModel()->select(first, QItemSelectionModel::SelectCurrent);
+
+        // Ensure something is always selected
+        QObject::connect(tree->selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            [=](const QItemSelection &current, const QItemSelection &prev){
+                if (current.indexes().isEmpty() && !prev.indexes().isEmpty())
+                    tree->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent);
+            });
     };
 
     attach(ui.dataSource,            dataSourceModel);
