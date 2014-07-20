@@ -4,11 +4,10 @@
 #include <QtCore>
 #include "elapse/sampletypes.h"
 
-enum PluginHostID
+enum class PluginHostID
 {
-    NATIVE,
-    PYTHON,
-    N_PLUGIN_HOSTS
+    Native,
+    Python,
 };
 
 struct PluginInfo
@@ -30,7 +29,5 @@ struct PluginData
     PluginInfo plugin;
     QList<ClassInfo> classes;
 };
-
-//typedef QMap<const char *, ClassInfo> ElementSetInfo;
 
 #endif // PLUGINMANAGER_GLOBAL_H

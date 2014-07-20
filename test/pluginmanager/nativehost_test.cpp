@@ -26,7 +26,7 @@ TEST_F(NativePluginHostTest, InfoForFooPlugin)
 {
     auto info = host.getInfo(fooPluginPath);
 
-    EXPECT_EQ(info.plugin.host, NATIVE);
+    EXPECT_EQ(info.plugin.host, PluginHostID::Native);
     EXPECT_EQ(info.plugin.name, QString("FooPlugin"));
     EXPECT_EQ(info.plugin.path, fooPluginPath);
 
@@ -45,7 +45,7 @@ TEST_F(NativePluginHostTest, InfoForBarPlugin)
 {
     auto info = host.getInfo(barPluginPath);
 
-    EXPECT_EQ(info.plugin.host, NATIVE);
+    EXPECT_EQ(info.plugin.host, PluginHostID::Native);
     EXPECT_EQ(info.plugin.name, QString("BarPlugin"));
     EXPECT_EQ(info.plugin.path, barPluginPath);
 

@@ -20,7 +20,7 @@ PluginData PythonPluginHost::getInfo(const QString &pluginPath)
         return data;
 
     try {
-        data.plugin.host = PYTHON;
+        data.plugin.host = PluginHostID::Python;
         data.plugin.path = pluginPath;
         data.plugin.name = moduleName;
 

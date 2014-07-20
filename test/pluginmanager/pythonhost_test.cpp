@@ -24,7 +24,7 @@ TEST_F(PythonPluginHostTest, InfoForBazPlugin)
 {
     auto info = host.getInfo(bazPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PYTHON);
+    EXPECT_EQ(info.plugin.host, PluginHostID::Python);
     EXPECT_EQ(info.plugin.name, QString("bazplugin"));
     EXPECT_EQ(info.plugin.path, bazPluginPath);
 

@@ -49,7 +49,7 @@ PluginData NativePluginHost::getInfo(const QString &pluginPath)
         return data;
     }
 
-    data.plugin.host = NATIVE;
+    data.plugin.host = PluginHostID::Native;
     data.plugin.path = pluginPath;
     data.plugin.name = loader.metaData()["className"].toString();
 

@@ -17,7 +17,7 @@ public:
 
     Ui::PluginManager ui;
     QDir searchPath;
-    PluginHost *hosts[N_PLUGIN_HOSTS];
+    QMap<PluginHostID, PluginHost*> hosts;
     QList<PluginData> pluginData;
 
     void searchForPlugins();

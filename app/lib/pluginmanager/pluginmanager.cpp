@@ -10,8 +10,8 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
 {
     ui.setupUi(q);
 
-    hosts[NATIVE] = new NativePluginHost;
-    hosts[PYTHON] = new PythonPluginHost;
+    hosts[PluginHostID::Native] = new NativePluginHost;
+    hosts[PluginHostID::Python] = new PythonPluginHost;
 
     QObject::connect(ui.pathButton, &QPushButton::clicked, [q]{
         QString dir = QFileDialog::getExistingDirectory(q, "Plugin path");
@@ -22,8 +22,7 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
 
 PluginManagerPrivate::~PluginManagerPrivate()
 {
-    for (uint i = 0; i < N_PLUGIN_HOSTS; i++)
-        delete hosts[i];
+    qDeleteAll(hosts);
 }
 
 PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
@@ -37,8 +36,8 @@ void PluginManagerPrivate::searchForPlugins()
     pluginData.clear();
 
     foreach (const QFileInfo &item, searchPath.entryInfoList()) {
-        for (uint i = 0; i < N_PLUGIN_HOSTS; i++) {
-            PluginData info = hosts[i]->getInfo(item.absoluteFilePath());
+        foreach (PluginHost *host, hosts) {
+            PluginData info = host->getInfo(item.absoluteFilePath());
             if (!info.plugin.name.isEmpty()) {
                 pluginData.append(info);
                 break;
