@@ -16,10 +16,8 @@ PluginData PythonPluginHost::getInfo(const QString &pluginPath)
     QDir dir(pluginPath);
     QString moduleName(dir.dirName());
 
-    if (!dir.exists("__init__.py")) {
-        qxtLog->debug(pluginPath + " is not a Python plugin");
+    if (!dir.exists("__init__.py"))
         return data;
-    }
 
     try {
         data.plugin.host = PYTHON;

@@ -37,6 +37,9 @@ PluginData NativePluginHost::getInfo(const QString &pluginPath)
 {
     PluginData data;
 
+    if (!QLibrary::isLibrary(pluginPath))
+        return data;
+
     QPluginLoader loader(pluginPath);
     QObject *plugin = loader.instance();
     auto factory = qobject_cast<elapse::PluginInterface*>(plugin);
