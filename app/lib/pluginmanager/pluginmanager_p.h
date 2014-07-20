@@ -35,6 +35,14 @@ public:
     QStandardItemModel classifierModel;
     QStandardItemModel outputActionModel;
 
+    struct ElementInfo {
+        QStandardItemModel *model;
+        QTreeView *tree;
+        QString elementClass;
+        elapse::Signal::Type signalType;
+    };
+    QList<ElementInfo> elements;
+
 private:
     PluginManager * const q_ptr;
     Q_DECLARE_PUBLIC(PluginManager)
