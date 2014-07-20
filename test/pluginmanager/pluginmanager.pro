@@ -9,7 +9,7 @@ SOURCES   += pluginmanager_test.cpp \
              nativehost_test.cpp \
              pythonhost_test.cpp
 
-INCLUDEPATH += $$ROOT/app/include
+INCLUDEPATH += $$ROOT/app/include $$shadowed($$ROOT/app/lib/pluginmanager)
 linkStaticlib(app, pluginmanager)
 linkSharedlib(app, elapseplugin, true)
 

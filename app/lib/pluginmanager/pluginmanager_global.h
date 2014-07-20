@@ -25,6 +25,12 @@ struct ClassInfo
     QString className;
 };
 
+struct PluginData
+{
+    PluginInfo plugin;
+    QList<ClassInfo> classes;
+};
+
 //typedef QMap<const char *, ClassInfo> ElementSetInfo;
 
 #endif // PLUGINMANAGER_GLOBAL_H

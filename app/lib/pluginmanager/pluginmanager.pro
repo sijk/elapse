@@ -20,4 +20,4 @@ HEADERS += pluginmanager.h \
            python/bindings/elapse.h \
            python/bindings/elements.h
 
-FORMS   +=
+FORMS   += pluginmanager.ui

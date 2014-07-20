@@ -8,12 +8,6 @@ class PluginHost
 public:
     virtual ~PluginHost() {}
 
-    struct PluginData
-    {
-        PluginInfo plugin;
-        QList<ClassInfo> classes;
-    };
-
     virtual PluginData getInfo(const QString &pluginPath) = 0;
 
     virtual QSharedPointer<QObject>

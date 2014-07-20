@@ -10,7 +10,7 @@ PythonPluginHost::PythonPluginHost()
     pyhost::initPython();
 }
 
-PluginHost::PluginData PythonPluginHost::getInfo(const QString &pluginPath)
+PluginData PythonPluginHost::getInfo(const QString &pluginPath)
 {
     PluginData data;
     QDir dir(pluginPath);

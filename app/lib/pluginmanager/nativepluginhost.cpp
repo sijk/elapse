@@ -33,7 +33,7 @@ elapse::Signal::Type signalType(const QMetaObject &obj)
 } // namespace
 
 
-PluginHost::PluginData NativePluginHost::getInfo(const QString &pluginPath)
+PluginData NativePluginHost::getInfo(const QString &pluginPath)
 {
     PluginData data;
 

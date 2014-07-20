@@ -12,9 +12,9 @@ public:
     void SetUp()
     {
         manager = new PluginManager;
-        manager->setSearchPath(qApp->applicationDirPath() + "/../test_plugins");
-
         priv = PluginManagerPrivate::expose(manager);
+        testPluginPath = qApp->applicationDirPath() + "/../test_plugins";
+        qxtLog->enableAllLogLevels();
     }
 
     void TearDown()
@@ -24,6 +24,7 @@ public:
 
     PluginManager *manager;
     PluginManagerPrivate *priv;
+    QString testPluginPath;
 
     SuppressLogging nolog;
 };
@@ -33,5 +34,29 @@ TEST_F(PluginManagerTest, SetSearchPath)
 {
     QDir newPath("/tmp");
     manager->setSearchPath(newPath);
-    EXPECT_EQ(manager->searchPath(), newPath);
+    EXPECT_EQ(manager->searchPath().absolutePath(), newPath.absolutePath());
+}
+
+TEST_F(PluginManagerTest, SearchForPlugins)
+{
+    manager->setSearchPath(testPluginPath);
+
+    EXPECT_EQ(priv->pluginData.size(), 3);
+    EXPECT_EQ(priv->pluginData[0].plugin.name, QString("bazplugin"));
+    EXPECT_EQ(priv->pluginData[1].plugin.name, QString("BarPlugin"));
+    EXPECT_EQ(priv->pluginData[2].plugin.name, QString("FooPlugin"));
+
+    EXPECT_EQ(priv->dataSourceModel.rowCount(), 1);
+
+    EXPECT_EQ(priv->eegDecoderModel.rowCount(), 2);
+    EXPECT_EQ(priv->vidDecoderModel.rowCount(), 1);
+    EXPECT_EQ(priv->imuDecoderModel.rowCount(), 0);
+
+    EXPECT_EQ(priv->eegFeatExModel.rowCount(), 1);
+    EXPECT_EQ(priv->vidFeatExModel.rowCount(), 0);
+    EXPECT_EQ(priv->imuFeatExModel.rowCount(), 1);
+
+    EXPECT_EQ(priv->dataSinkModel.rowCount(), 0);
+    EXPECT_EQ(priv->classifierModel.rowCount(), 0);
+    EXPECT_EQ(priv->outputActionModel.rowCount(), 0);
 }
