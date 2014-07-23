@@ -24,6 +24,14 @@ public:
     void populateModels();
     void attachModelViews();
 
+    typedef QPair<const PluginInfo*, const ClassInfo*> ElementInfo;
+    typedef QMap<QString, ElementInfo> ElementSetInfo;
+
+    ElementSetInfo getSelectedElements() const;
+    ElementSetPtr createElements(const ElementSetInfo &info);
+    template<class T>
+    void createElement(QSharedPointer<T> &element, const ElementInfo &info);
+
     QStandardItemModel dataSourceModel;
     QStandardItemModel dataSinkModel;
     QStandardItemModel eegDecoderModel;
@@ -35,13 +43,14 @@ public:
     QStandardItemModel classifierModel;
     QStandardItemModel outputActionModel;
 
-    struct ElementInfo {
+    struct ElementData {
         QStandardItemModel *model;
         QTreeView *tree;
         QString elementClass;
         elapse::Signal::Type signalType;
+        QString elementName;
     };
-    QList<ElementInfo> elements;
+    QList<ElementData> elements;
 
 private:
     PluginManager * const q_ptr;

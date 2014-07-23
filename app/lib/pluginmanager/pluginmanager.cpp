@@ -1,6 +1,8 @@
 #include <QFileDialog>
+#include <QxtLogger>
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
+
 #include "nativepluginhost.h"
 #include "pythonpluginhost.h"
 
@@ -14,16 +16,16 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
     hosts[PluginHostID::Python] = new PythonPluginHost;
 
     elements = {
-        { &dataSourceModel,   ui.dataSource,            "DataSource",       elapse::Signal::INVALID },
-        { &dataSinkModel,     ui.dataSink,              "DataSink",         elapse::Signal::INVALID },
-        { &eegDecoderModel,   ui.sampleDecoderEeg,      "SampleDecoder",    elapse::Signal::EEG     },
-        { &vidDecoderModel,   ui.sampleDecoderVideo,    "SampleDecoder",    elapse::Signal::VIDEO   },
-        { &imuDecoderModel,   ui.sampleDecoderImu,      "SampleDecoder",    elapse::Signal::IMU     },
-        { &eegFeatExModel,    ui.featureExtractorEeg,   "FeatureExtractor", elapse::Signal::EEG     },
-        { &vidFeatExModel,    ui.featureExtractorVideo, "FeatureExtractor", elapse::Signal::VIDEO   },
-        { &imuFeatExModel,    ui.featureExtractorImu,   "FeatureExtractor", elapse::Signal::IMU     },
-        { &classifierModel,   ui.classifier,            "Classifier",       elapse::Signal::INVALID },
-        { &outputActionModel, ui.outputAction,          "OutputAction",     elapse::Signal::INVALID },
+        { &dataSourceModel,   ui.dataSource,            "DataSource",       elapse::Signal::INVALID, "DataSource"          },
+        { &dataSinkModel,     ui.dataSink,              "DataSinkDelegate", elapse::Signal::INVALID, "DataSinkDelegate"    },
+        { &eegDecoderModel,   ui.sampleDecoderEeg,      "SampleDecoder",    elapse::Signal::EEG,     "EegSampleDecoder"    },
+        { &vidDecoderModel,   ui.sampleDecoderVideo,    "SampleDecoder",    elapse::Signal::VIDEO,   "VidSampleDecoder"    },
+        { &imuDecoderModel,   ui.sampleDecoderImu,      "SampleDecoder",    elapse::Signal::IMU,     "ImuSampleDecoder"    },
+        { &eegFeatExModel,    ui.featureExtractorEeg,   "FeatureExtractor", elapse::Signal::EEG,     "EegFeatureExtractor" },
+        { &vidFeatExModel,    ui.featureExtractorVideo, "FeatureExtractor", elapse::Signal::VIDEO,   "VidFeatureExtractor" },
+        { &imuFeatExModel,    ui.featureExtractorImu,   "FeatureExtractor", elapse::Signal::IMU,     "ImuFeatureExtractor" },
+        { &classifierModel,   ui.classifier,            "Classifier",       elapse::Signal::INVALID, "Classifier"          },
+        { &outputActionModel, ui.outputAction,          "OutputAction",     elapse::Signal::INVALID, "OutputAction"        },
     };
 
     QObject::connect(ui.pathButton, &QPushButton::clicked, [q]{
@@ -48,8 +50,8 @@ void PluginManagerPrivate::searchForPlugins()
     searchPath.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
     pluginData.clear();
 
-    foreach (const QFileInfo &item, searchPath.entryInfoList()) {
-        foreach (PluginHost *host, hosts) {
+    for (const QFileInfo &item : searchPath.entryInfoList()) {
+        for (PluginHost *host : hosts) {
             PluginData info = host->getInfo(item.absoluteFilePath());
             if (!info.plugin.name.isEmpty()) {
                 pluginData.append(info);
@@ -117,11 +119,73 @@ void PluginManagerPrivate::attachModelViews()
     };
 }
 
+PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSelectedElements() const
+{
+    ElementSetInfo selectedElements;
+
+    for (const auto &element : elements) {
+        auto selected = element.tree->selectionModel()->selection().indexes();
+        Q_ASSERT(selected.size() == 1);
+        QModelIndex index = selected.first();
+        QStandardItem *item = element.model->itemFromIndex(index);
+
+        int classIndex = item->data().toInt();
+        int pluginIndex = item->parent()->data().toInt();
+        const PluginInfo &plugin = pluginData.at(pluginIndex).plugin;
+        const ClassInfo &cls = pluginData.at(pluginIndex).classes.at(classIndex);
+
+        selectedElements.insert(element.elementName, qMakePair(&plugin, &cls));
+    }
+
+    return selectedElements;
+}
+
+template<class T>
+void PluginManagerPrivate::createElement(QSharedPointer<T> &element,
+                                         const ElementInfo &info)
+{
+    const PluginInfo &plugin = *info.first;
+    const ClassInfo &cls = *info.second;
+
+    element = hosts[plugin.host]->instantiate<T>(plugin, cls);
+
+    if (element.isNull())
+        qxtLog->debug("Failed to instantiate", cls.className, "from", plugin.name);
+}
+
+ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
+{
+    ElementSetPtr e = ElementSetPtr::create();
+
+    using elapse::Signal;
+
+    createElement(e->dataSource,                       info.value("DataSource"));
+    createElement(e->dataSink,                         info.value("DataSinkDelegate"));
+    createElement(e->sampleDecoders[Signal::EEG],      info.value("EegSampleDecoder"));
+    createElement(e->sampleDecoders[Signal::VIDEO],    info.value("VidSampleDecoder"));
+    createElement(e->sampleDecoders[Signal::IMU],      info.value("ImuSampleDecoder"));
+    createElement(e->featureExtractors[Signal::EEG],   info.value("EegFeatureExtractor"));
+    createElement(e->featureExtractors[Signal::VIDEO], info.value("VidFeatureExtractor"));
+    createElement(e->featureExtractors[Signal::IMU],   info.value("ImuFeatureExtractor"));
+    createElement(e->classifier,                       info.value("Classifier"));
+    createElement(e->action,                           info.value("OutputAction"));
+
+    for (const auto &element : e->allElements()) {
+        if (element.isNull()) {
+            qxtLog->warning("Failed to load all elements from plugins.");
+            return ElementSetPtr();
+        }
+    }
+
+    return e;
+}
+
 
 PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
     d_ptr(new PluginManagerPrivate(this))
 {
+    connect(this, SIGNAL(accepted()), SLOT(loadPluginsFromGuiSelection()));
 }
 
 PluginManager::~PluginManager()
@@ -156,5 +220,9 @@ void PluginManager::loadPluginsFromSettings()
 
 void PluginManager::loadPluginsFromGuiSelection()
 {
-
+    Q_D(PluginManager);
+    auto info = d->getSelectedElements();
+    auto elements = d->createElements(info);
+    if (elements)
+        emit pluginsLoaded(elements);
 }
