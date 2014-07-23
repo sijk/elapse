@@ -144,7 +144,7 @@ void PluginManager::setSearchPath(QDir newPath)
     d->attachModelViews();
 }
 
-void PluginManager::selectPluginsToLoad()
+void PluginManager::loadPluginsFromGui()
 {
     show();
 }
@@ -154,7 +154,7 @@ void PluginManager::loadPluginsFromSettings()
 
 }
 
-void PluginManager::loadPluginsFromSelection()
+void PluginManager::loadPluginsFromGuiSelection()
 {
 
 }

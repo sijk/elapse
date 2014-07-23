@@ -52,7 +52,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
             ui->actionLogView, SLOT(setChecked(bool)));
 
     connect(ui->actionPlugins, SIGNAL(triggered()),
-            pluginManager, SLOT(selectPluginsToLoad()));
+            pluginManager, SLOT(loadPluginsFromGui()));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
             pipeline, SLOT(setElements(ElementSetPtr)));
     connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
