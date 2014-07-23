@@ -64,10 +64,10 @@ PluginData NativePluginHost::getInfo(const QString &pluginPath)
     return data;
 }
 
-QSharedPointer<QObject> NativePluginHost::instantiateClass(const PluginInfo &pluginInfo,
-                                                           const ClassInfo &classInfo)
+QObject *NativePluginHost::instantiateClass(const PluginInfo &pluginInfo,
+                                            const ClassInfo &classInfo)
 {
-    QSharedPointer<QObject> instance;
+    QObject *instance;
 
     QPluginLoader loader(pluginInfo.path);
     QObject *plugin = loader.instance();
@@ -75,12 +75,12 @@ QSharedPointer<QObject> NativePluginHost::instantiateClass(const PluginInfo &plu
 
     if (!factory) {
         qxtLog->debug(loader.errorString());
-        return instance;
+        return nullptr;
     }
 
     for (const QMetaObject &obj : factory->classes()) {
         if (obj.className() == classInfo.className) {
-            instance.reset(obj.newInstance());
+            instance = obj.newInstance();
             if (instance)
                 break;
         }

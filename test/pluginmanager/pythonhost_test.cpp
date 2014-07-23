@@ -1,7 +1,11 @@
 #include <gtest/gtest.h>
 #include <QCoreApplication>
+#include <elapse/elements/featurextractor.h>
 
 #include "pythonpluginhost.h"
+
+using elapse::FeatureExtractor;
+
 
 class PythonPluginHostTest : public ::testing::Test
 {
@@ -43,8 +47,8 @@ TEST_F(PythonPluginHostTest, InstantiateBazEegFeatEx)
 {
     auto info = host.getInfo(bazPluginPath);
     auto cls = info.classes[0];
-    auto instance = host.instantiateClass(info.plugin, cls);
+    auto instance = host.instantiate<FeatureExtractor>(info.plugin, cls);
     ASSERT_FALSE(instance.isNull());
-    EXPECT_STREQ(instance->metaObject()->superClass()->className(),
-                 "elapse::FeatureExtractor");
+    EXPECT_EQ(instance->metaObject()->superClass(),
+              &FeatureExtractor::staticMetaObject);
 }

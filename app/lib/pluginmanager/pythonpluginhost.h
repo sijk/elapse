@@ -7,10 +7,11 @@ class PythonPluginHost : public PluginHost
 {
 public:
     PythonPluginHost();
-
     PluginData getInfo(const QString &pluginPath);
-    QSharedPointer<QObject> instantiateClass(const PluginInfo &plugin,
-                                             const ClassInfo &cls);
+
+protected:
+    QObject *instantiateClass(const PluginInfo &plugin, const ClassInfo &cls);
+    Deleter deleter();
 };
 
 #endif // PYTHONPLUGINHOST_H

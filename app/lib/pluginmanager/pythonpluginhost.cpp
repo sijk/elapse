@@ -42,8 +42,8 @@ PluginData PythonPluginHost::getInfo(const QString &pluginPath)
     return data;
 }
 
-QSharedPointer<QObject> PythonPluginHost::instantiateClass(const PluginInfo &plugin,
-                                                           const ClassInfo &cls)
+QObject *PythonPluginHost::instantiateClass(const PluginInfo &plugin,
+                                            const ClassInfo &cls)
 {
     QObject *obj;
     QDir dir(plugin.path);
@@ -55,8 +55,13 @@ QSharedPointer<QObject> PythonPluginHost::instantiateClass(const PluginInfo &plu
         pyhost::instances[obj] = pyobj;
     } catch (const boost::python::error_already_set&) {
         PyErr_Print();
-        return QSharedPointer<QObject>();
+        return nullptr;
     }
 
-    return QSharedPointer<QObject>(obj, &pyhost::removeInstance);
+    return obj;
+}
+
+PluginHost::Deleter PythonPluginHost::deleter()
+{
+    return &pyhost::removeInstance;
 }

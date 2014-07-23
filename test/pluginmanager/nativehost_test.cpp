@@ -1,7 +1,11 @@
 #include <gtest/gtest.h>
 #include <QCoreApplication>
+#include <elapse/elements/decoder.h>
 
 #include "nativepluginhost.h"
+
+using elapse::SampleDecoder;
+
 
 class NativePluginHostTest : public ::testing::Test
 {
@@ -64,7 +68,7 @@ TEST_F(NativePluginHostTest, InstantiateFooEegDecoder)
 {
     auto info = host.getInfo(fooPluginPath);
     auto cls = info.classes[0];
-    auto instance = host.instantiateClass(info.plugin, cls);
+    auto instance = host.instantiate<SampleDecoder>(info.plugin, cls);
     ASSERT_FALSE(instance.isNull());
     EXPECT_EQ(instance->metaObject()->className(), cls.className);
 }
