@@ -23,6 +23,14 @@ public:
     QString bazPluginPath;
 };
 
+TEST_F(PythonPluginHostTest, NoInfoForNonExistentPlugin)
+{
+    auto info = host.getInfo("/not/a/real/plugin");
+
+    EXPECT_EQ(info.plugin.name, QString());
+    EXPECT_EQ(info.plugin.path, QString());
+    EXPECT_EQ(info.classes.size(), 0);
+}
 
 TEST_F(PythonPluginHostTest, InfoForBazPlugin)
 {
