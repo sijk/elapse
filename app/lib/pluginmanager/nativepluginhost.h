@@ -3,6 +3,11 @@
 
 #include "pluginhost.h"
 
+
+/*!
+ * \brief The NativePluginHost class loads plugins implemented in C++.
+ */
+
 class NativePluginHost : public PluginHost
 {
 public:

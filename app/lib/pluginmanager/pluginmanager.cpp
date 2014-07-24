@@ -45,6 +45,11 @@ PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
     return manager->d_func();
 }
 
+/*!
+ * Use every PluginHost to search for plugins in the searchPath. Every file and
+ * directory in the searchPath is considered as a potential plugin by each
+ * PluginHost.
+ */
 void PluginManagerPrivate::searchForPlugins()
 {
     searchPath.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
@@ -61,6 +66,9 @@ void PluginManagerPrivate::searchForPlugins()
     }
 }
 
+/*!
+ * Populate the models that list the available implementations for each element.
+ */
 void PluginManagerPrivate::populateModels()
 {
     for (const auto &element : elements) {
@@ -99,6 +107,10 @@ void PluginManagerPrivate::populateModels()
     };
 }
 
+/*!
+ * Attach the models to their corresponding tree views in the plugin selection
+ * dialog.
+ */
 void PluginManagerPrivate::attachModelViews()
 {
     for (const auto &element : elements) {
@@ -119,6 +131,11 @@ void PluginManagerPrivate::attachModelViews()
     };
 }
 
+/*!
+ * Inspect the tree views to see which element implementations are selected.
+ * \return a map of elementName to the (PluginInfo, ClassInfo) pair that
+ * identifies an element implementation.
+ */
 PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSelectedElements() const
 {
     ElementSetInfo selectedElements;
@@ -140,6 +157,10 @@ PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSelectedElements()
     return selectedElements;
 }
 
+/*!
+ * Create an element with base class T using the given \a info and store the
+ * result in \a element.
+ */
 template<class T>
 void PluginManagerPrivate::createElement(QSharedPointer<T> &element,
                                          const ElementInfo &info)
@@ -153,6 +174,9 @@ void PluginManagerPrivate::createElement(QSharedPointer<T> &element,
         qxtLog->debug("Failed to instantiate", cls.className, "from", plugin.name);
 }
 
+/*!
+ * \return a new ElementSet populated with the objects described by \a info.
+ */
 ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
 {
     ElementSetPtr e = ElementSetPtr::create();
@@ -181,6 +205,10 @@ ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
 }
 
 
+
+/*!
+ * Create a new PluginManager as a child of the given \a parent.
+ */
 PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
     d_ptr(new PluginManagerPrivate(this))
@@ -188,17 +216,26 @@ PluginManager::PluginManager(QWidget *parent) :
     connect(this, SIGNAL(accepted()), SLOT(loadPluginsFromGuiSelection()));
 }
 
+/*!
+ * \brief PluginManager::~PluginManager
+ */
 PluginManager::~PluginManager()
 {
     delete d_ptr;
 }
 
+/*!
+ * \return the absolute path in which plugins will be searched for.
+ */
 QDir PluginManager::searchPath() const
 {
     Q_D(const PluginManager);
     return d->searchPath;
 }
 
+/*!
+ * Search for plugins in the \a newPath.
+ */
 void PluginManager::setSearchPath(QDir newPath)
 {
     Q_D(PluginManager);
@@ -208,16 +245,27 @@ void PluginManager::setSearchPath(QDir newPath)
     d->attachModelViews();
 }
 
+/*!
+ * Show the element selection dialog to allow the user to select a set of
+ * elements to load.
+ */
 void PluginManager::loadPluginsFromGui()
 {
     show();
 }
 
+/*!
+ * Load a previously saved set of elements.
+ */
 void PluginManager::loadPluginsFromSettings()
 {
 
 }
 
+/*!
+ * Load the elements that the user selected in the GUI. Called when the element
+ * selection dialog is accepted.
+ */
 void PluginManager::loadPluginsFromGuiSelection()
 {
     Q_D(PluginManager);
