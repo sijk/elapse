@@ -28,9 +28,16 @@ public:
     typedef QMap<QString, ElementInfo> ElementSetInfo;
 
     ElementSetInfo getSelectedElements() const;
+    ElementSetInfo getSavedElements() const;
     ElementSetPtr createElements(const ElementSetInfo &info);
+    void selectElements(const ElementSetInfo &info);
+    void saveElements(const ElementSetInfo &info);
+
     template<class T>
     void createElement(QSharedPointer<T> &element, const ElementInfo &info);
+
+    QStandardItem *findItemWithIndices(const QStandardItemModel *model,
+                                       int pluginIndex, int classIndex);
 
     QStandardItemModel dataSourceModel;
     QStandardItemModel dataSinkModel;

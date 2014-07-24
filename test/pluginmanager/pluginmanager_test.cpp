@@ -60,3 +60,20 @@ TEST_F(PluginManagerTest, SearchForPlugins)
     EXPECT_EQ(priv->classifierModel.rowCount(), 0);
     EXPECT_EQ(priv->outputActionModel.rowCount(), 0);
 }
+
+TEST_F(PluginManagerTest, FindElementWithIndices)
+{
+    auto itemHasName = [=](const QStandardItemModel *m, int p, int c,
+                           const QString &name) {
+        QStandardItem *item = priv->findItemWithIndices(m, p, c);
+        if (!item) return false;
+        return m->data(m->indexFromItem(item)).toString() == name;
+    };
+
+    manager->setSearchPath(testPluginPath);
+    EXPECT_TRUE(itemHasName(&priv->eegDecoderModel, 1, 0, "BarEegDecoder"));
+    EXPECT_TRUE(itemHasName(&priv->eegDecoderModel, 2, 0, "FooEegDecoder"));
+
+    EXPECT_FALSE(itemHasName(&priv->eegDecoderModel, 1, 1, "BarVideoDecoder"));
+    EXPECT_TRUE(itemHasName(&priv->vidDecoderModel, 1, 1, "BarVideoDecoder"));
+}
