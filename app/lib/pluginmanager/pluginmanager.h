@@ -29,14 +29,14 @@ public:
     void setSearchPath(QDir newPath);
 
 public slots:
-    void loadPluginsFromGui();
-    void loadPluginsFromSettings();
+    void loadElementsFromGui();
+    void loadElementsFromSettings();
 
 signals:
-    void pluginsLoaded(ElementSetPtr elements);
+    void elementsLoaded(ElementSetPtr elements);
 
 private slots:
-    void loadPluginsFromGuiSelection();
+    void loadElementsFromGuiSelection();
 
 private:
     PluginManagerPrivate * const d_ptr;

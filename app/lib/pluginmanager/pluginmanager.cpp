@@ -213,7 +213,7 @@ PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
     d_ptr(new PluginManagerPrivate(this))
 {
-    connect(this, SIGNAL(accepted()), SLOT(loadPluginsFromGuiSelection()));
+    connect(this, SIGNAL(accepted()), SLOT(loadElementsFromGuiSelection()));
 }
 
 /*!
@@ -249,7 +249,7 @@ void PluginManager::setSearchPath(QDir newPath)
  * Show the element selection dialog to allow the user to select a set of
  * elements to load.
  */
-void PluginManager::loadPluginsFromGui()
+void PluginManager::loadElementsFromGui()
 {
     show();
 }
@@ -257,7 +257,7 @@ void PluginManager::loadPluginsFromGui()
 /*!
  * Load a previously saved set of elements.
  */
-void PluginManager::loadPluginsFromSettings()
+void PluginManager::loadElementsFromSettings()
 {
 
 }
@@ -266,11 +266,12 @@ void PluginManager::loadPluginsFromSettings()
  * Load the elements that the user selected in the GUI. Called when the element
  * selection dialog is accepted.
  */
-void PluginManager::loadPluginsFromGuiSelection()
+void PluginManager::loadElementsFromGuiSelection()
 {
     Q_D(PluginManager);
     auto info = d->getSelectedElements();
     auto elements = d->createElements(info);
-    if (elements)
-        emit pluginsLoaded(elements);
+    if (elements) {
+        emit elementsLoaded(elements);
+    }
 }
