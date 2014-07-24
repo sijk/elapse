@@ -36,21 +36,21 @@ void DataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
 /*!
  * Start saving data.
  *
- * This first checks whether the elapse::DataSinkDelegate::needsNewSessionData()
- * and calls elapse::DataSinkDelegate::getSessionData() if necessary.
+ * This first checks whether the elapse::DataSinkDelegate::needsNewCaptureInfo()
+ * and calls elapse::DataSinkDelegate::getCaptureInfo() if necessary.
  *
  * If the delegate was started succssfully, the device configuration is passed
  * to the delegate to be saved. This means that setDeviceConfig() must be
  * called before start().
  *
- * \return whether the delegate was able to retrieve any necessary session data
+ * \return whether the delegate was able to retrieve any necessary capture info
  * and start successfully.
  */
 bool DataSink::start()
 {
     Q_ASSERT(delegate);
 
-    if (!delegate->needsNewSessionData() || delegate->getSessionData())
+    if (!delegate->needsNewCaptureInfo() || delegate->getCaptureInfo())
         return delegate->start();
 
     return false;

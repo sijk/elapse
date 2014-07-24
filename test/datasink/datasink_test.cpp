@@ -15,8 +15,8 @@ class MockDataSinkDelegate : public elapse::DataSinkDelegate
 public:
     MOCK_METHOD0(start, bool());
     MOCK_METHOD0(stop, void());
-    MOCK_METHOD0(needsNewSessionData, bool());
-    MOCK_METHOD0(getSessionData, bool());
+    MOCK_METHOD0(needsNewCaptureInfo, bool());
+    MOCK_METHOD0(getCaptureInfo, bool());
     MOCK_METHOD1(saveDeviceConfig, void(const QMap<QString,QVariantMap> &));
     MOCK_METHOD2(saveData, void(elapse::Signal::Type, QByteArray));
     MOCK_METHOD2(saveSample, void(elapse::Signal::Type, elapse::SamplePtr));
@@ -25,10 +25,10 @@ public:
 };
 
 
-TEST(DataSinkTest, StartSucceedsIfSessionDataNotNeeded)
+TEST(DataSinkTest, StartSucceedsIfCaptureInfoNotNeeded)
 {
     MockDataSinkDelegate d;
-    EXPECT_CALL(d, needsNewSessionData())
+    EXPECT_CALL(d, needsNewCaptureInfo())
             .WillOnce(Return(false));
     EXPECT_CALL(d, start())
             .WillOnce(Return(true));
@@ -38,12 +38,12 @@ TEST(DataSinkTest, StartSucceedsIfSessionDataNotNeeded)
     EXPECT_TRUE(sink.start());
 }
 
-TEST(DataSinkTest, StartFailsIfGetSessionDataFailed)
+TEST(DataSinkTest, StartFailsIfGetCaptureInfoFailed)
 {
     MockDataSinkDelegate d;
-    EXPECT_CALL(d, needsNewSessionData())
+    EXPECT_CALL(d, needsNewCaptureInfo())
             .WillOnce(Return(true));
-    EXPECT_CALL(d, getSessionData())
+    EXPECT_CALL(d, getCaptureInfo())
             .WillOnce(Return(false));
 
     DataSink sink;
@@ -54,9 +54,9 @@ TEST(DataSinkTest, StartFailsIfGetSessionDataFailed)
 TEST(DataSinkTest, StartFailsIfDelegateStartFails)
 {
     MockDataSinkDelegate d;
-    EXPECT_CALL(d, needsNewSessionData())
+    EXPECT_CALL(d, needsNewCaptureInfo())
             .WillOnce(Return(true));
-    EXPECT_CALL(d, getSessionData())
+    EXPECT_CALL(d, getCaptureInfo())
             .WillOnce(Return(true));
     EXPECT_CALL(d, start())
             .WillOnce(Return(false));
@@ -66,12 +66,12 @@ TEST(DataSinkTest, StartFailsIfDelegateStartFails)
     EXPECT_FALSE(sink.start());
 }
 
-TEST(DataSinkTest, StartSucceedsIfGetSessionDataAndDelegateStartSucceed)
+TEST(DataSinkTest, StartSucceedsIfGetCaptureInfoAndDelegateStartSucceed)
 {
     MockDataSinkDelegate d;
-    EXPECT_CALL(d, needsNewSessionData())
+    EXPECT_CALL(d, needsNewCaptureInfo())
             .WillOnce(Return(true));
-    EXPECT_CALL(d, getSessionData())
+    EXPECT_CALL(d, getCaptureInfo())
             .WillOnce(Return(true));
     EXPECT_CALL(d, start())
             .WillOnce(Return(true));
@@ -81,17 +81,17 @@ TEST(DataSinkTest, StartSucceedsIfGetSessionDataAndDelegateStartSucceed)
     EXPECT_TRUE(sink.start());
 }
 
-TEST(DataSinkTest, NewSessionDataEachTime)
+TEST(DataSinkTest, NewCaptureInfoEachTime)
 {
     // Test the behaviour of the DataSink with a delegate that requires
-    // getSessionData() to be called before every run.
+    // getCaptureInfo() to be called before every run.
 
     bool needsData = true;
     MockDataSinkDelegate d;
-    EXPECT_CALL(d, needsNewSessionData())
+    EXPECT_CALL(d, needsNewCaptureInfo())
             .Times(2)
             .WillRepeatedly(ReturnPointee(&needsData));
-    EXPECT_CALL(d, getSessionData())
+    EXPECT_CALL(d, getCaptureInfo())
             .Times(2)
             .WillRepeatedly(DoAll(Assign(&needsData, false), Return(true)));
     EXPECT_CALL(d, start())

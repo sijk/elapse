@@ -42,10 +42,10 @@ void SimpleRawDataSinkDelegate::stop()
 }
 
 /*!
- * \return true if getSessionData() hasn't been called or if the chosen data
+ * \return true if getCaptureInfo() hasn't been called or if the chosen data
  * directory doesn't exist.
  */
-bool SimpleRawDataSinkDelegate::needsNewSessionData()
+bool SimpleRawDataSinkDelegate::needsNewCaptureInfo()
 {
     return dataDir == QDir() || !dataDir.exists();
 }
@@ -55,7 +55,7 @@ bool SimpleRawDataSinkDelegate::needsNewSessionData()
  * data files will be saved.
  * \return whether the user selected a valid directory.
  */
-bool SimpleRawDataSinkDelegate::getSessionData()
+bool SimpleRawDataSinkDelegate::getCaptureInfo()
 {
     QString dir = getDirectory();
     if (dir.isEmpty())

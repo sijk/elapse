@@ -16,10 +16,10 @@ namespace elapse {
  * these types of data; if you try to save an unsupported data type a warning
  * will be logged at runtime.
  *
- * Associated with a DataSinkDelegate is the concept of \e "session data".
+ * Associated with a DataSinkDelegate is the concept of \e "capture info".
  * This allows DataSinkDelegate implementations to store arbitrary metadata
- * alongside the saved data. For more details, see getSessionData() and
- * needsNewSessionData().
+ * alongside the saved data. For more details, see getCaptureInfo() and
+ * needsNewCaptureInfo().
  *
  * \headerfile elapse/elements/datasinkdelegate.h
  * \ingroup pipeline-elements
@@ -33,7 +33,7 @@ public:
 
     /*!
      * Start saving data. This may involve, for example, creating a new file
-     * named according to the current session data.
+     * named according to the current capture info.
      * \return whether starting succeeded.
      */
     virtual bool start() = 0;
@@ -44,10 +44,10 @@ public:
     virtual void stop() = 0;
 
     /*!
-     * \return whether this DataSinkDelegate needs getSessionData() to be
+     * \return whether this DataSinkDelegate needs getCaptureInfo() to be
      * called before the next call to start().
      */
-    virtual bool needsNewSessionData() = 0;
+    virtual bool needsNewCaptureInfo() = 0;
 
 public slots:
     /*!
@@ -63,13 +63,13 @@ public slots:
      * information like a subject ID, recording conditions, whether the
      * user is sleep-deprived, and so on.
      *
-     * If a DataSinkDelegate needsNewSessionData(), getSessionData() will be
+     * If a DataSinkDelegate needsNewCaptureInfo(), getCaptureInfo() will be
      * called before start(). If this method returns \c false, start() will
      * not be called.
      *
-     * \return whether valid session data was obtained.
+     * \return whether valid capture info was obtained.
      */
-    virtual bool getSessionData() = 0;
+    virtual bool getCaptureInfo() = 0;
 
 public:
     /*!

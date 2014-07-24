@@ -204,8 +204,8 @@ class MockDataSinkDelegate : public elapse::DataSinkDelegate
 public:
     MOCK_METHOD0(start, bool());
     MOCK_METHOD0(stop, void());
-    MOCK_METHOD0(needsNewSessionData, bool());
-    MOCK_METHOD0(getSessionData, bool());
+    MOCK_METHOD0(needsNewCaptureInfo, bool());
+    MOCK_METHOD0(getCaptureInfo, bool());
     MOCK_METHOD1(saveDeviceConfig, void(const QMap<QString, QVariantMap>&));
     MOCK_METHOD2(saveData, void(elapse::Signal::Type, QByteArray));
     MOCK_METHOD2(saveSample, void(elapse::Signal::Type, elapse::SamplePtr));
@@ -214,9 +214,9 @@ public:
 
     MockDataSinkDelegate()
     {
-        // Ignore session data calls - these are tested elsewhere.
-        EXPECT_CALL(*this, needsNewSessionData()).WillRepeatedly(Return(false));
-        EXPECT_CALL(*this, getSessionData()).Times(0);
+        // Ignore capture info calls - these are tested elsewhere.
+        EXPECT_CALL(*this, needsNewCaptureInfo()).WillRepeatedly(Return(false));
+        EXPECT_CALL(*this, getCaptureInfo()).Times(0);
         ON_CALL(*this, start()).WillByDefault(Return(true));
     }
 

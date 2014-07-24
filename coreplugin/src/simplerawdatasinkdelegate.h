@@ -11,7 +11,7 @@
  * \brief The SimpleRawDataSinkDelegate class dumps raw data to disk using a
  * QDataStream.
  *
- * The only session data required for this delegate is the directory into
+ * The only capture info required for this delegate is the directory into
  * which the data files will be saved.
  *
  * Note that this class only supports saving raw data — not Sample%s or
@@ -29,8 +29,8 @@ public:
 
     bool start();
     void stop();
-    bool needsNewSessionData();
-    bool getSessionData();
+    bool needsNewCaptureInfo();
+    bool getCaptureInfo();
 
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
     void saveData(elapse::Signal::Type signalType, QByteArray data);

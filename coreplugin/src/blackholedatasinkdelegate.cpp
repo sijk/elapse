@@ -27,21 +27,21 @@ void BlackHoleDataSinkDelegate::stop()
 }
 
 /*!
- * No session data is needed since all data is discarded.
+ * No capture info is needed since all data is discarded.
  */
-bool BlackHoleDataSinkDelegate::needsNewSessionData()
+bool BlackHoleDataSinkDelegate::needsNewCaptureInfo()
 {
     return false;
 }
 
 /*!
- * Show a message box explaining that no session data is necessary.
+ * Show a message box explaining that no capture info is necessary.
  */
-bool BlackHoleDataSinkDelegate::getSessionData()
+bool BlackHoleDataSinkDelegate::getCaptureInfo()
 {
     QMessageBox::information(qApp->activeWindow(), "Black hole",
                              "The black hole data sink doesn't need any\n"
-                             "session data — all data is discarded.",
+                             "capture info — all data is discarded.",
                              QMessageBox::Ok);
     return true;
 }

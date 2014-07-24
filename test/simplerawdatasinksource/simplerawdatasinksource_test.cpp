@@ -37,26 +37,26 @@ public:
 };
 
 
-TEST_F(SimpleRawDataSinkTest, InitiallyNeedsNewSessionData)
+TEST_F(SimpleRawDataSinkTest, InitiallyNeedsNewCaptureInfo)
 {
-    EXPECT_TRUE(dataSink.needsNewSessionData());
+    EXPECT_TRUE(dataSink.needsNewCaptureInfo());
 }
 
-TEST_F(SimpleRawDataSinkTest, DoesntNeedNewSessionDataAfterGetTmp)
+TEST_F(SimpleRawDataSinkTest, DoesntNeedNewCaptureInfoAfterGetTmp)
 {
-    EXPECT_TRUE(dataSink.needsNewSessionData());
-    EXPECT_TRUE(dataSink.getSessionData());
-    EXPECT_FALSE(dataSink.needsNewSessionData());
+    EXPECT_TRUE(dataSink.needsNewCaptureInfo());
+    EXPECT_TRUE(dataSink.getCaptureInfo());
+    EXPECT_FALSE(dataSink.needsNewCaptureInfo());
 }
 
-TEST_F(SimpleRawDataSinkTest, OnlyNeedsNewSessionDataOnce)
+TEST_F(SimpleRawDataSinkTest, OnlyNeedsNewCaptureInfoOnce)
 {
-    EXPECT_TRUE(dataSink.needsNewSessionData());
-    EXPECT_TRUE(dataSink.getSessionData());
-    EXPECT_FALSE(dataSink.needsNewSessionData());
+    EXPECT_TRUE(dataSink.needsNewCaptureInfo());
+    EXPECT_TRUE(dataSink.getCaptureInfo());
+    EXPECT_FALSE(dataSink.needsNewCaptureInfo());
     EXPECT_TRUE(dataSink.start());
     dataSink.stop();
-    EXPECT_FALSE(dataSink.needsNewSessionData());
+    EXPECT_FALSE(dataSink.needsNewCaptureInfo());
 }
 
 TEST_F(SimpleRawDataSinkTest, SavesConfig)
@@ -65,7 +65,7 @@ TEST_F(SimpleRawDataSinkTest, SavesConfig)
         {"test", {{"prop1", 42},{"prop2",true}}}
     };
 
-    EXPECT_TRUE(dataSink.getSessionData());
+    EXPECT_TRUE(dataSink.getCaptureInfo());
     ASSERT_TRUE(dataSink.start());
     dataSink.saveDeviceConfig(srcConfig);
     dataSink.stop();
@@ -84,7 +84,7 @@ TEST_F(SimpleRawDataSinkTest, SavesConfig)
 
 TEST_F(SimpleRawDataSinkTest, SavesData)
 {
-    EXPECT_TRUE(dataSink.getSessionData());
+    EXPECT_TRUE(dataSink.getCaptureInfo());
     ASSERT_TRUE(dataSink.start());
     dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
     dataSink.saveData(elapse::Signal::IMU, "IMU DATA");
@@ -118,7 +118,7 @@ TEST_F(SimpleRawDataSinkTest, SinkAndSource)
         {"test", {{"prop1", 42},{"prop2",true}}}
     };
 
-    EXPECT_TRUE(dataSink.getSessionData());
+    EXPECT_TRUE(dataSink.getCaptureInfo());
     ASSERT_TRUE(dataSink.start());
     dataSink.saveDeviceConfig(config);
     dataSink.saveData(elapse::Signal::EEG, "EEG DATA");

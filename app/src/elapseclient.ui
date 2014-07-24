@@ -190,7 +190,7 @@
    </attribute>
    <addaction name="actionConnect"/>
    <addaction name="separator"/>
-   <addaction name="actionSetSessionData"/>
+   <addaction name="actionSetCaptureInfo"/>
    <addaction name="separator"/>
    <addaction name="actionCapture"/>
    <addaction name="separator"/>
@@ -284,14 +284,17 @@
     <string>Start/stop data capture</string>
    </property>
   </action>
-  <action name="actionSetSessionData">
+  <action name="actionSetCaptureInfo">
    <property name="icon">
     <iconset theme="document-properties">
      <normaloff/>
     </iconset>
    </property>
    <property name="text">
-    <string>Set session data</string>
+    <string>Set capture info</string>
+   </property>
+   <property name="toolTip">
+    <string>Set capture info</string>
    </property>
   </action>
   <action name="actionSaveRawData">

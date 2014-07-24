@@ -104,11 +104,11 @@ struct DataSinkDelegateWrap : elapse::DataSinkDelegate,
     void stop() {
         this->get_override("stop")();
     }
-    bool needsNewSessionData() {
-        return this->get_override("needsNewSessionData")();
+    bool needsNewCaptureInfo() {
+        return this->get_override("needsNewCaptureInfo")();
     }
-    bool getSessionData() {
-        return this->get_override("getSessionData")();
+    bool getCaptureInfo() {
+        return this->get_override("getCaptureInfo")();
     }
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config) {
         this->get_override("saveDeviceConfig")(config);
@@ -167,8 +167,8 @@ void export_elements()
     class_<DataSinkDelegateWrap, boost::noncopyable>("DataSinkDelegate")
         .def("start", pure_virtual(&elapse::DataSinkDelegate::start))
         .def("stop", pure_virtual(&elapse::DataSinkDelegate::stop))
-        .def("needsNewSessionData", pure_virtual(&elapse::DataSinkDelegate::needsNewSessionData))
-        .def("getSessionData", pure_virtual(&elapse::DataSinkDelegate::getSessionData))
+        .def("needsNewCaptureInfo", pure_virtual(&elapse::DataSinkDelegate::needsNewCaptureInfo))
+        .def("getCaptureInfo", pure_virtual(&elapse::DataSinkDelegate::getCaptureInfo))
         .def("saveDeviceConfig", pure_virtual(&elapse::DataSinkDelegate::saveDeviceConfig))
         .def("saveData", pure_virtual(&elapse::DataSinkDelegate::saveData))
         .def("saveSample", pure_virtual(&elapse::DataSinkDelegate::saveSample))

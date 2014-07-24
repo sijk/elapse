@@ -219,7 +219,7 @@ void ElapseClient::buildStateMachine()
 
     active->assignProperty(ui->actionCapture, "text", "Stop");
     active->assignProperty(ui->actionCapture, "icon", QIcon::fromTheme("media-playback-stop"));
-    active->assignProperty(ui->actionSetSessionData, "enabled", false);
+    active->assignProperty(ui->actionSetCaptureInfo, "enabled", false);
     connect(active, SIGNAL(entered()), SLOT(start()));
     connect(active, SIGNAL(exited()), SLOT(stop()));
     connect(beginCapture, SIGNAL(triggered()), ui->spinnerStarting, SLOT(start()));
@@ -345,14 +345,14 @@ void ElapseClient::configure()
     if (battery->isLow())
         warnBatteryLow();
 
-    connect(ui->actionSetSessionData, SIGNAL(triggered()),
-            pipeline->elements()->dataSink.data(), SLOT(getSessionData()));
+    connect(ui->actionSetCaptureInfo, SIGNAL(triggered()),
+            pipeline->elements()->dataSink.data(), SLOT(getCaptureInfo()));
 }
 
 void ElapseClient::unconfigure()
 {
     batteryMonitor->setBattery(nullptr);
-    disconnect(ui->actionSetSessionData, SIGNAL(triggered()), 0, 0);
+    disconnect(ui->actionSetCaptureInfo, SIGNAL(triggered()), 0, 0);
 }
 
 void ElapseClient::start()
