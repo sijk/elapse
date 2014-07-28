@@ -18,6 +18,9 @@ HEADERS += pluginmanager.h \
 
 FORMS   += pluginmanager.ui
 
+SOURCES += native/util.cpp
+HEADERS += native/util.h
+
 SOURCES += python/host.cpp
 HEADERS += python/host.h \
            python/bindings/elapse.h \
