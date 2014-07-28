@@ -1,5 +1,5 @@
-#ifndef PYTHON_UTIL_H
-#define PYTHON_UTIL_H
+#ifndef PYTHON_HOST_H
+#define PYTHON_HOST_H
 
 #include <boost/python.hpp>
 #include <QMap>
@@ -28,4 +28,4 @@ QObject *extractQObject(object obj, const QString &cls);
 
 } // namespace python
 
-#endif // PYTHON_UTIL_H
+#endif // PYTHON_HOST_H

@@ -2,7 +2,7 @@
 #include <QxtLogger>
 #include <boost/python.hpp>
 #include "pythonpluginhost.h"
-#include "python/util.h"
+#include "python/host.h"
 
 
 PythonPluginHost::PythonPluginHost()
