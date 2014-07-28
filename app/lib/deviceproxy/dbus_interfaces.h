@@ -121,6 +121,14 @@ public:
     void setSampleRate(SampleRate rate) { d.setSampleRate(rate); }
     bool useRefElec() const { return d.useRefElec(); }
     void setUseRefElec(bool use) { d.setUseRefElec(use); }
+    bool enableTestSignal() const { return d.enableTestSignal(); }
+    void setEnableTestSignal(bool enable) { d.setEnableTestSignal(enable); }
+    LeadOffFreq leadOffFreq() const { return LeadOffFreq(d.leadOffFreq()); }
+    void setLeadOffFreq(LeadOffFreq freq) { d.setLeadOffFreq(freq); }
+    bool leadOffSensePos() const { return d.leadOffSensePos(); }
+    void setLeadOffSensePos(bool enable) { d.setLeadOffSensePos(enable); }
+    bool leadOffSenseNeg() const { return d.leadOffSenseNeg(); }
+    void setLeadOffSenseNeg(bool enable) { d.setLeadOffSenseNeg(enable); }
 
 public slots:
     void start() { d.start(); }

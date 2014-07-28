@@ -110,6 +110,14 @@ public:
     { return SampleRate(config->get("eeg", "sampleRate").toInt()); }
     bool useRefElec() const
     { return config->get("eeg", "useRefElec").toBool(); }
+    bool enableTestSignal() const
+    { return config->get("eeg", "enableTestSignal").toBool(); }
+    LeadOffFreq leadOffFreq() const
+    { return LeadOffFreq(config->get("eeg", "leadOffFreq").toInt()); }
+    bool leadOffSensePos() const
+    { return config->get("eeg", "leadOffSensePos").toBool(); }
+    bool leadOffSenseNeg() const
+    { return config->get("eeg", "leadOffSenseNeg").toBool(); }
 
     iface::EegChannel *channel(uint i)
     {
@@ -124,6 +132,10 @@ public:
     void setSamplesPerChunk(uint samples) { Q_UNUSED(samples) }
     void setSampleRate(SampleRate rate) { Q_UNUSED(rate) }
     void setUseRefElec(bool use) { Q_UNUSED(use) }
+    void setEnableTestSignal(bool enable) { Q_UNUSED(enable) }
+    void setLeadOffFreq(LeadOffFreq freq) { Q_UNUSED(freq) }
+    void setLeadOffSensePos(bool enable) { Q_UNUSED(enable) }
+    void setLeadOffSenseNeg(bool enable) { Q_UNUSED(enable) }
 
 public slots:
     void start() { }
