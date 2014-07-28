@@ -23,12 +23,10 @@ public:
     virtual ~PluginHost() {}
 
     /*!
-     * Analyse the plugin at \a pluginPath and return a PluginData instance
-     * describing it. If the file/directory at \a pluginPath is not a plugin
-     * that this PluginHost understands, return a default-constructed
-     * PluginData instance.
+     * Search for plugins in the given \a dir. The default implementation calls
+     * getInfo() with every readable file and directory in \a dir.
      */
-    virtual PluginData getInfo(const QString &pluginPath) = 0;
+    virtual QList<PluginData> searchForPluginsIn(QDir &dir);
 
     /*!
      * \return an instance of class \a cls from the given \a plugin.
@@ -43,6 +41,14 @@ public:
 
 protected:
     /*!
+     * Analyse the plugin at \a pluginPath and return a PluginData instance
+     * describing it. If the file/directory at \a pluginPath is not a plugin
+     * that this PluginHost understands, return a default-constructed
+     * PluginData instance.
+     */
+    virtual PluginData getInfo(const QString &pluginPath) = 0;
+
+    /*!
      * Load the given \a plugin and create an instance of the given \a cls.
      */
     virtual QObject*
@@ -52,6 +58,7 @@ protected:
 
     /*!
      * \return a custom deleter function for the instantiated objects.
+     * Defaults to QObject::deleteLater.
      */
     virtual Deleter deleter() { return &QObject::deleteLater; }
 };

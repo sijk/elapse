@@ -52,23 +52,15 @@ PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
 }
 
 /*!
- * Use every PluginHost to search for plugins in the searchPath. Every file and
- * directory in the searchPath is considered as a potential plugin by each
- * PluginHost.
+ * Use every PluginHost to search for plugins in the searchPath.
  */
 void PluginManagerPrivate::searchForPlugins()
 {
-    searchPath.setFilter(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::Readable);
     pluginData.clear();
 
-    for (const QFileInfo &item : searchPath.entryInfoList()) {
-        for (PluginHost *host : hosts) {
-            PluginData info = host->getInfo(item.absoluteFilePath());
-            if (!info.plugin.name.isEmpty()) {
-                pluginData.append(info);
-                break;
-            }
-        }
+    for (PluginHost *host : hosts) {
+        auto plugins = host->searchForPluginsIn(searchPath);
+        pluginData.append(plugins);
     }
 }
 

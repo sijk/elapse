@@ -6,6 +6,7 @@ CONFIG  += link_pkgconfig
 PKGCONFIG += python2
 
 SOURCES += pluginmanager.cpp \
+           pluginhost.cpp \
            nativepluginhost.cpp \
            pythonpluginhost.cpp
 
