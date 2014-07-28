@@ -10,7 +10,6 @@ QList<PluginData> PluginHost::searchForPluginsIn(QDir &dir)
         PluginData info = getInfo(item.absoluteFilePath());
         if (!info.plugin.name.isEmpty()) {
             plugins.append(info);
-            break;
         }
     }
 

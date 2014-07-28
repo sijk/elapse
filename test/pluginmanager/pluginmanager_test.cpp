@@ -42,9 +42,9 @@ TEST_F(PluginManagerTest, SearchForPlugins)
     manager->setSearchPath(testPluginPath);
 
     EXPECT_EQ(priv->pluginData.size(), 3);
-    EXPECT_EQ(priv->pluginData[0].plugin.name, QString("bazplugin"));
-    EXPECT_EQ(priv->pluginData[1].plugin.name, QString("BarPlugin"));
-    EXPECT_EQ(priv->pluginData[2].plugin.name, QString("FooPlugin"));
+    EXPECT_EQ(priv->pluginData[0].plugin.name, QString("BarPlugin"));
+    EXPECT_EQ(priv->pluginData[1].plugin.name, QString("FooPlugin"));
+    EXPECT_EQ(priv->pluginData[2].plugin.name, QString("bazplugin"));
 
     EXPECT_EQ(priv->dataSourceModel.rowCount(), 1);
 
@@ -71,9 +71,9 @@ TEST_F(PluginManagerTest, FindElementWithIndices)
     };
 
     manager->setSearchPath(testPluginPath);
-    EXPECT_TRUE(itemHasName(&priv->eegDecoderModel, 1, 0, "BarEegDecoder"));
-    EXPECT_TRUE(itemHasName(&priv->eegDecoderModel, 2, 0, "FooEegDecoder"));
+    EXPECT_TRUE(itemHasName(&priv->eegDecoderModel, 0, 0, "BarEegDecoder"));
+    EXPECT_TRUE(itemHasName(&priv->eegDecoderModel, 1, 0, "FooEegDecoder"));
 
-    EXPECT_FALSE(itemHasName(&priv->eegDecoderModel, 1, 1, "BarVideoDecoder"));
-    EXPECT_TRUE(itemHasName(&priv->vidDecoderModel, 1, 1, "BarVideoDecoder"));
+    EXPECT_FALSE(itemHasName(&priv->eegDecoderModel, 0, 1, "BarVideoDecoder"));
+    EXPECT_TRUE(itemHasName(&priv->vidDecoderModel, 0, 1, "BarVideoDecoder"));
 }

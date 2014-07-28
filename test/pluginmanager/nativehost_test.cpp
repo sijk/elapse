@@ -7,6 +7,17 @@
 using elapse::SampleDecoder;
 
 
+class PublicNativePluginHost : public NativePluginHost
+{
+    // Make methods public for testability
+public:
+    PluginData getInfo(const QString &pluginPath)
+    {
+        return NativePluginHost::getInfo(pluginPath);
+    }
+};
+
+
 class NativePluginHostTest : public ::testing::Test
 {
 public:
@@ -20,7 +31,7 @@ public:
         barPluginPath = pluginDir.absoluteFilePath("libbarplugin.so");
     }
 
-    NativePluginHost host;
+    PublicNativePluginHost host;
     QString fooPluginPath;
     QString barPluginPath;
 };
