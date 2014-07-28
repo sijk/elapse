@@ -7,6 +7,7 @@ PKGCONFIG += python2
 
 SOURCES += pluginmanager.cpp \
            pluginhost.cpp \
+           staticpluginhost.cpp \
            nativepluginhost.cpp \
            pythonpluginhost.cpp
 
@@ -14,6 +15,7 @@ HEADERS += pluginmanager.h \
            pluginmanager_p.h \
            pluginmanager_global.h \
            pluginhost.h \
+           staticpluginhost.h \
            nativepluginhost.h \
            pythonpluginhost.h
 

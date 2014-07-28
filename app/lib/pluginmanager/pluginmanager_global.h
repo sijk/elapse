@@ -6,6 +6,7 @@
 
 enum class PluginHostID
 {
+    Static,
     Native,
     Python,
 };

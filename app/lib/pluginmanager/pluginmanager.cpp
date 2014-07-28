@@ -4,6 +4,7 @@
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
 
+#include "staticpluginhost.h"
 #include "nativepluginhost.h"
 #include "pythonpluginhost.h"
 
@@ -18,6 +19,7 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
 {
     ui.setupUi(q);
 
+    hosts[PluginHostID::Static] = new StaticPluginHost;
     hosts[PluginHostID::Native] = new NativePluginHost;
     hosts[PluginHostID::Python] = new PythonPluginHost;
 
