@@ -5,8 +5,10 @@
 #include "native/util.h"
 #include "staticpluginhost.h"
 
+Q_IMPORT_PLUGIN(CorePlugin)
 
-QList<PluginData> StaticPluginHost::searchForPluginsIn(const QDir &dir)
+
+QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
 {
     Q_UNUSED(dir);
     QList<PluginData> pluginData;

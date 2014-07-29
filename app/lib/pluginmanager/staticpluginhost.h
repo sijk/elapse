@@ -11,7 +11,7 @@
 class StaticPluginHost : public PluginHost
 {
 public:
-    QList<PluginData> searchForPluginsIn(const QDir &dir);
+    QList<PluginData> searchForPluginsIn(QDir &dir);
 
 protected:
     PluginData getInfo(const QString &pluginPath);

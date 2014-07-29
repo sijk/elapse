@@ -1,9 +1,8 @@
 include(../../global.pri)
 
-QT           += core gui widgets dbus network
-CONFIG       += qxt qwt link_pkgconfig
+QT           += core gui widgets
+CONFIG       += qxt qwt link_prl
 QXT          += core
-PKGCONFIG    += python2
 
 TARGET        = elapse
 TEMPLATE      = app
@@ -32,5 +31,3 @@ linkStaticlib(loggerwidget)
 linkSharedlib(app, elapseplugin, true)
 
 include($$ROOT/common/interfaces.pri)
-
-LIBS += -lboost_python

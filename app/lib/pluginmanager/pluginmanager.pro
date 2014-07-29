@@ -2,7 +2,7 @@ include(../../../staticlib.pri)
 
 QT      += gui widgets
 
-CONFIG  += link_pkgconfig
+CONFIG  += link_pkgconfig link_prl
 PKGCONFIG += python2
 
 SOURCES += pluginmanager.cpp \
@@ -29,3 +29,8 @@ HEADERS += python/host.h \
            python/bindings/elapse.h \
            python/bindings/elements.h
 
+LIBS    += -lboost_python
+
+LIBS += -L$$OUT_PWD/../../../coreplugin/src/ -lcoreplugin
+DEPENDPATH += $$PWD/../../../coreplugin/src
+PRE_TARGETDEPS += $$OUT_PWD/../../../coreplugin/src/libcoreplugin.a
