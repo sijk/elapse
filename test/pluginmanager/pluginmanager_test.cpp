@@ -13,6 +13,7 @@ public:
     {
         manager = new PluginManager;
         priv = PluginManagerPrivate::expose(manager);
+        priv->hosts.remove(PluginHostID::Static);
         testPluginPath = qApp->applicationDirPath() + "/../test_plugins";
         qxtLog->enableAllLogLevels();
     }
