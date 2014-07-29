@@ -41,7 +41,7 @@ void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
  * \return the feature vector for the current window. See the class overview
  * for details of the contents of the feature vector.
  */
-QVector<double> DummyVideoFeatureExtractor::features()
+std::vector<double> DummyVideoFeatureExtractor::features()
 {
     auto meanVals = means.values();
     double meanIntensity = sum(meanVals) / meanVals.size();
@@ -52,9 +52,7 @@ QVector<double> DummyVideoFeatureExtractor::features()
         });
     double meanSqDiff = sumSqDiff / meanVals.size();
 
-    QVector<double> features;
-    features << meanIntensity << meanSqDiff;
-    return features;
+    return { meanIntensity, meanSqDiff };
 }
 
 void DummyVideoFeatureExtractor::removeDataBefore(elapse::TimeStamp time)

@@ -52,12 +52,12 @@ ElapseClient::ElapseClient(QWidget *parent) :
             ui->actionLogView, SLOT(setChecked(bool)));
 
     connect(ui->actionPlugins, SIGNAL(triggered()),
-            pluginManager, SLOT(selectPluginsToLoad()));
-    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+            pluginManager, SLOT(loadElementsFromGui()));
+    connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
             pipeline, SLOT(setElements(ElementSetPtr)));
-    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+    connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
             SLOT(loadElementWidgets(ElementSetPtr)));
-    connect(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)),
+    connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
             SLOT(fillDeviceAddress()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -143,7 +143,7 @@ void ElapseClient::maybeAutoConnect()
  * [*] -> Uninitialised
  * Uninitialised : enter / connectButton.disable()
  * Uninitialised : enter / loadPluginsFromSettings()
- * Uninitialised --> Disconnected : pluginsLoaded / maybeAutoConnect()
+ * Uninitialised --> Disconnected : elementsLoaded / maybeAutoConnect()
  * Disconnected : enter / connectButton.enable()
  * Disconnected --> Connecting : connectButton / device.connect()
  *
@@ -187,8 +187,8 @@ void ElapseClient::buildStateMachine()
     uninitialised->assignProperty(ui->actionConnect, "enabled", false);
     uninitialised->assignProperty(ui->groupConnect, "visible", false);
     uninitialised->assignProperty(ui->buttonPlugins, "visible", true);
-    auto initialised = uninitialised->addTransition(pluginManager, SIGNAL(pluginsLoaded(ElementSetPtr)), disconnected);
-    connect(uninitialised, SIGNAL(entered()), pluginManager, SLOT(loadPluginsFromSettings()));
+    auto initialised = uninitialised->addTransition(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)), disconnected);
+    connect(uninitialised, SIGNAL(entered()), pluginManager, SLOT(loadElementsFromSettings()));
     connect(initialised, SIGNAL(triggered()), SLOT(maybeAutoConnect()));
 
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
@@ -236,8 +236,8 @@ void ElapseClient::buildStateMachine()
  */
 void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 {
-    foreach (QObject *element, elements->allElements())
-        addDockWidgetFrom(element);
+    foreach (auto &element, elements->allElements())
+        addDockWidgetFrom(element.data());
 }
 
 /*!
@@ -346,7 +346,7 @@ void ElapseClient::configure()
         warnBatteryLow();
 
     connect(ui->actionSetSessionData, SIGNAL(triggered()),
-            pipeline->elements()->dataSink, SLOT(getSessionData()));
+            pipeline->elements()->dataSink.data(), SLOT(getSessionData()));
 }
 
 void ElapseClient::unconfigure()

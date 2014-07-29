@@ -26,43 +26,34 @@ using elapse::Signal;
 
 struct ElementSet
 {
-    elapse::DataSource *dataSource;
-    QMap<Signal::Type, elapse::SampleDecoder*> sampleDecoders;
-    QMap<Signal::Type, elapse::FeatureExtractor*> featureExtractors;
-    elapse::Classifier *classifier;
-    elapse::OutputAction *action;
-    elapse::DataSinkDelegate *dataSink;
+    QSharedPointer<elapse::DataSource> dataSource;
+    QMap<Signal::Type, QSharedPointer<elapse::SampleDecoder>> sampleDecoders;
+    QMap<Signal::Type, QSharedPointer<elapse::FeatureExtractor>> featureExtractors;
+    QSharedPointer<elapse::Classifier> classifier;
+    QSharedPointer<elapse::OutputAction> action;
+    QSharedPointer<elapse::DataSinkDelegate> dataSink;
 
-    QList<QObject*> allElements() const;
-    ~ElementSet();
+    QList<QSharedPointer<QObject>> allElements() const;
 };
 
 
 /*!
  * \return a list of all the elements in the set.
  */
-inline QList<QObject*> ElementSet::allElements() const
+inline QList<QSharedPointer<QObject>> ElementSet::allElements() const
 {
-    QList<QObject*> elements;
+    QList<QSharedPointer<QObject>> elements;
 
     elements.append(dataSource);
-    for (auto decoder : sampleDecoders)
+    for (auto &decoder : sampleDecoders)
         elements.append(decoder);
-    for (auto extractor : featureExtractors)
+    for (auto &extractor : featureExtractors)
         elements.append(extractor);
     elements.append(classifier);
     elements.append(action);
     elements.append(dataSink);
 
     return elements;
-}
-
-/*!
- * Destroy this ElementSet and all of the elements it contains.
- */
-inline ElementSet::~ElementSet()
-{
-    qDeleteAll(allElements());
 }
 
 

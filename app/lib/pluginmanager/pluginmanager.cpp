@@ -1,416 +1,331 @@
-#include <QCoreApplication>
-#include <QMetaClassInfo>
-#include <QJsonObject>
-#include <QPluginLoader>
 #include <QFileDialog>
+#include <QSettings>
 #include <QxtLogger>
-#include "elapse/plugin.h"
-#include "pluginfilterproxymodel.h"
-#include "elementsetfactory.h"
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
-#include "pluginmanager_def.h"
+
+#include "staticpluginhost.h"
+#include "nativepluginhost.h"
+#include "pythonpluginhost.h"
+
+using elapse::Signal;
+
+const QString pluginSetting("elements/%1/plugin-path");
+const QString classSetting("elements/%1/class-name");
 
 
-/*!
- * \page pluginmanager-model PluginManager Data Model
- *
- * This page describes the structure of the PluginManager's internal data model.
- *
- * Suppose that we have two plugins, \c FooPlugin and \c BarPlugin. They each
- * provide several classes implementing elapse::DataSource and
- * elapse::SampleDecoder element types. This hypothetical situation is
- * illustrated below.
- *
- * @startuml{pluginmanager-model-classes.png}
- *
- * package libfooplugin.so {
- *     FooPlugin o-- FooTcpDataSource
- *     FooPlugin o-- FooUdpDataSource
- *     FooPlugin o-- FooEegDecoder
- * }
- * package libbarplugin.so {
- *     BarPlugin o-- BarEegDecoder
- *     BarPlugin o-- BarVideoDecoder
- * }
- *
- * BarEegDecoder    --|> SampleDecoder
- * BarVideoDecoder  --|> SampleDecoder
- * FooEegDecoder    --|> SampleDecoder
- * FooTcpDataSource --|> DataSource
- * FooUdpDataSource --|> DataSource
- *
- * FooEegDecoder : SignalType : "EEG"
- * BarEegDecoder : SignalType : "EEG"
- * BarVideoDecoder : SignalType : "VIDEO"
- *
- * @enduml
- *
- * Given these plugins, the structure of the PluginManager's data model would be
- * as follows:
- *
- * \code
- * [Root]
- *      DataSource
- *          FooPlugin
- *              FooTcpDataSource
- *              FooUdpDataSource
- *
- *      SampleDecoder
- *          FooPlugin
- *              FooEegDecoder
- *          BarPlugin
- *              BarEegDecoder
- *              BarVideoDecoder
- * \endcode
- *
- * If a PluginFilterProxyModel was defined with the arguments
- * \c elementType = "SampleDecoder" and \c signalType = Signal::EEG, then the
- * filtered model would have the following structure:
- *
- * \code
- * SampleDecoder
- *      FooPlugin
- *          FooEegDecoder
- *      BarPlugin
- *          BarEegDecoder
- * \endcode
- *
- * That is, it would include all of the classes implementing \c SampleDecoder
- * which apply to the \c signalType "EEG".
- */
-
-
-/*!
- * Create the private data for the given PluginManager. Set the search path to
- * the default and populate the plugin model from that path.
- */
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
-    q_ptr(q),
-    corePluginDir(QDir(qApp->applicationDirPath()).absoluteFilePath("plugins"))
+    q_ptr(q)
 {
     ui.setupUi(q);
 
-    QObject::connect(ui.pathButton, &QPushButton::clicked, [=]{
+    hosts[PluginHostID::Static] = new StaticPluginHost;
+    hosts[PluginHostID::Native] = new NativePluginHost;
+    hosts[PluginHostID::Python] = new PythonPluginHost;
+
+    elements = {
+        { &dataSourceModel,   ui.dataSource,            "DataSource",       Signal::INVALID, "DataSource"          },
+        { &dataSinkModel,     ui.dataSink,              "DataSinkDelegate", Signal::INVALID, "DataSinkDelegate"    },
+        { &eegDecoderModel,   ui.sampleDecoderEeg,      "SampleDecoder",    Signal::EEG,     "EegSampleDecoder"    },
+        { &vidDecoderModel,   ui.sampleDecoderVideo,    "SampleDecoder",    Signal::VIDEO,   "VidSampleDecoder"    },
+        { &imuDecoderModel,   ui.sampleDecoderImu,      "SampleDecoder",    Signal::IMU,     "ImuSampleDecoder"    },
+        { &eegFeatExModel,    ui.featureExtractorEeg,   "FeatureExtractor", Signal::EEG,     "EegFeatureExtractor" },
+        { &vidFeatExModel,    ui.featureExtractorVideo, "FeatureExtractor", Signal::VIDEO,   "VidFeatureExtractor" },
+        { &imuFeatExModel,    ui.featureExtractorImu,   "FeatureExtractor", Signal::IMU,     "ImuFeatureExtractor" },
+        { &classifierModel,   ui.classifier,            "Classifier",       Signal::INVALID, "Classifier"          },
+        { &outputActionModel, ui.outputAction,          "OutputAction",     Signal::INVALID, "OutputAction"        },
+    };
+
+    QObject::connect(ui.pathButton, &QPushButton::clicked, [q]{
         QString dir = QFileDialog::getExistingDirectory(q, "Plugin path");
         if (!dir.isEmpty())
-            setSearchPath(dir);
+            q->setSearchPath(dir);
     });
-
-    QString defaultUserPluginDir = QSettings().value("plugins-path").toString();
-    setSearchPath(defaultUserPluginDir);
 }
 
-/*!
- * Enable testing code to access the d_ptr of the public class.
- */
+PluginManagerPrivate::~PluginManagerPrivate()
+{
+    qDeleteAll(hosts);
+}
+
 PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
 {
     return manager->d_func();
 }
 
 /*!
- * \see PluginManager::setSearchPath()
+ * Use every PluginHost to search for plugins in the searchPath.
  */
-void PluginManagerPrivate::setSearchPath(QDir newPath)
+void PluginManagerPrivate::searchForPlugins()
 {
-    if (newPath == userPluginDir && model.rowCount() > 0) {
-        qxtLog->debug("PluginManager search path was set to the current value. "
-                      "Not doing anything...");
-        return;
+    pluginData.clear();
+
+    for (PluginHost *host : hosts) {
+        auto plugins = host->searchForPluginsIn(searchPath);
+        pluginData.append(plugins);
     }
-
-    userPluginDir = newPath;
-
-    model.clear();
-    searchForPluginsIn(corePluginDir);
-    if (userPluginDir != QDir() && userPluginDir.exists()) {
-        searchForPluginsIn(userPluginDir);
-        QSettings().setValue("plugins-path", userPluginDir.absolutePath());
-    }
-
-    attachViews();
 }
 
-void PluginManagerPrivate::searchForPluginsIn(QDir dir)
+/*!
+ * Populate the models that list the available implementations for each element.
+ */
+void PluginManagerPrivate::populateModels()
 {
-    qxtLog->info("Searching for plugins in", dir.absolutePath());
+    for (const auto &element : elements) {
+        element.model->clear();
 
-    auto rootItem = model.invisibleRootItem();
+        for (int i = 0; i < pluginData.size(); i++) {
+            const PluginData &info = pluginData.at(i);
+            QStandardItem *pluginItem = nullptr;
 
-    foreach (QFileInfo file, dir.entryInfoList(QDir::Files)) {
-        QPluginLoader loader(file.absoluteFilePath());
-        QObject *plugin = loader.instance();
-        auto factory = qobject_cast<elapse::PluginInterface*>(plugin);
+            for (int j = 0; j < info.classes.size(); j++) {
+                const ClassInfo &cls = info.classes.at(j);
 
-        if (factory) {
-            QString pluginName = loader.metaData()["className"].toString();
+                bool classMatches = cls.elementClass == element.elementClass;
+                bool signalTypeMatches = (cls.signalType == element.signalType)
+                        || (cls.signalType == elapse::Signal::INVALID)
+                        || (element.signalType == elapse::Signal::INVALID);
 
-            foreach (const QMetaObject &obj, factory->classes()) {
-                QString elementName = baseClass(&obj)->className();
-                // Remove namespace qualifiers
-                elementName = elementName.remove(0, elementName.lastIndexOf(':') + 1);
-
-                // Find or create element item
-                auto elementItem = childWithText(rootItem, elementName);
-                if (!elementItem) {
-                    elementItem = createElementTypeItem(elementName);
-                    rootItem->appendRow(elementItem);
+                if (classMatches && signalTypeMatches) {
+                    if (!pluginItem) {
+                        pluginItem = new QStandardItem(info.plugin.name);
+                        pluginItem->setData(i);
+                        pluginItem->setSelectable(false);
+                        pluginItem->setEditable(false);
+                        QFont font = pluginItem->font();
+                        font.setItalic(true);
+                        pluginItem->setFont(font);
+                        element.model->appendRow(pluginItem);
+                    }
+                    QStandardItem *elementItem = new QStandardItem(cls.className);
+                    elementItem->setData(j);
+                    elementItem->setEditable(false);
+                    pluginItem->appendRow(elementItem);
                 }
-
-                // Find or create plugin item
-                auto pluginItem = childWithText(elementItem, pluginName);
-                if (!pluginItem) {
-                    pluginItem = createPluginItem(pluginName, file);
-                    elementItem->appendRow(pluginItem);
-                }
-
-                // Create class item
-                auto classItem = createElementItem(obj);
-                pluginItem->appendRow(classItem);
             }
-        } else {
-            qxtLog->debug(loader.errorString());
         }
+    };
+}
 
-        loader.unload();
+/*!
+ * Attach the models to their corresponding tree views in the plugin selection
+ * dialog.
+ */
+void PluginManagerPrivate::attachModelViews()
+{
+    for (const auto &element : elements) {
+        element.tree->setModel(element.model);
+        element.tree->expandAll();
+
+        // Select the first item by default
+        auto first = element.model->index(0,0).child(0,0);
+        element.tree->selectionModel()->select(first, QItemSelectionModel::SelectCurrent);
+
+        // Ensure something is always selected
+        QObject::connect(element.tree->selectionModel(),
+            &QItemSelectionModel::selectionChanged,
+            [=](const QItemSelection &current, const QItemSelection &prev){
+                if (current.indexes().isEmpty() && !prev.indexes().isEmpty())
+                    element.tree->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent);
+            });
+    };
+}
+
+/*!
+ * Inspect the tree views to see which element implementations are selected.
+ * \return a map of elementName to the (PluginInfo, ClassInfo) pair that
+ * identifies an element implementation.
+ */
+PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSelectedElements() const
+{
+    ElementSetInfo selectedElements;
+
+    for (const auto &element : elements) {
+        auto selected = element.tree->selectionModel()->selection().indexes();
+        Q_ASSERT(selected.size() == 1);
+        QModelIndex index = selected.first();
+        QStandardItem *item = element.model->itemFromIndex(index);
+
+        int classIndex = item->data().toInt();
+        int pluginIndex = item->parent()->data().toInt();
+        const PluginInfo &plugin = pluginData.at(pluginIndex).plugin;
+        const ClassInfo &cls = pluginData.at(pluginIndex).classes.at(classIndex);
+
+        selectedElements.insert(element.elementName, qMakePair(&plugin, &cls));
     }
 
-    model.sort(0);
+    return selectedElements;
 }
 
 /*!
- * Helper function for building the internal plugin model.
- * \return a QStandardItem representing an element type with the given \a name.
+ * Load a set of element info from the settings file.
+ * \return the info if a complete set was saved in the settings file, otherwise
+ * an empty map.
  */
-QStandardItem *PluginManagerPrivate::createElementTypeItem(const QString &name)
+PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSavedElements() const
 {
-    auto item = new QStandardItem(name);
+    ElementSetInfo savedElements;
+    QSettings settings;
 
-    QFont font;
-    font.setBold(true);
-    item->setFont(font);
+    for (const ElementData &element : elements) {
+        const QString &pluginPath = settings.value(pluginSetting.arg(element.elementName)).toString();
+        const QString &className = settings.value(classSetting.arg(element.elementName)).toString();
 
-    item->setSelectable(false);
-    item->setEditable(false);
-
-    return item;
-}
-
-/*!
- * Helper function for building the internal plugin model.
- * \return a QStandardItem representing a plugin with the given \a name at the
- * given \a file path.
- *
- * The absolute path to the plugin file is stored as item data with the role
- * FILEPATH_ROLE.
- */
-QStandardItem *PluginManagerPrivate::createPluginItem(const QString &name,
-                                                      const QFileInfo &file)
-{
-    auto item = new QStandardItem(name);
-
-    item->setData(file.absoluteFilePath(), FILEPATH_ROLE);
-
-    QFont font;
-    font.setItalic(true);
-    item->setFont(font);
-
-    item->setSelectable(false);
-    item->setEditable(false);
-
-    return item;
-}
-
-/*!
- * Helper function for building the internal plugin model.
- * \return a QStandardItem representing an element class provided by a plugin.
- *
- * If the class provides a Q_CLASSINFO entry with the key "SignalType", the
- * value of this entry is stored as item data with the role SIGNALTYPE_ROLE.
- */
-QStandardItem *PluginManagerPrivate::createElementItem(const QMetaObject &obj)
-{
-    auto item = new QStandardItem(obj.className());
-
-    int typeIdx = obj.indexOfClassInfo("SignalType");
-    if (typeIdx >= 0) {
-        const char *signalType = obj.classInfo(typeIdx).value();
-        item->setData(Signal::fromString(signalType), SIGNALTYPE_ROLE);
+        for (const PluginData &info : pluginData) {
+            if (info.plugin.path == pluginPath) {
+                for (const ClassInfo &cls : info.classes) {
+                    if (cls.className == className) {
+                        savedElements.insert(element.elementName, qMakePair(&info.plugin, &cls));
+                        qxtLog->debug("Using saved element", className, "from", info.plugin.name);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    item->setEditable(false);
+    // Only return the saved elements if we have a full set of info
+    if (savedElements.size() == elements.size())
+        return savedElements;
 
-    return item;
+    return ElementSetInfo();
 }
 
 /*!
- * \return the first child of the given \a item with text \a name, or NULL.
+ * Create an element with base class T using the given \a info and store the
+ * result in \a element.
  */
-QStandardItem *PluginManagerPrivate::childWithText(const QStandardItem *item,
-                                                   const QString &name)
+template<class T>
+void PluginManagerPrivate::createElement(QSharedPointer<T> &element,
+                                         const ElementInfo &info)
 {
-    for (int i = 0; i < item->rowCount(); i++) {
-        auto child = item->child(i);
-        if (child->text() == name)
-            return child;
+    const PluginInfo &plugin = *info.first;
+    const ClassInfo &cls = *info.second;
+
+    element = hosts[plugin.host]->instantiate<T>(plugin, cls);
+
+    if (element.isNull())
+        qxtLog->debug("Failed to instantiate", cls.className, "from", plugin.name);
+}
+
+/*!
+ * \return a new ElementSet populated with the objects described by \a info.
+ */
+ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
+{
+    ElementSetPtr e = ElementSetPtr::create();
+
+    createElement(e->dataSource,                       info.value("DataSource"));
+    createElement(e->dataSink,                         info.value("DataSinkDelegate"));
+    createElement(e->sampleDecoders[Signal::EEG],      info.value("EegSampleDecoder"));
+    createElement(e->sampleDecoders[Signal::VIDEO],    info.value("VidSampleDecoder"));
+    createElement(e->sampleDecoders[Signal::IMU],      info.value("ImuSampleDecoder"));
+    createElement(e->featureExtractors[Signal::EEG],   info.value("EegFeatureExtractor"));
+    createElement(e->featureExtractors[Signal::VIDEO], info.value("VidFeatureExtractor"));
+    createElement(e->featureExtractors[Signal::IMU],   info.value("ImuFeatureExtractor"));
+    createElement(e->classifier,                       info.value("Classifier"));
+    createElement(e->action,                           info.value("OutputAction"));
+
+    for (const auto &element : e->allElements()) {
+        if (element.isNull()) {
+            qxtLog->warning("Failed to load all elements from plugins.");
+            return ElementSetPtr();
+        }
+    }
+
+    return e;
+}
+
+/*!
+ * Select the elements described by the given \a info in the tree views.
+ */
+void PluginManagerPrivate::selectElements(const ElementSetInfo &info)
+{
+    for (auto i = info.cbegin(); i != info.cend(); i++) {
+        const QString &elementName = i.key();
+        const PluginInfo *plugin = i.value().first;
+        const ClassInfo *cls = i.value().second;
+
+        // Find the index of the given PluginInfo
+        const int pluginIndex = std::distance(pluginData.cbegin(),
+            std::find_if(pluginData.cbegin(), pluginData.cend(),
+                [=](const PluginData &p){ return &p.plugin == plugin; }));
+
+        // Find the index of the given ClassInfo
+        const QList<ClassInfo> &classes = pluginData.at(pluginIndex).classes;
+        const int classIndex = std::distance(classes.cbegin(),
+            std::find_if(classes.cbegin(), classes.cend(),
+                [=](const ClassInfo &c){ return &c == cls; }));
+
+        // Find the ElementData of the element we're working with
+        const ElementData &element =
+            *std::find_if(elements.cbegin(), elements.cend(),
+                [=](const ElementData &e){ return e.elementName == elementName; });
+
+        // Select the model item with the given indices
+        auto item = findItemWithIndices(element.model, pluginIndex, classIndex);
+        Q_ASSERT(item);
+        auto index = element.model->indexFromItem(item);
+        element.tree->selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
+    }
+}
+
+/*!
+ * Save the given set of element \a info.
+ */
+void PluginManagerPrivate::saveElements(const ElementSetInfo &info)
+{
+    QSettings settings;
+
+    for (auto i = info.cbegin(); i != info.cend(); i++) {
+        const QString &elementName = i.key();
+        const PluginInfo *plugin = i.value().first;
+        const ClassInfo *cls = i.value().second;
+
+        settings.setValue(pluginSetting.arg(elementName), plugin->path);
+        settings.setValue(classSetting.arg(elementName), cls->className);
+
+        qxtLog->debug("Saving element", cls->className, "from", plugin->name);
+    }
+
+    qxtLog->info("Saved current element selection.");
+}
+
+/*!
+ * Find the item in the given \a model which correspond to the class
+ * at \a classIndex in the plugin at \a pluginIndex in the pluginData list.
+ */
+QStandardItem *PluginManagerPrivate::findItemWithIndices(const QStandardItemModel *model,
+                                                         int pluginIndex, int classIndex)
+{
+    const QStandardItem *root = model->invisibleRootItem();
+    for (int prow = 0; prow < root->rowCount(); prow++) {
+        QStandardItem *plugin = root->child(prow);
+        if (plugin->data().toInt() == pluginIndex) {
+            for (int crow = 0; crow < plugin->rowCount(); crow++) {
+                QStandardItem *cls = plugin->child(crow);
+                if (cls->data().toInt() == classIndex)
+                    return cls;
+            }
+        }
     }
     return nullptr;
 }
 
-/*!
- * \return the base class of \a obj just before QObject.
- *
- * For instance, if there was an inheritance hierarchy of QObject <- A <- B <- C
- * then baseClass(C) == baseClass(B) == baseClass(A) == A.
- */
-const QMetaObject *PluginManagerPrivate::baseClass(const QMetaObject *obj)
-{
-    const QMetaObject *super = obj->superClass();
-    if (super && super != &QObject::staticMetaObject)
-        return baseClass(super);
-    return obj;
-}
 
 /*!
- * Connect the QTreeViews in the PluginManager window to the corresponding parts
- * of the internal plugin model.
- */
-void PluginManagerPrivate::attachViews()
-{
-    auto setupTreeView = [this](QTreeView *tree, const QString &elementType,
-                                Signal::Type signalType = Signal::INVALID) {
-        // Filter model by element type and signal type
-        auto filteredModel = new PluginFilterProxyModel(elementType, signalType, tree);
-        filteredModel->setSourceModel(&model);
-
-        // Connect filtered model to view
-        tree->setModel(filteredModel);
-        // TODO: do this root item selection inside the proxy model
-        tree->setRootIndex(tree->model()->index(0,0));
-        tree->expandAll();
-
-        // Select the first class by default
-        tree->selectionModel()->select(tree->rootIndex().child(0,0).child(0,0),
-                                       QItemSelectionModel::SelectCurrent);
-
-        // Ensure that something is always selected from then on
-        QObject::connect(tree->selectionModel(),
-            &QItemSelectionModel::selectionChanged,
-            [=](const QItemSelection &current, const QItemSelection &prev){
-                if (current.indexes().isEmpty() && !prev.indexes().isEmpty())
-                    tree->selectionModel()->select(prev, QItemSelectionModel::SelectCurrent);
-            });
-    };
-
-    setupTreeView(ui.dataSource,            "DataSource");
-    setupTreeView(ui.sampleDecoderEeg,      "SampleDecoder",    Signal::EEG);
-    setupTreeView(ui.sampleDecoderVideo,    "SampleDecoder",    Signal::VIDEO);
-    setupTreeView(ui.sampleDecoderImu,      "SampleDecoder",    Signal::IMU);
-    setupTreeView(ui.featureExtractorEeg,   "FeatureExtractor", Signal::EEG);
-    setupTreeView(ui.featureExtractorVideo, "FeatureExtractor", Signal::VIDEO);
-    setupTreeView(ui.featureExtractorImu,   "FeatureExtractor", Signal::IMU);
-    setupTreeView(ui.classifier,            "Classifier");
-    setupTreeView(ui.outputAction,          "OutputAction");
-    setupTreeView(ui.dataSink,              "DataSinkDelegate");
-}
-
-/*!
- * \return the details of the class that is selected in the given \a tree view.
- */
-ClassInfo PluginManagerPrivate::getSelectedElement(const QTreeView *tree)
-{
-    ClassInfo info;
-
-    QModelIndexList idxs = tree->selectionModel()->selection().indexes();
-    Q_ASSERT(idxs.size() == 1);
-    QModelIndex index = idxs.at(0);
-
-    info.className = index.data().toString();
-    info.pluginPath = index.parent().data(FILEPATH_ROLE).toString();
-
-    return info;
-}
-
-/*!
- * Inspect the tree views and save the details of the selected elements to
- * the settings file.
- */
-void PluginManagerPrivate::saveSelectedElements()
-{
-    Q_Q(PluginManager);
-    QSettings settings;
-    auto trees = q->findChildren<QTreeView*>();
-
-    foreach (const QTreeView *tree, trees) {
-        ClassInfo info = getSelectedElement(tree);
-        QString name = tree->objectName();
-
-        settings.setValue(pathSetting.arg(name), info.pluginPath);
-        settings.setValue(classSetting.arg(name), info.className);
-    }
-
-    qxtLog->info("Saved current element selection");
-}
-
-/*!
- * Set the selections in the tree views to match the elements that are saved
- * in the settings file.
- */
-void PluginManagerPrivate::selectSavedElements()
-{
-    Q_Q(PluginManager);
-    QSettings settings;
-    auto trees = q->findChildren<QTreeView*>();
-
-    foreach (const QTreeView *tree, trees) {
-        QAbstractItemModel *model = tree->model();
-        QString name = tree->objectName();
-        QItemSelectionModel *selection = tree->selectionModel();
-        ClassInfo info;
-
-        info.pluginPath = settings.value(pathSetting.arg(name)).toString();
-        info.className = settings.value(classSetting.arg(name)).toString();
-
-        // Search the model for the item that matches the saved plugin/class
-        // names and select it.
-
-        auto element = model->index(0,0);
-        for (int i = 0; i < model->rowCount(element); i++) {
-            auto plugin = model->index(i, 0, element);
-
-            if (model->data(plugin, FILEPATH_ROLE) != info.pluginPath)
-                continue;
-
-            for (int j = 0; j < model->rowCount(plugin); j++) {
-                auto classIndex = model->index(j, 0, plugin);
-
-                if (model->data(classIndex).toString() == info.className) {
-                    selection->select(classIndex, QItemSelectionModel::SelectCurrent);
-                    return;
-                }
-            }
-        }
-    }
-}
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-/*!
- * Construct a PluginManager as a child of the given \a parent.
- *
- * The default plugin search path is set to the "plugins" subdirectory of the
- * directory containing the application executable.
+ * Create a new PluginManager as a child of the given \a parent.
  */
 PluginManager::PluginManager(QWidget *parent) :
     QDialog(parent),
     d_ptr(new PluginManagerPrivate(this))
 {
-    connect(this, SIGNAL(accepted()), SLOT(loadPluginsFromSelection()));
+    connect(this, SIGNAL(accepted()), SLOT(loadElementsFromGuiSelection()));
+    setSearchPath(QSettings().value("plugins-path").toString());
 }
 
 /*!
- * Destroy this PluginManager.
+ * \brief PluginManager::~PluginManager
  */
 PluginManager::~PluginManager()
 {
@@ -418,79 +333,69 @@ PluginManager::~PluginManager()
 }
 
 /*!
- * \property PluginManager::searchPath
- * The directory in which to search for plugins.
+ * \return the absolute path in which plugins will be searched for.
  */
 QDir PluginManager::searchPath() const
 {
     Q_D(const PluginManager);
-    return d->userPluginDir;
+    return d->searchPath;
 }
 
 /*!
- * Set the plugin search path to \a newPath and scan that directory for plugins.
+ * Search for plugins in the \a newPath.
  */
 void PluginManager::setSearchPath(QDir newPath)
 {
     Q_D(PluginManager);
-    d->setSearchPath(newPath);
+    if (newPath == d->searchPath) {
+        qxtLog->debug("Plugin search path was set to the current value. "
+                      "Not doing anything...");
+        return;
+    }
+
+    d->searchPath = newPath;
+    d->searchForPlugins();
+    d->populateModels();
+    d->attachModelViews();
+
+    QSettings().setValue("plugins-path", d->searchPath.absolutePath());
 }
 
 /*!
- * Show the Pluginmanager window, allowing the user to select the set of
- * elements they would like to load from plugins. If the window is not
- * cancelled, create a new element set and populate it with the classes that
- * were selected in the tree views.
- *
- * \see loadPluginsFromSelection()
+ * Show the element selection dialog to allow the user to select a set of
+ * elements to load.
  */
-void PluginManager::selectPluginsToLoad()
+void PluginManager::loadElementsFromGui()
 {
     show();
 }
 
 /*!
- * Create a new ElementSet and populate it with the classes that are saved in
- * the settings file.
+ * Load a previously saved set of elements.
  */
-void PluginManager::loadPluginsFromSettings()
+void PluginManager::loadElementsFromSettings()
 {
     Q_D(PluginManager);
-
-    qxtLog->info("Loading the saved set of elements");
-    SelectElementsFromSettings selectFromSettings;
-    auto elements = ElementSetFactory::loadUsingStrategy(&selectFromSettings);
-
+    auto info = d->getSavedElements();
+    if (info.isEmpty()) return;
+    auto elements = d->createElements(info);
     if (elements) {
-        d->selectSavedElements();
-        emit pluginsLoaded(elements);
+        d->selectElements(info);
+        emit elementsLoaded(elements);
     }
 }
 
 /*!
- * Called when the PluginManager window is closed with OK. Create a new
- * ElementSet and load the selected classes from plugins to populate it.
+ * Load the elements that the user selected in the GUI. Called when the element
+ * selection dialog is accepted.
  */
-void PluginManager::loadPluginsFromSelection()
+void PluginManager::loadElementsFromGuiSelection()
 {
     Q_D(PluginManager);
-
-    qxtLog->info("Loading the selected set of elements");
-    SelectElementsFromGui selectFromGui(this);
-    auto elements = ElementSetFactory::loadUsingStrategy(&selectFromGui);
-
+    auto info = d->getSelectedElements();
+    auto elements = d->createElements(info);
     if (elements) {
-        d->saveSelectedElements();
-        emit pluginsLoaded(elements);
+        d->saveElements(info);
+        emit elementsLoaded(elements);
     }
 }
-
-/*!
- * \fn PluginManager::pluginsLoaded(ElementSetPtr)
- * Emitted when an ElementSet has been loaded.
- *
- * The lifetime of the created ElementSet is managed automatically by virtue of
- * using a QSharedPointer to refer to it. As soon as the last reference to the
- * ElementSet is dropped it will be deleted automatically.
- */
-

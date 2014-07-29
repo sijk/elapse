@@ -1,7 +1,7 @@
 include(../../global.pri)
 
-QT           += core gui widgets dbus network
-CONFIG       += qxt qwt
+QT           += core gui widgets
+CONFIG       += qxt qwt link_prl
 QXT          += core
 
 TARGET        = elapse
@@ -31,4 +31,3 @@ linkStaticlib(loggerwidget)
 linkSharedlib(app, elapseplugin, true)
 
 include($$ROOT/common/interfaces.pri)
-

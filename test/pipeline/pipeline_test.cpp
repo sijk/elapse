@@ -120,7 +120,7 @@ class MockFeatureExtractor : public elapse::BaseFeatureExtractor
     Q_OBJECT
 public:
     MOCK_METHOD1(analyseSample, void(elapse::SamplePtr));
-    MOCK_METHOD0(features, QVector<double>());
+    MOCK_METHOD0(features, std::vector<double>());
     MOCK_METHOD1(removeDataBefore, void(TimeStamp));
     MOCK_METHOD1(setStartTime, void(TimeStamp));
     MOCK_METHOD0(reset, void());
@@ -250,16 +250,16 @@ protected:
         dataSink = new MockDataSinkDelegate;
 
         elements = ElementSetPtr::create();
-        elements->dataSource = dataSource;
-        elements->sampleDecoders[Signal::EEG] = eegDecoder;
-        elements->sampleDecoders[Signal::VIDEO] = vidDecoder;
-        elements->sampleDecoders[Signal::IMU] = imuDecoder;
-        elements->featureExtractors[Signal::EEG] = eegFeatEx;
-        elements->featureExtractors[Signal::VIDEO] = vidFeatEx;
-        elements->featureExtractors[Signal::IMU] = imuFeatEx;
-        elements->classifier = classifier;
-        elements->action = action;
-        elements->dataSink = dataSink;
+        elements->dataSource.reset(dataSource);
+        elements->sampleDecoders[Signal::EEG].reset(eegDecoder);
+        elements->sampleDecoders[Signal::VIDEO].reset(vidDecoder);
+        elements->sampleDecoders[Signal::IMU].reset(imuDecoder);
+        elements->featureExtractors[Signal::EEG].reset(eegFeatEx);
+        elements->featureExtractors[Signal::VIDEO].reset(vidFeatEx);
+        elements->featureExtractors[Signal::IMU].reset(imuFeatEx);
+        elements->classifier.reset(classifier);
+        elements->action.reset(action);
+        elements->dataSink.reset(dataSink);
 
         eegFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(eegFeatEx);
         vidFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(vidFeatEx);
@@ -353,7 +353,7 @@ TEST_F(PipelineTest, BaseFeatureExtractorWindowing)
     eegFeatEx->onSample(createSample(1010_ms));
     eegFeatEx->onSample(createSample(1020_ms));
 
-    QVector<double> features = { 1, 2, 3 };
+    std::vector<double> features = { 1, 2, 3 };
     EXPECT_CALL(*eegFeatEx, features()).WillOnce(Return(features));
     EXPECT_CALL(*eegFeatEx, removeDataBefore(_));
     EXPECT_CALL(*eegFeatEx, analyseSample(_));
@@ -396,7 +396,7 @@ TEST_F(PipelineTest, BaseFeatureExtractorWindowingInPipeline)
 
     // After first window
     {
-        QVector<double> features = { 1, 2, 3 };
+        std::vector<double> features = { 1, 2, 3 };
         EXPECT_CALL(*eegFeatEx, features()).WillOnce(Return(features));
         EXPECT_CALL(*eegFeatEx, removeDataBefore(_));
         EXPECT_CALL(*eegFeatEx, analyseSample(_));
@@ -496,7 +496,7 @@ TEST_F(PipelineTest, IgnoreSamplesBeforeStartTime)
 
 TEST_F(PipelineTest, FeatureExtractorWindowing)
 {
-    QVector<double> features = { 1, 2, 3 };
+    std::vector<double> features = { 1, 2, 3 };
     elapse::CognitiveState state = { 42 };
 
     EXPECT_CALL(*dataSink, saveData(_,_)).Times(13);
@@ -652,7 +652,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
 
 TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
 {
-    QVector<double> features = { 1, 2, 3 };
+    std::vector<double> features = { 1, 2, 3 };
     elapse::CognitiveState state = { 42 };
 
     dataSink->ignoreCalls();

@@ -97,7 +97,7 @@ protected:
      * \return a list of features calculated from the previously analysed
      * Sample%s in the current window.
      */
-    virtual QVector<double> features() = 0;
+    virtual std::vector<double> features() = 0;
 
     /*!
      * Remove any internal data that is related to samples occurring before

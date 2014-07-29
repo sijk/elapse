@@ -102,11 +102,11 @@ void StripChart::createStrips()
  * Append \a data to the StripChart. The cardinality of the given \a data must
  * be equal to \c nStrips.
  */
-void StripChart::appendData(const QVector<double> &data)
+void StripChart::appendData(const std::vector<double> &data)
 {
     Q_ASSERT(uint(data.size()) == _nStrips);
 
-    for (int i = 0; i < data.size(); i++) {
+    for (size_t i = 0; i < data.size(); i++) {
         ydata[i].pop_front();
         ydata[i].push_back(data[i] - i * _spacing);
     }

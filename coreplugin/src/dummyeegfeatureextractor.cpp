@@ -10,9 +10,9 @@ void DummyEegFeatureExtractor::analyseSample(elapse::SamplePtr sample)
     sampleFlags[sample->timestamp] = 1;
 }
 
-QVector<double> DummyEegFeatureExtractor::features()
+std::vector<double> DummyEegFeatureExtractor::features()
 {
-    return QVector<double>() << sampleFlags.size();
+    return { double(sampleFlags.size()) };
 }
 
 void DummyEegFeatureExtractor::removeDataBefore(elapse::TimeStamp time)

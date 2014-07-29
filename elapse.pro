@@ -1,5 +1,5 @@
 TEMPLATE    = subdirs
 CONFIG     += ordered
-SUBDIRS	    = common app coreplugin test
+SUBDIRS	    = common coreplugin app test
 
 include(doc/doc.pri)
