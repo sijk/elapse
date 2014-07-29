@@ -16,9 +16,9 @@ class PythonPluginHost : public PluginHost
 {
 public:
     PythonPluginHost();
-    PluginData getInfo(const QString &pluginPath);
 
 protected:
+    PluginData getInfo(const QString &pluginPath);
     QObject *instantiateClass(const PluginInfo &plugin, const ClassInfo &cls);
     Deleter deleter();
 };

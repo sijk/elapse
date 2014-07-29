@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include "bindings/elapse.h"
-#include "util.h"
+#include "host.h"
 
 namespace py = boost::python;
 

@@ -1,9 +1,11 @@
-include(../../plugin.pri)
+include(../../staticlib.pri)
 
 TARGET        = coreplugin
+CONFIG       += static plugin
+
 CONFIG       += link_pkgconfig qwt qxt
 QT           += network opengl
-PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10
+PKGCONFIG     = Qt5GStreamer-0.10 Qt5GStreamerUtils-0.10 Qt5GStreamerUi-0.10 gstreamer-0.10
 QXT          += core
 
 HEADERS      += udpdatasource.h \

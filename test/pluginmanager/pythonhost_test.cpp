@@ -7,6 +7,16 @@
 using elapse::FeatureExtractor;
 
 
+class PublicPythonPluginHost : public PythonPluginHost
+{
+    // Make methods public for testability
+public:
+    PluginData getInfo(const QString &pluginPath)
+    {
+        return PythonPluginHost::getInfo(pluginPath);
+    }
+};
+
 class PythonPluginHostTest : public ::testing::Test
 {
 public:
@@ -19,7 +29,7 @@ public:
         bazPluginPath = pluginDir.absoluteFilePath("bazplugin");
     }
 
-    PythonPluginHost host;
+    PublicPythonPluginHost host;
     QString bazPluginPath;
 };
 
