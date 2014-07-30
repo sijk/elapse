@@ -11,3 +11,4 @@ SUBDIRS += datasink
 SUBDIRS += simplerawdatasinksource
 SUBDIRS += configdbus
 SUBDIRS += pipeline
+SUBDIRS += python-bindings
