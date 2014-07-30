@@ -25,7 +25,7 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
 
     elements = {
         { &dataSourceModel,   ui.dataSource,            "DataSource",       Signal::INVALID, "DataSource"          },
-        { &dataSinkModel,     ui.dataSink,              "DataSinkDelegate", Signal::INVALID, "DataSinkDelegate"    },
+        { &dataSinkModel,     ui.dataSink,              "DataSink",         Signal::INVALID, "DataSink"            },
         { &eegDecoderModel,   ui.sampleDecoderEeg,      "SampleDecoder",    Signal::EEG,     "EegSampleDecoder"    },
         { &vidDecoderModel,   ui.sampleDecoderVideo,    "SampleDecoder",    Signal::VIDEO,   "VidSampleDecoder"    },
         { &imuDecoderModel,   ui.sampleDecoderImu,      "SampleDecoder",    Signal::IMU,     "ImuSampleDecoder"    },
@@ -216,7 +216,7 @@ ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
     ElementSetPtr e = ElementSetPtr::create();
 
     createElement(e->dataSource,                       info.value("DataSource"));
-    createElement(e->dataSink,                         info.value("DataSinkDelegate"));
+    createElement(e->dataSink,                         info.value("DataSink"));
     createElement(e->sampleDecoders[Signal::EEG],      info.value("EegSampleDecoder"));
     createElement(e->sampleDecoders[Signal::VIDEO],    info.value("VidSampleDecoder"));
     createElement(e->sampleDecoders[Signal::IMU],      info.value("ImuSampleDecoder"));

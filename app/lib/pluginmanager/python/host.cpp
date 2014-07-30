@@ -78,7 +78,7 @@ QObject *pyhost::extractQObject(py::object obj, const QString &cls)
         return py::extract<elapse::Classifier*>(obj);
     else if (cls == "OutputAction")
         return py::extract<elapse::OutputAction*>(obj);
-    else if (cls == "DataSinkDelegate")
-        return py::extract<elapse::DataSinkDelegate*>(obj);
+    else if (cls == "DataSink")
+        return py::extract<elapse::DataSink*>(obj);
     return nullptr;
 }

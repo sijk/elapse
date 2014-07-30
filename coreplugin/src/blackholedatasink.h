@@ -1,22 +1,22 @@
-#ifndef BLACKHOLEDATASINKDELEGATE_H
-#define BLACKHOLEDATASINKDELEGATE_H
+#ifndef BLACKHOLEDATASINK_H
+#define BLACKHOLEDATASINK_H
 
-#include <elapse/elements/datasinkdelegate.h>
+#include <elapse/elements/datasink.h>
 
 
 /*!
- * \brief The BlackHoleDataSinkDelegate class funnels data into the ether.
+ * \brief The BlackHoleDataSink class funnels data into the ether.
  * \ingroup core-plugin
  */
 
-class BlackHoleDataSinkDelegate : public elapse::DataSinkDelegate
+class BlackHoleDataSink : public elapse::DataSink
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit BlackHoleDataSinkDelegate(QObject *parent = nullptr);
+    Q_INVOKABLE explicit BlackHoleDataSink(QObject *parent = nullptr);
 
-    bool start();
-    void stop();
+    bool startSaving();
+    void stopSaving();
     bool needsNewCaptureInfo();
     bool getCaptureInfo();
 
@@ -27,4 +27,4 @@ public:
     void saveCognitiveState(elapse::CognitiveState state);
 };
 
-#endif // BLACKHOLEDATASINKDELEGATE_H
+#endif // BLACKHOLEDATASINK_H

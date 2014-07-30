@@ -1,17 +1,17 @@
-#ifndef SIMPLERAWDATASINKDELEGATE_H
-#define SIMPLERAWDATASINKDELEGATE_H
+#ifndef SIMPLERAWDATASINK_H
+#define SIMPLERAWDATASINK_H
 
 #include <QDir>
 #include <QFile>
 #include <QTime>
-#include <elapse/elements/datasinkdelegate.h>
+#include <elapse/elements/datasink.h>
 
 
 /*!
- * \brief The SimpleRawDataSinkDelegate class dumps raw data to disk using a
+ * \brief The SimpleRawDataSink class dumps raw data to disk using a
  * QDataStream.
  *
- * The only capture info required for this delegate is the directory into
+ * The only capture info required for this sink is the directory into
  * which the data files will be saved.
  *
  * Note that this class only supports saving raw data — not Sample%s or
@@ -21,14 +21,14 @@
  * \ingroup core-plugin
  */
 
-class SimpleRawDataSinkDelegate : public elapse::DataSinkDelegate
+class SimpleRawDataSink : public elapse::DataSink
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit SimpleRawDataSinkDelegate(QObject *parent = nullptr);
+    Q_INVOKABLE explicit SimpleRawDataSink(QObject *parent = nullptr);
 
-    bool start();
-    void stop();
+    bool startSaving();
+    void stopSaving();
     bool needsNewCaptureInfo();
     bool getCaptureInfo();
 
@@ -45,4 +45,4 @@ private:
     QTime time;
 };
 
-#endif // SIMPLERAWDATASINKDELEGATE_H
+#endif // SIMPLERAWDATASINK_H

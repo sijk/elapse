@@ -3,11 +3,11 @@
 #include <QLineEdit>
 #include <QSignalSpy>
 #include "../test_utils.h"
-#include "simplerawdatasinkdelegate.h"
+#include "simplerawdatasink.h"
 #include "simplerawdatasource.h"
 
 
-class SimpleRawDataSinkDelegateNoGui : public SimpleRawDataSinkDelegate
+class SimpleRawDataSinkNoGui : public SimpleRawDataSink
 {
 protected:
     QString getDirectory() const
@@ -32,7 +32,7 @@ public:
         ASSERT_TRUE(recursiveRmDir(dataDir));
     }
 
-    SimpleRawDataSinkDelegateNoGui dataSink;
+    SimpleRawDataSinkNoGui dataSink;
     QString dataDir;
 };
 

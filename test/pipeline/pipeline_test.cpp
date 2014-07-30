@@ -7,7 +7,7 @@
 #include <elapse/elements/featurextractor.h>
 #include <elapse/elements/classifier.h>
 #include <elapse/elements/outputaction.h>
-#include <elapse/elements/datasinkdelegate.h>
+#include <elapse/elements/datasink.h>
 #include <elapse/timestamps.h>
 #include "elementset.h"
 #include "pipeline.h"
@@ -198,12 +198,12 @@ public:
     MOCK_METHOD1(onState, void(elapse::CognitiveState));
 };
 
-class MockDataSinkDelegate : public elapse::DataSinkDelegate
+class MockDataSink : public elapse::DataSink
 {
     Q_OBJECT
 public:
-    MOCK_METHOD0(start, bool());
-    MOCK_METHOD0(stop, void());
+    MOCK_METHOD0(startSaving, bool());
+    MOCK_METHOD0(stopSaving, void());
     MOCK_METHOD0(needsNewCaptureInfo, bool());
     MOCK_METHOD0(getCaptureInfo, bool());
     MOCK_METHOD1(saveDeviceConfig, void(const QMap<QString, QVariantMap>&));
@@ -212,18 +212,18 @@ public:
     MOCK_METHOD1(saveFeatureVector, void(elapse::FeatureVector));
     MOCK_METHOD1(saveCognitiveState, void(elapse::CognitiveState));
 
-    MockDataSinkDelegate()
+    MockDataSink()
     {
         // Ignore capture info calls - these are tested elsewhere.
         EXPECT_CALL(*this, needsNewCaptureInfo()).WillRepeatedly(Return(false));
         EXPECT_CALL(*this, getCaptureInfo()).Times(0);
-        ON_CALL(*this, start()).WillByDefault(Return(true));
+        ON_CALL(*this, startSaving()).WillByDefault(Return(true));
     }
 
     void ignoreCalls()
     {
-        EXPECT_CALL(*this, start()).Times(AnyNumber());
-        EXPECT_CALL(*this, stop()).Times(AnyNumber());
+        EXPECT_CALL(*this, startSaving()).Times(AnyNumber());
+        EXPECT_CALL(*this, stopSaving()).Times(AnyNumber());
         EXPECT_CALL(*this, saveDeviceConfig(_)).Times(AnyNumber());
         EXPECT_CALL(*this, saveData(_,_)).Times(AnyNumber());
         EXPECT_CALL(*this, saveSample(_,_)).Times(AnyNumber());
@@ -247,7 +247,7 @@ protected:
         imuFeatEx = new MockImuFeatureExtractor;
         classifier = new MockClassifier;
         action = new MockOutputAction;
-        dataSink = new MockDataSinkDelegate;
+        dataSink = new MockDataSink;
 
         elements = ElementSetPtr::create();
         elements->dataSource.reset(dataSource);
@@ -276,7 +276,7 @@ public:
     QPointer<MockImuFeatureExtractor> imuFeatEx;
     QPointer<MockClassifier> classifier;
     QPointer<MockOutputAction> action;
-    QPointer<MockDataSinkDelegate> dataSink;
+    QPointer<MockDataSink> dataSink;
 
     elapse::BaseFeatureExtractorPrivate *eegFeatExPriv;
     elapse::BaseFeatureExtractorPrivate *vidFeatExPriv;
@@ -290,7 +290,7 @@ public:
     void expectPipelineStart()
     {
         InSequence s;
-        EXPECT_CALL(*dataSink, start());
+        EXPECT_CALL(*dataSink, startSaving());
         EXPECT_CALL(*classifier, reset());
         EXPECT_CALL(*dataSource, start());
         pipeline.start();
@@ -300,7 +300,7 @@ public:
     {
         InSequence s;
         EXPECT_CALL(*dataSource, stop());
-        EXPECT_CALL(*dataSink, stop());
+        EXPECT_CALL(*dataSink, stopSaving());
         pipeline.stop();
     }
 
@@ -407,7 +407,7 @@ TEST_F(PipelineTest, BaseFeatureExtractorWindowingInPipeline)
 
 /*
  * Check that data emitted from the DataSource gets to the SampleDecoders
- * and the DataSinkDelegate.
+ * and the DataSink.
  */
 TEST_F(PipelineTest, DataSourceToDecodersAndSink)
 {
@@ -423,14 +423,14 @@ TEST_F(PipelineTest, DataSourceToDecodersAndSink)
     vidFeatEx->ignoreCalls();
     imuFeatEx->ignoreCalls();
 
-    EXPECT_CALL(*dataSink, start()).Times(1);
+    EXPECT_CALL(*dataSink, startSaving()).Times(1);
     EXPECT_CALL(*dataSink, saveData(Signal::EEG,_)).Times(1);
     EXPECT_CALL(*dataSink, saveData(Signal::VIDEO,_)).Times(1);
     EXPECT_CALL(*dataSink, saveData(Signal::IMU,_)).Times(1);
     EXPECT_CALL(*dataSink, saveSample(Signal::EEG,_)).Times(1);
     EXPECT_CALL(*dataSink, saveSample(Signal::VIDEO,_)).Times(1);
     EXPECT_CALL(*dataSink, saveSample(Signal::IMU,_)).Times(1);
-    EXPECT_CALL(*dataSink, stop()).Times(1);
+    EXPECT_CALL(*dataSink, stopSaving()).Times(1);
 
     pipeline.setElements(elements);
     pipeline.start();
