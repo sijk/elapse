@@ -154,20 +154,8 @@
     </property>
     <addaction name="actionLogView"/>
    </widget>
-   <widget class="QMenu" name="menuOutput">
-    <property name="title">
-     <string>Output</string>
-    </property>
-    <addaction name="actionSaveRawData"/>
-    <addaction name="actionSaveSamples"/>
-    <addaction name="actionSaveFeatureVectors"/>
-    <addaction name="actionSaveCognitiveState"/>
-    <addaction name="separator"/>
-    <addaction name="actionSaveAll"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
-   <addaction name="menuOutput"/>
   </widget>
   <widget class="QToolBar" name="connectedToolBar">
    <property name="windowTitle">
@@ -295,49 +283,6 @@
    </property>
    <property name="toolTip">
     <string>Set capture info</string>
-   </property>
-  </action>
-  <action name="actionSaveRawData">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Save raw &amp;data</string>
-   </property>
-  </action>
-  <action name="actionSaveSamples">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Save &amp;samples</string>
-   </property>
-  </action>
-  <action name="actionSaveFeatureVectors">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Save &amp;feature vectors</string>
-   </property>
-  </action>
-  <action name="actionSaveCognitiveState">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Save &amp;cognitive state</string>
-   </property>
-  </action>
-  <action name="actionSaveAll">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Save &amp;all</string>
-   </property>
-   <property name="toolTip">
-    <string>Save all data</string>
    </property>
   </action>
  </widget>
