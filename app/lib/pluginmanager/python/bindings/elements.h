@@ -53,10 +53,10 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     void reset() {
         if (py::override fn = this->get_override("reset"))
             fn();
-        return BaseFeatureExtractorPublic::reset();
+        BaseFeatureExtractorPublic::reset();
     }
     void default_reset() {
-        return this->BaseFeatureExtractorPublic::reset();
+        this->BaseFeatureExtractorPublic::reset();
     }
 };
 
@@ -114,16 +114,36 @@ struct DataSinkDelegateWrap : elapse::DataSinkDelegate,
         this->get_override("saveDeviceConfig")(config);
     }
     void saveData(elapse::Signal::Type signalType, QByteArray data) {
-        this->get_override("saveData")(signalType, data);
+        if (py::override fn = this->get_override("saveData"))
+            fn(signalType, data);
+        elapse::DataSinkDelegate::saveData(signalType, data);
+    }
+    void default_saveData(elapse::Signal::Type signalType, QByteArray data) {
+        this->elapse::DataSinkDelegate::saveData(signalType, data);
     }
     void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
-        this->get_override("saveSample")(signalType, sample);
+        if (py::override fn = this->get_override("saveSample"))
+            fn(signalType, sample);
+        elapse::DataSinkDelegate::saveSample(signalType, sample);
+    }
+    void default_saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
+        this->elapse::DataSinkDelegate::saveSample(signalType, sample);
     }
     void saveFeatureVector(elapse::FeatureVector featureVector) {
-        this->get_override("saveFeatureVector")(featureVector);
+        if (py::override fn = this->get_override("saveFeatureVector"))
+            fn(featureVector);
+        elapse::DataSinkDelegate::saveFeatureVector(featureVector);
+    }
+    void default_saveFeatureVector(elapse::FeatureVector featureVector) {
+        this->elapse::DataSinkDelegate::saveFeatureVector(featureVector);
     }
     void saveCognitiveState(elapse::CognitiveState state) {
-        this->get_override("saveCognitiveState")(state);
+        if (py::override fn = this->get_override("saveCognitiveState"))
+            fn(state);
+        elapse::DataSinkDelegate::saveCognitiveState(state);
+    }
+    void default_saveCognitiveState(elapse::CognitiveState state) {
+        this->elapse::DataSinkDelegate::saveCognitiveState(state);
     }
 };
 
@@ -170,10 +190,18 @@ void export_elements()
         .def("needsNewCaptureInfo", pure_virtual(&elapse::DataSinkDelegate::needsNewCaptureInfo))
         .def("getCaptureInfo", pure_virtual(&elapse::DataSinkDelegate::getCaptureInfo))
         .def("saveDeviceConfig", pure_virtual(&elapse::DataSinkDelegate::saveDeviceConfig))
-        .def("saveData", pure_virtual(&elapse::DataSinkDelegate::saveData))
-        .def("saveSample", pure_virtual(&elapse::DataSinkDelegate::saveSample))
-        .def("saveFeatureVector", pure_virtual(&elapse::DataSinkDelegate::saveFeatureVector))
-        .def("saveCognitiveState", pure_virtual(&elapse::DataSinkDelegate::saveCognitiveState));
+        .def("saveData",
+             &elapse::DataSinkDelegate::saveData,
+             &DataSinkDelegateWrap::default_saveData)
+        .def("saveSample",
+             &elapse::DataSinkDelegate::saveSample,
+             &DataSinkDelegateWrap::default_saveSample)
+        .def("saveFeatureVector",
+             &elapse::DataSinkDelegate::saveFeatureVector,
+             &DataSinkDelegateWrap::default_saveFeatureVector)
+        .def("saveCognitiveState",
+             &elapse::DataSinkDelegate::saveCognitiveState,
+             &DataSinkDelegateWrap::default_saveCognitiveState);
 }
 
 #endif // PYTHON_ELEMENTS_H

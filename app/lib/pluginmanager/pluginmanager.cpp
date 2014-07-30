@@ -347,7 +347,7 @@ QDir PluginManager::searchPath() const
 void PluginManager::setSearchPath(QDir newPath)
 {
     Q_D(PluginManager);
-    if (newPath == d->searchPath) {
+    if (newPath == d->searchPath && !d->pluginData.isEmpty()) {
         qxtLog->debug("Plugin search path was set to the current value. "
                       "Not doing anything...");
         return;

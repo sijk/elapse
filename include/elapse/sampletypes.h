@@ -18,7 +18,7 @@ class Signal
 public:
     enum Type { EEG, VIDEO, IMU, INVALID = -1 };
 
-    static QString toString(Type type)
+    static const char*toString(Type type)
     { return typeEnum().valueToKey(type); }
 
     static Type fromString(const char *type)
