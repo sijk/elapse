@@ -18,8 +18,8 @@ HEADERS      += udpdatasource.h \
                 dummyimufeatureextractor.h \
                 dummyclassifier.h \
                 dummyaction.h \
-                blackholedatasinkdelegate.h \
-                simplerawdatasinkdelegate.h \
+                blackholedatasink.h \
+                simplerawdatasink.h \
                 util/bigendian24.h \
                 util/gstwrappedbuffer.h
 
@@ -33,8 +33,8 @@ SOURCES      += udpdatasource.cpp \
                 dummyimufeatureextractor.cpp \
                 dummyclassifier.cpp \
                 dummyaction.cpp \
-                blackholedatasinkdelegate.cpp \
-                simplerawdatasinkdelegate.cpp \
+                blackholedatasink.cpp \
+                simplerawdatasink.cpp \
                 util/gstwrappedbuffer.cpp
 
 HEADERS      += coreplugin.h

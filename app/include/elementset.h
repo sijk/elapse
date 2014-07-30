@@ -8,7 +8,7 @@
 #include "elapse/elements/featurextractor.h"
 #include "elapse/elements/classifier.h"
 #include "elapse/elements/outputaction.h"
-#include "elapse/elements/datasinkdelegate.h"
+#include "elapse/elements/datasink.h"
 
 using elapse::Signal;
 
@@ -31,7 +31,7 @@ struct ElementSet
     QMap<Signal::Type, QSharedPointer<elapse::FeatureExtractor>> featureExtractors;
     QSharedPointer<elapse::Classifier> classifier;
     QSharedPointer<elapse::OutputAction> action;
-    QSharedPointer<elapse::DataSinkDelegate> dataSink;
+    QSharedPointer<elapse::DataSink> dataSink;
 
     QList<QSharedPointer<QObject>> allElements() const;
 };

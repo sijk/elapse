@@ -9,7 +9,7 @@ class SimpleRawDataSourcePrivate;
 
 /*!
  * \brief The SimpleRawDataSource class loads data saved by a
- * SimpleRawDataSinkDelegate.
+ * SimpleRawDataSink.
  *
  * \ingroup core-plugin
  */

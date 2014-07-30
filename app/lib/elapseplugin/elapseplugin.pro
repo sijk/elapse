@@ -16,7 +16,7 @@ SOURCES += \
     offlinedatasource.cpp \
     featurextractor.cpp \
     classifier.cpp \
-    datasinkdelegate.cpp
+    datasink.cpp
 
 HEADERS += \
     elapse/timestamps.h \
@@ -26,7 +26,7 @@ HEADERS += \
     elapse/elements/featurextractor.h \
     elapse/elements/classifier.h \
     elapse/elements/outputaction.h \
-    elapse/elements/datasinkdelegate.h
+    elapse/elements/datasink.h
 
 LIBS += -L$$OUT_PWD/../../../common/dbus/ -ldbus
 INCLUDEPATH += $$PWD/../../../common/dbus

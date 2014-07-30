@@ -1,20 +1,20 @@
 #include <QMessageBox>
 #include <QApplication>
-#include "blackholedatasinkdelegate.h"
+#include "blackholedatasink.h"
 
 
 /*!
- * Create a new BlackHoleDataSinkDelegate as a child of the given \a parent.
+ * Create a new BlackHoleDataSink as a child of the given \a parent.
  */
-BlackHoleDataSinkDelegate::BlackHoleDataSinkDelegate(QObject *parent) :
-    DataSinkDelegate(parent)
+BlackHoleDataSink::BlackHoleDataSink(QObject *parent) :
+    DataSink(parent)
 {
 }
 
 /*!
  * Do nothing.
  */
-bool BlackHoleDataSinkDelegate::start()
+bool BlackHoleDataSink::startSaving()
 {
     return true;
 }
@@ -22,14 +22,14 @@ bool BlackHoleDataSinkDelegate::start()
 /*!
  * Do nothing.
  */
-void BlackHoleDataSinkDelegate::stop()
+void BlackHoleDataSink::stopSaving()
 {
 }
 
 /*!
  * No capture info is needed since all data is discarded.
  */
-bool BlackHoleDataSinkDelegate::needsNewCaptureInfo()
+bool BlackHoleDataSink::needsNewCaptureInfo()
 {
     return false;
 }
@@ -37,7 +37,7 @@ bool BlackHoleDataSinkDelegate::needsNewCaptureInfo()
 /*!
  * Show a message box explaining that no capture info is necessary.
  */
-bool BlackHoleDataSinkDelegate::getCaptureInfo()
+bool BlackHoleDataSink::getCaptureInfo()
 {
     QMessageBox::information(qApp->activeWindow(), "Black hole",
                              "The black hole data sink doesn't need any\n"
@@ -49,7 +49,7 @@ bool BlackHoleDataSinkDelegate::getCaptureInfo()
 /*!
  * Do nothing.
  */
-void BlackHoleDataSinkDelegate::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
+void BlackHoleDataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
 {
     Q_UNUSED(config)
 }
@@ -57,7 +57,7 @@ void BlackHoleDataSinkDelegate::saveDeviceConfig(const QMap<QString, QVariantMap
 /*!
  * Do nothing.
  */
-void BlackHoleDataSinkDelegate::saveData(elapse::Signal::Type signalType,
+void BlackHoleDataSink::saveData(elapse::Signal::Type signalType,
                                          QByteArray data)
 {
     Q_UNUSED(signalType)
@@ -67,7 +67,7 @@ void BlackHoleDataSinkDelegate::saveData(elapse::Signal::Type signalType,
 /*!
  * Do nothing.
  */
-void BlackHoleDataSinkDelegate::saveSample(elapse::Signal::Type signalType,
+void BlackHoleDataSink::saveSample(elapse::Signal::Type signalType,
                                            elapse::SamplePtr sample)
 {
     Q_UNUSED(signalType)
@@ -77,7 +77,7 @@ void BlackHoleDataSinkDelegate::saveSample(elapse::Signal::Type signalType,
 /*!
  * Do nothing.
  */
-void BlackHoleDataSinkDelegate::saveFeatureVector(elapse::FeatureVector featureVector)
+void BlackHoleDataSink::saveFeatureVector(elapse::FeatureVector featureVector)
 {
     Q_UNUSED(featureVector)
 }
@@ -85,7 +85,7 @@ void BlackHoleDataSinkDelegate::saveFeatureVector(elapse::FeatureVector featureV
 /*!
  * Do nothing.
  */
-void BlackHoleDataSinkDelegate::saveCognitiveState(elapse::CognitiveState state)
+void BlackHoleDataSink::saveCognitiveState(elapse::CognitiveState state)
 {
     Q_UNUSED(state)
 }

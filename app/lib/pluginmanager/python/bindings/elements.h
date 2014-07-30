@@ -5,7 +5,7 @@
 #include "elapse/elements/featurextractor.h"
 #include "elapse/elements/classifier.h"
 #include "elapse/elements/outputaction.h"
-#include "elapse/elements/datasinkdelegate.h"
+#include "elapse/elements/datasink.h"
 
 namespace py = boost::python;
 
@@ -95,14 +95,34 @@ struct OutputActionWrap : elapse::OutputAction,
     }
 };
 
-struct DataSinkDelegateWrap : elapse::DataSinkDelegate,
-                              py::wrapper<elapse::DataSinkDelegate>
+class DataSinkPublic : public elapse::DataSink
 {
-    bool start() {
-        return this->get_override("start")();
+public:
+    // Make the protected virtual methods public so they can be overriden
+    // by python classes.
+    bool getCaptureInfo() = 0;
+    bool needsNewCaptureInfo() = 0;
+    bool startSaving() = 0;
+    void stopSaving() = 0;
+    void saveData(elapse::Signal::Type signalType, QByteArray data)
+    { elapse::DataSink::saveData(signalType, data); }
+    void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample)
+    { elapse::DataSink::saveSample(signalType, sample); }
+    void saveFeatureVector(elapse::FeatureVector featureVector)
+    { elapse::DataSink::saveFeatureVector(featureVector); }
+    void saveCognitiveState(elapse::CognitiveState state)
+    { elapse::DataSink::saveCognitiveState(state); }
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config) = 0;
+};
+
+struct DataSinkWrap : DataSinkPublic,
+                      py::wrapper<DataSinkPublic>
+{
+    bool startSaving() {
+        return this->get_override("startSaving")();
     }
-    void stop() {
-        this->get_override("stop")();
+    void stopSaving() {
+        this->get_override("stopSaving")();
     }
     bool needsNewCaptureInfo() {
         return this->get_override("needsNewCaptureInfo")();
@@ -116,34 +136,34 @@ struct DataSinkDelegateWrap : elapse::DataSinkDelegate,
     void saveData(elapse::Signal::Type signalType, QByteArray data) {
         if (py::override fn = this->get_override("saveData"))
             fn(signalType, data);
-        elapse::DataSinkDelegate::saveData(signalType, data);
+        DataSinkPublic::saveData(signalType, data);
     }
     void default_saveData(elapse::Signal::Type signalType, QByteArray data) {
-        this->elapse::DataSinkDelegate::saveData(signalType, data);
+        this->DataSinkPublic::saveData(signalType, data);
     }
     void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
         if (py::override fn = this->get_override("saveSample"))
             fn(signalType, sample);
-        elapse::DataSinkDelegate::saveSample(signalType, sample);
+        DataSinkPublic::saveSample(signalType, sample);
     }
     void default_saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
-        this->elapse::DataSinkDelegate::saveSample(signalType, sample);
+        this->DataSinkPublic::saveSample(signalType, sample);
     }
     void saveFeatureVector(elapse::FeatureVector featureVector) {
         if (py::override fn = this->get_override("saveFeatureVector"))
             fn(featureVector);
-        elapse::DataSinkDelegate::saveFeatureVector(featureVector);
+        DataSinkPublic::saveFeatureVector(featureVector);
     }
     void default_saveFeatureVector(elapse::FeatureVector featureVector) {
-        this->elapse::DataSinkDelegate::saveFeatureVector(featureVector);
+        this->DataSinkPublic::saveFeatureVector(featureVector);
     }
     void saveCognitiveState(elapse::CognitiveState state) {
         if (py::override fn = this->get_override("saveCognitiveState"))
             fn(state);
-        elapse::DataSinkDelegate::saveCognitiveState(state);
+        DataSinkPublic::saveCognitiveState(state);
     }
     void default_saveCognitiveState(elapse::CognitiveState state) {
-        this->elapse::DataSinkDelegate::saveCognitiveState(state);
+        this->DataSinkPublic::saveCognitiveState(state);
     }
 };
 
@@ -184,24 +204,24 @@ void export_elements()
     class_<OutputActionWrap, boost::noncopyable>("OutputAction")
         .def("onState", pure_virtual(&elapse::OutputAction::onState));
 
-    class_<DataSinkDelegateWrap, boost::noncopyable>("DataSinkDelegate")
-        .def("start", pure_virtual(&elapse::DataSinkDelegate::start))
-        .def("stop", pure_virtual(&elapse::DataSinkDelegate::stop))
-        .def("needsNewCaptureInfo", pure_virtual(&elapse::DataSinkDelegate::needsNewCaptureInfo))
-        .def("getCaptureInfo", pure_virtual(&elapse::DataSinkDelegate::getCaptureInfo))
-        .def("saveDeviceConfig", pure_virtual(&elapse::DataSinkDelegate::saveDeviceConfig))
+    class_<DataSinkWrap, boost::noncopyable>("DataSink")
+        .def("startSaving", pure_virtual(&DataSinkPublic::startSaving))
+        .def("stopSaving", pure_virtual(&DataSinkPublic::stopSaving))
+        .def("needsNewCaptureInfo", pure_virtual(&DataSinkPublic::needsNewCaptureInfo))
+        .def("getCaptureInfo", pure_virtual(&DataSinkPublic::getCaptureInfo))
+        .def("saveDeviceConfig", pure_virtual(&DataSinkPublic::saveDeviceConfig))
         .def("saveData",
-             &elapse::DataSinkDelegate::saveData,
-             &DataSinkDelegateWrap::default_saveData)
+             &DataSinkPublic::saveData,
+             &DataSinkWrap::default_saveData)
         .def("saveSample",
-             &elapse::DataSinkDelegate::saveSample,
-             &DataSinkDelegateWrap::default_saveSample)
+             &DataSinkPublic::saveSample,
+             &DataSinkWrap::default_saveSample)
         .def("saveFeatureVector",
-             &elapse::DataSinkDelegate::saveFeatureVector,
-             &DataSinkDelegateWrap::default_saveFeatureVector)
+             &DataSinkPublic::saveFeatureVector,
+             &DataSinkWrap::default_saveFeatureVector)
         .def("saveCognitiveState",
-             &elapse::DataSinkDelegate::saveCognitiveState,
-             &DataSinkDelegateWrap::default_saveCognitiveState);
+             &DataSinkPublic::saveCognitiveState,
+             &DataSinkWrap::default_saveCognitiveState);
 }
 
 #endif // PYTHON_ELEMENTS_H

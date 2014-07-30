@@ -1,21 +1,21 @@
 #include <QDateTime>
 #include <QFileDialog>
 #include <QxtLogger>
-#include "simplerawdatasinkdelegate.h"
+#include "simplerawdatasink.h"
 
 
 /*!
- * Create a new SimpleRawDataSinkDelegate as a child of the given \a parent.
+ * Create a new SimpleRawDataSink as a child of the given \a parent.
  */
-SimpleRawDataSinkDelegate::SimpleRawDataSinkDelegate(QObject *parent) :
-    DataSinkDelegate(parent)
+SimpleRawDataSink::SimpleRawDataSink(QObject *parent) :
+    DataSink(parent)
 {
 }
 
 /*!
  * Create a file named with the current date and time.
  */
-bool SimpleRawDataSinkDelegate::start()
+bool SimpleRawDataSink::startSaving()
 {
     QString dateTime = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
     QString fileName = dataDir.absoluteFilePath(dateTime + ".dat");
@@ -35,7 +35,7 @@ bool SimpleRawDataSinkDelegate::start()
 /*!
  * Close the current data file.
  */
-void SimpleRawDataSinkDelegate::stop()
+void SimpleRawDataSink::stopSaving()
 {
     stream.setDevice(nullptr);
     file.close();
@@ -45,7 +45,7 @@ void SimpleRawDataSinkDelegate::stop()
  * \return true if getCaptureInfo() hasn't been called or if the chosen data
  * directory doesn't exist.
  */
-bool SimpleRawDataSinkDelegate::needsNewCaptureInfo()
+bool SimpleRawDataSink::needsNewCaptureInfo()
 {
     return dataDir == QDir() || !dataDir.exists();
 }
@@ -55,7 +55,7 @@ bool SimpleRawDataSinkDelegate::needsNewCaptureInfo()
  * data files will be saved.
  * \return whether the user selected a valid directory.
  */
-bool SimpleRawDataSinkDelegate::getCaptureInfo()
+bool SimpleRawDataSink::getCaptureInfo()
 {
     QString dir = getDirectory();
     if (dir.isEmpty())
@@ -67,7 +67,7 @@ bool SimpleRawDataSinkDelegate::getCaptureInfo()
 }
 
 // Implemented as a virtual method for testability
-QString SimpleRawDataSinkDelegate::getDirectory() const
+QString SimpleRawDataSink::getDirectory() const
 {
     return QFileDialog::getExistingDirectory();
 }
@@ -75,7 +75,7 @@ QString SimpleRawDataSinkDelegate::getDirectory() const
 /*!
  * Dump the \a config to the currently-open data file via a QDataStream.
  */
-void SimpleRawDataSinkDelegate::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
+void SimpleRawDataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &config)
 {
     Q_ASSERT(file.isOpen());
     stream << config;
@@ -85,7 +85,7 @@ void SimpleRawDataSinkDelegate::saveDeviceConfig(const QMap<QString, QVariantMap
  * Dump the \a signalType and \a data to the currently-open data file
  * via a QDataStream.
  */
-void SimpleRawDataSinkDelegate::saveData(elapse::Signal::Type signalType,
+void SimpleRawDataSink::saveData(elapse::Signal::Type signalType,
                                          QByteArray data)
 {
     Q_ASSERT(file.isOpen());
