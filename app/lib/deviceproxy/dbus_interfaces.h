@@ -125,6 +125,8 @@ public:
     void setEnableTestSignal(bool enable) { d.setEnableTestSignal(enable); }
     LeadOffFreq leadOffFreq() const { return LeadOffFreq(d.leadOffFreq()); }
     void setLeadOffFreq(LeadOffFreq freq) { d.setLeadOffFreq(freq); }
+    LeadOffMag leadOffMag() const { return LeadOffMag(d.leadOffMag()); }
+    void setLeadOffMag(LeadOffMag mag) { d.setLeadOffMag(mag); }
     bool leadOffSensePos() const { return d.leadOffSensePos(); }
     void setLeadOffSensePos(bool enable) { d.setLeadOffSensePos(enable); }
     bool leadOffSenseNeg() const { return d.leadOffSenseNeg(); }

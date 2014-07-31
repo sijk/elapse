@@ -114,6 +114,8 @@ public:
     { return config->get("eeg", "enableTestSignal").toBool(); }
     LeadOffFreq leadOffFreq() const
     { return LeadOffFreq(config->get("eeg", "leadOffFreq").toInt()); }
+    LeadOffMag leadOffMag() const
+    { return LeadOffMag(config->get("eeg", "leadOffMag").toInt()); }
     bool leadOffSensePos() const
     { return config->get("eeg", "leadOffSensePos").toBool(); }
     bool leadOffSenseNeg() const
@@ -134,6 +136,7 @@ public:
     void setUseRefElec(bool use) { Q_UNUSED(use) }
     void setEnableTestSignal(bool enable) { Q_UNUSED(enable) }
     void setLeadOffFreq(LeadOffFreq freq) { Q_UNUSED(freq) }
+    void setLeadOffMag(LeadOffMag mag) { Q_UNUSED(mag) }
     void setLeadOffSensePos(bool enable) { Q_UNUSED(enable) }
     void setLeadOffSenseNeg(bool enable) { Q_UNUSED(enable) }
 
