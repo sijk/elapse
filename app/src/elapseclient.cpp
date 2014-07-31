@@ -165,6 +165,7 @@ void ElapseClient::buildStateMachine()
     connected->assignProperty(ui->disconnectedToolBar, "visible", false);
     connected->assignProperty(ui->connectedToolBar, "visible", true);
     connected->assignProperty(ui->actionConnect, "text", "&Disconnect");
+    connected->assignProperty(ui->actionConnect, "toolTip", "Disconnect from the device");
     connected->assignProperty(ui->actionPlugins, "enabled", false);
     connected->addTransition(ui->actionConnect, SIGNAL(triggered()), disconnected);
     connected->addTransition(proxy, SIGNAL(error(QString)), disconnected);
