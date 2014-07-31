@@ -5,13 +5,15 @@
 
 
 /*!
- * \brief The PluginHost class is an abstract factory for loading objects
+ * \brief The PluginHost class is an abstract factory for loading elements
  * from plugins.
  *
  * This design allows plugins to be written in multiple languages. To add
  * support for a new language, implement a PluginHost that can load plugins
  * written in that language and implement any required bindings for the
- * element base classes.
+ * \ref pipeline-elements "element base classes".
+ *
+ * \ingroup plugins-int
  */
 
 class PluginHost
@@ -58,7 +60,7 @@ protected:
 
     /*!
      * \return a custom deleter function for the instantiated objects.
-     * Defaults to QObject::deleteLater.
+     * Defaults to \c QObject::deleteLater.
      */
     virtual Deleter deleter() { return &QObject::deleteLater; }
 };

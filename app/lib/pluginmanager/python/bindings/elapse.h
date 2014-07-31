@@ -1,6 +1,8 @@
 #ifndef PYTHON_ELAPSE_H
 #define PYTHON_ELAPSE_H
 
+#ifndef DOXYGEN
+
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "elapse/sampletypes.h"
@@ -92,4 +94,5 @@ BOOST_PYTHON_MODULE(elapse)
     to_python_converter<QVector3D, QVector3DConverter>();
 }
 
+#endif // DOXYGEN
 #endif // PYTHON_ELAPSE_H

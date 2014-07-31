@@ -10,6 +10,11 @@
  * The PythonPluginHost internally launches a Python interpreter which is used
  * to load Python packages. A plugin is a Python package containing a list of
  * class objects called `classes`.
+ *
+ * \note Python plugins must be packages, not modules — i.e.
+ * \c "foo/__init__.py" not \c "foo.py".
+ *
+ * \ingroup plugins-int
  */
 
 class PythonPluginHost : public PluginHost

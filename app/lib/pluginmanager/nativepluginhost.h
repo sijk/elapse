@@ -5,7 +5,10 @@
 
 
 /*!
- * \brief The NativePluginHost class loads plugins implemented in C++.
+ * \brief The NativePluginHost class loads
+ * \ref elapse::PluginInterface "plugins" implemented in C++.
+ *
+ * \ingroup plugins-int
  */
 
 class NativePluginHost : public PluginHost

@@ -1,6 +1,8 @@
 #ifndef PYTHON_ELEMENTS_H
 #define PYTHON_ELEMENTS_H
 
+#ifndef DOXYGEN
+
 #include <boost/python.hpp>
 #include "elapse/elements/featurextractor.h"
 #include "elapse/elements/classifier.h"
@@ -224,4 +226,5 @@ void export_elements()
              &DataSinkWrap::default_saveCognitiveState);
 }
 
+#endif // DOXYGEN
 #endif // PYTHON_ELEMENTS_H

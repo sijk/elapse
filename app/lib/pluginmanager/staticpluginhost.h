@@ -5,7 +5,9 @@
 
 
 /*!
- * \brief The StaticPluginHost class loads the static core plugin.
+ * \brief The StaticPluginHost class loads the static \ref core-plugin.
+ *
+ * \ingroup plugins-int
  */
 
 class StaticPluginHost : public PluginHost

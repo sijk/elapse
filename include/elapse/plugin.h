@@ -23,6 +23,7 @@ public:
     /*!
      * \return a list of QMetaObjects representing the classes that this plugin
      * provides.
+     * \see ELAPSE_EXPORT_CLASSES
      */
     virtual ClassList classes() = 0;
 };

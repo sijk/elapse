@@ -5,11 +5,17 @@
 #include "python/host.h"
 
 
+/*!
+ * Create a new PythonPluginHost and initialize the Python interpreter.
+ */
 PythonPluginHost::PythonPluginHost()
 {
     pyhost::initPython();
 }
 
+/*!
+ * Import the Python package at \a pluginPath and extract the list of classes.
+ */
 PluginData PythonPluginHost::getInfo(const QString &pluginPath)
 {
     PluginData data;
@@ -61,6 +67,10 @@ QObject *PythonPluginHost::instantiateClass(const PluginInfo &plugin,
     return obj;
 }
 
+/*!
+ * \return a Deleter that will remove objects from the internal cache of
+ * Python instances.
+ */
 PluginHost::Deleter PythonPluginHost::deleter()
 {
     return &pyhost::removeInstance;

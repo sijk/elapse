@@ -8,13 +8,14 @@
 
     ...
 
-    \section plugin-example Example Plugin
+    \section plugin-examples Example Plugins
 
-    The following page gives a complete example of how to implement a plugin.
+    The following pages give complete examples of how to implement a plugins
+    in each of the supported languages.
 
-    \todo Mention the need for a Q_INVOKABLE default constructor.
+    \li \subpage plugin-ex-cpp
+    \li \subpage plugin-ex-py
 
-    ...
 
     \section plugin-api-docs API Documentation
 
@@ -22,6 +23,22 @@
 */
 
 /*!
-    \defgroup plugins-ext External Plugin API
+    \defgroup plugins-ext C++ Plugin API
+*/
+
+/*!
+    \page plugin-ex-cpp C++ plugin example
+
+    \todo Mention the need for a Q_INVOKABLE default constructor.
+*/
+
+/*!
+    \page plugin-ex-py Python plugin example
+
+    ...
+*/
+
+/*!
+    \defgroup plugins-ext-py Python Plugin API
 */
 

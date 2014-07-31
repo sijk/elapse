@@ -8,6 +8,10 @@
 Q_IMPORT_PLUGIN(CorePlugin)
 
 
+/*!
+ * Search for static plugins. The \a dir parameter is ignored since it is
+ * meaningless in this case.
+ */
 QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
 {
     Q_UNUSED(dir);
@@ -42,6 +46,10 @@ QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
     return pluginData;
 }
 
+/*!
+ * Do nothing. File paths are not meaningful for statically-linked plugins.
+ * See searchForPluginsIn() instead.
+ */
 PluginData StaticPluginHost::getInfo(const QString &pluginPath)
 {
     Q_UNUSED(pluginPath);

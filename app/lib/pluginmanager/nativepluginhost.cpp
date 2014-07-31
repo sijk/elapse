@@ -5,6 +5,9 @@
 #include "nativepluginhost.h"
 
 
+/*!
+ * Retrieve metadata from the plugin at \a pluginPath, if it is a native plugin.
+ */
 PluginData NativePluginHost::getInfo(const QString &pluginPath)
 {
     PluginData data;
