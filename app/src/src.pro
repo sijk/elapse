@@ -12,12 +12,10 @@ DESTDIR       = ../../
 SOURCES      += main.cpp \
                 elapseclient.cpp \
                 batterymonitor.cpp \
-                spinner.cpp \
-                eegfilesink.cpp
+                spinner.cpp
 HEADERS      += elapseclient.h \
                 batterymonitor.h \
                 spinner.h \
-                eegfilesink.h \
                 elementset.h \
                 elapse/displayable.h
 FORMS        += elapseclient.ui
