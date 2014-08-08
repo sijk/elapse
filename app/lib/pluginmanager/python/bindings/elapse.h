@@ -57,6 +57,8 @@ BOOST_PYTHON_MODULE(elapse)
     class_<elapse::Sample>("Sample")
         .def_readonly("timestamp", &elapse::Sample::timestamp);
 
+    register_ptr_to_python<elapse::SamplePtr>();
+
     class_<elapse::EegSample, bases<elapse::Sample>>("EegSample")
         .def_readonly("seqnum", &elapse::EegSample::seqnum)
         .def_readonly("leadOff", &elapse::EegSample::seqnum)

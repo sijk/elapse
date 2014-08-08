@@ -2,10 +2,10 @@
 #define SAMPLETYPES_H
 
 #include <QtGlobal>
+#include <memory>
 #include <vector>
 #include <QVector3D>
 #include <QByteArray>
-#include <QSharedPointer>
 #include <QMetaEnum>
 #include "timestamps.h"
 
@@ -45,7 +45,7 @@ struct Sample
 };
 
 
-typedef QSharedPointer<const Sample> SamplePtr;
+typedef std::shared_ptr<const Sample> SamplePtr;
 
 
 struct EegSample : Sample

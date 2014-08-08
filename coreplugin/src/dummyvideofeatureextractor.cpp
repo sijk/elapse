@@ -32,7 +32,7 @@ void DummyVideoFeatureExtractor::setStartTime(elapse::TimeStamp timestamp)
  */
 void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
 {
-    auto frame = sample.staticCast<const VideoSample>();
+    auto frame = std::static_pointer_cast<const VideoSample>(sample);
     double meanIntensity = sum(frame->data) / (frame->w * frame->h);
     means[frame->timestamp] = meanIntensity;
 }
