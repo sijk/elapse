@@ -73,12 +73,12 @@ elapse::Signal::Type pyhost::signalType(py::object cls)
 QObject *pyhost::extractQObject(py::object obj, const QString &cls)
 {
     if (cls == "FeatureExtractor")
-        return py::extract<elapse::FeatureExtractor*>(obj);
+        return py::extract<FeatureExtractorWrap*>(obj);
     else if (cls == "Classifier")
-        return py::extract<elapse::Classifier*>(obj);
+        return py::extract<ClassifierWrap*>(obj);
     else if (cls == "OutputAction")
-        return py::extract<elapse::OutputAction*>(obj);
+        return py::extract<OutputActionWrap*>(obj);
     else if (cls == "DataSink")
-        return py::extract<elapse::DataSink*>(obj);
+        return py::extract<DataSinkWrap*>(obj);
     return nullptr;
 }

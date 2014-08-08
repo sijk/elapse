@@ -169,6 +169,25 @@ struct DataSinkWrap : DataSinkPublic,
     }
 };
 
+struct DeviceConfigConverter
+{
+    static PyObject *convert(const QMap<QString, QVariantMap> &config)
+    {
+        using namespace boost::python;
+        dict pyconfig;
+
+        for (auto i = config.cbegin(); i != config.cend(); i++) {
+            dict subconfig;
+            for (auto j = i.value().cbegin(); j != i.value().cend(); j++) {
+                subconfig[j.key().toStdString()] = j.value().toString().toStdString();
+            }
+            pyconfig[i.key().toStdString()] = subconfig;
+        }
+
+        return incref(pyconfig.ptr());
+    }
+};
+
 
 void export_elements()
 {
@@ -224,6 +243,8 @@ void export_elements()
         .def("saveCognitiveState",
              &DataSinkPublic::saveCognitiveState,
              &DataSinkWrap::default_saveCognitiveState);
+
+    to_python_converter<QMap<QString, QVariantMap>, DeviceConfigConverter>();
 }
 
 #endif // DOXYGEN

@@ -7,6 +7,8 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "elapse/sampletypes.h"
 #include "elements.h"
+#include "log.h"
+#include "settings.h"
 
 
 struct VideoSample_wrap : elapse::VideoSample
@@ -34,8 +36,10 @@ BOOST_PYTHON_MODULE(elapse)
     // Turn this module into a package
     scope().attr("__path__") = "elapse";
 
-    // Export the 'elapse.elements' module
+    // Export sub-modules
     export_elements();
+    export_log();
+    export_settings();
 
     {
         scope Signal = class_<elapse::Signal>("Signal", no_init)

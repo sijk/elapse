@@ -27,7 +27,9 @@ HEADERS += native/util.h
 SOURCES += python/host.cpp
 HEADERS += python/host.h \
            python/bindings/elapse.h \
-           python/bindings/elements.h
+           python/bindings/elements.h \
+           python/bindings/log.h \
+           python/bindings/settings.h
 
 LIBS    += -lboost_python
 
