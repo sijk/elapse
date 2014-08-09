@@ -9,7 +9,6 @@ QMap<QObject*, py::object> pyhost::instances;
 void pyhost::removeInstance(QObject *obj)
 {
     instances.remove(obj);
-    obj->deleteLater();
 }
 
 void pyhost::initPython()
