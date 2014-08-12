@@ -26,23 +26,25 @@ using elapse::Signal;
 
 struct ElementSet
 {
-    QSharedPointer<elapse::DataSource> dataSource;
-    QMap<Signal::Type, QSharedPointer<elapse::SampleDecoder>> sampleDecoders;
-    QMap<Signal::Type, QSharedPointer<elapse::FeatureExtractor>> featureExtractors;
-    QSharedPointer<elapse::Classifier> classifier;
-    QSharedPointer<elapse::OutputAction> action;
-    QSharedPointer<elapse::DataSink> dataSink;
+    template<class T> using Ptr = QSharedPointer<T>; // for readability
 
-    QList<QSharedPointer<QObject>> allElements() const;
+    Ptr<elapse::DataSource> dataSource;
+    QMap<Signal::Type, Ptr<elapse::SampleDecoder>> sampleDecoders;
+    QMap<Signal::Type, Ptr<elapse::FeatureExtractor>> featureExtractors;
+    Ptr<elapse::Classifier> classifier;
+    Ptr<elapse::OutputAction> action;
+    Ptr<elapse::DataSink> dataSink;
+
+    QList<Ptr<QObject>> allElements() const;
 };
 
 
 /*!
  * \return a list of all the elements in the set.
  */
-inline QList<QSharedPointer<QObject>> ElementSet::allElements() const
+inline QList<ElementSet::Ptr<QObject>> ElementSet::allElements() const
 {
-    QList<QSharedPointer<QObject>> elements;
+    QList<Ptr<QObject>> elements;
 
     elements.append(dataSource);
     for (auto &decoder : sampleDecoders)
