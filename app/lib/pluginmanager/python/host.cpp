@@ -1,5 +1,7 @@
 #include <QCoreApplication>
+#include <QxtLogger>
 #include "bindings/elapse.h"
+#include "exception.h"
 #include "host.h"
 
 namespace py = boost::python;
@@ -80,4 +82,59 @@ QObject *pyhost::extractQObject(py::object obj, const QString &cls)
     else if (cls == "DataSink")
         return py::extract<DataSinkWrap*>(obj);
     return nullptr;
+}
+
+/*
+ * Adapted from http://thejosephturner.com/blog/post/embedding-python-in-c-applications-with-boostpython-part-2/
+ */
+PythonException getPythonException()
+{
+    PythonException exc;
+    exc.type = "Unknown Python exception";
+
+    PyObject *type = nullptr, *value = nullptr, *traceback = nullptr;
+    PyErr_Fetch(&type, &value, &traceback);
+
+    if (type) {
+        py::handle<> hType(type);
+        py::str strType(py::object(hType).attr("__name__"));
+        py::extract<const char*> extractor(strType);
+        if (extractor.check())
+            exc.type = extractor();
+    }
+
+    if (value) {
+        py::handle<> hValue(value);
+        py::str strValue(hValue);
+        py::extract<const char*> extractor(strValue);
+        if (extractor.check())
+            exc.value = extractor();
+    }
+
+    if (traceback) {
+        py::handle<> hTraceback(traceback);
+        py::object format_tb(py::import("traceback").attr("format_tb"));
+        py::list lines(format_tb(hTraceback));
+        for (int i = 0; i < py::len(lines); i++) {
+            py::extract<const char*> extractor(lines[i]);
+            if (extractor.check()) {
+                QString line = extractor();
+                exc.traceback.append(line.split('\n'));
+            }
+        }
+    }
+
+    return exc;
+}
+
+void logPythonException()
+{
+    PythonException exc = getPythonException();
+
+    qxtLog->debug("Python traceback (most recent call last):");
+    for (auto &line : exc.traceback)
+        if (!line.isEmpty())
+            qxtLog->debug(line);
+
+    qxtLog->error(exc.type + ": " + exc.value);
 }

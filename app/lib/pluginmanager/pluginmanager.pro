@@ -26,6 +26,7 @@ HEADERS += native/util.h
 
 SOURCES += python/host.cpp
 HEADERS += python/host.h \
+           python/exception.h \
            python/bindings/elapse.h \
            python/bindings/elements.h \
            python/bindings/log.h \

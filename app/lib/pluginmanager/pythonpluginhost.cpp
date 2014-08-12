@@ -1,8 +1,8 @@
 #include <QDir>
-#include <QxtLogger>
 #include <boost/python.hpp>
 #include "pythonpluginhost.h"
 #include "python/host.h"
+#include "python/exception.h"
 
 
 /*!
@@ -41,7 +41,7 @@ PluginData PythonPluginHost::getInfo(const QString &pluginPath)
             data.classes.append(cls);
         }
     } catch (const boost::python::error_already_set &) {
-        PyErr_Print();
+        logPythonException();
         return PluginData();
     }
 
@@ -60,7 +60,7 @@ QObject *PythonPluginHost::instantiateClass(const PluginInfo &plugin,
         obj = pyhost::extractQObject(pyobj, cls.elementClass);
         pyhost::instances[obj] = pyobj;
     } catch (const boost::python::error_already_set&) {
-        PyErr_Print();
+        logPythonException();
         return nullptr;
     }
 
