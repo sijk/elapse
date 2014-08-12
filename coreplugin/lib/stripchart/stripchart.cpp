@@ -6,6 +6,11 @@
 #include "stripchart.h"
 
 
+static const QList<QColor> lineColours = {
+    Qt::red, Qt::yellow, Qt::green, Qt::cyan, Qt::blue, Qt::magenta,
+};
+
+
 /*!
  * \brief The StripChartScaleDraw class labels the y-axis of a StripChart.
  *
@@ -82,6 +87,7 @@ void StripChart::createStrips()
     // Create `nstrips` arrays of y data and associated plot curves
     for (uint i = 0; i < _nStrips; i++) {
         QwtPlotCurve *line = new QwtPlotCurve;
+        line->setPen(lineColours[i % lineColours.size()]);
         line->attach(plot);
         lines.append(line);
 
