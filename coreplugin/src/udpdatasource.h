@@ -17,7 +17,7 @@ class UdpDataSource : public elapse::DataSource
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit UdpDataSource(QObject *parent = nullptr);
+    Q_INVOKABLE UdpDataSource();
 
 public slots:
     void start();

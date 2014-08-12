@@ -131,10 +131,9 @@ void EegDecoderPrivate::plotData(const EegSample *sample)
 
 
 /*!
- * Construct a new EegDecoder as a child of the given \a parent.
+ * Construct a new EegDecoder.
  */
-EegDecoder::EegDecoder(QObject *parent) :
-    SampleDecoder(parent),
+EegDecoder::EegDecoder() :
     d_ptr(new EegDecoderPrivate)
 {
 }

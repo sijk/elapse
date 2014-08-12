@@ -14,10 +14,9 @@ T sum(const Container &c)
 
 
 /*!
- * Create a DummyVideoFeatureExtractor as a child of the given \a parent.
+ * Create a DummyVideoFeatureExtractor.
  */
-DummyVideoFeatureExtractor::DummyVideoFeatureExtractor(QObject *parent) :
-    BaseFeatureExtractor(parent)
+DummyVideoFeatureExtractor::DummyVideoFeatureExtractor()
 {
 }
 

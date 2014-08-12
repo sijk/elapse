@@ -24,9 +24,8 @@ namespace elapse {
 class DataSink : public QObject
 {
     Q_OBJECT
-public:
-    explicit DataSink(QObject *parent = nullptr);
 
+public:
     bool start();
     void stop();
 

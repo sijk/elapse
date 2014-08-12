@@ -10,7 +10,7 @@ class BarEegDecoder : public elapse::SampleDecoder
     Q_CLASSINFO("SignalType", "EEG")
 
 public:
-    Q_INVOKABLE explicit BarEegDecoder(QObject *parent = nullptr);
+    Q_INVOKABLE BarEegDecoder();
 
 public slots:
     void onData(QByteArray data);

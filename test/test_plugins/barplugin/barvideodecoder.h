@@ -10,7 +10,7 @@ class BarVideoDecoder : public elapse::SampleDecoder
     Q_CLASSINFO("SignalType", "VIDEO")
 
 public:
-    Q_INVOKABLE explicit BarVideoDecoder(QObject *parent = nullptr);
+    Q_INVOKABLE BarVideoDecoder();
 
 public slots:
     void onData(QByteArray data);

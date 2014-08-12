@@ -5,14 +5,6 @@ using elapse::Signal;
 
 
 /*!
- * Create a new DataSink as a child of the given \a parent.
- */
-elapse::DataSink::DataSink(QObject *parent) :
-    QObject(parent)
-{
-}
-
-/*!
  * Start saving data.
  *
  * This first checks whether it needsNewCaptureInfo() and calls

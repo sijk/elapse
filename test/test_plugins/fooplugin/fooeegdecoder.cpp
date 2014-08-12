@@ -5,8 +5,7 @@ using elapse::EegSample;
 using elapse::SamplePtr;
 
 
-FooEegDecoder::FooEegDecoder(QObject *parent) :
-    SampleDecoder(parent)
+FooEegDecoder::FooEegDecoder()
 {
 }
 

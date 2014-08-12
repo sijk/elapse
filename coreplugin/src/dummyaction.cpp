@@ -3,10 +3,9 @@
 
 
 /*!
- * Create a new DummyAction as a child of the given \a parent.
+ * Create a new DummyAction.
  */
-DummyAction::DummyAction(QObject *parent) :
-    OutputAction(parent)
+DummyAction::DummyAction()
 {
 }
 

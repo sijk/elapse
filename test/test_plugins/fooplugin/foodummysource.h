@@ -10,7 +10,7 @@ class FooDummySource : public elapse::DataSource
     Q_OBJECT
 
 public:
-    Q_INVOKABLE explicit FooDummySource(QObject *parent = nullptr);
+    Q_INVOKABLE FooDummySource();
 
 public slots:
     void start();

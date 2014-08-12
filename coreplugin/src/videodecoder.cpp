@@ -267,13 +267,12 @@ void VideoDecoderPrivate::onStateChange(const QGst::MessagePtr &msg)
 
 
 /*!
- * Create a new VideoDecoder as a child of the given \a parent.
+ * Create a new VideoDecoder.
  *
  * Internally, the VideoDecoder uses a QGst::Pipeline to decode the video
  * stream.
  */
-VideoDecoder::VideoDecoder(QObject *parent) :
-    SampleDecoder(parent),
+VideoDecoder::VideoDecoder() :
     d_ptr(new VideoDecoderPrivate(this))
 {
 }

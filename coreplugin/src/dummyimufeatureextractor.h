@@ -22,7 +22,7 @@ class DummyImuFeatureExtractor : public elapse::BaseFeatureExtractor,
     Q_CLASSINFO("SignalType", "IMU")
 
 public:
-    Q_INVOKABLE explicit DummyImuFeatureExtractor(QObject *parent = nullptr);
+    Q_INVOKABLE DummyImuFeatureExtractor();
 
     QWidget *getWidget();
 

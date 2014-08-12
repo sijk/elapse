@@ -14,7 +14,7 @@ class DummyClassifier : public elapse::BaseClassifier
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit DummyClassifier(QObject *parent = nullptr);
+    Q_INVOKABLE DummyClassifier();
 
 protected:
     elapse::CognitiveState classify(QList<elapse::FeatureVector> featureVectors);

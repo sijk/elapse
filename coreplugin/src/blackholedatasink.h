@@ -13,7 +13,7 @@ class BlackHoleDataSink : public elapse::DataSink
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit BlackHoleDataSink(QObject *parent = nullptr);
+    Q_INVOKABLE BlackHoleDataSink();
 
     bool startSaving();
     void stopSaving();

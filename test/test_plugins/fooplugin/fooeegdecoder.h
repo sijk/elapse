@@ -10,7 +10,7 @@ class FooEegDecoder : public elapse::SampleDecoder
     Q_CLASSINFO("SignalType", "EEG")
 
 public:
-    Q_INVOKABLE explicit FooEegDecoder(QObject *parent = nullptr);
+    Q_INVOKABLE FooEegDecoder();
 
 public slots:
     void onData(QByteArray data);

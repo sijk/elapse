@@ -29,9 +29,6 @@ class DataSource : public QObject
 {
     Q_OBJECT
 public:
-    /*! Construct a new DataSource as a child of the given \a parent. */
-    explicit DataSource(QObject *parent = nullptr) : QObject(parent) {}
-
     /*! \return whether this is an OfflineDataSource. */
     bool isOfflineSource() const;
 
@@ -111,7 +108,7 @@ class OfflineDataSource : public DataSource, public ConfigManager
 {
     Q_OBJECT
 public:
-    explicit OfflineDataSource(QObject *parent = nullptr);
+    explicit OfflineDataSource();
     ~OfflineDataSource();
 
 protected:

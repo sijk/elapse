@@ -19,7 +19,7 @@ class VideoDecoder : public elapse::SampleDecoder, public elapse::Displayable
     Q_CLASSINFO("SignalType", "VIDEO")
 
 public:
-    Q_INVOKABLE explicit VideoDecoder(QObject *parent = nullptr);
+    Q_INVOKABLE VideoDecoder();
     ~VideoDecoder();
 
     QWidget *getWidget();

@@ -138,10 +138,9 @@ void SimpleRawDataSourcePrivate::stop()
 
 
 /*!
- * Construct a new SimpleRawDataSource as a child of the given \a parent.
+ * Construct a new SimpleRawDataSource.
  */
-SimpleRawDataSource::SimpleRawDataSource(QObject *parent) :
-    OfflineDataSource(parent),
+SimpleRawDataSource::SimpleRawDataSource() :
     d_ptr(new SimpleRawDataSourcePrivate(this))
 {
     exposeDeviceInterface();

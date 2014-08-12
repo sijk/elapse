@@ -7,10 +7,9 @@ using elapse::SamplePtr;
 
 
 /*!
- * Create a new ImuDecoder as a child of the given \a parent.
+ * Create a new ImuDecoder.
  */
-ImuDecoder::ImuDecoder(QObject *parent) :
-    SampleDecoder(parent)
+ImuDecoder::ImuDecoder()
 {
 }
 

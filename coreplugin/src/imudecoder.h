@@ -16,7 +16,7 @@ class ImuDecoder : public elapse::SampleDecoder
     Q_CLASSINFO("SignalType", "IMU")
 
 public:
-    Q_INVOKABLE explicit ImuDecoder(QObject *parent = nullptr);
+    Q_INVOKABLE ImuDecoder();
 
 public slots:
     void onData(QByteArray data);

@@ -22,7 +22,7 @@ class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
     Q_CLASSINFO("SignalType", "VIDEO")
 
 public:
-    Q_INVOKABLE explicit DummyVideoFeatureExtractor(QObject *parent = nullptr);
+    Q_INVOKABLE DummyVideoFeatureExtractor();
 
     void setStartTime(elapse::TimeStamp timestamp);
 

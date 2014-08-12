@@ -5,8 +5,7 @@ using elapse::VideoSample;
 using elapse::SamplePtr;
 
 
-BarVideoDecoder::BarVideoDecoder(QObject *parent) :
-    SampleDecoder(parent)
+BarVideoDecoder::BarVideoDecoder()
 {
 }
 

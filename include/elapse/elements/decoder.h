@@ -25,13 +25,6 @@ namespace elapse {
 class SampleDecoder : public QObject
 {
     Q_OBJECT
-public:
-    /*! Construct a new SampleDecoder as a child of the given \a parent. */
-    explicit SampleDecoder(QObject *parent = nullptr) : QObject(parent) {}
-
-    /*! Destroy this SampleDecoder. */
-    virtual ~SampleDecoder() {}
-
 signals:
     /*! Emitted when a \a sample has been decoded. */
     void newSample(elapse::SamplePtr sample);

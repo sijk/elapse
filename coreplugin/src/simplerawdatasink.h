@@ -25,7 +25,7 @@ class SimpleRawDataSink : public elapse::DataSink
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit SimpleRawDataSink(QObject *parent = nullptr);
+    Q_INVOKABLE SimpleRawDataSink();
 
     bool startSaving();
     void stopSaving();

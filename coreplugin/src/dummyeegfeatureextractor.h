@@ -17,7 +17,7 @@ class DummyEegFeatureExtractor : public elapse::BaseFeatureExtractor
     Q_CLASSINFO("SignalType", "EEG")
 
 public:
-    Q_INVOKABLE explicit DummyEegFeatureExtractor(QObject *parent = nullptr);
+    Q_INVOKABLE DummyEegFeatureExtractor();
 
 protected:
     void analyseSample(elapse::SamplePtr sample);

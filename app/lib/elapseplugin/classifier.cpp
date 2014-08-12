@@ -4,14 +4,6 @@
 #include "elapse/elements/classifier.h"
 
 
-/*!
- * Construct a new BaseClassifier as a child of the given \a parent.
- */
-elapse::BaseClassifier::BaseClassifier(QObject *parent) :
-    Classifier(parent)
-{
-}
-
 void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
 {
     Q_ASSERT(featVect.startTime > 0);

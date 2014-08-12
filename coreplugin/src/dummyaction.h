@@ -14,7 +14,7 @@ class DummyAction : public elapse::OutputAction
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit DummyAction(QObject *parent = nullptr);
+    Q_INVOKABLE DummyAction();
 
 public slots:
     void onState(elapse::CognitiveState state);

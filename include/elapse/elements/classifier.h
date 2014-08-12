@@ -23,13 +23,6 @@ class Classifier : public QObject
 {
     Q_OBJECT
 
-public:
-    /*! Construct a new Classifier as a child of the given \a parent. */
-    explicit Classifier(QObject *parent = nullptr) : QObject(parent) {}
-
-    /*! Destroy this Classifier. */
-    virtual ~Classifier() {}
-
 public slots:
     /*!
      * Called when \a features are available for classification. This slot will
@@ -69,8 +62,6 @@ signals:
 class BaseClassifier : public Classifier
 {
     Q_OBJECT
-public:
-    explicit BaseClassifier(QObject *parent = nullptr);
 
 public slots:
     void onFeatures(elapse::FeatureVector featVect);

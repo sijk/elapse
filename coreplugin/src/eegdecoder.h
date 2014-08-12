@@ -22,7 +22,7 @@ class EegDecoder : public elapse::SampleDecoder, public elapse::Displayable
     Q_PROPERTY(uint nChannels READ nChannels WRITE setNChannels)
 
 public:
-    Q_INVOKABLE explicit EegDecoder(QObject *parent = nullptr);
+    Q_INVOKABLE EegDecoder();
     ~EegDecoder();
 
     quint8 gain() const;

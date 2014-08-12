@@ -1,8 +1,7 @@
 #include "headwidget.h"
 #include "dummyimufeatureextractor.h"
 
-DummyImuFeatureExtractor::DummyImuFeatureExtractor(QObject *parent) :
-    BaseFeatureExtractor(parent),
+DummyImuFeatureExtractor::DummyImuFeatureExtractor() :
     headWidget(nullptr)
 {
 }

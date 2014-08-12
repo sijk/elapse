@@ -24,12 +24,6 @@ class FeatureExtractor : public QObject
     Q_OBJECT
 
 public:
-    /*! Construct a new FeatureExtractor as a child of the given \a parent. */
-    explicit FeatureExtractor(QObject *parent = nullptr) : QObject(parent) {}
-
-    /*! Destroy this FeatureExtractor. */
-    virtual ~FeatureExtractor() {}
-
     /*! Set the \a timestamp at which the first window begins. */
     virtual void setStartTime(TimeStamp timestamp) = 0;
 
@@ -71,8 +65,9 @@ class BaseFeatureExtractorPrivate;
 class BaseFeatureExtractor : public FeatureExtractor
 {
     Q_OBJECT
+
 public:
-    explicit BaseFeatureExtractor(QObject *parent = nullptr);
+    explicit BaseFeatureExtractor();
     ~BaseFeatureExtractor();
 
     void setStartTime(TimeStamp timestamp);

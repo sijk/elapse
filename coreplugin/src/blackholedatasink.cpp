@@ -4,10 +4,9 @@
 
 
 /*!
- * Create a new BlackHoleDataSink as a child of the given \a parent.
+ * Create a new BlackHoleDataSink.
  */
-BlackHoleDataSink::BlackHoleDataSink(QObject *parent) :
-    DataSink(parent)
+BlackHoleDataSink::BlackHoleDataSink()
 {
 }
 

@@ -19,7 +19,7 @@ class SimpleRawDataSource : public elapse::OfflineDataSource,
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE explicit SimpleRawDataSource(QObject *parent = nullptr);
+    Q_INVOKABLE SimpleRawDataSource();
     ~SimpleRawDataSource();
 
     QVariant get(const QString &subSystem, const QString &property);

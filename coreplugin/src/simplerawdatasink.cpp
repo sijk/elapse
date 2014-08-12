@@ -5,10 +5,9 @@
 
 
 /*!
- * Create a new SimpleRawDataSink as a child of the given \a parent.
+ * Create a new SimpleRawDataSink.
  */
-SimpleRawDataSink::SimpleRawDataSink(QObject *parent) :
-    DataSink(parent)
+SimpleRawDataSink::SimpleRawDataSink()
 {
 }
 

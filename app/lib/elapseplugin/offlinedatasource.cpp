@@ -25,10 +25,9 @@ elapse::OfflineDataSourcePrivate::OfflineDataSourcePrivate(ConfigManager *config
 
 
 /*!
- * Construct a new OfflineDataSource as a child of the given \a parent.
+ * Construct a new OfflineDataSource.
  */
-elapse::OfflineDataSource::OfflineDataSource(QObject *parent) :
-    DataSource(parent),
+elapse::OfflineDataSource::OfflineDataSource() :
     d_ptr(nullptr)
 {
 }

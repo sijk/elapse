@@ -27,10 +27,9 @@ elapse::BaseFeatureExtractorPrivate *elapse::BaseFeatureExtractorPrivate::expose
 
 
 /*!
- * Create a BaseFeatureExtractor as a child of the given \a parent.
+ * Create a BaseFeatureExtractor.
  */
-elapse::BaseFeatureExtractor::BaseFeatureExtractor(QObject *parent) :
-    FeatureExtractor(parent),
+elapse::BaseFeatureExtractor::BaseFeatureExtractor() :
     d_ptr(new BaseFeatureExtractorPrivate)
 {
 }

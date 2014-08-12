@@ -1,7 +1,6 @@
 #include "dummyeegfeatureextractor.h"
 
-DummyEegFeatureExtractor::DummyEegFeatureExtractor(QObject *parent) :
-    BaseFeatureExtractor(parent)
+DummyEegFeatureExtractor::DummyEegFeatureExtractor()
 {
 }
 

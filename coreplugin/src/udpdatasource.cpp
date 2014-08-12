@@ -6,10 +6,9 @@
 
 
 /*!
- * Construct a new UdpDataSource as a child of the given \a parent.
+ * Construct a new UdpDataSource.
  */
-UdpDataSource::UdpDataSource(QObject *parent) :
-    DataSource(parent)
+UdpDataSource::UdpDataSource()
 {
     connect(&eegSock,   SIGNAL(readyRead()), SLOT(readAndEmit()));
     connect(&imuSock,   SIGNAL(readyRead()), SLOT(readAndEmit()));

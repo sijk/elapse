@@ -6,10 +6,9 @@ using elapse::CognitiveState;
 
 
 /*!
- * Create a new DummyClassifier as a child of the given \a parent.
+ * Create a new DummyClassifier.
  */
-DummyClassifier::DummyClassifier(QObject *parent) :
-    BaseClassifier(parent)
+DummyClassifier::DummyClassifier()
 {
 }
 

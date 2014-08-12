@@ -21,12 +21,6 @@ namespace elapse {
 class OutputAction : public QObject
 {
     Q_OBJECT
-public:
-    /*! Construct a new OutputAction as a child of the given \a parent. */
-    explicit OutputAction(QObject *parent = nullptr) : QObject(parent) {}
-
-    /*! Destroy this OutputAction. */
-    virtual ~OutputAction() {}
 
 public slots:
     /*!

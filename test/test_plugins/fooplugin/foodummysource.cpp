@@ -2,8 +2,7 @@
 #include "foodummysource.h"
 
 
-FooDummySource::FooDummySource(QObject *parent) :
-    DataSource(parent)
+FooDummySource::FooDummySource()
 {
     connect(&timer, SIGNAL(timeout()), SLOT(emitDummyData()));
 }
