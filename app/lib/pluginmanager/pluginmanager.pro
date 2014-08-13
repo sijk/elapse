@@ -30,7 +30,8 @@ HEADERS += python/host.h \
            python/bindings/elapse.h \
            python/bindings/elements.h \
            python/bindings/log.h \
-           python/bindings/settings.h
+           python/bindings/settings.h \
+           python/bindings/gui.h
 
 LIBS    += -lboost_python
 

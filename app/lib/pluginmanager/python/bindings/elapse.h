@@ -9,6 +9,7 @@
 #include "elements.h"
 #include "log.h"
 #include "settings.h"
+#include "gui.h"
 
 
 struct VideoSample_wrap : elapse::VideoSample
@@ -40,6 +41,7 @@ BOOST_PYTHON_MODULE(elapse)
     export_elements();
     export_log();
     export_settings();
+    export_gui();
 
     {
         scope Signal = class_<elapse::Signal>("Signal", no_init)
