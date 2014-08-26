@@ -39,6 +39,11 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->connectedToolBar->setVisible(false);
     ui->connectedToolBar->addWidget(ui->spinnerStarting);
 
+    connect(ui->autoConnect, &QCheckBox::toggled, [](bool checked){
+        QSettings().setValue("auto-connect", checked);
+    });
+    ui->autoConnect->setChecked(QSettings().value("auto-connect").toBool());
+
     addDockWidgetFrom(batteryMonitor);
 
     connect(ui->deviceAddress, SIGNAL(returnPressed()),
@@ -86,7 +91,7 @@ void ElapseClient::warnBatteryLow()
 
 void ElapseClient::maybeAutoConnect()
 {
-    if (QSettings().value("auto-connect", true).toBool())
+    if (QSettings().value("auto-connect").toBool())
         QMetaObject::invokeMethod(ui->actionConnect, "trigger", Qt::QueuedConnection);
 }
 
@@ -155,6 +160,7 @@ void ElapseClient::buildStateMachine()
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
     connecting->assignProperty(ui->actionPlugins, "enabled", false);
+    connecting->assignProperty(ui->autoConnect, "enabled", false);
     connecting->assignProperty(this, "cursor", QCursor(Qt::WaitCursor));
     connecting->addTransition(proxy, SIGNAL(error(QString)), disconnected);
     connecting->addTransition(proxy, SIGNAL(connected()), connected);
