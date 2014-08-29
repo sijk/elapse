@@ -63,8 +63,6 @@ BOOST_PYTHON_MODULE(elapse)
     class_<elapse::Sample>("Sample")
         .def_readonly("timestamp", &elapse::Sample::timestamp);
 
-    register_ptr_to_python<elapse::SamplePtr>();
-
     class_<elapse::EegSample, bases<elapse::Sample>>("EegSample")
         .def_readonly("seqnum", &elapse::EegSample::seqnum)
         .def_readonly("leadOff", &elapse::EegSample::seqnum)
@@ -80,6 +78,11 @@ BOOST_PYTHON_MODULE(elapse)
                                          return_value_policy<return_by_value>()))
         .add_property("gyr", make_getter(&elapse::ImuSample::gyr,
                                          return_value_policy<return_by_value>()));
+
+    register_ptr_to_python<elapse::SamplePtr>();
+    register_ptr_to_python<std::shared_ptr<const elapse::EegSample>>();
+    register_ptr_to_python<std::shared_ptr<const elapse::VideoSample>>();
+    register_ptr_to_python<std::shared_ptr<const elapse::ImuSample>>();
 
     class_<elapse::FeatureVector>("FeatureVector",
                                   init<elapse::Signal::Type, elapse::TimeStamp>())

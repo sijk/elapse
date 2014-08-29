@@ -4,6 +4,7 @@
 #ifndef DOXYGEN
 
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include "python/exception.h"
 #include "elapse/elements/featurextractor.h"
 #include "elapse/elements/classifier.h"
@@ -19,7 +20,10 @@ namespace py = boost::python;
  */
 #define PYCATCH(expr) \
     try { expr; } \
-    catch (const py::error_already_set&) { logPythonException(); }
+    catch (const py::error_already_set&) { \
+        qxtLog->trace(QString("Error in '%1'").arg(#expr)); \
+        logPythonException(); \
+    }
 
 /*!
  * Execute the given \a expr and return the result, unless a Python runtime
@@ -27,7 +31,10 @@ namespace py = boost::python;
  */
 #define PYCATCH_RETURN(expr, def) \
     try { return expr; } \
-    catch (const py::error_already_set&) { logPythonException(); } \
+    catch (const py::error_already_set&) { \
+        qxtLog->trace(QString("Error in '%1'").arg(#expr)); \
+        logPythonException(); \
+    } \
     return def
 
 
@@ -54,7 +61,7 @@ public:
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
     virtual void analyseSample(elapse::SamplePtr sample) = 0;
-    virtual std::vector<double> features() = 0;
+    virtual py::list pyfeatures() = 0;
     virtual void removeDataBefore(elapse::TimeStamp time) = 0;
     virtual void reset() { elapse::BaseFeatureExtractor::reset(); }
 };
@@ -66,6 +73,13 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
         PYCATCH(this->get_override("analyseSample")(sample));
     }
     std::vector<double> features() {
+        // py::list  ->  vector<double>
+        py::list feat;
+        PYCATCH(feat = this->pyfeatures());
+        py::stl_input_iterator<double> begin(feat), end;
+        return std::vector<double>(begin, end);
+    }
+    py::list pyfeatures() {
         PYCATCH_RETURN(this->get_override("features")(), {});
     }
     void removeDataBefore(elapse::TimeStamp time) {
@@ -228,7 +242,7 @@ void export_elements()
     class_<BaseFeatureExtractorWrap, bases<elapse::FeatureExtractor>,
            boost::noncopyable>("BaseFeatureExtractor")
         .def("analyseSample", pure_virtual(&BaseFeatureExtractorPublic::analyseSample))
-        .def("features", pure_virtual(&BaseFeatureExtractorPublic::features))
+        .def("features", pure_virtual(&BaseFeatureExtractorPublic::pyfeatures))
         .def("removeDataBefore", pure_virtual(&BaseFeatureExtractorPublic::removeDataBefore))
         .def("reset", &BaseFeatureExtractorPublic::reset,
                       &BaseFeatureExtractorWrap::default_reset);
