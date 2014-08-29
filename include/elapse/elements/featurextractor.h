@@ -33,6 +33,9 @@ public:
     /*! Set the time between the beginning of adjacent windows in \a ms. */
     virtual void setWindowStep(uint ms) = 0;
 
+    /*! Configure this FeatureExtractor to match the given hardware \a config. */
+    virtual void configure(QMap<QString, QVariantMap> config) { Q_UNUSED(config); }
+
 public slots:
     /*! Executed when the next \a sample is available for analysis. */
     virtual void onSample(elapse::SamplePtr sample) = 0;

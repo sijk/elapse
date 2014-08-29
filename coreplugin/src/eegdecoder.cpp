@@ -147,6 +147,16 @@ EegDecoder::~EegDecoder()
 }
 
 /*!
+ * Configure gain, vref, and nChannels to match the given hardware \a config.
+ */
+void EegDecoder::configure(QMap<QString, QVariantMap> config)
+{
+    setNChannels(config["eeg"]["nChannels"].toUInt());
+    setVref(config["eeg"]["vref"].toDouble());
+    setGain(config["eeg/channel/0"]["gain"].toUInt());
+}
+
+/*!
  * The device's current gain setting for all channels.
  */
 quint8 EegDecoder::gain() const

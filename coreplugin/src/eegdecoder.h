@@ -25,6 +25,8 @@ public:
     Q_INVOKABLE EegDecoder();
     ~EegDecoder();
 
+    void configure(QMap<QString, QVariantMap> config);
+
     quint8 gain() const;
     void setGain(quint8 gain);
 

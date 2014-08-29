@@ -45,6 +45,7 @@ private slots:
     void maybeAutoConnect();
     void loadElementWidgets(ElementSetPtr elements);
     void connectToDevice();
+    void createDefaultHardwareConfig();
     void configure();
     void unconfigure();
     void start();
