@@ -309,8 +309,7 @@ void ElapseClient::start()
 {
     pipeline->start();
 
-    // Save the device configuration
-    auto cfg = proxy->readDeviceConfig();
+    auto cfg = proxy->getDeviceConfig();
     pipeline->elements()->dataSink->saveDeviceConfig(cfg);
 
     // Do any setup that requires an offline source to have been started

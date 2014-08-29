@@ -61,7 +61,7 @@ TEST(ConfigDBusTest, GetConfigViaDBus)
     EXPECT_EQ(error.count(), 0);
 }
 
-TEST(ConfigDBusTest, ReadDeviceConfig)
+TEST(ConfigDBusTest, GetDeviceConfig)
 {
     MockOfflineDataSource src;
     EXPECT_CALL(src, get(_,_))
@@ -78,7 +78,7 @@ TEST(ConfigDBusTest, ReadDeviceConfig)
     ASSERT_EQ(connected.count(), 1);
 
     ASSERT_TRUE(proxy.device()->isAccessible());
-    auto cfg = proxy.readDeviceConfig();
+    auto cfg = proxy.getDeviceConfig();
     auto subSystems = cfg.keys();
     EXPECT_THAT(subSystems, Contains("battery"));
     EXPECT_THAT(subSystems, Contains("imu"));
