@@ -13,7 +13,7 @@
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
 
-#define DEFAULT_ADDR    "overo.local"
+#define DEFAULT_ADDR    "192.168.2.2"
 
 
 /*!
@@ -46,9 +46,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
 
     addDockWidgetFrom(batteryMonitor);
 
-    connect(ui->deviceAddress, SIGNAL(returnPressed()),
-            ui->actionConnect, SLOT(trigger()));
-
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
     connect(logView, SIGNAL(visibilityChanged(bool)),
@@ -60,8 +57,6 @@ ElapseClient::ElapseClient(QWidget *parent) :
             pipeline, SLOT(setElements(ElementSetPtr)));
     connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
             SLOT(loadElementWidgets(ElementSetPtr)));
-    connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
-            SLOT(fillDeviceAddress()));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(proxy, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -155,8 +150,7 @@ void ElapseClient::buildStateMachine()
 
     disconnected->addTransition(ui->actionConnect, SIGNAL(triggered()), connecting);
 
-    connect(connecting, &QState::entered,
-            [=]{ proxy->connectTo(ui->deviceAddress->text()); });
+    connect(connecting, SIGNAL(entered()), SLOT(connectToDevice()));
     connecting->assignProperty(ui->spinnerConnecting, "running", true);
     connecting->assignProperty(ui->actionConnect, "enabled", false);
     connecting->assignProperty(ui->actionPlugins, "enabled", false);
@@ -196,6 +190,22 @@ void ElapseClient::buildStateMachine()
     machine->start();
 }
 
+/**
+ * Connect to the appropriate device address depending on whether the
+ * DataSource::isOfflineSource().
+ */
+void ElapseClient::connectToDevice()
+{
+    auto elements = pipeline->elements();
+    Q_ASSERT(elements);
+    if (elements->dataSource->isOfflineSource()) {
+        proxy->connectTo("localhost");
+    } else {
+        QString host = QSettings().value("host", DEFAULT_ADDR).toString();
+        proxy->connectTo(host);
+    }
+}
+
 /*!
  * Add widgets from Displayable elements.
  */
@@ -203,31 +213,6 @@ void ElapseClient::loadElementWidgets(ElementSetPtr elements)
 {
     foreach (auto &element, elements->allElements())
         addDockWidgetFrom(element.data());
-}
-
-/*!
- * Fill in the device address entry appropriately depending on whether the
- * DataSource::isOfflineSource().
- */
-void ElapseClient::fillDeviceAddress()
-{
-    auto elements = pipeline->elements();
-    Q_ASSERT(elements);
-
-    if (elements->dataSource->isOfflineSource()) {
-        qxtLog->debug(elements->dataSource->metaObject()->className(),
-                      "is an offline data source");
-        ui->deviceAddress->setText("localhost");
-        ui->deviceAddress->setEnabled(false);
-    } else {
-        qxtLog->debug(elements->dataSource->metaObject()->className(),
-                      "is an online data source");
-        auto defaultAddr = QSettings().value("host", DEFAULT_ADDR).toString();
-        auto address = ui->deviceAddress->text();
-        if (address.isEmpty() || address == "localhost")
-            ui->deviceAddress->setText(defaultAddr);
-        ui->deviceAddress->setEnabled(true);
-    }
 }
 
 /*!
