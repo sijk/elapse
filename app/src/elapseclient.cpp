@@ -32,6 +32,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks);
 
     qxtLog->info("Using settings from", QSettings().fileName());
+    createDefaultHardwareConfig();
 
     ui->buttonPlugins->setVisible(false);
     ui->buttonPlugins->setDefaultAction(ui->actionPlugins);
@@ -263,28 +264,90 @@ void ElapseClient::setDockWidgetsVisible(bool visible)
     }
 }
 
+void ElapseClient::createDefaultHardwareConfig()
+{
+    QSettings settings;
+
+    auto setDefault = [&](const QString &prop, QVariant val) {
+        if (!settings.contains(prop))
+            settings.setValue(prop, val);
+    };
+
+    settings.beginGroup("hardware");
+
+    setDefault("eeg/useRefElec", true);
+    setDefault("eeg/sampleRate", 250);
+    setDefault("eeg/samplesPerChunk", 20);
+    setDefault("eeg/all-channels/enabled", true);
+    setDefault("eeg/all-channels/gain", iface::EegChannel::x24);
+    setDefault("eeg/all-channels/inputMux", iface::EegChannel::Normal);
+
+    settings.endGroup();
+}
+
 void ElapseClient::configure()
 {
     QSettings settings;
 
-    // Configure the device
+    // Configure the device according to the settings file
 
-    uint eegSampleRate = settings.value("eeg/samplerate", 250).toUInt();
-    uint eegChunkSize  = settings.value("eeg/chunksize", 20).toUInt();
-    uint eegGain       = settings.value("eeg/gain", 24).toUInt();
+    settings.beginGroup("hardware");
+    std::vector<std::pair<const char*, QObject*>> sensors = {
+        { "eeg",    proxy->device()->eeg() },
+        { "camera", proxy->device()->camera() },
+        { "imu",    proxy->device()->imu() },
+        { "battery",proxy->device()->battery() },
+    };
+    for (auto &s : sensors) {
+        const char *name = s.first;
+        QObject *sensor = s.second;
+        settings.beginGroup(name);
 
-    auto eeg = proxy->device()->eeg();
-    eeg->setSampleRate(iface::EegAdc::SampleRate(eegSampleRate));
-    eeg->setSamplesPerChunk(eegChunkSize);
-    eeg->setUseRefElec(true);
-    eeg->setAllChannels({{"enabled", true},
-                         {"gain", eegGain},
-                         {"inputMux", "Normal"}});
+        qxtLog->trace(name);
+        for (auto &prop : settings.childKeys()) {
+            auto val = settings.value(prop);
+            qxtLog->trace("  ", prop, "=", val);
+            sensor->setProperty(prop.toLatin1().constData(), val);
+        }
+
+        // Special case for EEG channels
+        auto eeg = proxy->device()->eeg();
+        if (sensor == eeg) {
+            settings.beginGroup("all-channels");
+            qxtLog->trace("  all");
+            QVariantMap allChannels;
+            for (auto &prop : settings.childKeys()) {
+                auto val = settings.value(prop);
+                qxtLog->trace("    ", prop, "=", val);
+                allChannels.insert(prop, val);
+            }
+            eeg->setAllChannels(allChannels);
+            settings.endGroup();
+
+            settings.beginGroup("channel");
+            for (auto &channel : settings.childGroups()) {
+                uint ch = channel.toUInt();
+                qxtLog->trace("  ", ch);
+                settings.beginGroup(channel);
+                for (auto &prop : settings.childKeys()) {
+                    auto val = settings.value(prop);
+                    qxtLog->trace("    ", prop, "=", val);
+                    eeg->channel(ch)->setProperty(prop.toLatin1().constData(), val);
+                }
+                settings.endGroup();
+            }
+            settings.endGroup();
+        }
+        settings.endGroup();
+    }
+    settings.endGroup();
 
     // Other setup
 
-    pipeline->setWindowLength(1000);
-    pipeline->setWindowStep(500);
+    settings.beginGroup("pipeline/window");
+    pipeline->setWindowLength(settings.value("length", 1000).toUInt());
+    pipeline->setWindowStep(settings.value("step", 500).toUInt());
+    settings.endGroup();
 
     qxtLog->debug("Notifying server that our address is", proxy->localAddress());
     proxy->device()->setClientAddress(proxy->localAddress());
@@ -309,16 +372,8 @@ void ElapseClient::start()
 {
     pipeline->start();
 
-    // Save the device configuration
-    auto cfg = proxy->readDeviceConfig();
-    pipeline->elements()->dataSink->saveDeviceConfig(cfg);
-
-    // Do any setup that requires an offline source to have been started
-    auto eeg = proxy->device()->eeg();
-    auto eegDecoder = pipeline->elements()->sampleDecoders[Signal::EEG];
-    eegDecoder->setProperty("gain", eeg->channel(0)->gain());
-    eegDecoder->setProperty("vref", eeg->vref());
-    eegDecoder->setProperty("nChannels", eeg->nChannels());
+    auto cfg = proxy->getDeviceConfig();
+    pipeline->setDeviceConfig(cfg);
 
     proxy->device()->startStreaming();
 }

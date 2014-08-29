@@ -67,7 +67,7 @@ QString DeviceProxy::localAddress() const
  *   "subSystem2", ... }
  * \endcode
  */
-QMap<QString, QVariantMap> DeviceProxy::readDeviceConfig() const
+QMap<QString, QVariantMap> DeviceProxy::getDeviceConfig() const
 {
     Q_ASSERT(dev);
     QMap<QString, QVariantMap> config;
@@ -80,7 +80,7 @@ QMap<QString, QVariantMap> DeviceProxy::readDeviceConfig() const
         for (int i = 0; i < obj->metaObject()->propertyCount(); i++) {
             auto prop = obj->metaObject()->property(i);
             if (prop.isReadable() && qstrcmp(prop.name(), "objectName")) {
-                qxtLog->trace(prop.name(), prop.read(obj));
+                qxtLog->trace("    ", prop.name(), "=", prop.read(obj));
                 props.insert(prop.name(), prop.read(obj));
             }
         }
@@ -88,10 +88,11 @@ QMap<QString, QVariantMap> DeviceProxy::readDeviceConfig() const
     };
 
     auto readConfig = [&](const QString &subSystem, const QObject *obj) {
-        qxtLog->trace("---", subSystem);
+        qxtLog->trace("  ", subSystem);
         config.insert(subSystem, getProperties(obj));
     };
 
+    qxtLog->trace("Hardware config:");
     readConfig("battery", dev->battery());
     readConfig("imu", dev->imu());
     readConfig("camera", dev->camera());

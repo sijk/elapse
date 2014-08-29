@@ -37,6 +37,11 @@ signals:
 
 public slots:
     /*!
+     * Configure this SampleDecoder to match the given hardware \a config.
+     */
+    virtual void configure(QMap<QString, QVariantMap> config) { Q_UNUSED(config); }
+
+    /*!
      * Called when starting the Pipeline. Subclasses may override this method
      * to do any initialisation they require.
      */

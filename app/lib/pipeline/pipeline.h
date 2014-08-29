@@ -34,6 +34,7 @@ public:
 
 public slots:
     void setElements(ElementSetPtr newElements);
+    void setDeviceConfig(QMap<QString, QVariantMap> config);
 
     void start();
     void stop();

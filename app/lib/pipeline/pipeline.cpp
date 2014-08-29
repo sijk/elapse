@@ -185,6 +185,22 @@ void Pipeline::setElements(ElementSetPtr newElements)
 }
 
 /*!
+ * Configure the elapse::SampleDecoder%s  and elapse::FeatureExtractor%s
+ * to match the hardware \a config and also pass it to
+ * elapse::DataSink::saveDeviceConfig().
+ */
+void Pipeline::setDeviceConfig(QMap<QString, QVariantMap> config)
+{
+    foreach (auto &sampleDecoder, _elements->sampleDecoders)
+        sampleDecoder->configure(config);
+
+    foreach (auto &featureExtractor, _elements->featureExtractors)
+        featureExtractor->configure(config);
+
+    _elements->dataSink->saveDeviceConfig(config);
+}
+
+/*!
  * Start the pipeline.
  */
 void Pipeline::start()
