@@ -80,9 +80,9 @@ BOOST_PYTHON_MODULE(elapse)
                                          return_value_policy<return_by_value>()));
 
     register_ptr_to_python<elapse::SamplePtr>();
-    register_ptr_to_python<std::shared_ptr<const elapse::EegSample>>();
-    register_ptr_to_python<std::shared_ptr<const elapse::VideoSample>>();
-    register_ptr_to_python<std::shared_ptr<const elapse::ImuSample>>();
+    register_ptr_to_python<elapse::sample_ptr<elapse::EegSample>>();
+    register_ptr_to_python<elapse::sample_ptr<elapse::VideoSample>>();
+    register_ptr_to_python<elapse::sample_ptr<elapse::ImuSample>>();
 
     class_<elapse::FeatureVector>("FeatureVector",
                                   init<elapse::Signal::Type, elapse::TimeStamp>())

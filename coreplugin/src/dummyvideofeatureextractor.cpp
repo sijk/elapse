@@ -2,9 +2,6 @@
 #include <QxtLogger>
 #include "dummyvideofeatureextractor.h"
 
-using elapse::VideoSample;
-using elapse::SamplePtr;
-
 
 template<class Container, class T = double>
 T sum(const Container &c)
@@ -29,9 +26,9 @@ void DummyVideoFeatureExtractor::setStartTime(elapse::TimeStamp timestamp)
 /*!
  * Calculate the mean intensity of the pixels in the given \a sample.
  */
-void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
+void DummyVideoFeatureExtractor::analyseSample(elapse::SamplePtr sample)
 {
-    auto frame = std::static_pointer_cast<const VideoSample>(sample);
+    auto frame = elapse::static_sample_cast<elapse::VideoSample>(sample);
     double meanIntensity = sum(frame->data) / (frame->w * frame->h);
     means[frame->timestamp] = meanIntensity;
 }
