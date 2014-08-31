@@ -1,7 +1,6 @@
 #include <QPluginLoader>
 #include <QStaticPlugin>
 #include <QxtLogger>
-#include "elapse/plugin.h"
 #include "native/util.h"
 #include "staticpluginhost.h"
 
@@ -21,23 +20,11 @@ QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
     for (const QStaticPlugin &plugin : plugins) {
         PluginData data;
         data.plugin.host = PluginHostID::Static;
-        data.plugin.name = plugin.metaData()["className"].toString();
 
-        QObject *instance = plugin.instance();
-        auto factory = qobject_cast<elapse::PluginInterface*>(instance);
-
-        if (!factory) {
+        if (!getPluginDataFrom(plugin, data)) {
             qxtLog->debug("Could not get static plugin instance for",
                           data.plugin.name);
             continue;
-        }
-
-        for (const QMetaObject &obj : factory->classes()) {
-            ClassInfo cls;
-            cls.elementClass = stripNamespace(baseClass(&obj)->className());
-            cls.signalType = signalType(obj);
-            cls.className = obj.className();
-            data.classes.append(cls);
         }
 
         pluginData.append(data);
@@ -65,22 +52,13 @@ QObject *StaticPluginHost::instantiateClass(const PluginInfo &pluginInfo,
         if (plugin.metaData()["className"].toString() != pluginInfo.name)
             continue;
 
-        QObject *instance = plugin.instance();
-        auto factory = qobject_cast<elapse::PluginInterface*>(instance);
-
-        if (!factory) {
-            qxtLog->debug("Could not get static plugin instance for",
-                          pluginInfo.name);
-            continue;
-        }
-
-        for (const QMetaObject &obj : factory->classes()) {
-            if (obj.className() == classInfo.className) {
-                QObject *object = obj.newInstance();
-                if (object)
-                    return object;
-            }
-        }
+        QObject *instance = instantiateClassFrom(plugin.instance(),
+                                                 classInfo.className);
+        if (instance)
+            return instance;
+        else
+            qxtLog->debug("Could not instantiate", classInfo.className,
+                          "from static plugin", pluginInfo.name);
     }
 
     return nullptr;

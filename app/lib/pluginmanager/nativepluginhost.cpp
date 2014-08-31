@@ -1,6 +1,5 @@
 #include <QPluginLoader>
 #include <QxtLogger>
-#include "elapse/plugin.h"
 #include "native/util.h"
 #include "nativepluginhost.h"
 
@@ -10,31 +9,17 @@
  */
 PluginData NativePluginHost::getInfo(const QString &pluginPath)
 {
-    PluginData data;
-
     if (!QLibrary::isLibrary(pluginPath))
-        return data;
+        return PluginData();
 
-    QPluginLoader loader(pluginPath);
-    QObject *plugin = loader.instance();
-    auto factory = qobject_cast<elapse::PluginInterface*>(plugin);
-
-    if (!factory) {
-        qxtLog->debug(loader.errorString());
-        return data;
-    }
-
+    PluginData data;
     data.plugin.host = PluginHostID::Native;
     data.plugin.path = pluginPath;
-    data.plugin.name = loader.metaData()["className"].toString();
 
-    for (const QMetaObject &obj : factory->classes()) {
-        ClassInfo cls;
-        cls.elementClass = stripNamespace(baseClass(&obj)->className());
-        cls.signalType = signalType(obj);
-        cls.className = obj.className();
-        data.classes.append(cls);
-    }
+    QPluginLoader loader(pluginPath);
+
+    if (!getPluginDataFrom(loader, data))
+        qxtLog->debug(loader.errorString());
 
     return data;
 }
@@ -42,24 +27,11 @@ PluginData NativePluginHost::getInfo(const QString &pluginPath)
 QObject *NativePluginHost::instantiateClass(const PluginInfo &pluginInfo,
                                             const ClassInfo &classInfo)
 {
-    QObject *instance;
-
     QPluginLoader loader(pluginInfo.path);
-    QObject *plugin = loader.instance();
-    auto factory = qobject_cast<elapse::PluginInterface*>(plugin);
-
-    if (!factory) {
+    QObject *instance = instantiateClassFrom(loader.instance(),
+                                             classInfo.className);
+    if (!instance)
         qxtLog->debug(loader.errorString());
-        return nullptr;
-    }
-
-    for (const QMetaObject &obj : factory->classes()) {
-        if (obj.className() == classInfo.className) {
-            instance = obj.newInstance();
-            if (instance)
-                break;
-        }
-    }
 
     return instance;
 }
