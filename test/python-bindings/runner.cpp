@@ -35,10 +35,8 @@ TEST_F(PythonBindingsTest, RunPythonTests)
     PluginHost *host = priv->hosts[info.plugin.host];
 
     for (const ClassInfo &test : info.classes) {
-        auto passed = host->instantiate<elapse::FeatureExtractor>(info.plugin, test);
-        EXPECT_TRUE(passed)
-                << "Python test '" << test.className.mid(5).toStdString()
-                << "' failed.";
-        passed.clear();
+        auto pyTestPassed = host->instantiate<elapse::FeatureExtractor>(info.plugin, test);
+        if (!pyTestPassed)
+            ADD_FAILURE_AT(test.className.mid(5).toLatin1().constData(), 0);
     }
 }

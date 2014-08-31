@@ -1,6 +1,9 @@
 import elapse
 
 
+# The list of test classes is automatically populated by the test decorator
+classes = []
+
 def test(fn):
     '''
     A decorator which creates an elapse element class whose constructor
@@ -17,19 +20,23 @@ def test(fn):
 
         def __init__(self):
             super(Test, self).__init__()
-            print 'RUN  :', self.testname
+            print '[ RUN      ]', self.testname
             try:
                 fn()
             except Exception, e:
-                print 'FAIL :', e
+                print '[  FAILED  ]', e
                 raise
             else:
-                print 'PASS'
+                print '[       OK ]'
 
     # Name the class according to the name of the function
-    return type('test_' + fn.__name__, (Test,), {})
+    testClass = type('test_' + fn.__name__, (Test,), {})
+    classes.append(testClass)
+    return testClass
 
-# # #
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 
 @test
 def SignalTypes():
@@ -133,10 +140,3 @@ def CreateFeatureExtractor():
         pass
     else:
         raise TypeError, 'FeatureExtractor.onSample() should be pure virtual'
-
-# # #
-
-def get_tests():
-    return [v for v in globals().values() if hasattr(v, 'testname')]
-
-classes = get_tests()
