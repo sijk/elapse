@@ -36,10 +36,10 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
         { &outputActionModel, ui.outputAction,          "OutputAction",     Signal::INVALID, "OutputAction"        },
     };
 
-    QObject::connect(ui.pathButton, &QPushButton::clicked, [q]{
-        QString dir = QFileDialog::getExistingDirectory(q, "Plugin path");
+    QObject::connect(ui.pathButton, &QPushButton::clicked, [this]{
+        QString dir = QFileDialog::getExistingDirectory(q_ptr, "Plugin path", searchPath.absolutePath());
         if (!dir.isEmpty())
-            q->setSearchPath(dir);
+            q_ptr->setSearchPath(dir);
     });
 }
 
