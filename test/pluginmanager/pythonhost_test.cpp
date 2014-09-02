@@ -7,14 +7,11 @@
 using elapse::FeatureExtractor;
 
 
+// Make methods public for testability
 class PublicPythonPluginHost : public PythonPluginHost
 {
-    // Make methods public for testability
 public:
-    PluginData getInfo(const QString &pluginPath)
-    {
-        return PythonPluginHost::getInfo(pluginPath);
-    }
+    using PythonPluginHost::getInfo;
 };
 
 class PythonPluginHostTest : public ::testing::Test

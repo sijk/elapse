@@ -57,13 +57,13 @@ struct FeatureExtractorWrap : elapse::FeatureExtractor,
 
 class BaseFeatureExtractorPublic : public elapse::BaseFeatureExtractor
 {
-public:
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
-    virtual void analyseSample(elapse::SamplePtr sample) = 0;
+public:
+    using elapse::BaseFeatureExtractor::analyseSample;
+    using elapse::BaseFeatureExtractor::removeDataBefore;
+    using elapse::BaseFeatureExtractor::reset;
     virtual py::list pyfeatures() = 0;
-    virtual void removeDataBefore(elapse::TimeStamp time) = 0;
-    virtual void reset() { elapse::BaseFeatureExtractor::reset(); }
 };
 
 struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
@@ -108,10 +108,10 @@ struct ClassifierWrap : elapse::Classifier,
 
 class BaseClassifierPublic : public elapse::BaseClassifier
 {
-public:
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
-    virtual elapse::CognitiveState classify(QList<elapse::FeatureVector> featureVectors) = 0;
+public:
+    using elapse::BaseClassifier::classify;
 };
 
 struct BaseClassifierWrap : BaseClassifierPublic,
@@ -133,22 +133,18 @@ struct OutputActionWrap : elapse::OutputAction,
 
 class DataSinkPublic : public elapse::DataSink
 {
-public:
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
-    bool getCaptureInfo() = 0;
-    bool needsNewCaptureInfo() = 0;
-    bool startSaving() = 0;
-    void stopSaving() = 0;
-    void saveData(elapse::Signal::Type signalType, QByteArray data)
-    { elapse::DataSink::saveData(signalType, data); }
-    void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample)
-    { elapse::DataSink::saveSample(signalType, sample); }
-    void saveFeatureVector(elapse::FeatureVector featureVector)
-    { elapse::DataSink::saveFeatureVector(featureVector); }
-    void saveCognitiveState(elapse::CognitiveState state)
-    { elapse::DataSink::saveCognitiveState(state); }
-    void saveDeviceConfig(const QMap<QString, QVariantMap> &config) = 0;
+public:
+    using elapse::DataSink::getCaptureInfo;
+    using elapse::DataSink::needsNewCaptureInfo;
+    using elapse::DataSink::startSaving;
+    using elapse::DataSink::stopSaving;
+    using elapse::DataSink::saveData;
+    using elapse::DataSink::saveSample;
+    using elapse::DataSink::saveFeatureVector;
+    using elapse::DataSink::saveCognitiveState;
+    using elapse::DataSink::saveDeviceConfig;
 };
 
 struct DataSinkWrap : DataSinkPublic,
