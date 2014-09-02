@@ -17,7 +17,7 @@ DummyVideoFeatureExtractor::DummyVideoFeatureExtractor()
 {
 }
 
-void DummyVideoFeatureExtractor::setStartTime(elapse::TimeStamp timestamp)
+void DummyVideoFeatureExtractor::setStartTime(elapse::time::Point timestamp)
 {
     BaseFeatureExtractor::setStartTime(timestamp);
     means.clear();
@@ -51,7 +51,7 @@ std::vector<double> DummyVideoFeatureExtractor::features()
     return { meanIntensity, meanSqDiff };
 }
 
-void DummyVideoFeatureExtractor::removeDataBefore(elapse::TimeStamp time)
+void DummyVideoFeatureExtractor::removeDataBefore(elapse::time::Point time)
 {
     means.removeValuesBefore(time);
 }

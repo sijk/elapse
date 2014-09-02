@@ -91,12 +91,12 @@ BOOST_PYTHON_MODULE(elapse)
     implicitly_convertible<elapse::ImuSample::const_ptr, elapse::SamplePtr>();
 
     class_<elapse::FeatureVector>("FeatureVector",
-                                  init<elapse::Signal::Type, elapse::TimeStamp>())
+                                  init<elapse::Signal::Type, elapse::time::Point>())
         .def_readonly("signalType", &elapse::FeatureVector::signalType)
         .def_readonly("startTime", &elapse::FeatureVector::startTime)
         .def_readonly("features", &elapse::FeatureVector::features);
 
-    class_<elapse::CognitiveState>("CognitiveState", init<elapse::TimeStamp>())
+    class_<elapse::CognitiveState>("CognitiveState", init<elapse::time::Point>())
         .def_readonly("startTime", &elapse::CognitiveState::startTime)
         .def_readonly("state", &elapse::CognitiveState::state);
 

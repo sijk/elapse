@@ -20,7 +20,7 @@ using ::testing::Invoke;
 using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::elapse::Signal;
-using ::elapse::TimeStamp;
+using ::elapse::time::Point;
 using namespace ::elapse::time::literals;
 
 
@@ -31,17 +31,17 @@ public:
     MOCK_METHOD0(start, void());
     MOCK_METHOD0(stop, void());
 
-    void emitEeg(TimeStamp timestamp)
+    void emitEeg(time::Point timestamp)
     {
         emit eegReady(QByteArray::number((quint64)timestamp));
     }
 
-    void emitVid(TimeStamp timestamp)
+    void emitVid(time::Point timestamp)
     {
         emit videoReady(QByteArray::number((quint64)timestamp));
     }
 
-    void emitImu(TimeStamp timestamp)
+    void emitImu(time::Point timestamp)
     {
         emit imuReady(QByteArray::number((quint64)timestamp));
     }
@@ -50,7 +50,7 @@ public:
 struct DummySample : elapse::detail::BaseSample<DummySample> {};
 
 template<typename SampleType = DummySample>
-elapse::SamplePtr createSample(TimeStamp time)
+elapse::SamplePtr createSample(time::Point time)
 {
     auto sample = SampleType::create();
     sample->timestamp = time;
@@ -123,8 +123,8 @@ class MockFeatureExtractor : public elapse::BaseFeatureExtractor
 public:
     MOCK_METHOD1(analyseSample, void(elapse::SamplePtr));
     MOCK_METHOD0(features, std::vector<double>());
-    MOCK_METHOD1(removeDataBefore, void(TimeStamp));
-    MOCK_METHOD1(setStartTime, void(TimeStamp));
+    MOCK_METHOD1(removeDataBefore, void(time::Point));
+    MOCK_METHOD1(setStartTime, void(time::Point));
     MOCK_METHOD0(reset, void());
 
     MockFeatureExtractor()
@@ -135,7 +135,7 @@ public:
                 .WillByDefault(Invoke(this, &MockFeatureExtractor::_reset));
     }
 
-    void _setStartTime(TimeStamp time)
+    void _setStartTime(time::Point time)
     {
         BaseFeatureExtractor::setStartTime(time);
     }
@@ -306,9 +306,9 @@ public:
         pipeline.stop();
     }
 
-    void expectFirstSampleWithTimestamp(TimeStamp time)
+    void expectFirstSampleWithTimestamp(time::Point time)
     {
-        const TimeStamp startTime = time + 1_s;
+        const time::Point startTime = time + 1_s;
 
         {
             InSequence eeg;
@@ -468,7 +468,7 @@ TEST_F(PipelineTest, IgnoreSamplesBeforeStartTime)
         EXPECT_CALL(*vidDecoder, onData(_)).Times(99);
         EXPECT_CALL(*imuDecoder, onData(_)).Times(99);
 
-        for (TimeStamp time = 20_ms; time < 1010_ms; time += 10_ms) {
+        for (time::Point time = 20_ms; time < 1010_ms; time += 10_ms) {
             dataSource->emitEeg(time);
             dataSource->emitVid(time);
             dataSource->emitImu(time);
@@ -485,7 +485,7 @@ TEST_F(PipelineTest, IgnoreSamplesBeforeStartTime)
         EXPECT_CALL(*vidFeatEx, analyseSample(_)).Times(100);
         EXPECT_CALL(*imuFeatEx, analyseSample(_)).Times(100);
 
-        for (TimeStamp time = 1010_ms; time < 2010_ms; time += 10_ms) {
+        for (time::Point time = 1010_ms; time < 2010_ms; time += 10_ms) {
             dataSource->emitEeg(time);
             dataSource->emitVid(time);
             dataSource->emitImu(time);
@@ -669,12 +669,12 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
     expectFirstSampleWithTimestamp(10_ms);
 
     // Expected window bounds
-    const TimeStamp w1start = 1010_ms, w1end = 2010_ms;
-    const TimeStamp w2start = 1510_ms, w2end = 2510_ms;
-    const TimeStamp w3start = 2010_ms, w3end = 3010_ms;
-    const TimeStamp w4start = 2510_ms, w4end = 3510_ms;
-    const TimeStamp w5start = 3010_ms, w5end = 4010_ms;
-    const TimeStamp w6start = 3510_ms;
+    const time::Point w1start = 1010_ms, w1end = 2010_ms;
+    const time::Point w2start = 1510_ms, w2end = 2510_ms;
+    const time::Point w3start = 2010_ms, w3end = 3010_ms;
+    const time::Point w4start = 2510_ms, w4end = 3510_ms;
+    const time::Point w5start = 3010_ms, w5end = 4010_ms;
+    const time::Point w6start = 3510_ms;
 
     // 2: A bunch of EEG samples spanning five windows:
     //
@@ -692,7 +692,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
         EXPECT_CALL(*eegFeatEx, features()).Times(5).WillRepeatedly(Return(features));
         EXPECT_CALL(*eegFeatEx, removeDataBefore(_)).Times(5);
 
-        for (TimeStamp time = w1start; time <= w5end; time += 10_ms)
+        for (time::Point time = w1start; time <= w5end; time += 10_ms)
             dataSource->emitEeg(time);
 
         EXPECT_EQ(eegFeatExPriv->windowStart, w6start);
@@ -716,7 +716,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
         EXPECT_CALL(*imuFeatEx, features()).WillOnce(Return(features));
         EXPECT_CALL(*imuFeatEx, removeDataBefore(_));
 
-        for (TimeStamp time = w1start; time <= w1end; time += 100_ms)
+        for (time::Point time = w1start; time <= w1end; time += 100_ms)
             dataSource->emitImu(time);
 
         EXPECT_EQ(eegFeatExPriv->windowStart, w6start);
@@ -744,7 +744,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
         EXPECT_CALL(*vidFeatEx, features()).Times(3).WillRepeatedly(Return(features));
         EXPECT_CALL(*vidFeatEx, removeDataBefore(_)).Times(3);
 
-        for (TimeStamp time = w1start; time <= w3end; time += 25_ms)
+        for (time::Point time = w1start; time <= w3end; time += 25_ms)
             dataSource->emitVid(time);
 
         EXPECT_EQ(eegFeatExPriv->windowStart, w6start);

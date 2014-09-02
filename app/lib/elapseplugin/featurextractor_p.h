@@ -10,7 +10,7 @@ class BaseFeatureExtractorPrivate
 public:
     BaseFeatureExtractorPrivate();
 
-    TimeStamp windowStart;
+    time::Point windowStart;
     uint windowLength;
     uint windowStep;
     Signal::Type signalType;

@@ -14,7 +14,7 @@ std::vector<double> DummyEegFeatureExtractor::features()
     return { double(sampleFlags.size()) };
 }
 
-void DummyEegFeatureExtractor::removeDataBefore(elapse::TimeStamp time)
+void DummyEegFeatureExtractor::removeDataBefore(elapse::time::Point time)
 {
     sampleFlags.removeValuesBefore(time);
 }

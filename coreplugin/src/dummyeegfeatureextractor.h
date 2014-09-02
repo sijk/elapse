@@ -22,7 +22,7 @@ public:
 protected:
     void analyseSample(elapse::SamplePtr sample);
     std::vector<double> features();
-    void removeDataBefore(elapse::TimeStamp time);
+    void removeDataBefore(elapse::time::Point time);
 
 private:
     elapse::time::Series<int> sampleFlags;

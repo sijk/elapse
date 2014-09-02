@@ -249,7 +249,7 @@ void Pipeline::setStartTime(elapse::SamplePtr sample)
     if (startTimeIsSet)
         return;
 
-    elapse::TimeStamp startTime = sample->timestamp + 1_s;
+    elapse::time::Point startTime = sample->timestamp + 1_s;
 
     qxtLog->debug("Setting start time to", elapse::time::format(startTime));
     foreach (auto &featureExtractor, _elements->featureExtractors)

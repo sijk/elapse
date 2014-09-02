@@ -25,7 +25,7 @@ class FeatureExtractor : public QObject
 
 public:
     /*! Set the \a timestamp at which the first window begins. */
-    virtual void setStartTime(TimeStamp timestamp) = 0;
+    virtual void setStartTime(time::Point timestamp) = 0;
 
     /*! Set the length of each window in \a ms. */
     virtual void setWindowLength(uint ms) = 0;
@@ -73,7 +73,7 @@ public:
     explicit BaseFeatureExtractor();
     ~BaseFeatureExtractor();
 
-    void setStartTime(TimeStamp timestamp);
+    void setStartTime(time::Point timestamp);
 
     void setWindowLength(uint length);
     void setWindowStep(uint step);
@@ -101,7 +101,7 @@ protected:
      * Remove any internal data that is related to samples occurring before
      * the given \a time.
      */
-    virtual void removeDataBefore(TimeStamp time) = 0;
+    virtual void removeDataBefore(time::Point time) = 0;
 
     /*!
      * Reset any internal state. Defaults to calling removeDataBefore() with

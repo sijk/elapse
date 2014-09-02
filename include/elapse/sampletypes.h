@@ -41,7 +41,7 @@ struct Sample
 {
     virtual ~Sample() {}
 
-    TimeStamp timestamp;
+    time::Point timestamp;
 
 protected:
     Sample() = default;
@@ -123,20 +123,20 @@ protected:
 struct FeatureVector
 {
     Signal::Type signalType;
-    TimeStamp startTime;
+    time::Point startTime;
     std::vector<double> features;
 
-    FeatureVector(Signal::Type signalType, TimeStamp startTime) :
+    FeatureVector(Signal::Type signalType, time::Point startTime) :
         signalType(signalType), startTime(startTime) {}
 };
 
 
 struct CognitiveState
 {
-    TimeStamp startTime;
+    time::Point startTime;
     std::vector<double> state;
 
-    CognitiveState(TimeStamp startTime) : startTime(startTime) {}
+    CognitiveState(time::Point startTime) : startTime(startTime) {}
 };
 
 } // namespace elapse

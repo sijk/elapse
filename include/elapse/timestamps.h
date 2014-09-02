@@ -10,54 +10,54 @@
 namespace elapse {
 
 /*!
- * TimeStamp%s are expressed in nanoseconds since the Unix epoch.
- *
- * This won't overflow until December 2554.
- */
-typedef std::uint64_t TimeStamp;
-
-/*!
- * Utilities for working with elapse::TimeStamp%s.
+ * Utilities for working with time.
  */
 namespace time {
 
 /*!
- * User-defined literals for expressing elapse::TimeStamp%s.
+ * time::Point%s are expressed in nanoseconds since the Unix epoch.
+ *
+ * This won't overflow until December 2554.
+ */
+typedef std::uint64_t Point;
+
+/*!
+ * User-defined literals for expressing time::Point%s.
  *
  *     1_us == 1000_ns == 1000
  */
 namespace literals {
 
-constexpr TimeStamp operator"" _ns(unsigned long long n) { return n; }
-constexpr TimeStamp operator"" _us(unsigned long long n) { return n * 1000_ns; }
-constexpr TimeStamp operator"" _ms(unsigned long long n) { return n * 1000_us; }
-constexpr TimeStamp operator"" _s (unsigned long long n) { return n * 1000_ms; }
+constexpr time::Point operator"" _ns(unsigned long long n) { return n; }
+constexpr time::Point operator"" _us(unsigned long long n) { return n * 1000_ns; }
+constexpr time::Point operator"" _ms(unsigned long long n) { return n * 1000_us; }
+constexpr time::Point operator"" _s (unsigned long long n) { return n * 1000_ms; }
 
 } // namespace literals
 
 
 template<typename T>
-constexpr TimeStamp from_us(T t)
+constexpr time::Point from_us(T t)
 {
     using namespace literals;
     return t * 1_us;
 }
 
 template<typename T>
-constexpr TimeStamp from_ms(T t)
+constexpr time::Point from_ms(T t)
 {
     using namespace literals;
     return t * 1_ms;
 }
 
 template<typename T>
-constexpr TimeStamp from_s(T t)
+constexpr time::Point from_s(T t)
 {
     using namespace literals;
     return t * 1_s;
 }
 
-inline TimeStamp from_timespec(const struct timespec *ts)
+inline time::Point from_timespec(const struct timespec *ts)
 {
     return from_s(ts->tv_sec) + ts->tv_nsec;
 }
@@ -65,7 +65,7 @@ inline TimeStamp from_timespec(const struct timespec *ts)
 /*!
  * \return the \a time in ISO 8601 format (yyyy-mm-ddThh:mm:ss.fffffffff).
  */
-inline QString format(TimeStamp time)
+inline QString format(time::Point time)
 {
     using namespace literals;
 
@@ -77,24 +77,24 @@ inline QString format(TimeStamp time)
 }
 
 /*!
- * \brief The time::Series class maps TimeStamp%s to arbitrary values.
+ * \brief The time::Series class maps time::Point%s to arbitrary values.
  *
  * This class exists primarily as a convenience for implementing
  * FeatureExtractor%s. It provides an easy way to remove all values
- * which have TimeStamp%s less than a given value.
+ * which have time::Point%s less than a given value.
  *
  * \headerfile elapse/timestamps.h
  */
 template<typename T>
-class Series : public std::map<TimeStamp, T>
+class Series : public std::map<time::Point, T>
 {
 public:
     /*!
-     * Remove all values which have TimeStamp%s less than the given \a time.
+     * Remove all values which have time::Point%s less than the given \a time.
      *
      * Relies on the fact that std::maps are sorted by their keys.
      */
-    void removeValuesBefore(TimeStamp time)
+    void removeValuesBefore(time::Point time)
     {
         auto i = this->begin();
         auto end = this->lower_bound(time);
@@ -121,7 +121,7 @@ public:
 } // namespace elapse
 
 
-inline QDataStream &operator>>(QDataStream &stream, elapse::TimeStamp &value)
+inline QDataStream &operator>>(QDataStream &stream, elapse::time::Point &value)
 {
     return stream >> reinterpret_cast<quint64&>(value);
 }

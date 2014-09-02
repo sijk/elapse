@@ -41,7 +41,7 @@ namespace py = boost::python;
 struct FeatureExtractorWrap : elapse::FeatureExtractor,
                               py::wrapper<elapse::FeatureExtractor>
 {
-    void setStartTime(elapse::TimeStamp timestamp) {
+    void setStartTime(elapse::time::Point timestamp) {
         PYCATCH(this->get_override("setStartTime")(timestamp));
     }
     void setWindowLength(uint ms) {
@@ -82,7 +82,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     py::list pyfeatures() {
         PYCATCH_RETURN(this->get_override("features")(), {});
     }
-    void removeDataBefore(elapse::TimeStamp time) {
+    void removeDataBefore(elapse::time::Point time) {
         PYCATCH(this->get_override("removeDataBefore")(time));
     }
     void reset() {

@@ -30,7 +30,7 @@ std::vector<double> DummyImuFeatureExtractor::features()
     return { double(sampleFlags.size()) };
 }
 
-void DummyImuFeatureExtractor::removeDataBefore(elapse::TimeStamp time)
+void DummyImuFeatureExtractor::removeDataBefore(elapse::time::Point time)
 {
     sampleFlags.removeValuesBefore(time);
 }
