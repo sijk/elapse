@@ -57,6 +57,11 @@ constexpr TimeStamp from_s(T t)
     return t * 1_s;
 }
 
+inline TimeStamp from_timespec(const struct timespec *ts)
+{
+    return from_s(ts->tv_sec) + ts->tv_nsec;
+}
+
 /*!
  * \return the \a time in ISO 8601 format (yyyy-mm-ddThh:mm:ss.fffffffff).
  */
