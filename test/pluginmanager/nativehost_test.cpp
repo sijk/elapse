@@ -6,16 +6,14 @@
 
 using elapse::elements::SampleDecoder;
 using elapse::data::Signal;
+namespace plugin = elapse::plugin;
 
 
-class PublicNativePluginHost : public NativePluginHost
+class PublicNativePluginHost : public plugin::NativeHost
 {
     // Make methods public for testability
 public:
-    PluginData getInfo(const QString &pluginPath)
-    {
-        return NativePluginHost::getInfo(pluginPath);
-    }
+    using plugin::NativeHost::getInfo;
 };
 
 
@@ -42,7 +40,7 @@ TEST_F(NativePluginHostTest, InfoForFooPlugin)
 {
     auto info = host.getInfo(fooPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PluginHostID::Native);
+    EXPECT_EQ(info.plugin.host, plugin::HostID::Native);
     EXPECT_EQ(info.plugin.name, QString("FooPlugin"));
     EXPECT_EQ(info.plugin.path, fooPluginPath);
 
@@ -61,7 +59,7 @@ TEST_F(NativePluginHostTest, InfoForBarPlugin)
 {
     auto info = host.getInfo(barPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PluginHostID::Native);
+    EXPECT_EQ(info.plugin.host, plugin::HostID::Native);
     EXPECT_EQ(info.plugin.name, QString("BarPlugin"));
     EXPECT_EQ(info.plugin.path, barPluginPath);
 

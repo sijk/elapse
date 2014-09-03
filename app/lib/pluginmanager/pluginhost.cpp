@@ -1,6 +1,8 @@
 #include "pluginhost.h"
 
-QList<PluginData> PluginHost::searchForPluginsIn(QDir &dir)
+namespace elapse { namespace plugin {
+
+QList<PluginData> Host::searchForPluginsIn(QDir &dir)
 {
     QList<PluginData> plugins;
 
@@ -15,3 +17,5 @@ QList<PluginData> PluginHost::searchForPluginsIn(QDir &dir)
 
     return plugins;
 }
+
+}} // namespace elapse::plugin

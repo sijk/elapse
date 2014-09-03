@@ -25,7 +25,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ElapseClient),
     logView(new LogView(this)),
-    pluginManager(new PluginManager(this)),
+    pluginManager(new plugin::Manager(this)),
     pipeline(new Pipeline(this)),
     proxy(new DeviceProxy(this)),
     batteryMonitor(new BatteryMonitor(this))

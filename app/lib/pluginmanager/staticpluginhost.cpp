@@ -6,12 +6,13 @@
 
 Q_IMPORT_PLUGIN(CorePlugin)
 
+namespace elapse { namespace plugin {
 
 /*!
  * Search for static plugins. The \a dir parameter is ignored since it is
  * meaningless in this case.
  */
-QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
+QList<PluginData> StaticHost::searchForPluginsIn(QDir &dir)
 {
     Q_UNUSED(dir);
     QList<PluginData> pluginData;
@@ -19,9 +20,9 @@ QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
 
     for (const QStaticPlugin &plugin : plugins) {
         PluginData data;
-        data.plugin.host = PluginHostID::Static;
+        data.plugin.host = HostID::Static;
 
-        if (!getPluginDataFrom(plugin, data)) {
+        if (!native::getPluginDataFrom(plugin, data)) {
             qxtLog->debug("Could not get static plugin instance for",
                           data.plugin.name);
             continue;
@@ -37,14 +38,14 @@ QList<PluginData> StaticPluginHost::searchForPluginsIn(QDir &dir)
  * Do nothing. File paths are not meaningful for statically-linked plugins.
  * See searchForPluginsIn() instead.
  */
-PluginData StaticPluginHost::getInfo(const QString &pluginPath)
+PluginData StaticHost::getInfo(const QString &pluginPath)
 {
     Q_UNUSED(pluginPath);
     return PluginData();
 }
 
-QObject *StaticPluginHost::instantiateClass(const PluginInfo &pluginInfo,
-                                            const ClassInfo &classInfo)
+QObject *StaticHost::instantiateClass(const PluginInfo &pluginInfo,
+                                      const ClassInfo &classInfo)
 {
     QVector<QStaticPlugin> plugins = QPluginLoader::staticPlugins();
 
@@ -52,8 +53,8 @@ QObject *StaticPluginHost::instantiateClass(const PluginInfo &pluginInfo,
         if (plugin.metaData()["className"].toString() != pluginInfo.name)
             continue;
 
-        QObject *instance = instantiateClassFrom(plugin.instance(),
-                                                 classInfo.className);
+        QObject *instance = native::instantiateClassFrom(plugin.instance(),
+                                                         classInfo.className);
         if (instance)
             return instance;
         else
@@ -64,3 +65,4 @@ QObject *StaticPluginHost::instantiateClass(const PluginInfo &pluginInfo,
     return nullptr;
 }
 
+}} // namespace elapse::plugin

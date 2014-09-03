@@ -24,7 +24,7 @@ namespace py = boost::python;
     try { expr; } \
     catch (const py::error_already_set&) { \
         qxtLog->trace(QString("Error in '%1'").arg(#expr)); \
-        logPythonException(); \
+        elapse::plugin::python::logException(); \
     }
 
 /*!
@@ -35,7 +35,7 @@ namespace py = boost::python;
     try { return expr; } \
     catch (const py::error_already_set&) { \
         qxtLog->trace(QString("Error in '%1'").arg(#expr)); \
-        logPythonException(); \
+        elapse::plugin::python::logException(); \
     } \
     return def
 

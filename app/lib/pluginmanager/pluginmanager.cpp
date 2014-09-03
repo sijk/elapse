@@ -8,20 +8,22 @@
 #include "nativepluginhost.h"
 #include "pythonpluginhost.h"
 
-using elapse::data::Signal;
+namespace elapse {
+
+using data::Signal;
 
 const QString pluginSetting("elements/%1/plugin-path");
 const QString classSetting("elements/%1/class-name");
 
 
-PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
+plugin::ManagerPrivate::ManagerPrivate(plugin::Manager *q) :
     q_ptr(q)
 {
     ui.setupUi(q);
 
-    hosts[PluginHostID::Static] = new StaticPluginHost;
-    hosts[PluginHostID::Native] = new NativePluginHost;
-    hosts[PluginHostID::Python] = new PythonPluginHost;
+    hosts[HostID::Static] = new StaticHost;
+    hosts[HostID::Native] = new NativeHost;
+    hosts[HostID::Python] = new PythonHost;
 
     elements = {
         { &dataSourceModel,   ui.dataSource,            "DataSource",       Signal::INVALID, "DataSource"          },
@@ -43,24 +45,24 @@ PluginManagerPrivate::PluginManagerPrivate(PluginManager *q) :
     });
 }
 
-PluginManagerPrivate::~PluginManagerPrivate()
+plugin::ManagerPrivate::~ManagerPrivate()
 {
     qDeleteAll(hosts);
 }
 
-PluginManagerPrivate *PluginManagerPrivate::expose(PluginManager *manager)
+plugin::ManagerPrivate *plugin::ManagerPrivate::expose(plugin::Manager *manager)
 {
     return manager->d_func();
 }
 
 /*!
- * Use every PluginHost to search for plugins in the searchPath.
+ * Use every plugin::Host to search for plugins in the searchPath.
  */
-void PluginManagerPrivate::searchForPlugins()
+void plugin::ManagerPrivate::searchForPlugins()
 {
     pluginData.clear();
 
-    for (PluginHost *host : hosts) {
+    for (plugin::Host *host : hosts) {
         auto plugins = host->searchForPluginsIn(searchPath);
         pluginData.append(plugins);
     }
@@ -69,7 +71,7 @@ void PluginManagerPrivate::searchForPlugins()
 /*!
  * Populate the models that list the available implementations for each element.
  */
-void PluginManagerPrivate::populateModels()
+void plugin::ManagerPrivate::populateModels()
 {
     for (const auto &element : elements) {
         element.model->clear();
@@ -111,7 +113,7 @@ void PluginManagerPrivate::populateModels()
  * Attach the models to their corresponding tree views in the plugin selection
  * dialog.
  */
-void PluginManagerPrivate::attachModelViews()
+void plugin::ManagerPrivate::attachModelViews()
 {
     for (const auto &element : elements) {
         element.tree->setModel(element.model);
@@ -136,7 +138,7 @@ void PluginManagerPrivate::attachModelViews()
  * \return a map of elementName to the (PluginInfo, ClassInfo) pair that
  * identifies an element implementation.
  */
-PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSelectedElements() const
+plugin::ManagerPrivate::ElementSetInfo plugin::ManagerPrivate::getSelectedElements() const
 {
     ElementSetInfo selectedElements;
 
@@ -162,7 +164,7 @@ PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSelectedElements()
  * \return the info if a complete set was saved in the settings file, otherwise
  * an empty map.
  */
-PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSavedElements() const
+plugin::ManagerPrivate::ElementSetInfo plugin::ManagerPrivate::getSavedElements() const
 {
     ElementSetInfo savedElements;
     QSettings settings;
@@ -196,8 +198,8 @@ PluginManagerPrivate::ElementSetInfo PluginManagerPrivate::getSavedElements() co
  * result in \a element.
  */
 template<class T>
-void PluginManagerPrivate::createElement(QSharedPointer<T> &element,
-                                         const ElementInfo &info)
+void plugin::ManagerPrivate::createElement(QSharedPointer<T> &element,
+                                           const ElementInfo &info)
 {
     const PluginInfo &plugin = *info.first;
     const ClassInfo &cls = *info.second;
@@ -211,7 +213,7 @@ void PluginManagerPrivate::createElement(QSharedPointer<T> &element,
 /*!
  * \return a new ElementSet populated with the objects described by \a info.
  */
-ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
+ElementSetPtr plugin::ManagerPrivate::createElements(const ElementSetInfo &info)
 {
     ElementSetPtr e = ElementSetPtr::create();
 
@@ -239,7 +241,7 @@ ElementSetPtr PluginManagerPrivate::createElements(const ElementSetInfo &info)
 /*!
  * Select the elements described by the given \a info in the tree views.
  */
-void PluginManagerPrivate::selectElements(const ElementSetInfo &info)
+void plugin::ManagerPrivate::selectElements(const ElementSetInfo &info)
 {
     for (auto i = info.cbegin(); i != info.cend(); i++) {
         const QString &elementName = i.key();
@@ -273,7 +275,7 @@ void PluginManagerPrivate::selectElements(const ElementSetInfo &info)
 /*!
  * Save the given set of element \a info.
  */
-void PluginManagerPrivate::saveElements(const ElementSetInfo &info)
+void plugin::ManagerPrivate::saveElements(const ElementSetInfo &info)
 {
     QSettings settings;
 
@@ -295,8 +297,8 @@ void PluginManagerPrivate::saveElements(const ElementSetInfo &info)
  * Find the item in the given \a model which correspond to the class
  * at \a classIndex in the plugin at \a pluginIndex in the pluginData list.
  */
-QStandardItem *PluginManagerPrivate::findItemWithIndices(const QStandardItemModel *model,
-                                                         int pluginIndex, int classIndex)
+QStandardItem *plugin::ManagerPrivate::findItemWithIndices(const QStandardItemModel *model,
+                                                           int pluginIndex, int classIndex)
 {
     const QStandardItem *root = model->invisibleRootItem();
     for (int prow = 0; prow < root->rowCount(); prow++) {
@@ -314,20 +316,17 @@ QStandardItem *PluginManagerPrivate::findItemWithIndices(const QStandardItemMode
 
 
 /*!
- * Create a new PluginManager as a child of the given \a parent.
+ * Create a new plugin::Manager as a child of the given \a parent.
  */
-PluginManager::PluginManager(QWidget *parent) :
+plugin::Manager::Manager(QWidget *parent) :
     QDialog(parent),
-    d_ptr(new PluginManagerPrivate(this))
+    d_ptr(new plugin::ManagerPrivate(this))
 {
     connect(this, SIGNAL(accepted()), SLOT(loadElementsFromGuiSelection()));
     setSearchPath(QSettings().value("plugins-path").toString());
 }
 
-/*!
- * \brief PluginManager::~PluginManager
- */
-PluginManager::~PluginManager()
+plugin::Manager::~Manager()
 {
     delete d_ptr;
 }
@@ -335,18 +334,18 @@ PluginManager::~PluginManager()
 /*!
  * \return the absolute path in which plugins will be searched for.
  */
-QDir PluginManager::searchPath() const
+QDir plugin::Manager::searchPath() const
 {
-    Q_D(const PluginManager);
+    Q_D(const plugin::Manager);
     return d->searchPath;
 }
 
 /*!
  * Search for plugins in the \a newPath.
  */
-void PluginManager::setSearchPath(QDir newPath)
+void plugin::Manager::setSearchPath(QDir newPath)
 {
-    Q_D(PluginManager);
+    Q_D(plugin::Manager);
     if (newPath == d->searchPath && !d->pluginData.isEmpty()) {
         qxtLog->debug("Plugin search path was set to the current value. "
                       "Not doing anything...");
@@ -365,7 +364,7 @@ void PluginManager::setSearchPath(QDir newPath)
  * Show the element selection dialog to allow the user to select a set of
  * elements to load.
  */
-void PluginManager::loadElementsFromGui()
+void plugin::Manager::loadElementsFromGui()
 {
     show();
 }
@@ -373,9 +372,9 @@ void PluginManager::loadElementsFromGui()
 /*!
  * Load a previously saved set of elements.
  */
-void PluginManager::loadElementsFromSettings()
+void plugin::Manager::loadElementsFromSettings()
 {
-    Q_D(PluginManager);
+    Q_D(plugin::Manager);
     auto info = d->getSavedElements();
     if (info.isEmpty()) return;
     auto elements = d->createElements(info);
@@ -389,9 +388,9 @@ void PluginManager::loadElementsFromSettings()
  * Load the elements that the user selected in the GUI. Called when the element
  * selection dialog is accepted.
  */
-void PluginManager::loadElementsFromGuiSelection()
+void plugin::Manager::loadElementsFromGuiSelection()
 {
-    Q_D(PluginManager);
+    Q_D(plugin::Manager);
     auto info = d->getSelectedElements();
     auto elements = d->createElements(info);
     if (elements) {
@@ -399,3 +398,5 @@ void PluginManager::loadElementsFromGuiSelection()
         emit elementsLoaded(elements);
     }
 }
+
+} // namespace elapse

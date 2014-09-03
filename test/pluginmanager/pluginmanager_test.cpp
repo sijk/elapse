@@ -6,14 +6,17 @@
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
 
+namespace plugin = elapse::plugin;
+
+
 class PluginManagerTest : public testing::Test
 {
 public:
     void SetUp()
     {
-        manager = new PluginManager;
-        priv = PluginManagerPrivate::expose(manager);
-        priv->hosts.remove(PluginHostID::Static);
+        manager = new plugin::Manager;
+        priv = plugin::ManagerPrivate::expose(manager);
+        priv->hosts.remove(plugin::HostID::Static);
         testPluginPath = qApp->applicationDirPath() + "/../test_plugins";
         qxtLog->enableAllLogLevels();
     }
@@ -23,8 +26,8 @@ public:
         delete manager;
     }
 
-    PluginManager *manager;
-    PluginManagerPrivate *priv;
+    plugin::Manager *manager;
+    plugin::ManagerPrivate *priv;
     QString testPluginPath;
 
     SuppressLogging nolog;

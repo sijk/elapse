@@ -3,15 +3,19 @@
 
 #include <QString>
 
-struct PythonException
+namespace elapse { namespace plugin { namespace python {
+
+struct Exception
 {
     QString type;
     QString value;
     QStringList traceback;
 };
 
-PythonException getPythonException();
+Exception getException();
 
-void logPythonException();
+void logException();
+
+}}} // namespace elapse::plugin::python
 
 #endif // PYTHON_EXCEPTION_H

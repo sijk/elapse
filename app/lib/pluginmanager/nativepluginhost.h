@@ -3,20 +3,23 @@
 
 #include "pluginhost.h"
 
+namespace elapse { namespace plugin {
 
 /*!
- * \brief The NativePluginHost class loads
- * \ref elapse::PluginInterface "plugins" implemented in C++.
+ * \brief The NativeHost class loads \ref elapse::plugin::Interface "plugins"
+ * implemented in C++.
  *
  * \ingroup plugins-int
  */
 
-class NativePluginHost : public PluginHost
+class NativeHost : public Host
 {
 protected:
     PluginData getInfo(const QString &pluginPath);
     QObject *instantiateClass(const PluginInfo &pluginInfo,
                               const ClassInfo &classInfo);
 };
+
+}} // namespace elapse::plugin
 
 #endif // NATIVEPLUGINHOST_H

@@ -3,14 +3,15 @@
 
 #include "pluginhost.h"
 
+namespace elapse { namespace plugin {
 
 /*!
- * \brief The StaticPluginHost class loads the static \ref core-plugin.
+ * \brief The StaticHost class loads the static \ref core-plugin.
  *
  * \ingroup plugins-int
  */
 
-class StaticPluginHost : public PluginHost
+class StaticHost : public Host
 {
 public:
     QList<PluginData> searchForPluginsIn(QDir &dir);
@@ -20,5 +21,7 @@ protected:
     QObject *instantiateClass(const PluginInfo &pluginInfo,
                               const ClassInfo &classInfo);
 };
+
+}} // namespace elapse::plugin
 
 #endif // STATICPLUGINHOST_H

@@ -8,10 +8,10 @@ using elapse::elements::FeatureExtractor;
 
 
 // Make methods public for testability
-class PublicPythonPluginHost : public PythonPluginHost
+class PublicPythonPluginHost : public elapse::plugin::PythonHost
 {
 public:
-    using PythonPluginHost::getInfo;
+    using elapse::plugin::PythonHost::getInfo;
 };
 
 class PythonPluginHostTest : public ::testing::Test
@@ -43,7 +43,7 @@ TEST_F(PythonPluginHostTest, InfoForBazPlugin)
 {
     auto info = host.getInfo(bazPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PluginHostID::Python);
+    EXPECT_EQ(info.plugin.host, elapse::plugin::HostID::Python);
     EXPECT_EQ(info.plugin.name, QString("bazplugin"));
     EXPECT_EQ(info.plugin.path, bazPluginPath);
 

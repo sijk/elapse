@@ -4,15 +4,14 @@
 #include <QMainWindow>
 #include "elementset.h"
 
-class PluginManager;
 class LogView;
 class QStateMachine;
 
-namespace Ui {
-class ElapseClient;
-}
+namespace Ui { class ElapseClient; }
 
 namespace elapse {
+
+namespace plugin { class Manager; }
 
 /*!
  * \brief Implementation of the Elapse client application.
@@ -29,9 +28,9 @@ class BatteryMonitor;
  * \brief The ElapseClient class provides the main window of the Elapse
  * application.
  *
- * It contains a Pipeline, a PluginManager, and a DeviceProxy which provide all
- * of the actual functionality of the application. It also provides a GUI for
- * interacting with these objects and displaying the state of the signal
+ * It contains a Pipeline, a plugin::Manager, and a DeviceProxy which provide
+ * all of the actual functionality of the application. It also provides a GUI
+ * for interacting with these objects and displaying the state of the signal
  * processing elements.
  *
  * \see \ref elapseclient-fsm
@@ -70,7 +69,7 @@ private:
     Ui::ElapseClient *ui;
     LogView *logView;
     QStateMachine *machine;
-    PluginManager *pluginManager;
+    plugin::Manager *pluginManager;
     Pipeline *pipeline;
     DeviceProxy *proxy;
     BatteryMonitor *batteryMonitor;

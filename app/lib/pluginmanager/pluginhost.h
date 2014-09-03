@@ -3,26 +3,27 @@
 
 #include "pluginmanager_global.h"
 
+namespace elapse { namespace plugin {
 
 /*!
- * \brief The PluginHost class is an abstract factory for loading elements
+ * \brief The plugin::Host class is an abstract factory for loading elements
  * from plugins.
  *
  * This design allows plugins to be written in multiple languages. To add
- * support for a new language, implement a PluginHost that can load plugins
+ * support for a new language, implement a plugin::Host that can load plugins
  * written in that language and implement any required bindings for the
  * \ref pipeline-elements "element base classes".
  *
  * \ingroup plugins-int
  */
 
-class PluginHost
+class Host
 {
 public:
     /*!
      * Destroy this PluginHost.
      */
-    virtual ~PluginHost() {}
+    virtual ~Host() {}
 
     /*!
      * Search for plugins in the given \a dir. The default implementation calls
@@ -56,6 +57,9 @@ protected:
     virtual QObject*
     instantiateClass(const PluginInfo &plugin, const ClassInfo &cls) = 0;
 
+    /*!
+     * A custom deleter function for objects instantiated by this Host.
+     */
     typedef std::function<void(QObject*)> Deleter;
 
     /*!
@@ -64,5 +68,7 @@ protected:
      */
     virtual Deleter deleter() { return &QObject::deleteLater; }
 };
+
+}} // namespace elapse::plugin
 
 #endif // PLUGINHOST_H

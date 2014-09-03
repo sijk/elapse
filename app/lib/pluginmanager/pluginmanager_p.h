@@ -7,17 +7,19 @@
 #include "pluginmanager_global.h"
 #include "pluginhost.h"
 
-class PluginManagerPrivate
+namespace elapse { namespace plugin {
+
+class ManagerPrivate
 {
 public:
-    PluginManagerPrivate(PluginManager *q);
-    ~PluginManagerPrivate();
+    ManagerPrivate(plugin::Manager *q);
+    ~ManagerPrivate();
 
-    static PluginManagerPrivate *expose(PluginManager *manager);
+    static ManagerPrivate *expose(plugin::Manager *manager);
 
     Ui::PluginManager ui;
     QDir searchPath;
-    QMap<PluginHostID, PluginHost*> hosts;
+    QMap<HostID, Host*> hosts;
     QList<PluginData> pluginData;
 
     void searchForPlugins();
@@ -60,8 +62,10 @@ public:
     QList<ElementData> elements;
 
 private:
-    PluginManager * const q_ptr;
-    Q_DECLARE_PUBLIC(PluginManager)
+    plugin::Manager * const q_ptr;
+    Q_DECLARE_PUBLIC(plugin::Manager)
 };
+
+}} // namespace elapse::plugin
 
 #endif // PLUGINMANAGER_P_H

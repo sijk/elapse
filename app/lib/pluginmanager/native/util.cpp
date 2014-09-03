@@ -4,6 +4,9 @@
 #include "pluginmanager_global.h"
 #include "util.h"
 
+using elapse::data::Signal;
+
+
 static const QMetaObject *baseClass(const QMetaObject *obj)
 {
     const QMetaObject *super = obj->superClass();
@@ -18,15 +21,19 @@ static QString stripNamespace(const char *ident)
     return s.remove(0, s.lastIndexOf(':') + 1);
 }
 
-static elapse::data::Signal::Type signalType(const QMetaObject &obj)
+static Signal::Type signalType(const QMetaObject &obj)
 {
     int typeIdx = obj.indexOfClassInfo("SignalType");
     if (typeIdx >= 0) {
         const char *type = obj.classInfo(typeIdx).value();
-        return elapse::data::Signal::fromString(type);
+        return Signal::fromString(type);
     }
-    return elapse::data::Signal::INVALID;
+    return Signal::INVALID;
 }
+
+
+namespace elapse { namespace plugin { namespace native {
+
 
 template<class T>
 bool getPluginDataFrom(T &plugin, PluginData &data)
@@ -34,7 +41,7 @@ bool getPluginDataFrom(T &plugin, PluginData &data)
     data.plugin.name = plugin.metaData()["className"].toString();
 
     QObject *pluginInstance = plugin.instance();
-    auto factory = qobject_cast<elapse::PluginInterface*>(pluginInstance);
+    auto factory = qobject_cast<plugin::Interface*>(pluginInstance);
     if (!factory)
         return false;
 
@@ -55,7 +62,7 @@ template bool getPluginDataFrom(QPluginLoader &plugin, PluginData &data);
 
 QObject *instantiateClassFrom(QObject *pluginInstance, const QString &className)
 {
-    auto factory = qobject_cast<elapse::PluginInterface*>(pluginInstance);
+    auto factory = qobject_cast<plugin::Interface*>(pluginInstance);
     if (!factory)
         return nullptr;
 
@@ -69,3 +76,5 @@ QObject *instantiateClassFrom(QObject *pluginInstance, const QString &className)
 
     return nullptr;
 }
+
+}}} // namespace elapse::plugin::native

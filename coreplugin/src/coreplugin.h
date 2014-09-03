@@ -33,11 +33,11 @@ namespace coreplugin {
  * \ingroup core-plugin
  */
 
-class CorePlugin : public QObject, public elapse::PluginInterface
+class CorePlugin : public QObject, public elapse::plugin::Interface
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid)
-    Q_INTERFACES(elapse::PluginInterface)
+    Q_INTERFACES(elapse::plugin::Interface)
     ELAPSE_EXPORT_CLASSES(
         UdpDataSource,
         SimpleRawDataSource,

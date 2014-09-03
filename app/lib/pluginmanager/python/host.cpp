@@ -4,16 +4,31 @@
 #include "exception.h"
 #include "host.h"
 
-namespace py = boost::python;
+namespace elapse { namespace plugin { namespace python {
 
-QMap<QObject*, py::object> pyhost::instances;
+using data::Signal;
 
-void pyhost::removeInstance(QObject *obj)
+/*!
+ * A cache to keep a reference to boost::python::object%s, keyed by their
+ * corresponding QObject pointers. This keeps a reference to the python
+ * objects until the C++ shared pointer is released, at which point
+ * removeInstance() removes the python object from this cache.
+ */
+QMap<QObject*, py::object> instances;
+
+/*!
+ * Remove the python object corresponding to the given \a obj from the
+ * internal cache.
+ */
+void removeInstance(QObject *obj)
 {
     instances.remove(obj);
 }
 
-void pyhost::initPython()
+/*!
+ * Initialise the python interpreter and register the elapse bindings.
+ */
+void initPython()
 {
     static bool initialized = false;
     if (initialized) return;
@@ -27,7 +42,10 @@ void pyhost::initPython()
     initelapse();
 }
 
-void pyhost::addParentToPythonPath(QDir dir)
+/*!
+ * Add the parent directory of the given \a dir to python's search path.
+ */
+void addParentToPythonPath(QDir dir)
 {
     dir.cdUp();
     const char *path = qPrintable(dir.absolutePath());
@@ -37,7 +55,12 @@ void pyhost::addParentToPythonPath(QDir dir)
         sys_path.append(path);
 }
 
-QMap<QString, py::object> pyhost::getClasses(const QString &moduleName)
+/*!
+ * Load the python module with the given \a moduleName and get the list of
+ * elapse::elements classes that it exports.
+ * \return a mapping from class names to python class objects.
+ */
+QMap<QString, py::object> getClasses(const QString &moduleName)
 {
     QMap<QString, py::object> classes;
 
@@ -54,7 +77,11 @@ QMap<QString, py::object> pyhost::getClasses(const QString &moduleName)
     return classes;
 }
 
-QString pyhost::baseClassName(py::object cls)
+/*!
+ * \return the name of the elapse::elements base class that the given \a cls
+ * inherits from.
+ */
+QString baseClassName(py::object cls)
 {
     py::object base = cls.attr("__base__");
     if (py::extract<std::string>(base.attr("__module__"))() != "Boost.Python")
@@ -62,16 +89,25 @@ QString pyhost::baseClassName(py::object cls)
     return QString(py::extract<const char*>(cls.attr("__name__")));
 }
 
-elapse::data::Signal::Type pyhost::signalType(py::object cls)
+/*!
+ * \return the value of the "signalType" attribute of the given \a cls
+ * (if any), otherwise Signal::INVALID.
+ */
+Signal::Type signalType(py::object cls)
 {
     if (PyObject_HasAttrString(cls.ptr(), "signalType")) {
         auto sigType = py::str(cls.attr("signalType"));
-        return elapse::data::Signal::fromString(py::extract<const char*>(sigType));
+        return Signal::fromString(py::extract<const char*>(sigType));
     }
-    return elapse::data::Signal::INVALID;
+    return Signal::INVALID;
 }
 
-QObject *pyhost::extractQObject(py::object obj, const QString &cls)
+/*!
+ * Extract a QObject pointer from the given python \a obj. You need to pass
+ * the name of the appropriate baseClass() as \a cls.
+ * \return the QObject pointer, or null if \a obj is not an instance of \a cls.
+ */
+QObject *extractQObject(py::object obj, const QString &cls)
 {
     if (cls == "FeatureExtractor") {
         py::extract<BaseFeatureExtractorWrap*> basefx(obj);
@@ -89,12 +125,16 @@ QObject *pyhost::extractQObject(py::object obj, const QString &cls)
     return nullptr;
 }
 
-/*
+/*!
+ * \return the details of the current python::Exception. It is only valid to
+ * call this function from within a `boost::python::error_already_set` exception
+ * handler.
+ *
  * Adapted from http://thejosephturner.com/blog/post/embedding-python-in-c-applications-with-boostpython-part-2/
  */
-PythonException getPythonException()
+Exception getException()
 {
-    PythonException exc;
+    Exception exc;
     exc.type = "Unknown Python exception";
 
     PyObject *type = nullptr, *value = nullptr, *traceback = nullptr;
@@ -132,9 +172,14 @@ PythonException getPythonException()
     return exc;
 }
 
-void logPythonException()
+/*!
+ * Get the details of the current python::Exception and write them to the
+ * `qxtLogger`. The traceback is written at Debug level and the error message
+ * is written at Error level.
+ */
+void logException()
 {
-    PythonException exc = getPythonException();
+    Exception exc = getException();
 
     qxtLog->debug("Python traceback (most recent call last):");
     for (auto &line : exc.traceback)
@@ -143,3 +188,5 @@ void logPythonException()
 
     qxtLog->error(exc.type + ": " + exc.value);
 }
+
+}}} // namespace elapse::plugin::python

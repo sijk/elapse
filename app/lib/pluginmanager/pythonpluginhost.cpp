@@ -4,19 +4,20 @@
 #include "python/host.h"
 #include "python/exception.h"
 
+namespace elapse { namespace plugin {
 
 /*!
  * Create a new PythonPluginHost and initialize the Python interpreter.
  */
-PythonPluginHost::PythonPluginHost()
+PythonHost::PythonHost()
 {
-    pyhost::initPython();
+    python::initPython();
 }
 
 /*!
  * Import the Python package at \a pluginPath and extract the list of classes.
  */
-PluginData PythonPluginHost::getInfo(const QString &pluginPath)
+PluginData PythonHost::getInfo(const QString &pluginPath)
 {
     PluginData data;
     QDir dir(pluginPath);
@@ -26,41 +27,41 @@ PluginData PythonPluginHost::getInfo(const QString &pluginPath)
         return data;
 
     try {
-        data.plugin.host = PluginHostID::Python;
+        data.plugin.host = HostID::Python;
         data.plugin.path = pluginPath;
         data.plugin.name = moduleName;
 
-        pyhost::addParentToPythonPath(dir);
-        auto classes = pyhost::getClasses(moduleName);
+        python::addParentToPythonPath(dir);
+        auto classes = python::getClasses(moduleName);
 
         for (auto i = classes.cbegin(); i != classes.cend(); i++) {
             ClassInfo cls;
-            cls.elementClass = pyhost::baseClassName(i.value());
-            cls.signalType = pyhost::signalType(i.value());
+            cls.elementClass = python::baseClassName(i.value());
+            cls.signalType = python::signalType(i.value());
             cls.className = i.key();
             data.classes.append(cls);
         }
     } catch (const boost::python::error_already_set &) {
-        logPythonException();
+        python::logException();
         return PluginData();
     }
 
     return data;
 }
 
-QObject *PythonPluginHost::instantiateClass(const PluginInfo &plugin,
-                                            const ClassInfo &cls)
+QObject *PythonHost::instantiateClass(const PluginInfo &plugin,
+                                      const ClassInfo &cls)
 {
     QObject *obj;
     QDir dir(plugin.path);
 
     try {
-        auto classes = pyhost::getClasses(dir.dirName());
+        auto classes = python::getClasses(dir.dirName());
         boost::python::object pyobj = classes[cls.className]();
-        obj = pyhost::extractQObject(pyobj, cls.elementClass);
-        pyhost::instances[obj] = pyobj;
+        obj = python::extractQObject(pyobj, cls.elementClass);
+        python::instances[obj] = pyobj;
     } catch (const boost::python::error_already_set&) {
-        logPythonException();
+        python::logException();
         return nullptr;
     }
 
@@ -68,10 +69,12 @@ QObject *PythonPluginHost::instantiateClass(const PluginInfo &plugin,
 }
 
 /*!
- * \return a Deleter that will remove objects from the internal cache of
- * Python instances.
+ * \return a plugin::Host::Deleter that will remove objects from the
+ * internal cache of Python instances.
  */
-PluginHost::Deleter PythonPluginHost::deleter()
+Host::Deleter PythonHost::deleter()
 {
-    return &pyhost::removeInstance;
+    return &python::removeInstance;
 }
+
+}} // namespace elapse::plugin
