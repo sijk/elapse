@@ -4,13 +4,12 @@
 #include <QMainWindow>
 #include "elementset.h"
 
-class LogView;
 class QStateMachine;
-
 namespace Ui { class ElapseClient; }
 
 namespace elapse {
 
+namespace log { class LogView; }
 namespace plugin { class Manager; }
 
 /*!
@@ -67,7 +66,7 @@ private:
     void buildStateMachine();
 
     Ui::ElapseClient *ui;
-    LogView *logView;
+    log::LogView *logView;
     QStateMachine *machine;
     plugin::Manager *pluginManager;
     Pipeline *pipeline;

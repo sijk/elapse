@@ -2,6 +2,8 @@
 #include <QBrush>
 #include "logmodel.h"
 
+namespace elapse { namespace log {
+
 static const QMap<QxtLogger::LogLevel, QBrush> levelColours = {
     { QxtLogger::TraceLevel,    Qt::gray        },
     { QxtLogger::DebugLevel,    Qt::lightGray   },
@@ -115,3 +117,5 @@ void LogModel::appendItem(const LogItem &item)
     _items.append(item);
     endInsertRows();
 }
+
+}} // namespace elapse::log

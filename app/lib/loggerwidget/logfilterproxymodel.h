@@ -4,6 +4,7 @@
 #include <QSortFilterProxyModel>
 #include <QxtLogger>
 
+namespace elapse { namespace log {
 
 /*!
  * \brief The LogFilterProxyModel class filters the LogModel by log level.
@@ -30,5 +31,7 @@ protected:
 private:
     QxtLogger::LogLevel minLevel;
 };
+
+}} // namespace elapse::log
 
 #endif // LOGFILTERPROXYMODEL_H

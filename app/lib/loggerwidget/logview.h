@@ -3,13 +3,21 @@
 
 #include <QDialog>
 
-class TableModelLoggerEngine;
-class LogFilterProxyModel;
 class QxtLoggerEngine;
 
-namespace Ui {
-class LogView;
-}
+namespace Ui { class LogView; }
+
+namespace elapse {
+
+/*!
+ * \brief Logging utilities.
+ * \ingroup logging
+ */
+
+namespace log {
+
+class TableModelLoggerEngine;
+class LogFilterProxyModel;
 
 
 /*!
@@ -44,5 +52,7 @@ private:
     TableModelLoggerEngine *engine;
     LogFilterProxyModel *proxyModel;
 };
+
+}} // namespace elapse::log
 
 #endif // LOGVIEW_H

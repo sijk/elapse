@@ -3,8 +3,11 @@
 
 #include <QxtLoggerEngine>
 
-class LogModel;
 class QAbstractItemModel;
+
+namespace elapse { namespace log {
+
+class LogModel;
 
 
 /*!
@@ -30,5 +33,7 @@ public:
 private:
     LogModel *_model;
 };
+
+}} // namespace elapse::log
 
 #endif // TABLEMODELLOGGERENGINE_H

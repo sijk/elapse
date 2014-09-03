@@ -24,7 +24,7 @@ namespace elapse { namespace client {
 ElapseClient::ElapseClient(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ElapseClient),
-    logView(new LogView(this)),
+    logView(new log::LogView(this)),
     pluginManager(new plugin::Manager(this)),
     pipeline(new Pipeline(this)),
     proxy(new DeviceProxy(this)),

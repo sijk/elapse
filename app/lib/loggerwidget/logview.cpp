@@ -8,6 +8,7 @@
 #include "logview.h"
 #include "ui_logview.h"
 
+namespace elapse { namespace log {
 
 static QStringListModel levelNames{{
     "Trace", "Debug", "Info", "Warning", "Error", "Critical", "Fatal",
@@ -117,3 +118,5 @@ void LogView::keyPressEvent(QKeyEvent *event)
     if (event->key() != Qt::Key_Escape)
         QDialog::keyPressEvent(event);
 }
+
+}} // namespace elapse::log
