@@ -27,7 +27,7 @@ class SampleDecoder : public QObject
     Q_OBJECT
 signals:
     /*! Emitted when a \a sample has been decoded. */
-    void newSample(elapse::SamplePtr sample);
+    void newSample(elapse::data::SamplePtr sample);
 
     /*!
      * Emitted when an error occurs. The \a message is a human-readable string

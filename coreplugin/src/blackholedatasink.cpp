@@ -2,6 +2,8 @@
 #include <QApplication>
 #include "blackholedatasink.h"
 
+using namespace elapse::data;
+
 
 /*!
  * Create a new BlackHoleDataSink.
@@ -56,8 +58,7 @@ void BlackHoleDataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &confi
 /*!
  * Do nothing.
  */
-void BlackHoleDataSink::saveData(elapse::Signal::Type signalType,
-                                         QByteArray data)
+void BlackHoleDataSink::saveData(Signal::Type signalType, QByteArray data)
 {
     Q_UNUSED(signalType)
     Q_UNUSED(data)
@@ -66,8 +67,7 @@ void BlackHoleDataSink::saveData(elapse::Signal::Type signalType,
 /*!
  * Do nothing.
  */
-void BlackHoleDataSink::saveSample(elapse::Signal::Type signalType,
-                                           elapse::SamplePtr sample)
+void BlackHoleDataSink::saveSample(Signal::Type signalType, SamplePtr sample)
 {
     Q_UNUSED(signalType)
     Q_UNUSED(sample)
@@ -76,7 +76,7 @@ void BlackHoleDataSink::saveSample(elapse::Signal::Type signalType,
 /*!
  * Do nothing.
  */
-void BlackHoleDataSink::saveFeatureVector(elapse::FeatureVector featureVector)
+void BlackHoleDataSink::saveFeatureVector(FeatureVector featureVector)
 {
     Q_UNUSED(featureVector)
 }
@@ -84,7 +84,7 @@ void BlackHoleDataSink::saveFeatureVector(elapse::FeatureVector featureVector)
 /*!
  * Do nothing.
  */
-void BlackHoleDataSink::saveCognitiveState(elapse::CognitiveState state)
+void BlackHoleDataSink::saveCognitiveState(CognitiveState state)
 {
     Q_UNUSED(state)
 }

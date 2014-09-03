@@ -29,7 +29,7 @@ public slots:
      * OutputAction subclasses to match up and process the corresponding
      * FeatureVector%s.
      */
-    virtual void onState(elapse::CognitiveState state) = 0;
+    virtual void onState(elapse::data::CognitiveState state) = 0;
 };
 
 } // namespace elapse

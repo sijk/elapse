@@ -51,11 +51,11 @@ TEST_F(PythonPluginHostTest, InfoForBazPlugin)
 
     EXPECT_EQ(info.classes[0].className, QString("BazEegFeatEx"));
     EXPECT_EQ(info.classes[0].elementClass, QString("FeatureExtractor"));
-    EXPECT_EQ(info.classes[0].signalType, elapse::Signal::EEG);
+    EXPECT_EQ(info.classes[0].signalType, elapse::data::Signal::EEG);
 
     EXPECT_EQ(info.classes[1].className, QString("BazImuFeatEx"));
     EXPECT_EQ(info.classes[1].elementClass, QString("FeatureExtractor"));
-    EXPECT_EQ(info.classes[1].signalType, elapse::Signal::IMU);
+    EXPECT_EQ(info.classes[1].signalType, elapse::data::Signal::IMU);
 }
 
 TEST_F(PythonPluginHostTest, InstantiateBazEegFeatEx)

@@ -8,7 +8,7 @@
 #include "nativepluginhost.h"
 #include "pythonpluginhost.h"
 
-using elapse::Signal;
+using elapse::data::Signal;
 
 const QString pluginSetting("elements/%1/plugin-path");
 const QString classSetting("elements/%1/class-name");
@@ -83,8 +83,8 @@ void PluginManagerPrivate::populateModels()
 
                 bool classMatches = cls.elementClass == element.elementClass;
                 bool signalTypeMatches = (cls.signalType == element.signalType)
-                        || (cls.signalType == elapse::Signal::INVALID)
-                        || (element.signalType == elapse::Signal::INVALID);
+                        || (cls.signalType == Signal::INVALID)
+                        || (element.signalType == Signal::INVALID);
 
                 if (classMatches && signalTypeMatches) {
                     if (!pluginItem) {

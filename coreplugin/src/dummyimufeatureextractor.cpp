@@ -1,6 +1,10 @@
 #include "headwidget.h"
 #include "dummyimufeatureextractor.h"
 
+using namespace elapse;
+using namespace elapse::data;
+
+
 DummyImuFeatureExtractor::DummyImuFeatureExtractor() :
     headWidget(nullptr)
 {
@@ -17,10 +21,10 @@ QWidget *DummyImuFeatureExtractor::getWidget()
     return headWidget;
 }
 
-void DummyImuFeatureExtractor::analyseSample(elapse::SamplePtr sample)
+void DummyImuFeatureExtractor::analyseSample(SamplePtr sample)
 {
     if (headWidget)
-        updateHeadWidget(elapse::ImuSample::staticCastFrom(sample).get());
+        updateHeadWidget(ImuSample::staticCastFrom(sample).get());
 
     sampleFlags[sample->timestamp] = 1;
 }
@@ -30,7 +34,7 @@ std::vector<double> DummyImuFeatureExtractor::features()
     return { double(sampleFlags.size()) };
 }
 
-void DummyImuFeatureExtractor::removeDataBefore(elapse::time::Point time)
+void DummyImuFeatureExtractor::removeDataBefore(time::Point time)
 {
     sampleFlags.removeValuesBefore(time);
 }
@@ -38,7 +42,7 @@ void DummyImuFeatureExtractor::removeDataBefore(elapse::time::Point time)
 /*!
  * Update the orientation of the head widget with the given \a sample.
  */
-void DummyImuFeatureExtractor::updateHeadWidget(const elapse::ImuSample *sample)
+void DummyImuFeatureExtractor::updateHeadWidget(const ImuSample *sample)
 {
     // Calculate the direction of the acceleration vector.
     // By assuming this is purely due to gravity, we get an approximation

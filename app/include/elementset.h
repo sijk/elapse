@@ -10,7 +10,7 @@
 #include "elapse/elements/outputaction.h"
 #include "elapse/elements/datasink.h"
 
-using elapse::Signal;
+using elapse::data::Signal;
 
 
 /*!

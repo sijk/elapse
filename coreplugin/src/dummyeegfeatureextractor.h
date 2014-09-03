@@ -20,7 +20,7 @@ public:
     Q_INVOKABLE DummyEegFeatureExtractor();
 
 protected:
-    void analyseSample(elapse::SamplePtr sample);
+    void analyseSample(elapse::data::SamplePtr sample);
     std::vector<double> features();
     void removeDataBefore(elapse::time::Point time);
 

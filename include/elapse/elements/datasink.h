@@ -33,11 +33,11 @@ public slots:
     void onEegData(QByteArray data);
     void onVideoData(QByteArray data);
     void onImuData(QByteArray data);
-    void onEegSample(elapse::SamplePtr sample);
-    void onVideoSample(elapse::SamplePtr sample);
-    void onImuSample(elapse::SamplePtr sample);
-    void onFeatureVector(elapse::FeatureVector featureVector);
-    void onCognitiveState(elapse::CognitiveState state);
+    void onEegSample(elapse::data::SamplePtr sample);
+    void onVideoSample(elapse::data::SamplePtr sample);
+    void onImuSample(elapse::data::SamplePtr sample);
+    void onFeatureVector(elapse::data::FeatureVector featureVector);
+    void onCognitiveState(elapse::data::CognitiveState state);
 
     /*!
      * Allow the user to set any metadata about the data that will be captured
@@ -82,12 +82,12 @@ protected:
     /*!
      * Called when there is raw \a data of the given \a signalType to be saved.
      */
-    virtual void saveData(Signal::Type signalType, QByteArray data);
+    virtual void saveData(data::Signal::Type signalType, QByteArray data);
 
     /*!
      * Called when there is a \a sample of the given \a signalType to be saved.
      */
-    virtual void saveSample(Signal::Type signalType, SamplePtr sample);
+    virtual void saveSample(data::Signal::Type signalType, data::SamplePtr sample);
 
     /*!
      * Called when there is a \a featureVector to be saved.
@@ -95,12 +95,12 @@ protected:
      * Derived classes may inspect FeatureVector::signalType to find the
      * type of the signal from which the \a featureVector was extracted.
      */
-    virtual void saveFeatureVector(FeatureVector featureVector);
+    virtual void saveFeatureVector(data::FeatureVector featureVector);
 
     /*!
      * Called when there is a new cognitive \a state to be saved.
      */
-    virtual void saveCognitiveState(CognitiveState state);
+    virtual void saveCognitiveState(data::CognitiveState state);
 
 public:
     /*!

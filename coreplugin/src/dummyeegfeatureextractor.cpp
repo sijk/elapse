@@ -4,7 +4,7 @@ DummyEegFeatureExtractor::DummyEegFeatureExtractor()
 {
 }
 
-void DummyEegFeatureExtractor::analyseSample(elapse::SamplePtr sample)
+void DummyEegFeatureExtractor::analyseSample(elapse::data::SamplePtr sample)
 {
     sampleFlags[sample->timestamp] = 1;
 }

@@ -21,10 +21,10 @@ public:
     bool getCaptureInfo();
 
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(elapse::Signal::Type signalType, QByteArray data);
-    void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample);
-    void saveFeatureVector(elapse::FeatureVector featureVector);
-    void saveCognitiveState(elapse::CognitiveState state);
+    void saveData(elapse::data::Signal::Type signalType, QByteArray data);
+    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample);
+    void saveFeatureVector(elapse::data::FeatureVector featureVector);
+    void saveCognitiveState(elapse::data::CognitiveState state);
 };
 
 #endif // BLACKHOLEDATASINK_H

@@ -32,7 +32,7 @@ struct PluginInfo
 struct ClassInfo
 {
     QString elementClass;            ///< The element base class this class inherits from
-    elapse::Signal::Type signalType; ///< The signal type this class works with (if specified)
+    elapse::data::Signal::Type signalType; ///< The signal type this class works with (if specified)
     QString className;               ///< The name of the class
 };
 

@@ -11,6 +11,8 @@
 #include <elapse/sampletypes.h>
 #include "simplerawdatasource.h"
 
+using elapse::data::Signal;
+
 
 class DataLoader : public QThread
 {
@@ -62,7 +64,7 @@ void DataLoader::run()
     stopped = false;
 
     int dt;
-    elapse::Signal::Type signalType;
+    Signal::Type signalType;
     QByteArray data;
     bool first = true;
 
@@ -75,11 +77,11 @@ void DataLoader::run()
         else
             QThread::msleep(dt);
 
-        if (signalType == elapse::Signal::EEG)
+        if (signalType == Signal::EEG)
             emit eegReady(data);
-        else if (signalType == elapse::Signal::VIDEO)
+        else if (signalType == Signal::VIDEO)
             emit videoReady(data);
-        else if (signalType == elapse::Signal::IMU)
+        else if (signalType == Signal::IMU)
             emit imuReady(data);
         else
             Q_UNREACHABLE();

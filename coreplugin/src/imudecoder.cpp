@@ -2,8 +2,8 @@
 #include <elapse/sampletypes.h>
 #include "imudecoder.h"
 
-using elapse::ImuSample;
-using elapse::SamplePtr;
+using elapse::data::ImuSample;
+using elapse::data::SamplePtr;
 
 
 /*!

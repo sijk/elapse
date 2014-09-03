@@ -2,6 +2,8 @@
 #include "elapse/timestamps.h"
 #include "featurextractor_p.h"
 
+using namespace elapse::data;
+
 
 elapse::BaseFeatureExtractorPrivate::BaseFeatureExtractorPrivate() :
     windowStart(0),
@@ -13,7 +15,7 @@ elapse::BaseFeatureExtractorPrivate::BaseFeatureExtractorPrivate() :
  * \return the Signal::Type this FeatureExtractor works with, as defined
  * by the "SignalType" class info field.
  */
-elapse::Signal::Type elapse::BaseFeatureExtractorPrivate::findSignalType(BaseFeatureExtractor *q)
+Signal::Type elapse::BaseFeatureExtractorPrivate::findSignalType(BaseFeatureExtractor *q)
 {
     const int index = q->metaObject()->indexOfClassInfo("SignalType");
     const char *info = q->metaObject()->classInfo(index).value();
@@ -64,7 +66,7 @@ void elapse::BaseFeatureExtractor::setWindowStep(uint step)
  * window as necessary and delegates the actual feature extraction to
  * the protected methods.
  */
-void elapse::BaseFeatureExtractor::onSample(elapse::SamplePtr sample)
+void elapse::BaseFeatureExtractor::onSample(SamplePtr sample)
 {
     Q_D(BaseFeatureExtractor);
 

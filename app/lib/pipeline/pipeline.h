@@ -45,7 +45,7 @@ signals:
     void error(QString msg = QString());
 
 private slots:
-    void setStartTime(elapse::SamplePtr sample);
+    void setStartTime(elapse::data::SamplePtr sample);
 
 private:
     ElementSetPtr _elements;

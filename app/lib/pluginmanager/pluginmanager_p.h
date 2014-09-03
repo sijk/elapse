@@ -54,7 +54,7 @@ public:
         QStandardItemModel *model;
         QTreeView *tree;
         QString elementClass;
-        elapse::Signal::Type signalType;
+        elapse::data::Signal::Type signalType;
         QString elementName;
     };
     QList<ElementData> elements;

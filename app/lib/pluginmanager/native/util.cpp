@@ -18,14 +18,14 @@ static QString stripNamespace(const char *ident)
     return s.remove(0, s.lastIndexOf(':') + 1);
 }
 
-static elapse::Signal::Type signalType(const QMetaObject &obj)
+static elapse::data::Signal::Type signalType(const QMetaObject &obj)
 {
     int typeIdx = obj.indexOfClassInfo("SignalType");
     if (typeIdx >= 0) {
         const char *type = obj.classInfo(typeIdx).value();
-        return elapse::Signal::fromString(type);
+        return elapse::data::Signal::fromString(type);
     }
-    return elapse::Signal::INVALID;
+    return elapse::data::Signal::INVALID;
 }
 
 template<class T>

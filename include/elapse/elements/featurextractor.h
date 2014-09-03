@@ -38,11 +38,11 @@ public:
 
 public slots:
     /*! Executed when the next \a sample is available for analysis. */
-    virtual void onSample(elapse::SamplePtr sample) = 0;
+    virtual void onSample(elapse::data::SamplePtr sample) = 0;
 
 signals:
     /*! Emitted when a complete window has been analysed. */
-    void newFeatures(elapse::FeatureVector features);
+    void newFeatures(elapse::data::FeatureVector features);
 };
 
 
@@ -79,17 +79,17 @@ public:
     void setWindowStep(uint step);
 
 public slots:
-    void onSample(elapse::SamplePtr sample);
+    void onSample(elapse::data::SamplePtr sample);
 
 protected:
     /*!
      * Derived classes should implement this method to analyse the given
      * \a sample. The result will need to be stored internally until the
      * next call to features().
-     * \sa TimestampedValues for a convenient data structure to store the
+     * \sa time::Series for a convenient data structure to store the
      * results of this analysis.
      */
-    virtual void analyseSample(SamplePtr sample) = 0;
+    virtual void analyseSample(data::SamplePtr sample) = 0;
 
     /*!
      * \return a list of features calculated from the previously analysed
@@ -105,7 +105,7 @@ protected:
 
     /*!
      * Reset any internal state. Defaults to calling removeDataBefore() with
-     * the maximum value a TimeStamp can hold.
+     * the maximum value a time::Point can hold.
      */
     virtual void reset();
 

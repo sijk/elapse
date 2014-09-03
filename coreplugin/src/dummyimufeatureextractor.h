@@ -27,11 +27,11 @@ public:
     QWidget *getWidget();
 
 private:
-    void analyseSample(elapse::SamplePtr sample);
+    void analyseSample(elapse::data::SamplePtr sample);
     std::vector<double> features();
     void removeDataBefore(elapse::time::Point time);
 
-    void updateHeadWidget(const elapse::ImuSample *sample);
+    void updateHeadWidget(const elapse::data::ImuSample *sample);
 
     HeadWidget *headWidget;
     elapse::time::Series<int> sampleFlags;

@@ -50,7 +50,7 @@ struct FeatureExtractorWrap : elapse::FeatureExtractor,
     void setWindowStep(uint ms) {
         PYCATCH(this->get_override("setWindowStep")(ms));
     }
-    void onSample(elapse::SamplePtr sample) {
+    void onSample(elapse::data::SamplePtr sample) {
         PYCATCH(this->get_override("onSample")(sample));
     }
 };
@@ -69,7 +69,7 @@ public:
 struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
                                   py::wrapper<BaseFeatureExtractorPublic>
 {
-    void analyseSample(elapse::SamplePtr sample) {
+    void analyseSample(elapse::data::SamplePtr sample) {
         PYCATCH(this->get_override("analyseSample")(sample));
     }
     std::vector<double> features() {
@@ -98,7 +98,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
 struct ClassifierWrap : elapse::Classifier,
                         py::wrapper<elapse::Classifier>
 {
-    void onFeatures(elapse::FeatureVector features) {
+    void onFeatures(elapse::data::FeatureVector features) {
         PYCATCH(this->get_override("onFeatures")(features));
     }
     void reset() {
@@ -117,16 +117,16 @@ public:
 struct BaseClassifierWrap : BaseClassifierPublic,
                             py::wrapper<BaseClassifierPublic>
 {
-    elapse::CognitiveState classify(QList<elapse::FeatureVector> featureVectors) {
+    elapse::data::CognitiveState classify(QList<elapse::data::FeatureVector> featureVectors) {
         PYCATCH_RETURN(this->get_override("classify")(featureVectors),
-                       elapse::CognitiveState(0));
+                       elapse::data::CognitiveState(0));
     }
 };
 
 struct OutputActionWrap : elapse::OutputAction,
                           py::wrapper<elapse::OutputAction>
 {
-    void onState(elapse::CognitiveState state) {
+    void onState(elapse::data::CognitiveState state) {
         PYCATCH(this->get_override("onState")(state));
     }
 };
@@ -165,36 +165,36 @@ struct DataSinkWrap : DataSinkPublic,
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config) {
         PYCATCH(this->get_override("saveDeviceConfig")(config));
     }
-    void saveData(elapse::Signal::Type signalType, QByteArray data) {
+    void saveData(elapse::data::Signal::Type signalType, QByteArray data) {
         if (py::override fn = this->get_override("saveData"))
             PYCATCH(fn(signalType, data));
         DataSinkPublic::saveData(signalType, data);
     }
-    void default_saveData(elapse::Signal::Type signalType, QByteArray data) {
+    void default_saveData(elapse::data::Signal::Type signalType, QByteArray data) {
         PYCATCH(this->DataSinkPublic::saveData(signalType, data));
     }
-    void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
+    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
         if (py::override fn = this->get_override("saveSample"))
             PYCATCH(fn(signalType, sample));
         DataSinkPublic::saveSample(signalType, sample);
     }
-    void default_saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
+    void default_saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
         PYCATCH(this->DataSinkPublic::saveSample(signalType, sample));
     }
-    void saveFeatureVector(elapse::FeatureVector featureVector) {
+    void saveFeatureVector(elapse::data::FeatureVector featureVector) {
         if (py::override fn = this->get_override("saveFeatureVector"))
             PYCATCH(fn(featureVector));
         DataSinkPublic::saveFeatureVector(featureVector);
     }
-    void default_saveFeatureVector(elapse::FeatureVector featureVector) {
+    void default_saveFeatureVector(elapse::data::FeatureVector featureVector) {
         PYCATCH(this->DataSinkPublic::saveFeatureVector(featureVector));
     }
-    void saveCognitiveState(elapse::CognitiveState state) {
+    void saveCognitiveState(elapse::data::CognitiveState state) {
         if (py::override fn = this->get_override("saveCognitiveState"))
             PYCATCH(fn(state));
         DataSinkPublic::saveCognitiveState(state);
     }
-    void default_saveCognitiveState(elapse::CognitiveState state) {
+    void default_saveCognitiveState(elapse::data::CognitiveState state) {
         PYCATCH(this->DataSinkPublic::saveCognitiveState(state));
     }
 };

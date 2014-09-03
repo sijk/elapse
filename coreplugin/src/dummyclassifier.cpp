@@ -1,8 +1,8 @@
 #include <QxtLogger>
 #include "dummyclassifier.h"
 
-using elapse::FeatureVector;
-using elapse::CognitiveState;
+using elapse::data::FeatureVector;
+using elapse::data::CognitiveState;
 
 
 /*!

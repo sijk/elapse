@@ -17,7 +17,7 @@ public:
     Q_INVOKABLE DummyClassifier();
 
 protected:
-    elapse::CognitiveState classify(QList<elapse::FeatureVector> featureVectors);
+    elapse::data::CognitiveState classify(QList<elapse::data::FeatureVector> featureVectors);
 };
 
 #endif // DUMMYCLASSIFIER_H

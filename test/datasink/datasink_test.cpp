@@ -17,10 +17,10 @@ public:
     MOCK_METHOD0(needsNewCaptureInfo, bool());
     MOCK_METHOD0(getCaptureInfo, bool());
     MOCK_METHOD1(saveDeviceConfig, void(const QMap<QString,QVariantMap> &));
-    MOCK_METHOD2(saveData, void(elapse::Signal::Type, QByteArray));
-    MOCK_METHOD2(saveSample, void(elapse::Signal::Type, elapse::SamplePtr));
-    MOCK_METHOD1(saveFeatureVector, void(elapse::FeatureVector));
-    MOCK_METHOD1(saveCognitiveState, void(elapse::CognitiveState));
+    MOCK_METHOD2(saveData, void(elapse::data::Signal::Type, QByteArray));
+    MOCK_METHOD2(saveSample, void(elapse::data::Signal::Type, elapse::data::SamplePtr));
+    MOCK_METHOD1(saveFeatureVector, void(elapse::data::FeatureVector));
+    MOCK_METHOD1(saveCognitiveState, void(elapse::data::CognitiveState));
 };
 
 

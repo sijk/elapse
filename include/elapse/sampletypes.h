@@ -9,7 +9,7 @@
 #include <QMetaEnum>
 #include "timestamps.h"
 
-namespace elapse {
+namespace elapse { namespace data {
 
 class Signal
 {
@@ -139,6 +139,6 @@ struct CognitiveState
     CognitiveState(time::Point startTime) : startTime(startTime) {}
 };
 
-} // namespace elapse
+}} // namespace elapse::data
 
 #endif // SAMPLETYPES_H

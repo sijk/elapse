@@ -8,8 +8,8 @@
 #include "stripchart.h"
 #include "eegdecoder.h"
 
-using elapse::EegSample;
-using elapse::SamplePtr;
+using elapse::data::EegSample;
+using elapse::data::SamplePtr;
 
 #define CHANNELS_PER_CHIP   8
 
@@ -24,7 +24,7 @@ public:
     uint nChannels;
 
     double toMicroVolts(double value) const;
-    static void checkSequenceNumber(elapse::EegSample::const_ptr sample);
+    static void checkSequenceNumber(EegSample::const_ptr sample);
 
     QWidget *widgetContainer;
     QSlider *spacingSlider;
@@ -32,7 +32,7 @@ public:
     StripChart *stripChart;
 
     void createStripChart();
-    void plotData(elapse::EegSample::const_ptr sample);
+    void plotData(EegSample::const_ptr sample);
 };
 
 

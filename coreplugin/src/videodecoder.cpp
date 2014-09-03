@@ -18,7 +18,8 @@
 #include "util/gstwrappedbuffer.h"
 #include "videodecoder.h"
 
-using elapse::SamplePtr;
+using elapse::data::SamplePtr;
+using elapse::data::VideoSample;
 
 
 #define SRC_CAPS \
@@ -42,7 +43,7 @@ using elapse::SamplePtr;
  * the VideoSample is destroyed.
  */
 
-struct GstVideoSample : elapse::VideoSample
+struct GstVideoSample : VideoSample
 {
     GstVideoSample(QGst::BufferPtr buffer, elapse::time::Point ts);
 
@@ -204,7 +205,7 @@ void VideoDecoderPrivate::onFrameDecoded()
         timestamp = frameTimes.dequeue();
     }
 
-    auto frame = elapse::VideoSample::createSubClass<GstVideoSample>(buff, timestamp);
+    auto frame = VideoSample::createSubClass<GstVideoSample>(buff, timestamp);
     emit q->newSample(frame);
 }
 

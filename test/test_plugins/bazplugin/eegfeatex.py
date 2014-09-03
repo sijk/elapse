@@ -1,7 +1,7 @@
 import elapse
 
 class BazEegFeatEx(elapse.elements.BaseFeatureExtractor):
-    signalType = elapse.Signal.EEG
+    signalType = elapse.data.Signal.EEG
 
     def analyseSample(self, sample):
         pass

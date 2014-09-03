@@ -17,7 +17,7 @@ public:
     Q_INVOKABLE DummyAction();
 
 public slots:
-    void onState(elapse::CognitiveState state);
+    void onState(elapse::data::CognitiveState state);
 };
 
 #endif // DUMMYACTION_H

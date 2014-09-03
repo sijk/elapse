@@ -62,13 +62,13 @@ QString pyhost::baseClassName(py::object cls)
     return QString(py::extract<const char*>(cls.attr("__name__")));
 }
 
-elapse::Signal::Type pyhost::signalType(py::object cls)
+elapse::data::Signal::Type pyhost::signalType(py::object cls)
 {
     if (PyObject_HasAttrString(cls.ptr(), "signalType")) {
         auto sigType = py::str(cls.attr("signalType"));
-        return elapse::Signal::fromString(py::extract<const char*>(sigType));
+        return elapse::data::Signal::fromString(py::extract<const char*>(sigType));
     }
-    return elapse::Signal::INVALID;
+    return elapse::data::Signal::INVALID;
 }
 
 QObject *pyhost::extractQObject(py::object obj, const QString &cls)

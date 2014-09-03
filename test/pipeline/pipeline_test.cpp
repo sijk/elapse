@@ -19,8 +19,8 @@ using ::testing::Return;
 using ::testing::Invoke;
 using ::testing::AnyNumber;
 using ::testing::InSequence;
-using ::elapse::Signal;
-using ::elapse::time::Point;
+using namespace ::elapse;
+using namespace ::elapse::data;
 using namespace ::elapse::time::literals;
 
 
@@ -47,10 +47,10 @@ public:
     }
 };
 
-struct DummySample : elapse::detail::BaseSample<DummySample> {};
+struct DummySample : elapse::data::detail::BaseSample<DummySample> {};
 
 template<typename SampleType = DummySample>
-elapse::SamplePtr createSample(time::Point time)
+SamplePtr createSample(time::Point time)
 {
     auto sample = SampleType::create();
     sample->timestamp = time;
@@ -58,7 +58,7 @@ elapse::SamplePtr createSample(time::Point time)
 }
 
 template<typename SampleType>
-elapse::SamplePtr createSample(const QByteArray &data)
+SamplePtr createSample(const QByteArray &data)
 {
     return createSample<SampleType>(data.toULongLong());
 }
@@ -77,7 +77,7 @@ public:
 
     void handleData(QByteArray data)
     {
-        emit newSample(createSample<elapse::EegSample>(data));
+        emit newSample(createSample<EegSample>(data));
     }
 };
 
@@ -95,7 +95,7 @@ public:
 
     void handleData(QByteArray data)
     {
-        emit newSample(createSample<elapse::VideoSample>(data));
+        emit newSample(createSample<VideoSample>(data));
     }
 };
 
@@ -113,7 +113,7 @@ public:
 
     void handleData(QByteArray data)
     {
-        emit newSample(createSample<elapse::ImuSample>(data));
+        emit newSample(createSample<ImuSample>(data));
     }
 };
 
@@ -121,7 +121,7 @@ class MockFeatureExtractor : public elapse::BaseFeatureExtractor
 {
     Q_OBJECT
 public:
-    MOCK_METHOD1(analyseSample, void(elapse::SamplePtr));
+    MOCK_METHOD1(analyseSample, void(SamplePtr));
     MOCK_METHOD0(features, std::vector<double>());
     MOCK_METHOD1(removeDataBefore, void(time::Point));
     MOCK_METHOD1(setStartTime, void(time::Point));
@@ -178,7 +178,7 @@ class MockClassifier : public elapse::BaseClassifier
 {
     Q_OBJECT
 public:
-    MOCK_METHOD1(classify, elapse::CognitiveState(QList<elapse::FeatureVector>));
+    MOCK_METHOD1(classify, CognitiveState(QList<FeatureVector>));
     MOCK_METHOD0(reset, void());
 
     MockClassifier()
@@ -197,7 +197,7 @@ class MockOutputAction : public elapse::OutputAction
 {
     Q_OBJECT
 public:
-    MOCK_METHOD1(onState, void(elapse::CognitiveState));
+    MOCK_METHOD1(onState, void(CognitiveState));
 };
 
 class MockDataSink : public elapse::DataSink
@@ -209,10 +209,10 @@ public:
     MOCK_METHOD0(needsNewCaptureInfo, bool());
     MOCK_METHOD0(getCaptureInfo, bool());
     MOCK_METHOD1(saveDeviceConfig, void(const QMap<QString, QVariantMap>&));
-    MOCK_METHOD2(saveData, void(elapse::Signal::Type, QByteArray));
-    MOCK_METHOD2(saveSample, void(elapse::Signal::Type, elapse::SamplePtr));
-    MOCK_METHOD1(saveFeatureVector, void(elapse::FeatureVector));
-    MOCK_METHOD1(saveCognitiveState, void(elapse::CognitiveState));
+    MOCK_METHOD2(saveData, void(Signal::Type, QByteArray));
+    MOCK_METHOD2(saveSample, void(Signal::Type, SamplePtr));
+    MOCK_METHOD1(saveFeatureVector, void(FeatureVector));
+    MOCK_METHOD1(saveCognitiveState, void(CognitiveState));
 
     MockDataSink()
     {
@@ -499,7 +499,7 @@ TEST_F(PipelineTest, IgnoreSamplesBeforeStartTime)
 TEST_F(PipelineTest, FeatureExtractorWindowing)
 {
     std::vector<double> features = { 1, 2, 3 };
-    elapse::CognitiveState state = { 42 };
+    CognitiveState state = { 42 };
 
     EXPECT_CALL(*dataSink, saveData(_,_)).Times(13);
     EXPECT_CALL(*dataSink, saveSample(_,_)).Times(13);
@@ -655,7 +655,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
 TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
 {
     std::vector<double> features = { 1, 2, 3 };
-    elapse::CognitiveState state = { 42 };
+    CognitiveState state = { 42 };
 
     dataSink->ignoreCalls();
     QSignalSpy error(&pipeline, SIGNAL(error(QString)));

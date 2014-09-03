@@ -22,7 +22,7 @@ QMap<QString, object> getClasses(const QString &moduleName);
 
 QString baseClassName(object cls);
 
-elapse::Signal::Type signalType(object cls);
+elapse::data::Signal::Type signalType(object cls);
 
 QObject *extractQObject(object obj, const QString &cls);
 

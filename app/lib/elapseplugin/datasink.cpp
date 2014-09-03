@@ -1,7 +1,7 @@
 #include <QxtLogger>
 #include "elapse/elements/datasink.h"
 
-using elapse::Signal;
+using namespace elapse::data;
 
 
 /*!
@@ -56,7 +56,7 @@ void elapse::DataSink::onImuData(QByteArray data)
  * Called when a elapse::SampleDecoder emits an EEG \a sample. Calls
  * saveSample().
  */
-void elapse::DataSink::onEegSample(elapse::SamplePtr sample)
+void elapse::DataSink::onEegSample(SamplePtr sample)
 {
     saveSample(Signal::EEG, sample);
 }
@@ -65,7 +65,7 @@ void elapse::DataSink::onEegSample(elapse::SamplePtr sample)
  * Called when a elapse::SampleDecoder emits a video \a sample. Calls
  * saveSample().
  */
-void elapse::DataSink::onVideoSample(elapse::SamplePtr sample)
+void elapse::DataSink::onVideoSample(SamplePtr sample)
 {
     saveSample(Signal::VIDEO, sample);
 }
@@ -74,7 +74,7 @@ void elapse::DataSink::onVideoSample(elapse::SamplePtr sample)
  * Called when a elapse::SampleDecoder emits an IMU \a sample. Calls
  * saveSample().
  */
-void elapse::DataSink::onImuSample(elapse::SamplePtr sample)
+void elapse::DataSink::onImuSample(SamplePtr sample)
 {
     saveSample(Signal::IMU, sample);
 }
@@ -83,7 +83,7 @@ void elapse::DataSink::onImuSample(elapse::SamplePtr sample)
  * Called when a elapse::FeatureExtractor emits a \a featureVector. Calls
  * saveFeatureVector().
  */
-void elapse::DataSink::onFeatureVector(elapse::FeatureVector featureVector)
+void elapse::DataSink::onFeatureVector(FeatureVector featureVector)
 {
     saveFeatureVector(featureVector);
 }
@@ -92,7 +92,7 @@ void elapse::DataSink::onFeatureVector(elapse::FeatureVector featureVector)
  * Called when the elapse::Classifier emits a new cognitive \a state. Calls
  * saveCognitiveState().
  */
-void elapse::DataSink::onCognitiveState(elapse::CognitiveState state)
+void elapse::DataSink::onCognitiveState(CognitiveState state)
 {
     saveCognitiveState(state);
 }
@@ -110,7 +110,7 @@ void elapse::DataSink::saveData(Signal::Type signalType, QByteArray data)
     }
 }
 
-void elapse::DataSink::saveSample(Signal::Type signalType, elapse::SamplePtr sample)
+void elapse::DataSink::saveSample(Signal::Type signalType, SamplePtr sample)
 {
     Q_UNUSED(signalType);
     Q_UNUSED(sample);
@@ -123,7 +123,7 @@ void elapse::DataSink::saveSample(Signal::Type signalType, elapse::SamplePtr sam
     }
 }
 
-void elapse::DataSink::saveFeatureVector(elapse::FeatureVector featureVector)
+void elapse::DataSink::saveFeatureVector(FeatureVector featureVector)
 {
     Q_UNUSED(featureVector);
 
@@ -135,7 +135,7 @@ void elapse::DataSink::saveFeatureVector(elapse::FeatureVector featureVector)
     }
 }
 
-void elapse::DataSink::saveCognitiveState(elapse::CognitiveState state)
+void elapse::DataSink::saveCognitiveState(CognitiveState state)
 {
     Q_UNUSED(state);
 

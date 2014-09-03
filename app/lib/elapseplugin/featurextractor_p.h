@@ -13,9 +13,9 @@ public:
     time::Point windowStart;
     uint windowLength;
     uint windowStep;
-    Signal::Type signalType;
+    data::Signal::Type signalType;
 
-    static Signal::Type findSignalType(BaseFeatureExtractor *q);
+    static data::Signal::Type findSignalType(BaseFeatureExtractor *q);
     static BaseFeatureExtractorPrivate *expose(BaseFeatureExtractor *q);
 };
 

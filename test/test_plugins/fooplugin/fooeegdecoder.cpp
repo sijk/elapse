@@ -1,8 +1,8 @@
 #include <elapse/sampletypes.h>
 #include "fooeegdecoder.h"
 
-using elapse::EegSample;
-using elapse::SamplePtr;
+using elapse::data::EegSample;
+using elapse::data::SamplePtr;
 
 
 FooEegDecoder::FooEegDecoder()
