@@ -46,7 +46,7 @@ TEST(ConfigDBusTest, GetConfigViaDBus)
     EXPECT_CALL(src, get(QString("eeg/channel/0"),QString("gain")))
             .WillOnce(Return(QVariant::fromValue(42)));
 
-    DeviceProxy proxy;
+    elapse::client::DeviceProxy proxy;
     QSignalSpy connected(&proxy, SIGNAL(connected()));
     QSignalSpy error(&proxy, SIGNAL(error(QString)));
 
@@ -69,7 +69,7 @@ TEST(ConfigDBusTest, GetDeviceConfig)
     EXPECT_CALL(src, get(QString("eeg"),QString("nChannels")))
             .WillRepeatedly(Return(QVariant::fromValue(2)));
 
-    DeviceProxy proxy;
+    elapse::client::DeviceProxy proxy;
     QSignalSpy connected(&proxy, SIGNAL(connected()));
     QSignalSpy error(&proxy, SIGNAL(error(QString)));
 
@@ -96,7 +96,7 @@ TEST(ConfigDBusTest, DetectDisconnection)
 {
     auto src = new MockOfflineDataSource;
 
-    DeviceProxy proxy;
+    elapse::client::DeviceProxy proxy;
     QSignalSpy connected(&proxy, SIGNAL(connected()));
 
     proxy.connectTo("localhost");

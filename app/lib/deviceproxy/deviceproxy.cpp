@@ -9,6 +9,7 @@
 
 #define DEFAULT_PORT    9000
 
+namespace elapse { namespace client {
 
 /*!
  * Create a new DeviceProxy as a child of the given \a parent.
@@ -31,7 +32,7 @@ DeviceProxy::~DeviceProxy()
 /*!
  * \return the D-Bus interface for the root device object.
  */
-elapse::hardware::Device *DeviceProxy::device() const
+hardware::Device *DeviceProxy::device() const
 {
     return dev;
 }
@@ -150,7 +151,7 @@ void DeviceProxy::connectInBackground()
         }
     }
 
-    dev = new elapse::dbus::Device(bus);
+    dev = new dbus::Device(bus);
     if (!dev->checkConnected()) {
         emit error("The server is not running on the device.");
         return;
@@ -225,3 +226,5 @@ bool DeviceProxy::detectLocalAddressByConnectingTo(const QString &host,
  * \fn DeviceProxy::error(QString msg)
  * Emitted when an error occurs with the connection to the device.
  */
+
+}} // namespace elapse::client

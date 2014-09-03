@@ -4,6 +4,7 @@
 #include <QObject>
 #include "elementset.h"
 
+namespace elapse { namespace client {
 
 /*!
  * \brief The Pipeline class manages a set of signal processing elements.
@@ -52,5 +53,6 @@ private:
     bool startTimeIsSet;
 };
 
+}} // namespace elapse::client
 
 #endif // PIPELINE_H

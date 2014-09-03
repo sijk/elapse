@@ -10,8 +10,8 @@ class OfflineDataSourcePrivate
 public:
     OfflineDataSourcePrivate(ConfigManager *config);
 
-    config::Device device;
-    DeviceDBusAdaptor adaptor;
+    client::config::Device device;
+    common::dbus::Adaptor adaptor;
 };
 
 

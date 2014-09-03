@@ -5,14 +5,14 @@
 #include "elapse/elements/datasource.h"
 
 
-namespace elapse {
+namespace elapse { namespace client {
 
 /*!
- * \brief Adaptors between a \ref elapse::elements::ConfigManager "ConfigManager"
- * and ::hardware interfaces.
+ * \brief Adaptors between a \ref elements::ConfigManager "ConfigManager"
+ * and elapse::hardware interfaces.
  *
  * The config namespace contains implementations of the interfaces in the
- * ::hardware namespace that pass calls through to a ConfigManager.
+ * elapse::hardware namespace that pass calls through to a ConfigManager.
  * Only calls to const methods are passed through; non-const methods are NOPs.
  *
  * \code
@@ -223,6 +223,6 @@ private:
     config::Battery *_battery;
 };
 
-}} // namespace elapse::config
+}}} // namespace elapse::client::config
 
 #endif // CONFIGPROXIES_H

@@ -70,6 +70,8 @@ protected:
 };
 
 
+namespace elapse { namespace client {
+
 /*!
  * Create a BatteryMonitor as a child of the given \a parent.
  */
@@ -102,7 +104,7 @@ QWidget *BatteryMonitor::getWidget()
 /*!
  * Set the DBus interface to the device's \a battery.
  */
-void BatteryMonitor::setBattery(elapse::hardware::Battery *battery)
+void BatteryMonitor::setBattery(hardware::Battery *battery)
 {
     this->battery = battery;
     if (!battery) {
@@ -131,3 +133,4 @@ void BatteryMonitor::updateVoltage()
     gauge->setValue(voltage);
 }
 
+}} // namespace elapse::client

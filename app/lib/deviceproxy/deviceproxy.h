@@ -6,7 +6,9 @@
 #include <QTimer>
 #include "common/hardware.h"
 
-namespace elapse { namespace dbus { class Device; } }
+namespace elapse { namespace client {
+
+namespace dbus { class Device; }
 
 
 /*!
@@ -21,7 +23,7 @@ public:
     explicit DeviceProxy(QObject *parent = nullptr);
     ~DeviceProxy();
 
-    elapse::hardware::Device *device() const;
+    hardware::Device *device() const;
 
     QString deviceAddress() const;
     QString localAddress() const;
@@ -44,11 +46,12 @@ private:
     void connectInBackground();
     bool detectLocalAddressByConnectingTo(const QString& host, quint16 port);
 
-    elapse::dbus::Device *dev;
+    dbus::Device *dev;
     QString deviceAddr;
     QString localAddr;
     QTimer connectionChecker;
 };
 
+}} // namespace elapse::client
 
 #endif // DEVICEPROXY_H

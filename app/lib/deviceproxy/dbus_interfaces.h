@@ -12,14 +12,14 @@
 #include "imu_interface.h"
 
 
-namespace elapse {
+namespace elapse { namespace client {
 
 /*!
  * \brief Adaptors between generated D-Bus interfaces and elapse::hardware
  * interfaces.
  *
- * The ::dbus namespace contains implementations of the interfaces in the
- * ::hardware namespace that pass calls through to QDBusAbstractInterface
+ * The dbus namespace contains implementations of the interfaces in the
+ * elapse::hardware namespace that pass calls through to QDBusAbstractInterface
  * subclasses generated from the XML interface definitions.
  *
  * \code
@@ -40,7 +40,7 @@ class Imu : public hardware::Imu
 public:
     Imu(const QDBusConnection &connection, QObject *parent = 0) :
         hardware::Imu(parent),
-        d(dbus::service, dbus::imuPath, connection)
+        d(common::dbus::service, common::dbus::imuPath, connection)
     { }
 
 public:
@@ -71,7 +71,7 @@ class EegChannel : public hardware::EegChannel
 public:
     EegChannel(uint i, const QDBusConnection &connection, QObject *parent = 0) :
         hardware::EegChannel(parent),
-        d(dbus::service, dbus::eegChanPath.arg(i), connection)
+        d(common::dbus::service, common::dbus::eegChanPath.arg(i), connection)
     { }
 
 public:
@@ -100,7 +100,7 @@ class EegAdc : public hardware::EegAdc
 public:
     EegAdc(const QDBusConnection &connection, QObject *parent = 0) :
         hardware::EegAdc(parent),
-        d(dbus::service, dbus::eegPath, connection)
+        d(common::dbus::service, common::dbus::eegPath, connection)
     { }
 
     ~EegAdc() { qDeleteAll(_channels); }
@@ -144,7 +144,7 @@ public slots:
 
 private:
     org::nzbri::elapse::Eeg::EegAdc d;
-    QList<dbus::EegChannel*> _channels;
+    QList<EegChannel*> _channels;
 };
 
 
@@ -159,7 +159,7 @@ class Battery : public hardware::Battery
 public:
     Battery(const QDBusConnection &connection, QObject *parent = 0) :
         hardware::Battery(parent),
-        d(dbus::service, dbus::batteryPath, connection)
+        d(common::dbus::service, common::dbus::batteryPath, connection)
     { }
 
 public:
@@ -185,7 +185,7 @@ class Device : public hardware::Device
 public:
     Device(const QDBusConnection &connection, QObject *parent = 0) :
         hardware::Device(parent),
-        d(dbus::service, dbus::rootPath, connection),
+        d(common::dbus::service, common::dbus::rootPath, connection),
         _eeg(new EegAdc(connection, this)),
         _imu(new Imu(connection, this)),
         _battery(new Battery(connection, this))
@@ -223,12 +223,12 @@ public slots:
 private:
     mutable org::nzbri::elapse::Device d;
 
-    dbus::EegAdc *_eeg;
-//    dbus::Camera *_camera;
-    dbus::Imu *_imu;
-    dbus::Battery *_battery;
+    EegAdc *_eeg;
+//    Camera *_camera;
+    Imu *_imu;
+    Battery *_battery;
 };
 
-}} // namespace elapse::dbus
+}}} // namespace elapse::client::dbus
 
 #endif // INTERFACES_H

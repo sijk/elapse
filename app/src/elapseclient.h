@@ -4,16 +4,25 @@
 #include <QMainWindow>
 #include "elementset.h"
 
-class Pipeline;
 class PluginManager;
-class DeviceProxy;
 class LogView;
-class BatteryMonitor;
 class QStateMachine;
 
 namespace Ui {
 class ElapseClient;
 }
+
+namespace elapse {
+
+/*!
+ * \brief Implementation of the Elapse client application.
+ */
+
+namespace client {
+
+class Pipeline;
+class DeviceProxy;
+class BatteryMonitor;
 
 
 /*!
@@ -66,5 +75,7 @@ private:
     DeviceProxy *proxy;
     BatteryMonitor *batteryMonitor;
 };
+
+}} // namespace elapse::client
 
 #endif // ELAPSECLIENT_H

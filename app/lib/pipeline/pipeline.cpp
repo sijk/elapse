@@ -3,6 +3,8 @@
 #include "elapse/timestamps.h"
 #include "pipeline.h"
 
+namespace elapse { namespace client {
+
 using namespace elapse::time::literals;
 
 /*!
@@ -185,9 +187,9 @@ void Pipeline::setElements(ElementSetPtr newElements)
 }
 
 /*!
- * Configure the elapse::SampleDecoder%s  and elapse::FeatureExtractor%s
+ * Configure the elements::SampleDecoder%s  and elements::FeatureExtractor%s
  * to match the hardware \a config and also pass it to
- * elapse::DataSink::saveDeviceConfig().
+ * elements::DataSink::saveDeviceConfig().
  */
 void Pipeline::setDeviceConfig(QMap<QString, QVariantMap> config)
 {
@@ -241,7 +243,7 @@ void Pipeline::stop()
  * start timestamp for the FeatureExtractor%s to one second later to give all
  * of the sensors time to start up. For subsequent samples it does nothing.
  */
-void Pipeline::setStartTime(elapse::data::SamplePtr sample)
+void Pipeline::setStartTime(data::SamplePtr sample)
 {
     // Access to startTimeIsSet doesn't need special synchronisation
     // as long as this slot is connected with Qt::AutoConnection so that
@@ -249,9 +251,9 @@ void Pipeline::setStartTime(elapse::data::SamplePtr sample)
     if (startTimeIsSet)
         return;
 
-    elapse::time::Point startTime = sample->timestamp + 1_s;
+    time::Point startTime = sample->timestamp + 1_s;
 
-    qxtLog->debug("Setting start time to", elapse::time::format(startTime));
+    qxtLog->debug("Setting start time to", time::format(startTime));
     foreach (auto &featureExtractor, _elements->featureExtractors)
         featureExtractor->setStartTime(startTime);
 
@@ -260,7 +262,7 @@ void Pipeline::setStartTime(elapse::data::SamplePtr sample)
 
 /*!
  * \fn Pipeline::started()
- * Emitted when the elapse::DataSource has started receiving data from
+ * Emitted when the elements::DataSource has started receiving data from
  * the device.
  */
 
@@ -274,3 +276,5 @@ void Pipeline::setStartTime(elapse::data::SamplePtr sample)
  * Emitted when an error has occurred somewhere in the pipeline. The \a msg is
  * human readable, suitable for displaying in a dialog box or similar.
  */
+
+}} // namespace elapse::client

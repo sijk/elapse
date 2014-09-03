@@ -15,6 +15,8 @@
 
 #define DEFAULT_ADDR    "192.168.2.2"
 
+namespace elapse { namespace client {
+
 
 /*!
  * Construct an ElapseClient as a child of the given \a parent widget.
@@ -225,7 +227,7 @@ void ElapseClient::addDockWidgetFrom(QObject *object)
 {
     QString className = object->metaObject()->className();
 
-    auto displayable = dynamic_cast<elapse::Displayable*>(object);
+    auto displayable = dynamic_cast<Displayable*>(object);
     if (!displayable) {
         qxtLog->trace(className, "is not displayable");
         return;
@@ -279,8 +281,8 @@ void ElapseClient::createDefaultHardwareConfig()
     setDefault("eeg/sampleRate", 250);
     setDefault("eeg/samplesPerChunk", 20);
     setDefault("eeg/all-channels/enabled", true);
-    setDefault("eeg/all-channels/gain", elapse::hardware::EegChannel::x24);
-    setDefault("eeg/all-channels/inputMux", elapse::hardware::EegChannel::Normal);
+    setDefault("eeg/all-channels/gain", hardware::EegChannel::x24);
+    setDefault("eeg/all-channels/inputMux", hardware::EegChannel::Normal);
 
     settings.endGroup();
 }
@@ -384,3 +386,4 @@ void ElapseClient::stop()
     pipeline->stop();
 }
 
+}} // namespace elapse::client

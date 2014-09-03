@@ -285,7 +285,7 @@ public:
     elapse::elements::BaseFeatureExtractorPrivate *imuFeatExPriv;
 
     ElementSetPtr elements;
-    Pipeline pipeline;
+    elapse::client::Pipeline pipeline;
 
     SuppressLogging nolog;
 
