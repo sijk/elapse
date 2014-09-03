@@ -1,5 +1,5 @@
 include(../../../global.pri)
-include($$ROOT/common/interfaces.pri)
+include($$ROOT/common/hardware.pri)
 
 QT       = core gui dbus
 TEMPLATE = lib

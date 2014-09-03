@@ -4,7 +4,7 @@
 #include <QxtLogger>
 #include "common/qenum-utils.h"
 #include "common/dbus/paths.h"
-#include "common/interfaces.h"
+#include "common/hardware.h"
 
 // Generated headers
 #include "elapse_interface.h"

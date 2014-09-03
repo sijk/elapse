@@ -1,7 +1,7 @@
 #ifndef CONFIGPROXIES_H
 #define CONFIGPROXIES_H
 
-#include "common/interfaces.h"
+#include "common/hardware.h"
 #include "elapse/elements/datasource.h"
 
 

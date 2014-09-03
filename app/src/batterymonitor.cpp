@@ -3,7 +3,7 @@
 #include <qwt_dial.h>
 #include <qwt_dial_needle.h>
 #include <qwt_round_scale_draw.h>
-#include "common/interface/battery_iface.h"
+#include "common/hardware/battery_iface.h"
 #include "batterymonitor.h"
 
 

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QTimer>
-#include "common/interfaces.h"
+#include "common/hardware.h"
 
 namespace elapse { namespace dbus { class Device; } }
 
