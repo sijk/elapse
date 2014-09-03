@@ -31,7 +31,7 @@ DeviceProxy::~DeviceProxy()
 /*!
  * \return the D-Bus interface for the root device object.
  */
-iface::Device *DeviceProxy::device() const
+elapse::hardware::Device *DeviceProxy::device() const
 {
     return dev;
 }
@@ -150,7 +150,7 @@ void DeviceProxy::connectInBackground()
         }
     }
 
-    dev = new dbus::Device(bus);
+    dev = new elapse::dbus::Device(bus);
     if (!dev->checkConnected()) {
         emit error("The server is not running on the device.");
         return;

@@ -12,15 +12,18 @@
 #include "imu_interface.h"
 
 
+namespace elapse {
+
 /*!
- * \brief Adaptors between generated D-Bus interfaces and ::iface interfaces.
+ * \brief Adaptors between generated D-Bus interfaces and elapse::hardware
+ * interfaces.
  *
  * The ::dbus namespace contains implementations of the interfaces in the
- * ::iface namespace that pass calls through to QDBusAbstractInterface
+ * ::hardware namespace that pass calls through to QDBusAbstractInterface
  * subclasses generated from the XML interface definitions.
  *
  * \code
- * Client → dbus::Foo (iface::Foo) → org::nzbri::elapse::Foo (QDBusAbstractInterface) → D-Bus
+ * Client → dbus::Foo (hardware::Foo) → org::nzbri::elapse::Foo (QDBusAbstractInterface) → D-Bus
  * \endcode
  */
 
@@ -28,15 +31,15 @@ namespace dbus {
 
 /*!
  * \brief The Imu class makes a generated IMU D-Bus interface look like
- * an iface::Imu.
+ * an hardware::Imu.
  */
 
-class Imu : public iface::Imu
+class Imu : public hardware::Imu
 {
     Q_OBJECT
 public:
     Imu(const QDBusConnection &connection, QObject *parent = 0) :
-        iface::Imu(parent),
+        hardware::Imu(parent),
         d(dbus::service, dbus::imuPath, connection)
     { }
 
@@ -59,15 +62,15 @@ private:
 
 /*!
  * \brief The EegChannel class makes a generated EEG channel D-Bus interface
- * look like an iface::EegChannel.
+ * look like an hardware::EegChannel.
  */
 
-class EegChannel : public iface::EegChannel
+class EegChannel : public hardware::EegChannel
 {
     Q_OBJECT
 public:
     EegChannel(uint i, const QDBusConnection &connection, QObject *parent = 0) :
-        iface::EegChannel(parent),
+        hardware::EegChannel(parent),
         d(dbus::service, dbus::eegChanPath.arg(i), connection)
     { }
 
@@ -88,29 +91,29 @@ private:
 
 /*!
  * \brief The EegAdc class makes a generated EEG ADC D-Bus interface look like
- * an iface::EegAdc.
+ * an hardware::EegAdc.
  */
 
-class EegAdc : public iface::EegAdc
+class EegAdc : public hardware::EegAdc
 {
     Q_OBJECT
 public:
     EegAdc(const QDBusConnection &connection, QObject *parent = 0) :
-        iface::EegAdc(parent),
+        hardware::EegAdc(parent),
         d(dbus::service, dbus::eegPath, connection)
     { }
 
-    ~EegAdc() { qDeleteAll(iface_channels); }
+    ~EegAdc() { qDeleteAll(_channels); }
 
 public:
-    iface::EegChannel *channel(uint i)
+    hardware::EegChannel *channel(uint i)
     {
-        if (iface_channels.isEmpty()) {
+        if (_channels.isEmpty()) {
             uint n = nChannels();
             for (uint i = 0; i < n; i++)
-                iface_channels.append(new EegChannel(i, d.connection()));
+                _channels.append(new EegChannel(i, d.connection()));
         }
-        return iface_channels.at(i);
+        return _channels.at(i);
     }
     uint nChannels() const { return d.nChannels(); }
     uint bytesPerChunk() const { return d.bytesPerChunk(); }
@@ -141,21 +144,21 @@ public slots:
 
 private:
     org::nzbri::elapse::Eeg::EegAdc d;
-    QList<dbus::EegChannel*> iface_channels;
+    QList<dbus::EegChannel*> _channels;
 };
 
 
 /*!
  * \brief The Battery class makes a generated battery D-Bus interface look like
- * a iface::Battery.
+ * a hardware::Battery.
  */
 
-class Battery : public iface::Battery
+class Battery : public hardware::Battery
 {
     Q_OBJECT
 public:
     Battery(const QDBusConnection &connection, QObject *parent = 0) :
-        iface::Battery(parent),
+        hardware::Battery(parent),
         d(dbus::service, dbus::batteryPath, connection)
     { }
 
@@ -173,19 +176,19 @@ private:
 
 /*!
  * \brief The Device class makes a generated device D-Bus interface look like
- * a iface::Device.
+ * a hardware::Device.
  */
 
-class Device : public iface::Device
+class Device : public hardware::Device
 {
     Q_OBJECT
 public:
     Device(const QDBusConnection &connection, QObject *parent = 0) :
-        iface::Device(parent),
+        hardware::Device(parent),
         d(dbus::service, dbus::rootPath, connection),
-        iface_eeg(new EegAdc(connection, this)),
-        iface_imu(new Imu(connection, this)),
-        iface_battery(new Battery(connection, this))
+        _eeg(new EegAdc(connection, this)),
+        _imu(new Imu(connection, this)),
+        _battery(new Battery(connection, this))
     { }
 
     /*!
@@ -206,10 +209,10 @@ public:
     }
 
 public:
-    iface::EegAdc *eeg() { return iface_eeg; }
-    iface::Camera *camera() { return nullptr; }
-    iface::Imu *imu() { return iface_imu; }
-    iface::Battery *battery() { return iface_battery; }
+    hardware::EegAdc *eeg() { return _eeg; }
+    hardware::Camera *camera() { return nullptr; }
+    hardware::Imu *imu() { return _imu; }
+    hardware::Battery *battery() { return _battery; }
 
 public slots:
     bool isAccessible() const { return d.isAccessible(); }
@@ -220,12 +223,12 @@ public slots:
 private:
     mutable org::nzbri::elapse::Device d;
 
-    dbus::EegAdc *iface_eeg;
-//    dbus::Camera *iface_camera;
-    dbus::Imu *iface_imu;
-    dbus::Battery *iface_battery;
+    dbus::EegAdc *_eeg;
+//    dbus::Camera *_camera;
+    dbus::Imu *_imu;
+    dbus::Battery *_battery;
 };
 
-} // namespace dbus
+}} // namespace elapse::dbus
 
 #endif // INTERFACES_H

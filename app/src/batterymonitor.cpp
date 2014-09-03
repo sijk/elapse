@@ -102,7 +102,7 @@ QWidget *BatteryMonitor::getWidget()
 /*!
  * Set the DBus interface to the device's \a battery.
  */
-void BatteryMonitor::setBattery(iface::Battery *battery)
+void BatteryMonitor::setBattery(elapse::hardware::Battery *battery)
 {
     this->battery = battery;
     if (!battery) {
