@@ -5,7 +5,7 @@
 #include "elapse/datatypes.h"
 #include "elapse/timestamps.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The Classifier interface is implemented by elements that take in
@@ -79,6 +79,6 @@ private:
     time::Series<FeatureSet> timestampedFeatureSets;
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // CLASSIFIER_H

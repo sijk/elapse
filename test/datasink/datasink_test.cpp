@@ -9,7 +9,7 @@ using testing::Assign;
 using testing::DoAll;
 
 
-class MockDataSink : public elapse::DataSink
+class MockDataSink : public elapse::elements::DataSink
 {
 public:
     MOCK_METHOD0(startSaving, bool());

@@ -4,8 +4,9 @@
 
 using namespace elapse::data;
 
+namespace elapse { namespace elements {
 
-elapse::BaseFeatureExtractorPrivate::BaseFeatureExtractorPrivate() :
+BaseFeatureExtractorPrivate::BaseFeatureExtractorPrivate() :
     windowStart(0),
     signalType(Signal::INVALID)
 {
@@ -15,14 +16,14 @@ elapse::BaseFeatureExtractorPrivate::BaseFeatureExtractorPrivate() :
  * \return the Signal::Type this FeatureExtractor works with, as defined
  * by the "SignalType" class info field.
  */
-Signal::Type elapse::BaseFeatureExtractorPrivate::findSignalType(BaseFeatureExtractor *q)
+Signal::Type BaseFeatureExtractorPrivate::findSignalType(BaseFeatureExtractor *q)
 {
     const int index = q->metaObject()->indexOfClassInfo("SignalType");
     const char *info = q->metaObject()->classInfo(index).value();
     return Signal::fromString(info);
 }
 
-elapse::BaseFeatureExtractorPrivate *elapse::BaseFeatureExtractorPrivate::expose(BaseFeatureExtractor *q)
+BaseFeatureExtractorPrivate *BaseFeatureExtractorPrivate::expose(BaseFeatureExtractor *q)
 {
     return q->d_func();
 }
@@ -31,17 +32,17 @@ elapse::BaseFeatureExtractorPrivate *elapse::BaseFeatureExtractorPrivate::expose
 /*!
  * Create a BaseFeatureExtractor.
  */
-elapse::BaseFeatureExtractor::BaseFeatureExtractor() :
+BaseFeatureExtractor::BaseFeatureExtractor() :
     d_ptr(new BaseFeatureExtractorPrivate)
 {
 }
 
-elapse::BaseFeatureExtractor::~BaseFeatureExtractor()
+BaseFeatureExtractor::~BaseFeatureExtractor()
 {
     delete d_ptr;
 }
 
-void elapse::BaseFeatureExtractor::setStartTime(time::Point timestamp)
+void BaseFeatureExtractor::setStartTime(time::Point timestamp)
 {
     Q_D(BaseFeatureExtractor);
     reset();
@@ -49,13 +50,13 @@ void elapse::BaseFeatureExtractor::setStartTime(time::Point timestamp)
     d->signalType = BaseFeatureExtractorPrivate::findSignalType(this);
 }
 
-void elapse::BaseFeatureExtractor::setWindowLength(uint length)
+void BaseFeatureExtractor::setWindowLength(uint length)
 {
     Q_D(BaseFeatureExtractor);
     d->windowLength = time::from_ms(length);
 }
 
-void elapse::BaseFeatureExtractor::setWindowStep(uint step)
+void BaseFeatureExtractor::setWindowStep(uint step)
 {
     Q_D(BaseFeatureExtractor);
     d->windowStep = time::from_ms(step);
@@ -66,7 +67,7 @@ void elapse::BaseFeatureExtractor::setWindowStep(uint step)
  * window as necessary and delegates the actual feature extraction to
  * the protected methods.
  */
-void elapse::BaseFeatureExtractor::onSample(SamplePtr sample)
+void BaseFeatureExtractor::onSample(SamplePtr sample)
 {
     Q_D(BaseFeatureExtractor);
 
@@ -99,8 +100,9 @@ void elapse::BaseFeatureExtractor::onSample(SamplePtr sample)
     analyseSample(sample);
 }
 
-void elapse::BaseFeatureExtractor::reset()
+void BaseFeatureExtractor::reset()
 {
     removeDataBefore(std::numeric_limits<time::Point>::max());
 }
 
+}} // namespace elapse::elements

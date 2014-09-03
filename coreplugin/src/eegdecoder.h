@@ -13,7 +13,8 @@ class EegDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class EegDecoder : public elapse::SampleDecoder, public elapse::Displayable
+class EegDecoder : public elapse::elements::SampleDecoder,
+                   public elapse::Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")

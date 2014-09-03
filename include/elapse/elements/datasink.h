@@ -5,7 +5,7 @@
 #include "elapse/datatypes.h"
 
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The DataSink class provides the ability to save data to disk.
@@ -110,6 +110,6 @@ public:
 
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // DATASINK_H

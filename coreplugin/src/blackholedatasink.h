@@ -9,7 +9,7 @@
  * \ingroup core-plugin
  */
 
-class BlackHoleDataSink : public elapse::DataSink
+class BlackHoleDataSink : public elapse::elements::DataSink
 {
     Q_OBJECT
 public:

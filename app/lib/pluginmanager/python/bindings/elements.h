@@ -11,6 +11,8 @@
 #include "elapse/elements/outputaction.h"
 #include "elapse/elements/datasink.h"
 
+using namespace elapse::elements;
+
 namespace py = boost::python;
 
 
@@ -38,8 +40,8 @@ namespace py = boost::python;
     return def
 
 
-struct FeatureExtractorWrap : elapse::FeatureExtractor,
-                              py::wrapper<elapse::FeatureExtractor>
+struct FeatureExtractorWrap : FeatureExtractor,
+                              py::wrapper<FeatureExtractor>
 {
     void setStartTime(elapse::time::Point timestamp) {
         PYCATCH(this->get_override("setStartTime")(timestamp));
@@ -55,14 +57,14 @@ struct FeatureExtractorWrap : elapse::FeatureExtractor,
     }
 };
 
-class BaseFeatureExtractorPublic : public elapse::BaseFeatureExtractor
+class BaseFeatureExtractorPublic : public BaseFeatureExtractor
 {
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
 public:
-    using elapse::BaseFeatureExtractor::analyseSample;
-    using elapse::BaseFeatureExtractor::removeDataBefore;
-    using elapse::BaseFeatureExtractor::reset;
+    using BaseFeatureExtractor::analyseSample;
+    using BaseFeatureExtractor::removeDataBefore;
+    using BaseFeatureExtractor::reset;
     virtual py::list pyfeatures() = 0;
 };
 
@@ -95,8 +97,8 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     }
 };
 
-struct ClassifierWrap : elapse::Classifier,
-                        py::wrapper<elapse::Classifier>
+struct ClassifierWrap : Classifier,
+                        py::wrapper<Classifier>
 {
     void onFeatures(elapse::data::FeatureVector features) {
         PYCATCH(this->get_override("onFeatures")(features));
@@ -106,12 +108,12 @@ struct ClassifierWrap : elapse::Classifier,
     }
 };
 
-class BaseClassifierPublic : public elapse::BaseClassifier
+class BaseClassifierPublic : public BaseClassifier
 {
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
 public:
-    using elapse::BaseClassifier::classify;
+    using BaseClassifier::classify;
 };
 
 struct BaseClassifierWrap : BaseClassifierPublic,
@@ -123,28 +125,28 @@ struct BaseClassifierWrap : BaseClassifierPublic,
     }
 };
 
-struct OutputActionWrap : elapse::OutputAction,
-                          py::wrapper<elapse::OutputAction>
+struct OutputActionWrap : OutputAction,
+                          py::wrapper<OutputAction>
 {
     void onState(elapse::data::CognitiveState state) {
         PYCATCH(this->get_override("onState")(state));
     }
 };
 
-class DataSinkPublic : public elapse::DataSink
+class DataSinkPublic : public DataSink
 {
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
 public:
-    using elapse::DataSink::getCaptureInfo;
-    using elapse::DataSink::needsNewCaptureInfo;
-    using elapse::DataSink::startSaving;
-    using elapse::DataSink::stopSaving;
-    using elapse::DataSink::saveData;
-    using elapse::DataSink::saveSample;
-    using elapse::DataSink::saveFeatureVector;
-    using elapse::DataSink::saveCognitiveState;
-    using elapse::DataSink::saveDeviceConfig;
+    using DataSink::getCaptureInfo;
+    using DataSink::needsNewCaptureInfo;
+    using DataSink::startSaving;
+    using DataSink::stopSaving;
+    using DataSink::saveData;
+    using DataSink::saveSample;
+    using DataSink::saveFeatureVector;
+    using DataSink::saveCognitiveState;
+    using DataSink::saveDeviceConfig;
 };
 
 struct DataSinkWrap : DataSinkPublic,
@@ -229,13 +231,13 @@ void export_elements()
     scope elements_scope = elements;
 
     class_<FeatureExtractorWrap, boost::noncopyable>("FeatureExtractor")
-        .def("setStartTime", pure_virtual(&elapse::FeatureExtractor::setStartTime))
-        .def("setWindowLength", pure_virtual(&elapse::FeatureExtractor::setWindowLength))
-        .def("setWindowStep", pure_virtual(&elapse::FeatureExtractor::setWindowStep))
-        .def("onSample", pure_virtual(&elapse::FeatureExtractor::onSample))
-        .def("newFeatures", &elapse::FeatureExtractor::newFeatures);
+        .def("setStartTime", pure_virtual(&FeatureExtractor::setStartTime))
+        .def("setWindowLength", pure_virtual(&FeatureExtractor::setWindowLength))
+        .def("setWindowStep", pure_virtual(&FeatureExtractor::setWindowStep))
+        .def("onSample", pure_virtual(&FeatureExtractor::onSample))
+        .def("newFeatures", &FeatureExtractor::newFeatures);
 
-    class_<BaseFeatureExtractorWrap, bases<elapse::FeatureExtractor>,
+    class_<BaseFeatureExtractorWrap, bases<FeatureExtractor>,
            boost::noncopyable>("BaseFeatureExtractor")
         .def("analyseSample", pure_virtual(&BaseFeatureExtractorPublic::analyseSample))
         .def("features", pure_virtual(&BaseFeatureExtractorPublic::pyfeatures))
@@ -244,16 +246,16 @@ void export_elements()
                       &BaseFeatureExtractorWrap::default_reset);
 
     class_<ClassifierWrap, boost::noncopyable>("Classifier")
-        .def("onFeatures", pure_virtual(&elapse::Classifier::onFeatures))
-        .def("reset", pure_virtual(&elapse::Classifier::reset))
-        .def("newState", &elapse::Classifier::newState);
+        .def("onFeatures", pure_virtual(&Classifier::onFeatures))
+        .def("reset", pure_virtual(&Classifier::reset))
+        .def("newState", &Classifier::newState);
 
-    class_<BaseClassifierWrap, bases<elapse::Classifier>,
+    class_<BaseClassifierWrap, bases<Classifier>,
             boost::noncopyable>("BaseClassifier")
         .def("classify", pure_virtual(&BaseClassifierPublic::classify));
 
     class_<OutputActionWrap, boost::noncopyable>("OutputAction")
-        .def("onState", pure_virtual(&elapse::OutputAction::onState));
+        .def("onState", pure_virtual(&OutputAction::onState));
 
     class_<DataSinkWrap, boost::noncopyable>("DataSink")
         .def("startSaving", pure_virtual(&DataSinkPublic::startSaving))

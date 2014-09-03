@@ -4,7 +4,7 @@
 
 #include "pythonpluginhost.h"
 
-using elapse::FeatureExtractor;
+using elapse::elements::FeatureExtractor;
 
 
 // Make methods public for testability

@@ -21,7 +21,7 @@
  * \ingroup core-plugin
  */
 
-class SimpleRawDataSink : public elapse::DataSink
+class SimpleRawDataSink : public elapse::elements::DataSink
 {
     Q_OBJECT
 public:

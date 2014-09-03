@@ -10,7 +10,7 @@
  * \ingroup core-plugin
  */
 
-class ImuDecoder : public elapse::SampleDecoder
+class ImuDecoder : public elapse::elements::SampleDecoder
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "IMU")

@@ -4,6 +4,8 @@
 #include "pluginmanager.h"
 #include "pluginmanager_p.h"
 
+using elapse::elements::FeatureExtractor;
+
 
 class PythonBindingsTest : public testing::Test
 {
@@ -33,7 +35,7 @@ TEST_F(PythonBindingsTest, RunPythonTests)
     PluginHost *host = priv->hosts[info.plugin.host];
 
     for (const ClassInfo &test : info.classes) {
-        auto pyTestPassed = host->instantiate<elapse::FeatureExtractor>(info.plugin, test);
+        auto pyTestPassed = host->instantiate<FeatureExtractor>(info.plugin, test);
         if (!pyTestPassed)
             ADD_FAILURE_AT(test.className.mid(5).toLatin1().constData(), 0);
     }

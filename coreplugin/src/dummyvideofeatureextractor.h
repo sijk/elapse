@@ -16,7 +16,7 @@
  * \ingroup core-plugin
  */
 
-class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
+class DummyVideoFeatureExtractor : public elapse::elements::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")

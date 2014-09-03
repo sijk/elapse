@@ -14,7 +14,7 @@ class SimpleRawDataSourcePrivate;
  * \ingroup core-plugin
  */
 
-class SimpleRawDataSource : public elapse::OfflineDataSource,
+class SimpleRawDataSource : public elapse::elements::OfflineDataSource,
                             public elapse::Displayable
 {
     Q_OBJECT

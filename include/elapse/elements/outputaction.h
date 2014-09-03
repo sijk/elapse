@@ -4,7 +4,7 @@
 #include <QObject>
 #include "elapse/datatypes.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The OutputAction interface is implemented by elements that perform
@@ -32,6 +32,6 @@ public slots:
     virtual void onState(elapse::data::CognitiveState state) = 0;
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // OUTPUTACTION_H

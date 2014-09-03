@@ -3,7 +3,7 @@
 
 #include "elapse/elements/featurextractor.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 class BaseFeatureExtractorPrivate
 {
@@ -19,6 +19,6 @@ public:
     static BaseFeatureExtractorPrivate *expose(BaseFeatureExtractor *q);
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // FEATUREXTRACTOR_P_H

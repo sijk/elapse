@@ -24,7 +24,7 @@ using namespace ::elapse::data;
 using namespace ::elapse::time::literals;
 
 
-class MockDataSource : public elapse::DataSource
+class MockDataSource : public elapse::elements::DataSource
 {
     Q_OBJECT
 public:
@@ -63,7 +63,7 @@ SamplePtr createSample(const QByteArray &data)
     return createSample<SampleType>(data.toULongLong());
 }
 
-class MockEegDecoder : public elapse::SampleDecoder
+class MockEegDecoder : public elapse::elements::SampleDecoder
 {
     Q_OBJECT
 public:
@@ -81,7 +81,7 @@ public:
     }
 };
 
-class MockVidDecoder : public elapse::SampleDecoder
+class MockVidDecoder : public elapse::elements::SampleDecoder
 {
     Q_OBJECT
 public:
@@ -99,7 +99,7 @@ public:
     }
 };
 
-class MockImuDecoder : public elapse::SampleDecoder
+class MockImuDecoder : public elapse::elements::SampleDecoder
 {
     Q_OBJECT
 public:
@@ -117,7 +117,7 @@ public:
     }
 };
 
-class MockFeatureExtractor : public elapse::BaseFeatureExtractor
+class MockFeatureExtractor : public elapse::elements::BaseFeatureExtractor
 {
     Q_OBJECT
 public:
@@ -174,7 +174,7 @@ class MockImuFeatureExtractor : public MockFeatureExtractor
     Q_CLASSINFO("SignalType", "IMU")
 };
 
-class MockClassifier : public elapse::BaseClassifier
+class MockClassifier : public elapse::elements::BaseClassifier
 {
     Q_OBJECT
 public:
@@ -193,14 +193,14 @@ public:
     }
 };
 
-class MockOutputAction : public elapse::OutputAction
+class MockOutputAction : public elapse::elements::OutputAction
 {
     Q_OBJECT
 public:
     MOCK_METHOD1(onState, void(CognitiveState));
 };
 
-class MockDataSink : public elapse::DataSink
+class MockDataSink : public elapse::elements::DataSink
 {
     Q_OBJECT
 public:
@@ -263,9 +263,9 @@ protected:
         elements->action.reset(action);
         elements->dataSink.reset(dataSink);
 
-        eegFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(eegFeatEx);
-        vidFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(vidFeatEx);
-        imuFeatExPriv = elapse::BaseFeatureExtractorPrivate::expose(imuFeatEx);
+        eegFeatExPriv = elapse::elements::BaseFeatureExtractorPrivate::expose(eegFeatEx);
+        vidFeatExPriv = elapse::elements::BaseFeatureExtractorPrivate::expose(vidFeatEx);
+        imuFeatExPriv = elapse::elements::BaseFeatureExtractorPrivate::expose(imuFeatEx);
     }
 
 public:
@@ -280,9 +280,9 @@ public:
     QPointer<MockOutputAction> action;
     QPointer<MockDataSink> dataSink;
 
-    elapse::BaseFeatureExtractorPrivate *eegFeatExPriv;
-    elapse::BaseFeatureExtractorPrivate *vidFeatExPriv;
-    elapse::BaseFeatureExtractorPrivate *imuFeatExPriv;
+    elapse::elements::BaseFeatureExtractorPrivate *eegFeatExPriv;
+    elapse::elements::BaseFeatureExtractorPrivate *vidFeatExPriv;
+    elapse::elements::BaseFeatureExtractorPrivate *imuFeatExPriv;
 
     ElementSetPtr elements;
     Pipeline pipeline;

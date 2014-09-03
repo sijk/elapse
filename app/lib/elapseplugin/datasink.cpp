@@ -3,6 +3,7 @@
 
 using namespace elapse::data;
 
+namespace elapse { namespace elements {
 
 /*!
  * Start saving data.
@@ -13,7 +14,7 @@ using namespace elapse::data;
  * \return whether any necessary capture info was successfully retrieved
  * and saving was successfully started.
  */
-bool elapse::DataSink::start()
+bool DataSink::start()
 {
     if (!needsNewCaptureInfo() || getCaptureInfo())
         return startSaving();
@@ -23,81 +24,81 @@ bool elapse::DataSink::start()
 /*!
  * Stop saving data.
  */
-void elapse::DataSink::stop()
+void DataSink::stop()
 {
     stopSaving();
 }
 
 /*!
- * Called when the elapse::DataSource emits EEG \a data. Calls saveData().
+ * Called when the DataSource emits EEG \a data. Calls saveData().
  */
-void elapse::DataSink::onEegData(QByteArray data)
+void DataSink::onEegData(QByteArray data)
 {
     saveData(Signal::EEG, data);
 }
 
 /*!
- * Called when the elapse::DataSource emits video \a data. Calls saveData().
+ * Called when the DataSource emits video \a data. Calls saveData().
  */
-void elapse::DataSink::onVideoData(QByteArray data)
+void DataSink::onVideoData(QByteArray data)
 {
     saveData(Signal::VIDEO, data);
 }
 
 /*!
- * Called when the elapse::DataSource emits IMU \a data. Calls saveData().
+ * Called when the DataSource emits IMU \a data. Calls saveData().
  */
-void elapse::DataSink::onImuData(QByteArray data)
+void DataSink::onImuData(QByteArray data)
 {
     saveData(Signal::IMU, data);
 }
 
 /*!
- * Called when a elapse::SampleDecoder emits an EEG \a sample. Calls
+ * Called when a SampleDecoder emits an EEG \a sample. Calls
  * saveSample().
  */
-void elapse::DataSink::onEegSample(SamplePtr sample)
+void DataSink::onEegSample(SamplePtr sample)
 {
     saveSample(Signal::EEG, sample);
 }
 
 /*!
- * Called when a elapse::SampleDecoder emits a video \a sample. Calls
+ * Called when a SampleDecoder emits a video \a sample. Calls
  * saveSample().
  */
-void elapse::DataSink::onVideoSample(SamplePtr sample)
+void DataSink::onVideoSample(SamplePtr sample)
 {
     saveSample(Signal::VIDEO, sample);
 }
 
 /*!
- * Called when a elapse::SampleDecoder emits an IMU \a sample. Calls
+ * Called when a SampleDecoder emits an IMU \a sample. Calls
  * saveSample().
  */
-void elapse::DataSink::onImuSample(SamplePtr sample)
+void DataSink::onImuSample(SamplePtr sample)
 {
     saveSample(Signal::IMU, sample);
 }
 
 /*!
- * Called when a elapse::FeatureExtractor emits a \a featureVector. Calls
+ * Called when a FeatureExtractor emits a \a featureVector. Calls
  * saveFeatureVector().
  */
-void elapse::DataSink::onFeatureVector(FeatureVector featureVector)
+void DataSink::onFeatureVector(FeatureVector featureVector)
 {
     saveFeatureVector(featureVector);
 }
 
 /*!
- * Called when the elapse::Classifier emits a new cognitive \a state. Calls
+ * Called when the Classifier emits a new cognitive \a state. Calls
  * saveCognitiveState().
  */
-void elapse::DataSink::onCognitiveState(CognitiveState state)
+void DataSink::onCognitiveState(CognitiveState state)
 {
     saveCognitiveState(state);
 }
 
-void elapse::DataSink::saveData(Signal::Type signalType, QByteArray data)
+void DataSink::saveData(Signal::Type signalType, QByteArray data)
 {
     Q_UNUSED(signalType);
     Q_UNUSED(data);
@@ -110,7 +111,7 @@ void elapse::DataSink::saveData(Signal::Type signalType, QByteArray data)
     }
 }
 
-void elapse::DataSink::saveSample(Signal::Type signalType, SamplePtr sample)
+void DataSink::saveSample(Signal::Type signalType, SamplePtr sample)
 {
     Q_UNUSED(signalType);
     Q_UNUSED(sample);
@@ -123,7 +124,7 @@ void elapse::DataSink::saveSample(Signal::Type signalType, SamplePtr sample)
     }
 }
 
-void elapse::DataSink::saveFeatureVector(FeatureVector featureVector)
+void DataSink::saveFeatureVector(FeatureVector featureVector)
 {
     Q_UNUSED(featureVector);
 
@@ -135,7 +136,7 @@ void elapse::DataSink::saveFeatureVector(FeatureVector featureVector)
     }
 }
 
-void elapse::DataSink::saveCognitiveState(CognitiveState state)
+void DataSink::saveCognitiveState(CognitiveState state)
 {
     Q_UNUSED(state);
 
@@ -147,3 +148,4 @@ void elapse::DataSink::saveCognitiveState(CognitiveState state)
     }
 }
 
+}} // namespace elapse::elements

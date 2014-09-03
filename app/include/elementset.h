@@ -28,12 +28,12 @@ struct ElementSet
 {
     template<class T> using Ptr = QSharedPointer<T>; // for readability
 
-    Ptr<elapse::DataSource> dataSource;
-    QMap<Signal::Type, Ptr<elapse::SampleDecoder>> sampleDecoders;
-    QMap<Signal::Type, Ptr<elapse::FeatureExtractor>> featureExtractors;
-    Ptr<elapse::Classifier> classifier;
-    Ptr<elapse::OutputAction> action;
-    Ptr<elapse::DataSink> dataSink;
+    Ptr<elapse::elements::DataSource> dataSource;
+    QMap<Signal::Type, Ptr<elapse::elements::SampleDecoder>> sampleDecoders;
+    QMap<Signal::Type, Ptr<elapse::elements::FeatureExtractor>> featureExtractors;
+    Ptr<elapse::elements::Classifier> classifier;
+    Ptr<elapse::elements::OutputAction> action;
+    Ptr<elapse::elements::DataSink> dataSink;
 
     QList<Ptr<QObject>> allElements() const;
 };

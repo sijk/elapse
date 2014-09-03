@@ -11,7 +11,7 @@
  * \ingroup core-plugin
  */
 
-class DummyEegFeatureExtractor : public elapse::BaseFeatureExtractor
+class DummyEegFeatureExtractor : public elapse::elements::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")

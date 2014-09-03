@@ -15,7 +15,7 @@ class HeadWidget;
  * \ingroup core-plugin
  */
 
-class DummyImuFeatureExtractor : public elapse::BaseFeatureExtractor,
+class DummyImuFeatureExtractor : public elapse::elements::BaseFeatureExtractor,
                                  public elapse::Displayable
 {
     Q_OBJECT

@@ -13,7 +13,7 @@ using ::testing::AnyNumber;
 using ::testing::Contains;
 
 
-class MockOfflineDataSource : public elapse::OfflineDataSource
+class MockOfflineDataSource : public elapse::elements::OfflineDataSource
 {
 public:
     MockOfflineDataSource()

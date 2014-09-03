@@ -6,7 +6,7 @@
 
 class QByteArray;
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The SampleDecoder interface is implemented by elements that decode a
@@ -62,6 +62,6 @@ public slots:
     virtual void onData(QByteArray data) = 0;
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // DECODER_H

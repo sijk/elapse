@@ -67,6 +67,12 @@
 */
 
 /*!
+    \namespace elapse::elements
+    \brief Elements of the \ref signal-pipeline "signal processing pipeline".
+    \ingroup pipeline-elements
+*/
+
+/*!
     \defgroup app Elapse Application
 
     These classes relate to the core Elapse application.

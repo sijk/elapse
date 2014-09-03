@@ -4,7 +4,7 @@
 #include <QObject>
 class QByteArray;
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 class OfflineDataSource;
 class OfflineDataSourcePrivate;
@@ -125,6 +125,6 @@ private:
     Q_DECLARE_PRIVATE(OfflineDataSource)
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // DATASOURCE_H

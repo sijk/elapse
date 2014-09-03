@@ -4,7 +4,7 @@
 
 #include "nativepluginhost.h"
 
-using elapse::SampleDecoder;
+using elapse::elements::SampleDecoder;
 using elapse::data::Signal;
 
 

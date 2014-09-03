@@ -10,7 +10,7 @@
  * \ingroup core-plugin
  */
 
-class DummyClassifier : public elapse::BaseClassifier
+class DummyClassifier : public elapse::elements::BaseClassifier
 {
     Q_OBJECT
 public:

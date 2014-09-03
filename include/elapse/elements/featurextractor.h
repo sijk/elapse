@@ -5,7 +5,7 @@
 #include "elapse/datatypes.h"
 #include "elapse/timestamps.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The FeatureExtractor interface is implemented by elements that
@@ -114,6 +114,6 @@ private:
     Q_DECLARE_PRIVATE(BaseFeatureExtractor)
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // FEATUREXTRACTOR_H

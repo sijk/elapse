@@ -6,10 +6,11 @@
 
 
 /*!
- * \brief Adaptors between a elapse::ConfigManager and ::iface interfaces.
+ * \brief Adaptors between a \ref elapse::elements::ConfigManager "ConfigManager"
+ * and ::iface interfaces.
  *
  * The config namespace contains implementations of the interfaces in the
- * ::iface namespace that pass calls through to a elapse::ConfigManager.
+ * ::iface namespace that pass calls through to a ConfigManager.
  * Only calls to const methods are passed through; non-const methods are NOPs.
  *
  * \code
@@ -19,15 +20,17 @@
 
 namespace config {
 
+using elapse::elements::ConfigManager;
+
 /*!
- * \brief The Imu class makes a elapse::ConfigManager look like an iface::Imu.
+ * \brief The Imu class makes a ConfigManager look like an iface::Imu.
  */
 
 class Imu : public iface::Imu
 {
     Q_OBJECT
 public:
-    Imu(elapse::ConfigManager *config, QObject *parent = nullptr) :
+    Imu(ConfigManager *config, QObject *parent = nullptr) :
         iface::Imu(parent), config(config)
     { }
 
@@ -47,12 +50,12 @@ public slots:
     void stop() { }
 
 private:
-    elapse::ConfigManager *config;
+    ConfigManager *config;
 };
 
 
 /*!
- * \brief The EegChannel class makes a elapse::ConfigManager look like
+ * \brief The EegChannel class makes a ConfigManager look like
  * an iface::EegChannel.
  */
 
@@ -60,7 +63,7 @@ class EegChannel : public iface::EegChannel
 {
     Q_OBJECT
 public:
-    EegChannel(uint i, elapse::ConfigManager *config, QObject *parent = 0) :
+    EegChannel(uint i, ConfigManager *config, QObject *parent = 0) :
         iface::EegChannel(parent), config(config),
         chan(QString("eeg/channel/%1").arg(i))
     { }
@@ -79,13 +82,13 @@ public:
     void setEnabled(bool enabled) { Q_UNUSED(enabled) }
 
 private:
-    elapse::ConfigManager *config;
+    ConfigManager *config;
     const QString chan;
 };
 
 
 /*!
- * \brief The EegAdc class makes a elapse::ConfigManager look like
+ * \brief The EegAdc class makes a ConfigManager look like
  * an iface::EegAdc.
  */
 
@@ -93,7 +96,7 @@ class EegAdc : public iface::EegAdc
 {
     Q_OBJECT
 public:
-    EegAdc(elapse::ConfigManager *config, QObject *parent = 0) :
+    EegAdc(ConfigManager *config, QObject *parent = 0) :
         iface::EegAdc(parent), config(config)
     { }
 
@@ -147,13 +150,13 @@ public slots:
     void setAllChannels(const QVariantMap &properties) { Q_UNUSED(properties) }
 
 private:
-    elapse::ConfigManager *config;
+    ConfigManager *config;
     QList<config::EegChannel*> iface_channels;
 };
 
 
 /*!
- * \brief The Battery class makes a elapse::ConfigManager look like
+ * \brief The Battery class makes a ConfigManager look like
  * a iface::Battery.
  */
 
@@ -161,7 +164,7 @@ class Battery : public iface::Battery
 {
     Q_OBJECT
 public:
-    Battery(elapse::ConfigManager *config, QObject *parent = 0) :
+    Battery(ConfigManager *config, QObject *parent = 0) :
         iface::Battery(parent), config(config)
     { }
 
@@ -177,12 +180,12 @@ public:
     void setLowThresh(double value) { Q_UNUSED(value) }
 
 private:
-    elapse::ConfigManager *config;
+    ConfigManager *config;
 };
 
 
 /*!
- * \brief The Device class makes a elapse::ConfigManager look like
+ * \brief The Device class makes a ConfigManager look like
  * a iface::Device.
  */
 
@@ -190,7 +193,7 @@ class Device : public iface::Device
 {
     Q_OBJECT
 public:
-    Device(elapse::ConfigManager *config, QObject *parent = 0) :
+    Device(ConfigManager *config, QObject *parent = 0) :
         iface::Device(parent), config(config),
         iface_eeg(new EegAdc(config, this)),
 //        iface_camera(new Camera(config, this)),
@@ -211,7 +214,7 @@ public slots:
     void stopStreaming() { }
 
 private:
-    elapse::ConfigManager *config;
+    ConfigManager *config;
     config::EegAdc *iface_eeg;
 //    offline::Camera *iface_camera;
     config::Imu *iface_imu;

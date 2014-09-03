@@ -10,7 +10,7 @@
  * \ingroup core-plugin
  */
 
-class DummyAction : public elapse::OutputAction
+class DummyAction : public elapse::elements::OutputAction
 {
     Q_OBJECT
 public:

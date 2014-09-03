@@ -13,7 +13,8 @@ class VideoDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class VideoDecoder : public elapse::SampleDecoder, public elapse::Displayable
+class VideoDecoder : public elapse::elements::SampleDecoder,
+                     public elapse::Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")
