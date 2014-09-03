@@ -45,7 +45,23 @@ using elapse::data::VideoSample;
 
 struct GstVideoSample : VideoSample
 {
-    GstVideoSample(QGst::BufferPtr buffer, elapse::time::Point ts);
+    /*!
+     * Construct a GstVideoSample which wraps the given \a buffer and has the
+     * given \a timestamp.
+     *
+     * The VideoSample::data points directly to the QGst::Buffer::data() to
+     * avoid an unnecessary copy.
+     */
+    GstVideoSample(QGst::BufferPtr buffer, elapse::time::Point ts) :
+        buff(buffer)
+    {
+        auto caps = buff->caps()->internalStructure(0);
+
+        timestamp = ts;
+        w = caps->value("width").toInt();
+        h = caps->value("height").toInt();
+        data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
+    }
 
 private:
     QGst::BufferPtr buff;
@@ -70,6 +86,8 @@ signals:
     void bufferReady();
 };
 
+
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The VideoDecoderPrivate class hides the implementation details of the
@@ -210,24 +228,6 @@ void VideoDecoderPrivate::onFrameDecoded()
 }
 
 /*!
- * Construct a GstVideoSample which wraps the given \a buffer and has the
- * given \a timestamp.
- *
- * The VideoSample::data points directly to the QGst::Buffer::data() to
- * avoid an unnecessary copy.
- */
-GstVideoSample::GstVideoSample(QGst::BufferPtr buffer, elapse::time::Point ts) :
-    buff(buffer)
-{
-    auto caps = buff->caps()->internalStructure(0);
-
-    timestamp = ts;
-    w = caps->value("width").toInt();
-    h = caps->value("height").toInt();
-    data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
-}
-
-/*!
  * Called when an error occurs in the GStreamer pipeline. Extracts the error
  * message, emits it as an error() signal, and stops the GStreamer pipeline.
  */
@@ -336,5 +336,7 @@ void VideoDecoder::stop()
     Q_D(VideoDecoder);
     d->pipeline->setState(QGst::StateNull);
 }
+
+}} // namespace elapse::coreplugin
 
 #include "videodecoder.moc" // because VideoDecoderPrivate inherits from QObject

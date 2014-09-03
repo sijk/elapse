@@ -3,6 +3,7 @@
 #include <QxtLogger>
 #include "simplerawdatasink.h"
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * Create a new SimpleRawDataSink.
@@ -91,3 +92,4 @@ void SimpleRawDataSink::saveData(elapse::data::Signal::Type signalType,
     stream << time.restart() << signalType << data;
 }
 
+}} // namespace elapse::coreplugin

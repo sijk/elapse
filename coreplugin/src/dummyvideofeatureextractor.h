@@ -4,6 +4,7 @@
 #include <elapse/elements/featurextractor.h>
 #include <elapse/timestamps.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The DummyVideoFeatureExtractor class is a placeholder
@@ -34,5 +35,7 @@ protected:
 private:
     elapse::time::Series<double> means;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // DUMMYVIDEOFEATUREEXTRACTOR_H

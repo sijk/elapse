@@ -2,6 +2,8 @@
 #include <QApplication>
 #include "blackholedatasink.h"
 
+namespace elapse { namespace coreplugin {
+
 using namespace elapse::data;
 
 
@@ -89,3 +91,4 @@ void BlackHoleDataSink::saveCognitiveState(CognitiveState state)
     Q_UNUSED(state)
 }
 
+}} // namespace elapse::coreplugin

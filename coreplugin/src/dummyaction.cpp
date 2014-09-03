@@ -1,6 +1,7 @@
 #include <QxtLogger>
 #include "dummyaction.h"
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * Create a new DummyAction.
@@ -18,3 +19,4 @@ void DummyAction::onState(elapse::data::CognitiveState state)
     qxtLog->debug("Updated cognitive state");
 }
 
+}} // namespace elapse::coreplugin

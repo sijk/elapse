@@ -3,6 +3,7 @@
 
 #include <elapse/elements/classifier.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The DummyClassifier class is a black hole for FeatureVector%s.
@@ -19,5 +20,7 @@ public:
 protected:
     elapse::data::CognitiveState classify(QList<elapse::data::FeatureVector> featureVectors);
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // DUMMYCLASSIFIER_H

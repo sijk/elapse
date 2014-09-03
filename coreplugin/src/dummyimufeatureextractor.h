@@ -6,6 +6,8 @@
 
 class HeadWidget;
 
+namespace elapse { namespace coreplugin {
+
 
 /*!
  * \brief The DummyImuFeatureExtractor class is a black hole for ImuSample%s.
@@ -36,5 +38,7 @@ private:
     HeadWidget *headWidget;
     elapse::time::Series<int> sampleFlags;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // DUMMYIMUFEATUREEXTRACTOR_H

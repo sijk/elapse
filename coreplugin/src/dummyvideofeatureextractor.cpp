@@ -2,15 +2,18 @@
 #include <QxtLogger>
 #include "dummyvideofeatureextractor.h"
 
-using namespace elapse;
-using namespace elapse::data;
-
 
 template<class Container, class T = double>
 T sum(const Container &c)
 {
     return std::accumulate(c.cbegin(), c.cend(), T());
 }
+
+
+namespace elapse { namespace coreplugin {
+
+using namespace elapse;
+using namespace elapse::data;
 
 
 /*!
@@ -58,3 +61,5 @@ void DummyVideoFeatureExtractor::removeDataBefore(elapse::time::Point time)
 {
     means.removeValuesBefore(time);
 }
+
+}} // namespace elapse::coreplugin

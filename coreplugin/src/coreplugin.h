@@ -15,6 +15,13 @@
 #include "blackholedatasink.h"
 #include "simplerawdatasink.h"
 
+namespace elapse {
+
+/*!
+ * \brief Default implementations of elapse::elements.
+ * \ingroup core-plugin
+ */
+namespace coreplugin {
 
 /*!
  * \brief The CorePlugin class encapsulates the default element implementations
@@ -46,5 +53,7 @@ class CorePlugin : public QObject, public elapse::PluginInterface
         SimpleRawDataSink
     )
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // COREPLUGIN_H

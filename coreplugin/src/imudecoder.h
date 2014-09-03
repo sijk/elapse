@@ -3,6 +3,7 @@
 
 #include <elapse/elements/decoder.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The ImuDecoder class decodes the byte stream from the IMU.
@@ -21,5 +22,7 @@ public:
 public slots:
     void onData(QByteArray data);
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // IMUDECODER_H

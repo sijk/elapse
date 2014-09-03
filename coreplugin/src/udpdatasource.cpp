@@ -4,6 +4,7 @@
 #define IMU_PORT    6000
 #define VIDEO_PORT  7000
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * Construct a new UdpDataSource.
@@ -88,3 +89,4 @@ void UdpDataSource::onSocketError(QAbstractSocket::SocketError err)
     emit error(sock->errorString());
 }
 
+}} // namespace elapse::coreplugin

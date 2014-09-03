@@ -2,9 +2,10 @@
 #include <elapse/datatypes.h>
 #include "imudecoder.h"
 
+namespace elapse { namespace coreplugin {
+
 using elapse::data::ImuSample;
 using elapse::data::SamplePtr;
-
 
 /*!
  * Create a new ImuDecoder.
@@ -35,3 +36,5 @@ void ImuDecoder::onData(QByteArray data)
 
     emit newSample(sample);
 }
+
+}} // namespace elapse::coreplugin

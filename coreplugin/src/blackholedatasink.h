@@ -3,6 +3,7 @@
 
 #include <elapse/elements/datasink.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The BlackHoleDataSink class funnels data into the ether.
@@ -26,5 +27,7 @@ public:
     void saveFeatureVector(elapse::data::FeatureVector featureVector);
     void saveCognitiveState(elapse::data::CognitiveState state);
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // BLACKHOLEDATASINK_H

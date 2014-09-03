@@ -11,6 +11,8 @@
 #include <elapse/datatypes.h>
 #include "simplerawdatasource.h"
 
+namespace elapse { namespace coreplugin {
+
 using elapse::data::Signal;
 
 
@@ -199,5 +201,6 @@ void SimpleRawDataSource::stop()
     d->stop();
 }
 
-#include "simplerawdatasource.moc"
+}} // namespace elapse::coreplugin
 
+#include "simplerawdatasource.moc"

@@ -6,6 +6,7 @@
 #include <QTime>
 #include <elapse/elements/datasink.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The SimpleRawDataSink class dumps raw data to disk using a
@@ -44,5 +45,7 @@ private:
     QDataStream stream;
     QTime time;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // SIMPLERAWDATASINK_H

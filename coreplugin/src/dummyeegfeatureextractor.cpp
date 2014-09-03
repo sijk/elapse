@@ -1,5 +1,7 @@
 #include "dummyeegfeatureextractor.h"
 
+namespace elapse { namespace coreplugin {
+
 DummyEegFeatureExtractor::DummyEegFeatureExtractor()
 {
 }
@@ -18,3 +20,5 @@ void DummyEegFeatureExtractor::removeDataBefore(elapse::time::Point time)
 {
     sampleFlags.removeValuesBefore(time);
 }
+
+}} // namespace elapse::coreplugin

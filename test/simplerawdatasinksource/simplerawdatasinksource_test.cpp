@@ -9,7 +9,7 @@
 using elapse::data::Signal;
 
 
-class SimpleRawDataSinkNoGui : public SimpleRawDataSink
+class SimpleRawDataSinkNoGui : public elapse::coreplugin::SimpleRawDataSink
 {
 protected:
     QString getDirectory() const
@@ -132,7 +132,7 @@ TEST_F(SimpleRawDataSinkTest, SinkAndSource)
     ASSERT_EQ(files.count(), 1);
     QString filePath = files.first().absoluteFilePath();
 
-    SimpleRawDataSource src;
+    elapse::coreplugin::SimpleRawDataSource src;
     QSignalSpy eegReady(&src, SIGNAL(eegReady(QByteArray)));
     QSignalSpy imuReady(&src, SIGNAL(imuReady(QByteArray)));
     QSignalSpy videoReady(&src, SIGNAL(videoReady(QByteArray)));

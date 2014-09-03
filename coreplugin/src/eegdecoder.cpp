@@ -8,10 +8,12 @@
 #include "stripchart.h"
 #include "eegdecoder.h"
 
+#define CHANNELS_PER_CHIP   8
+
+namespace elapse { namespace coreplugin {
+
 using elapse::data::EegSample;
 using elapse::data::SamplePtr;
-
-#define CHANNELS_PER_CHIP   8
 
 
 class EegDecoderPrivate
@@ -258,3 +260,5 @@ QWidget *EegDecoder::getWidget()
         d->createStripChart();
     return d->widgetContainer;
 }
+
+}} // namespace elapse::coreplugin

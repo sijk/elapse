@@ -1,6 +1,8 @@
 #include "headwidget.h"
 #include "dummyimufeatureextractor.h"
 
+namespace elapse { namespace coreplugin {
+
 using namespace elapse;
 using namespace elapse::data;
 
@@ -56,3 +58,5 @@ void DummyImuFeatureExtractor::updateHeadWidget(const ImuSample *sample)
     headWidget->setXRotation(-theta);
     headWidget->setZRotation(phi);
 }
+
+}} // namespace elapse::coreplugin

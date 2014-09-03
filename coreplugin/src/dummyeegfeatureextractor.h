@@ -4,6 +4,7 @@
 #include <elapse/elements/featurextractor.h>
 #include <elapse/timestamps.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The DummyEegFeatureExtractor class is a black hole for EegSample%s.
@@ -27,5 +28,7 @@ protected:
 private:
     elapse::time::Series<int> sampleFlags;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // DUMMYEEGFEATUREEXTRACTOR_H

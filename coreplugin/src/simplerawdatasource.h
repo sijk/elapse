@@ -4,6 +4,8 @@
 #include <elapse/elements/datasource.h>
 #include <elapse/displayable.h>
 
+namespace elapse { namespace coreplugin {
+
 class SimpleRawDataSourcePrivate;
 
 
@@ -33,5 +35,7 @@ private:
     SimpleRawDataSourcePrivate * const d_ptr;
     Q_DECLARE_PRIVATE(SimpleRawDataSource)
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // SIMPLERAWDATASOURCE_H
