@@ -20,7 +20,7 @@ SOURCES += \
 
 HEADERS += \
     elapse/timestamps.h \
-    elapse/sampletypes.h \
+    elapse/datatypes.h \
     elapse/elements/datasource.h \
     elapse/elements/decoder.h \
     elapse/elements/featurextractor.h \

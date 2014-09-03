@@ -2,7 +2,7 @@
 #define FEATUREXTRACTOR_H
 
 #include <QObject>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 #include "elapse/timestamps.h"
 
 namespace elapse {

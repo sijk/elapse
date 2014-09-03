@@ -4,7 +4,7 @@
 #include <boost/python.hpp>
 #include <QMap>
 #include <QDir>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 
 namespace pyhost {
 

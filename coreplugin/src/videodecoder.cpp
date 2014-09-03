@@ -14,7 +14,7 @@
 #include <QGst/Bus>
 #include <QGst/Parse>
 #include <QGst/Message>
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "util/gstwrappedbuffer.h"
 #include "videodecoder.h"
 

@@ -1,5 +1,5 @@
 #include <QDataStream>
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "imudecoder.h"
 
 using elapse::data::ImuSample;

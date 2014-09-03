@@ -2,7 +2,7 @@
 #define ELEMENTS_H
 
 #include <QSharedPointer>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 #include "elapse/elements/datasource.h"
 #include "elapse/elements/decoder.h"
 #include "elapse/elements/featurextractor.h"

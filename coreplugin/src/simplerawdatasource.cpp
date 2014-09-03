@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QThread>
 #include <QxtLogger>
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "simplerawdatasource.h"
 
 using elapse::data::Signal;

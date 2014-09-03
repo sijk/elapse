@@ -2,7 +2,7 @@
 #define DATASINK_H
 
 #include <QObject>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 
 
 namespace elapse {

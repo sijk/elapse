@@ -5,7 +5,7 @@
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 #include "elements.h"
 #include "log.h"
 #include "settings.h"

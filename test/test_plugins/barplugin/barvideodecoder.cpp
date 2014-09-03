@@ -1,4 +1,4 @@
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "barvideodecoder.h"
 
 using elapse::data::VideoSample;

@@ -2,7 +2,7 @@
 #define PLUGINMANAGER_GLOBAL_H
 
 #include <QtCore>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 
 /*!
  * \brief The PluginHostID enum lists the available PluginHost%s.
