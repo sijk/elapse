@@ -10,7 +10,7 @@
 namespace elapse {
 
 /*!
- * Utilities for working with time.
+ * \brief Utilities for working with time.
  */
 namespace time {
 
@@ -22,7 +22,7 @@ namespace time {
 typedef std::uint64_t Point;
 
 /*!
- * User-defined literals for expressing time::Point%s.
+ * \brief User-defined literals for expressing time::Point%s.
  *
  *     1_us == 1000_ns == 1000
  */
