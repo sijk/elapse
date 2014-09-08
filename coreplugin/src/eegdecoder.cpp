@@ -31,7 +31,7 @@ public:
     QWidget *widgetContainer;
     QSlider *spacingSlider;
     QLabel *spacingValue;
-    StripChart *stripChart;
+    widgets::StripChart *stripChart;
 
     void createStripChart();
     void plotData(EegSample::const_ptr sample);
@@ -83,7 +83,7 @@ void EegDecoderPrivate::createStripChart()
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    stripChart = new StripChart(widgetContainer);
+    stripChart = new widgets::StripChart(widgetContainer);
     stripChart->setNStrips(nChannels);
     stripChart->setNSamples(1000);
     layout->addWidget(stripChart, 1);

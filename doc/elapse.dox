@@ -73,6 +73,12 @@
 */
 
 /*!
+    \namespace elapse::widgets
+    \brief Miscellaneous GUI widgets
+    \ingroup widgets
+*/
+
+/*!
     \defgroup app Elapse Application
 
     These classes relate to the core Elapse application.

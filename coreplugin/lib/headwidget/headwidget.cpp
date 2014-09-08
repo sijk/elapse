@@ -8,6 +8,8 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+namespace elapse { namespace widgets {
+
 HeadWidget::HeadWidget(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
@@ -150,3 +152,5 @@ void HeadWidget::mouseMoveEvent(QMouseEvent *event)
     }
     lastPos = event->pos();
 }
+
+}} // namespace elapse::widgets

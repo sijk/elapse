@@ -4,9 +4,9 @@
 #include <elapse/elements/featurextractor.h>
 #include <elapse/displayable.h>
 
-class HeadWidget;
-
-namespace elapse { namespace coreplugin {
+namespace elapse {
+namespace widgets { class HeadWidget; }
+namespace coreplugin {
 
 
 /*!
@@ -35,7 +35,7 @@ private:
 
     void updateHeadWidget(const elapse::data::ImuSample *sample);
 
-    HeadWidget *headWidget;
+    widgets::HeadWidget *headWidget;
     elapse::time::Series<int> sampleFlags;
 };
 

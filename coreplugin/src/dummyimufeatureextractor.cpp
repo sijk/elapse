@@ -19,7 +19,7 @@ DummyImuFeatureExtractor::DummyImuFeatureExtractor() :
 QWidget *DummyImuFeatureExtractor::getWidget()
 {
     if (!headWidget)
-        headWidget = new HeadWidget;
+        headWidget = new widgets::HeadWidget;
     return headWidget;
 }
 
