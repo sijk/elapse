@@ -95,6 +95,15 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     void default_reset() {
         PYCATCH(this->BaseFeatureExtractorPublic::reset());
     }
+    elapse::data::Signal::Type signalType() const {
+        using elapse::data::Signal;
+        py::object self(py::handle<>(py::detail::wrapper_base_::get_owner(*this)));
+        if (PyObject_HasAttrString(self.ptr(), "signalType")) {
+            auto sigType = py::str(self.attr("signalType"));
+            return Signal::fromString(py::extract<const char*>(sigType));
+        }
+        return Signal::INVALID;
+    }
 };
 
 struct ClassifierWrap : Classifier,

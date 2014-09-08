@@ -142,7 +142,7 @@ def CreateFeatureExtractor():
 @test
 def BaseFeatExMethods():
     class BFX(elapse.elements.BaseFeatureExtractor):
-        pass
+        signalType = Signal.EEG
     fx = flexmock(BFX())
 
     # Necessary configuration before calling onSample

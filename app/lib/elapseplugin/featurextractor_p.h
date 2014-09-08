@@ -15,7 +15,7 @@ public:
     uint windowStep;
     data::Signal::Type signalType;
 
-    static data::Signal::Type findSignalType(BaseFeatureExtractor *q);
+    static data::Signal::Type findSignalType(const BaseFeatureExtractor *q);
     static BaseFeatureExtractorPrivate *expose(BaseFeatureExtractor *q);
 };
 

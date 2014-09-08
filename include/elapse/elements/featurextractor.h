@@ -109,6 +109,12 @@ protected:
      */
     virtual void reset();
 
+    /*!
+     * \return the data::Signal::Type with which this FeatureExtractor
+     * operates. Defaults to the value of the Q_CLASSINFO("SignalType") field.
+     */
+    virtual data::Signal::Type signalType() const;
+
 private:
     BaseFeatureExtractorPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(BaseFeatureExtractor)
