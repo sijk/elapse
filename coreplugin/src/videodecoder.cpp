@@ -14,11 +14,12 @@
 #include <QGst/Bus>
 #include <QGst/Parse>
 #include <QGst/Message>
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "util/gstwrappedbuffer.h"
 #include "videodecoder.h"
 
-using elapse::SamplePtr;
+using elapse::data::SamplePtr;
+using elapse::data::VideoSample;
 
 
 #define SRC_CAPS \
@@ -42,9 +43,25 @@ using elapse::SamplePtr;
  * the VideoSample is destroyed.
  */
 
-struct GstVideoSample : elapse::VideoSample
+struct GstVideoSample : VideoSample
 {
-    GstVideoSample(QGst::BufferPtr buffer, elapse::TimeStamp ts);
+    /*!
+     * Construct a GstVideoSample which wraps the given \a buffer and has the
+     * given \a timestamp.
+     *
+     * The VideoSample::data points directly to the QGst::Buffer::data() to
+     * avoid an unnecessary copy.
+     */
+    GstVideoSample(QGst::BufferPtr buffer, elapse::time::Point ts) :
+        buff(buffer)
+    {
+        auto caps = buff->caps()->internalStructure(0);
+
+        timestamp = ts;
+        w = caps->value("width").toInt();
+        h = caps->value("height").toInt();
+        data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
+    }
 
 private:
     QGst::BufferPtr buff;
@@ -69,6 +86,8 @@ signals:
     void bufferReady();
 };
 
+
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The VideoDecoderPrivate class hides the implementation details of the
@@ -97,7 +116,7 @@ public:
     QPointer<QGst::Ui::VideoWidget> displaysink;
     QSize videoSize;
 
-    QQueue<elapse::TimeStamp> frameTimes;
+    QQueue<elapse::time::Point> frameTimes;
     QMutex frameTimesLock;  ///< Serialize access to frameTimes.
 
     void onInputData(QByteArray data);
@@ -162,7 +181,7 @@ VideoDecoderPrivate::~VideoDecoderPrivate()
 void VideoDecoderPrivate::onInputData(QByteArray data)
 {
     // Extract the real timestamp from the received data.
-    const elapse::TimeStamp time = data.right(16).toULongLong(nullptr, 16);
+    const elapse::time::Point time = data.right(16).toULongLong(nullptr, 16);
     {
         QMutexLocker lock(&frameTimesLock);
 
@@ -197,33 +216,15 @@ void VideoDecoderPrivate::onFrameDecoded()
         return;
 
     // Retrieve the real timestamp for this frame
-    elapse::TimeStamp timestamp;
+    elapse::time::Point timestamp;
     {
         QMutexLocker lock(&frameTimesLock);
         Q_ASSERT(!frameTimes.isEmpty());
         timestamp = frameTimes.dequeue();
     }
 
-    auto frame = elapse::VideoSample::createSubClass<GstVideoSample>(buff, timestamp);
+    auto frame = VideoSample::createSubClass<GstVideoSample>(buff, timestamp);
     emit q->newSample(frame);
-}
-
-/*!
- * Construct a GstVideoSample which wraps the given \a buffer and has the
- * given \a timestamp.
- *
- * The VideoSample::data points directly to the QGst::Buffer::data() to
- * avoid an unnecessary copy.
- */
-GstVideoSample::GstVideoSample(QGst::BufferPtr buffer, elapse::TimeStamp ts) :
-    buff(buffer)
-{
-    auto caps = buff->caps()->internalStructure(0);
-
-    timestamp = ts;
-    w = caps->value("width").toInt();
-    h = caps->value("height").toInt();
-    data = QByteArray::fromRawData((const char*)buff->data(), buff->size());
 }
 
 /*!
@@ -335,5 +336,7 @@ void VideoDecoder::stop()
     Q_D(VideoDecoder);
     d->pipeline->setState(QGst::StateNull);
 }
+
+}} // namespace elapse::coreplugin
 
 #include "videodecoder.moc" // because VideoDecoderPrivate inherits from QObject

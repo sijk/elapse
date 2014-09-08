@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QList>
 #include <QTimer>
-#include "common/interfaces.h"
+#include "common/hardware.h"
+
+namespace elapse { namespace client {
 
 namespace dbus { class Device; }
 
@@ -21,7 +23,7 @@ public:
     explicit DeviceProxy(QObject *parent = nullptr);
     ~DeviceProxy();
 
-    iface::Device *device() const;
+    hardware::Device *device() const;
 
     QString deviceAddress() const;
     QString localAddress() const;
@@ -50,5 +52,6 @@ private:
     QTimer connectionChecker;
 };
 
+}} // namespace elapse::client
 
 #endif // DEVICEPROXY_H

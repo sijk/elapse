@@ -1,6 +1,8 @@
 #include <QMovie>
 #include "spinner.h"
 
+namespace elapse { namespace widgets {
+
 /*!
  * Construct a Spinner as a child of the given \a parent.
  */
@@ -43,3 +45,5 @@ void Spinner::setRunning(bool run)
 {
     run ? start() : stop();
 }
+
+}} // namespace elapse::widgets

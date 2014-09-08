@@ -3,6 +3,7 @@
 #include <QxtLogger>
 #include "simplerawdatasink.h"
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * Create a new SimpleRawDataSink.
@@ -84,10 +85,11 @@ void SimpleRawDataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &confi
  * Dump the \a signalType and \a data to the currently-open data file
  * via a QDataStream.
  */
-void SimpleRawDataSink::saveData(elapse::Signal::Type signalType,
-                                         QByteArray data)
+void SimpleRawDataSink::saveData(elapse::data::Signal::Type signalType,
+                                 QByteArray data)
 {
     Q_ASSERT(file.isOpen());
     stream << time.restart() << signalType << data;
 }
 
+}} // namespace elapse::coreplugin

@@ -5,14 +5,14 @@
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 #include "elements.h"
 #include "log.h"
 #include "settings.h"
 #include "gui.h"
 
 
-std::vector<uchar> getVideoSampleData(elapse::VideoSample::const_ptr s)
+std::vector<uchar> getVideoSampleData(elapse::data::VideoSample::const_ptr s)
 {
     return std::vector<uchar>(s->data.cbegin(), s->data.cend());
 }
@@ -42,63 +42,71 @@ BOOST_PYTHON_MODULE(elapse)
     export_gui();
 
     {
-        scope Signal = class_<elapse::Signal>("Signal", no_init)
-            .def("toString", &elapse::Signal::toString)
-            .staticmethod("toString")
-            .def("fromString", &elapse::Signal::fromString)
-            .staticmethod("fromString")
-            .def("count", &elapse::Signal::count)
-            .staticmethod("count");
+        object data(handle<>(borrowed(PyImport_AddModule("elapse.data"))));
+        scope().attr("data") = data;
+        scope data_scope = data;
 
-        enum_<elapse::Signal::Type>("Type")
-            .value("EEG", elapse::Signal::EEG)
-            .value("VIDEO", elapse::Signal::VIDEO)
-            .value("IMU", elapse::Signal::IMU)
-            .value("INVALID", elapse::Signal::INVALID)
-            .export_values();
+        using namespace elapse::data;
+
+        {
+            scope signal = class_<Signal>("Signal", no_init)
+                .def("toString", &Signal::toString)
+                .staticmethod("toString")
+                .def("fromString", &Signal::fromString)
+                .staticmethod("fromString")
+                .def("count", &Signal::count)
+                .staticmethod("count");
+
+            enum_<Signal::Type>("Type")
+                .value("EEG", Signal::EEG)
+                .value("VIDEO", Signal::VIDEO)
+                .value("IMU", Signal::IMU)
+                .value("INVALID", Signal::INVALID)
+                .export_values();
+        }
+
+        class_<Sample, noncopyable>("Sample", no_init)
+            .def_readwrite("timestamp", &Sample::timestamp);
+
+        class_<EegSample, bases<Sample>, EegSample::ptr, noncopyable>("EegSample", no_init)
+            .def("__init__", make_constructor(&EegSample::create))
+            .def_readonly("seqnum", &EegSample::seqnum)
+            .def_readonly("leadOff", &EegSample::seqnum)
+            .def_readonly("values", &EegSample::values);
+
+        class_<VideoSample, bases<Sample>, VideoSample::ptr, noncopyable>("VideoSample", no_init)
+            .def("__init__", make_constructor(&VideoSample::create))
+            .def_readonly("w", &VideoSample::w)
+            .def_readonly("h", &VideoSample::h)
+            .add_property("data", &getVideoSampleData);
+
+        class_<ImuSample, bases<Sample>, ImuSample::ptr, noncopyable>("ImuSample", no_init)
+            .def("__init__", make_constructor(&ImuSample::create))
+            .add_property("acc", make_getter(&ImuSample::acc,
+                                             return_value_policy<return_by_value>()))
+            .add_property("gyr", make_getter(&ImuSample::gyr,
+                                             return_value_policy<return_by_value>()));
+
+        register_ptr_to_python<SamplePtr>();
+
+        implicitly_convertible<EegSample::ptr, EegSample::const_ptr>();
+        implicitly_convertible<VideoSample::ptr, VideoSample::const_ptr>();
+        implicitly_convertible<ImuSample::ptr, ImuSample::const_ptr>();
+
+        implicitly_convertible<EegSample::const_ptr, SamplePtr>();
+        implicitly_convertible<VideoSample::const_ptr, SamplePtr>();
+        implicitly_convertible<ImuSample::const_ptr, SamplePtr>();
+
+        class_<FeatureVector>("FeatureVector",
+                              init<Signal::Type, elapse::time::Point>())
+            .def_readonly("signalType", &FeatureVector::signalType)
+            .def_readonly("startTime", &FeatureVector::startTime)
+            .def_readonly("features", &FeatureVector::features);
+
+        class_<CognitiveState>("CognitiveState", init<elapse::time::Point>())
+            .def_readonly("startTime", &CognitiveState::startTime)
+            .def_readonly("state", &CognitiveState::state);
     }
-
-    class_<elapse::Sample, noncopyable>("Sample", no_init)
-        .def_readwrite("timestamp", &elapse::Sample::timestamp);
-
-    class_<elapse::EegSample, bases<elapse::Sample>, elapse::EegSample::ptr, noncopyable>("EegSample", no_init)
-        .def("__init__", make_constructor(&elapse::EegSample::create))
-        .def_readonly("seqnum", &elapse::EegSample::seqnum)
-        .def_readonly("leadOff", &elapse::EegSample::seqnum)
-        .def_readonly("values", &elapse::EegSample::values);
-
-    class_<elapse::VideoSample, bases<elapse::Sample>, elapse::VideoSample::ptr, noncopyable>("VideoSample", no_init)
-        .def("__init__", make_constructor(&elapse::VideoSample::create))
-        .def_readonly("w", &elapse::VideoSample::w)
-        .def_readonly("h", &elapse::VideoSample::h)
-        .add_property("data", &getVideoSampleData);
-
-    class_<elapse::ImuSample, bases<elapse::Sample>, elapse::ImuSample::ptr, noncopyable>("ImuSample", no_init)
-        .def("__init__", make_constructor(&elapse::ImuSample::create))
-        .add_property("acc", make_getter(&elapse::ImuSample::acc,
-                                         return_value_policy<return_by_value>()))
-        .add_property("gyr", make_getter(&elapse::ImuSample::gyr,
-                                         return_value_policy<return_by_value>()));
-
-    register_ptr_to_python<elapse::SamplePtr>();
-
-    implicitly_convertible<elapse::EegSample::ptr, elapse::EegSample::const_ptr>();
-    implicitly_convertible<elapse::VideoSample::ptr, elapse::VideoSample::const_ptr>();
-    implicitly_convertible<elapse::ImuSample::ptr, elapse::ImuSample::const_ptr>();
-
-    implicitly_convertible<elapse::EegSample::const_ptr, elapse::SamplePtr>();
-    implicitly_convertible<elapse::VideoSample::const_ptr, elapse::SamplePtr>();
-    implicitly_convertible<elapse::ImuSample::const_ptr, elapse::SamplePtr>();
-
-    class_<elapse::FeatureVector>("FeatureVector",
-                                  init<elapse::Signal::Type, elapse::TimeStamp>())
-        .def_readonly("signalType", &elapse::FeatureVector::signalType)
-        .def_readonly("startTime", &elapse::FeatureVector::startTime)
-        .def_readonly("features", &elapse::FeatureVector::features);
-
-    class_<elapse::CognitiveState>("CognitiveState", init<elapse::TimeStamp>())
-        .def_readonly("startTime", &elapse::CognitiveState::startTime)
-        .def_readonly("state", &elapse::CognitiveState::state);
 
     // ---
 

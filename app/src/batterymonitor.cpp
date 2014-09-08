@@ -3,7 +3,7 @@
 #include <qwt_dial.h>
 #include <qwt_dial_needle.h>
 #include <qwt_round_scale_draw.h>
-#include "common/interface/battery_iface.h"
+#include "common/hardware/battery_iface.h"
 #include "batterymonitor.h"
 
 
@@ -70,6 +70,8 @@ protected:
 };
 
 
+namespace elapse { namespace client {
+
 /*!
  * Create a BatteryMonitor as a child of the given \a parent.
  */
@@ -102,7 +104,7 @@ QWidget *BatteryMonitor::getWidget()
 /*!
  * Set the DBus interface to the device's \a battery.
  */
-void BatteryMonitor::setBattery(iface::Battery *battery)
+void BatteryMonitor::setBattery(hardware::Battery *battery)
 {
     this->battery = battery;
     if (!battery) {
@@ -131,3 +133,4 @@ void BatteryMonitor::updateVoltage()
     gauge->setValue(voltage);
 }
 
+}} // namespace elapse::client

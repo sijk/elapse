@@ -5,6 +5,7 @@
 #include <QxtSignalGroup>
 #include <elapse/elements/datasource.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The UdpDataSource class receives data from the device over
@@ -13,7 +14,7 @@
  * \ingroup core-plugin
  */
 
-class UdpDataSource : public elapse::DataSource
+class UdpDataSource : public elapse::elements::DataSource
 {
     Q_OBJECT
 public:
@@ -33,5 +34,7 @@ private:
     QUdpSocket videoSock;
     QxtSignalGroup startedSignals;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // UDPDATASOURCE_H

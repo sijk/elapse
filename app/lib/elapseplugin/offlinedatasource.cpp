@@ -3,21 +3,19 @@
 #include "configproxies.h"
 
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 class OfflineDataSourcePrivate
 {
 public:
     OfflineDataSourcePrivate(ConfigManager *config);
 
-    config::Device device;
-    DeviceDBusAdaptor adaptor;
+    client::config::Device device;
+    common::dbus::Adaptor adaptor;
 };
 
-} // namespace elapse
 
-
-elapse::OfflineDataSourcePrivate::OfflineDataSourcePrivate(ConfigManager *config) :
+OfflineDataSourcePrivate::OfflineDataSourcePrivate(ConfigManager *config) :
     device(config),
     adaptor(&device, true)
 {
@@ -27,7 +25,7 @@ elapse::OfflineDataSourcePrivate::OfflineDataSourcePrivate(ConfigManager *config
 /*!
  * Construct a new OfflineDataSource.
  */
-elapse::OfflineDataSource::OfflineDataSource() :
+OfflineDataSource::OfflineDataSource() :
     d_ptr(nullptr)
 {
 }
@@ -35,19 +33,20 @@ elapse::OfflineDataSource::OfflineDataSource() :
 /*!
  * Destroy this OfflineDataSource.
  */
-elapse::OfflineDataSource::~OfflineDataSource()
+OfflineDataSource::~OfflineDataSource()
 {
     delete d_ptr;
 }
 
-void elapse::OfflineDataSource::exposeDeviceInterface()
+void OfflineDataSource::exposeDeviceInterface()
 {
     d_ptr = new OfflineDataSourcePrivate(this);
 }
 
 
-bool elapse::DataSource::isOfflineSource() const
+bool DataSource::isOfflineSource() const
 {
-    return qobject_cast<const elapse::OfflineDataSource*>(this) != nullptr;
+    return qobject_cast<const OfflineDataSource*>(this) != nullptr;
 }
 
+}} // namespace elapse::elements

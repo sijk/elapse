@@ -2,10 +2,10 @@
 #define CLASSIFIER_H
 
 #include <QObject>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 #include "elapse/timestamps.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The Classifier interface is implemented by elements that take in
@@ -30,7 +30,7 @@ public slots:
      * Classifier subclasses to match up and process the corresponding
      * FeatureVector%s.
      */
-    virtual void onFeatures(elapse::FeatureVector features) = 0;
+    virtual void onFeatures(elapse::data::FeatureVector features) = 0;
 
     /*!
      * Called when the pipeline starts to reset any internal state.
@@ -42,7 +42,7 @@ signals:
      * Emitted when the CognitiveState has been classified from the latest
      * set of FeatureVector%s.
      */
-    void newState(elapse::CognitiveState state);
+    void newState(elapse::data::CognitiveState state);
 };
 
 
@@ -64,7 +64,7 @@ class BaseClassifier : public Classifier
     Q_OBJECT
 
 public slots:
-    void onFeatures(elapse::FeatureVector featVect);
+    void onFeatures(elapse::data::FeatureVector featVect);
     void reset();
 
 protected:
@@ -72,13 +72,13 @@ protected:
      * Derived classes should implement this method to classify the user's
      * current CognitiveState given the list of \a featureVectors.
      */
-    virtual CognitiveState classify(QList<FeatureVector> featureVectors) = 0;
+    virtual data::CognitiveState classify(QList<data::FeatureVector> featureVectors) = 0;
 
 private:
-    typedef QMap<Signal::Type, FeatureVector> FeatureSet;
+    typedef QMap<data::Signal::Type, data::FeatureVector> FeatureSet;
     time::Series<FeatureSet> timestampedFeatureSets;
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // CLASSIFIER_H

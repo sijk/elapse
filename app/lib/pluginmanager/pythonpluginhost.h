@@ -3,11 +3,12 @@
 
 #include "pluginhost.h"
 
+namespace elapse { namespace plugin {
 
 /*!
- * \brief The PythonPluginHost class loads plugins implemented in Python.
+ * \brief The PythonHost class loads plugins implemented in Python.
  *
- * The PythonPluginHost internally launches a Python interpreter which is used
+ * The PythonHost internally launches a Python interpreter which is used
  * to load Python packages. A plugin is a Python package containing a list of
  * class objects called `classes`.
  *
@@ -17,15 +18,17 @@
  * \ingroup plugins-int
  */
 
-class PythonPluginHost : public PluginHost
+class PythonHost : public Host
 {
 public:
-    PythonPluginHost();
+    PythonHost();
 
 protected:
     PluginData getInfo(const QString &pluginPath);
     QObject *instantiateClass(const PluginInfo &plugin, const ClassInfo &cls);
     Deleter deleter();
 };
+
+}} // namespace elapse::plugin
 
 #endif // PYTHONPLUGINHOST_H

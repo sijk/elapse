@@ -2,11 +2,11 @@
 #define DECODER_H
 
 #include <QObject>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 
 class QByteArray;
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The SampleDecoder interface is implemented by elements that decode a
@@ -27,7 +27,7 @@ class SampleDecoder : public QObject
     Q_OBJECT
 signals:
     /*! Emitted when a \a sample has been decoded. */
-    void newSample(elapse::SamplePtr sample);
+    void newSample(elapse::data::SamplePtr sample);
 
     /*!
      * Emitted when an error occurs. The \a message is a human-readable string
@@ -62,6 +62,6 @@ public slots:
     virtual void onData(QByteArray data) = 0;
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // DECODER_H

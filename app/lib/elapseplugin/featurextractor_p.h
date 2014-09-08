@@ -3,22 +3,22 @@
 
 #include "elapse/elements/featurextractor.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 class BaseFeatureExtractorPrivate
 {
 public:
     BaseFeatureExtractorPrivate();
 
-    TimeStamp windowStart;
+    time::Point windowStart;
     uint windowLength;
     uint windowStep;
-    Signal::Type signalType;
+    data::Signal::Type signalType;
 
-    static Signal::Type findSignalType(BaseFeatureExtractor *q);
+    static data::Signal::Type findSignalType(const BaseFeatureExtractor *q);
     static BaseFeatureExtractorPrivate *expose(BaseFeatureExtractor *q);
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // FEATUREXTRACTOR_P_H

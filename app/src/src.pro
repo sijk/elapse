@@ -28,4 +28,4 @@ linkStaticlib(loggerwidget)
 
 linkSharedlib(app, elapseplugin, true)
 
-include($$ROOT/common/interfaces.pri)
+include($$ROOT/common/hardware.pri)

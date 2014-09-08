@@ -2,6 +2,8 @@
 #include "logmodel.h"
 #include "logfilterproxymodel.h"
 
+namespace elapse { namespace log {
+
 /*!
  * Construct a new LogFilterProxyModel as a child of the given parent.
  */
@@ -49,3 +51,5 @@ bool LogFilterProxyModel::filterAcceptsRow(int srcRow,
 
     return false;
 }
+
+}} // namespace elapse::log

@@ -4,6 +4,8 @@
 #include <QTime>
 #include <QTextStream>
 
+namespace elapse { namespace log {
+
 /*!
  * Construct a new TableModelLoggerEngine and instantiate its internal LogModel.
  *
@@ -68,3 +70,5 @@ QAbstractItemModel *TableModelLoggerEngine::model()
 {
     return _model;
 }
+
+}} // namespace elapse::log

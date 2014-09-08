@@ -4,6 +4,7 @@
 #include <QObject>
 #include "elementset.h"
 
+namespace elapse { namespace client {
 
 /*!
  * \brief The Pipeline class manages a set of signal processing elements.
@@ -27,13 +28,13 @@ class Pipeline : public QObject
 public:
     explicit Pipeline(QObject *parent = nullptr);
 
-    ElementSetPtr elements() const;
+    elements::ElementSetPtr elements() const;
 
     void setWindowLength(uint ms);
     void setWindowStep(uint ms);
 
 public slots:
-    void setElements(ElementSetPtr newElements);
+    void setElements(elements::ElementSetPtr newElements);
     void setDeviceConfig(QMap<QString, QVariantMap> config);
 
     void start();
@@ -45,12 +46,13 @@ signals:
     void error(QString msg = QString());
 
 private slots:
-    void setStartTime(elapse::SamplePtr sample);
+    void setStartTime(elapse::data::SamplePtr sample);
 
 private:
-    ElementSetPtr _elements;
+    elements::ElementSetPtr _elements;
     bool startTimeIsSet;
 };
 
+}} // namespace elapse::client
 
 #endif // PIPELINE_H

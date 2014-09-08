@@ -3,8 +3,10 @@
 #include "elapse/timestamps.h"
 #include "elapse/elements/classifier.h"
 
+using elapse::data::Signal;
 
-void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
+
+void elapse::elements::BaseClassifier::onFeatures(elapse::data::FeatureVector featVect)
 {
     Q_ASSERT(featVect.startTime > 0);
 
@@ -47,7 +49,7 @@ void elapse::BaseClassifier::onFeatures(elapse::FeatureVector featVect)
     }
 }
 
-void elapse::BaseClassifier::reset()
+void elapse::elements::BaseClassifier::reset()
 {
     timestampedFeatureSets.clear();
 }

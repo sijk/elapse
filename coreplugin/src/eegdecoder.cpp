@@ -3,15 +3,17 @@
 #include <QLabel>
 #include <QLayout>
 #include <QxtLogger>
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "util/bigendian24.h"
 #include "stripchart.h"
 #include "eegdecoder.h"
 
-using elapse::EegSample;
-using elapse::SamplePtr;
-
 #define CHANNELS_PER_CHIP   8
+
+namespace elapse { namespace coreplugin {
+
+using elapse::data::EegSample;
+using elapse::data::SamplePtr;
 
 
 class EegDecoderPrivate
@@ -24,15 +26,15 @@ public:
     uint nChannels;
 
     double toMicroVolts(double value) const;
-    static void checkSequenceNumber(elapse::EegSample::const_ptr sample);
+    static void checkSequenceNumber(EegSample::const_ptr sample);
 
     QWidget *widgetContainer;
     QSlider *spacingSlider;
     QLabel *spacingValue;
-    StripChart *stripChart;
+    widgets::StripChart *stripChart;
 
     void createStripChart();
-    void plotData(elapse::EegSample::const_ptr sample);
+    void plotData(EegSample::const_ptr sample);
 };
 
 
@@ -81,7 +83,7 @@ void EegDecoderPrivate::createStripChart()
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    stripChart = new StripChart(widgetContainer);
+    stripChart = new widgets::StripChart(widgetContainer);
     stripChart->setNStrips(nChannels);
     stripChart->setNSamples(1000);
     layout->addWidget(stripChart, 1);
@@ -258,3 +260,5 @@ QWidget *EegDecoder::getWidget()
         d->createStripChart();
     return d->widgetContainer;
 }
+
+}} // namespace elapse::coreplugin

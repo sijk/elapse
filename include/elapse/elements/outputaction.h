@@ -2,9 +2,9 @@
 #define OUTPUTACTION_H
 
 #include <QObject>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 
-namespace elapse {
+namespace elapse { namespace elements {
 
 /*!
  * \brief The OutputAction interface is implemented by elements that perform
@@ -29,9 +29,9 @@ public slots:
      * OutputAction subclasses to match up and process the corresponding
      * FeatureVector%s.
      */
-    virtual void onState(elapse::CognitiveState state) = 0;
+    virtual void onState(elapse::data::CognitiveState state) = 0;
 };
 
-} // namespace elapse
+}} // namespace elapse::elements
 
 #endif // OUTPUTACTION_H

@@ -4,6 +4,7 @@
 #include <elapse/elements/decoder.h>
 #include <elapse/displayable.h>
 
+namespace elapse { namespace coreplugin {
 
 class VideoDecoderPrivate;
 
@@ -13,7 +14,8 @@ class VideoDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class VideoDecoder : public elapse::SampleDecoder, public elapse::Displayable
+class VideoDecoder : public elapse::elements::SampleDecoder,
+                     public elapse::Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")
@@ -33,5 +35,7 @@ private:
     VideoDecoderPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(VideoDecoder)
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // VIDEODECODER_H

@@ -1,5 +1,5 @@
 include(../../../global.pri)
-include($$ROOT/common/interfaces.pri)
+include($$ROOT/common/hardware.pri)
 
 QT       = core gui dbus
 TEMPLATE = lib
@@ -20,7 +20,7 @@ SOURCES += \
 
 HEADERS += \
     elapse/timestamps.h \
-    elapse/sampletypes.h \
+    elapse/datatypes.h \
     elapse/elements/datasource.h \
     elapse/elements/decoder.h \
     elapse/elements/featurextractor.h \

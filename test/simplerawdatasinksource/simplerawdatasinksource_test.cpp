@@ -6,8 +6,10 @@
 #include "simplerawdatasink.h"
 #include "simplerawdatasource.h"
 
+using elapse::data::Signal;
 
-class SimpleRawDataSinkNoGui : public SimpleRawDataSink
+
+class SimpleRawDataSinkNoGui : public elapse::coreplugin::SimpleRawDataSink
 {
 protected:
     QString getDirectory() const
@@ -86,9 +88,9 @@ TEST_F(SimpleRawDataSinkTest, SavesData)
 {
     EXPECT_TRUE(dataSink.getCaptureInfo());
     ASSERT_TRUE(dataSink.start());
-    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
-    dataSink.saveData(elapse::Signal::IMU, "IMU DATA");
-    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
+    dataSink.saveData(Signal::EEG, "EEG DATA");
+    dataSink.saveData(Signal::IMU, "IMU DATA");
+    dataSink.saveData(Signal::EEG, "EEG DATA");
     dataSink.stop();
 
     QFileInfoList files = QDir(dataDir, "*.dat").entryInfoList();
@@ -98,17 +100,17 @@ TEST_F(SimpleRawDataSinkTest, SavesData)
     QDataStream stream(&file);
 
     int dt;
-    elapse::Signal::Type signalType;
+    Signal::Type signalType;
     QByteArray data;
-    auto expectNextDataToBe = [&](elapse::Signal::Type t, const QByteArray &d) {
+    auto expectNextDataToBe = [&](Signal::Type t, const QByteArray &d) {
         stream >> dt >> (int&)signalType >> data;
         EXPECT_GE(dt, 0);
         EXPECT_EQ(signalType, t);
         EXPECT_EQ(data, d);
     };
-    expectNextDataToBe(elapse::Signal::EEG, "EEG DATA");
-    expectNextDataToBe(elapse::Signal::IMU, "IMU DATA");
-    expectNextDataToBe(elapse::Signal::EEG, "EEG DATA");
+    expectNextDataToBe(Signal::EEG, "EEG DATA");
+    expectNextDataToBe(Signal::IMU, "IMU DATA");
+    expectNextDataToBe(Signal::EEG, "EEG DATA");
     EXPECT_TRUE(stream.atEnd());
 }
 
@@ -121,16 +123,16 @@ TEST_F(SimpleRawDataSinkTest, SinkAndSource)
     EXPECT_TRUE(dataSink.getCaptureInfo());
     ASSERT_TRUE(dataSink.start());
     dataSink.saveDeviceConfig(config);
-    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
-    dataSink.saveData(elapse::Signal::IMU, "IMU DATA");
-    dataSink.saveData(elapse::Signal::EEG, "EEG DATA");
+    dataSink.saveData(Signal::EEG, "EEG DATA");
+    dataSink.saveData(Signal::IMU, "IMU DATA");
+    dataSink.saveData(Signal::EEG, "EEG DATA");
     dataSink.stop();
 
     QFileInfoList files = QDir(dataDir, "*.dat").entryInfoList();
     ASSERT_EQ(files.count(), 1);
     QString filePath = files.first().absoluteFilePath();
 
-    SimpleRawDataSource src;
+    elapse::coreplugin::SimpleRawDataSource src;
     QSignalSpy eegReady(&src, SIGNAL(eegReady(QByteArray)));
     QSignalSpy imuReady(&src, SIGNAL(imuReady(QByteArray)));
     QSignalSpy videoReady(&src, SIGNAL(videoReady(QByteArray)));

@@ -31,6 +31,8 @@ private:
 };
 
 
+namespace elapse { namespace widgets {
+
 /*!
  * Construct a new StripChart as a child of the given \a parent;
  */
@@ -211,3 +213,5 @@ void StripChart::setSpacing(double spacing)
  * \property StripChart::rate
  * The number of milliseconds between plot redraws.
  */
+
+}} // namespace elapse::widgets

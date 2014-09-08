@@ -4,6 +4,7 @@
 #include <QAbstractTableModel>
 #include <QxtLogger>
 
+namespace elapse { namespace log {
 
 /*!
  * \brief The LogItem struct represents a logged message.
@@ -42,5 +43,7 @@ public:
 private:
     QList<LogItem> _items;
 };
+
+}} // namespace elapse::log
 
 #endif // LOGMODEL_H

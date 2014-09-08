@@ -3,13 +3,14 @@
 
 #include <elapse/elements/datasink.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The BlackHoleDataSink class funnels data into the ether.
  * \ingroup core-plugin
  */
 
-class BlackHoleDataSink : public elapse::DataSink
+class BlackHoleDataSink : public elapse::elements::DataSink
 {
     Q_OBJECT
 public:
@@ -21,10 +22,12 @@ public:
     bool getCaptureInfo();
 
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(elapse::Signal::Type signalType, QByteArray data);
-    void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample);
-    void saveFeatureVector(elapse::FeatureVector featureVector);
-    void saveCognitiveState(elapse::CognitiveState state);
+    void saveData(elapse::data::Signal::Type signalType, QByteArray data);
+    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample);
+    void saveFeatureVector(elapse::data::FeatureVector featureVector);
+    void saveCognitiveState(elapse::data::CognitiveState state);
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // BLACKHOLEDATASINK_H

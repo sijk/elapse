@@ -4,17 +4,16 @@
 
 #include "nativepluginhost.h"
 
-using elapse::SampleDecoder;
+using elapse::elements::SampleDecoder;
+using elapse::data::Signal;
+namespace plugin = elapse::plugin;
 
 
-class PublicNativePluginHost : public NativePluginHost
+class PublicNativePluginHost : public plugin::NativeHost
 {
     // Make methods public for testability
 public:
-    PluginData getInfo(const QString &pluginPath)
-    {
-        return NativePluginHost::getInfo(pluginPath);
-    }
+    using plugin::NativeHost::getInfo;
 };
 
 
@@ -41,7 +40,7 @@ TEST_F(NativePluginHostTest, InfoForFooPlugin)
 {
     auto info = host.getInfo(fooPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PluginHostID::Native);
+    EXPECT_EQ(info.plugin.host, plugin::HostID::Native);
     EXPECT_EQ(info.plugin.name, QString("FooPlugin"));
     EXPECT_EQ(info.plugin.path, fooPluginPath);
 
@@ -49,18 +48,18 @@ TEST_F(NativePluginHostTest, InfoForFooPlugin)
 
     EXPECT_EQ(info.classes[0].className, QString("FooEegDecoder"));
     EXPECT_EQ(info.classes[0].elementClass, QString("SampleDecoder"));
-    EXPECT_EQ(info.classes[0].signalType, elapse::Signal::EEG);
+    EXPECT_EQ(info.classes[0].signalType, Signal::EEG);
 
     EXPECT_EQ(info.classes[1].className, QString("FooDummySource"));
     EXPECT_EQ(info.classes[1].elementClass, QString("DataSource"));
-    EXPECT_EQ(info.classes[1].signalType, elapse::Signal::INVALID);
+    EXPECT_EQ(info.classes[1].signalType, Signal::INVALID);
 }
 
 TEST_F(NativePluginHostTest, InfoForBarPlugin)
 {
     auto info = host.getInfo(barPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PluginHostID::Native);
+    EXPECT_EQ(info.plugin.host, plugin::HostID::Native);
     EXPECT_EQ(info.plugin.name, QString("BarPlugin"));
     EXPECT_EQ(info.plugin.path, barPluginPath);
 
@@ -68,11 +67,11 @@ TEST_F(NativePluginHostTest, InfoForBarPlugin)
 
     EXPECT_EQ(info.classes[0].className, QString("BarEegDecoder"));
     EXPECT_EQ(info.classes[0].elementClass, QString("SampleDecoder"));
-    EXPECT_EQ(info.classes[0].signalType, elapse::Signal::EEG);
+    EXPECT_EQ(info.classes[0].signalType, Signal::EEG);
 
     EXPECT_EQ(info.classes[1].className, QString("BarVideoDecoder"));
     EXPECT_EQ(info.classes[1].elementClass, QString("SampleDecoder"));
-    EXPECT_EQ(info.classes[1].signalType, elapse::Signal::VIDEO);
+    EXPECT_EQ(info.classes[1].signalType, Signal::VIDEO);
 }
 
 TEST_F(NativePluginHostTest, InstantiateFooEegDecoder)

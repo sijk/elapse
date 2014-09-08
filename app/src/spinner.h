@@ -4,6 +4,7 @@
 #include <QLabel>
 class QMovie;
 
+namespace elapse { namespace widgets {
 
 /*!
  * \brief The Spinner class provides a loading/waiting animation.
@@ -32,5 +33,7 @@ public slots:
 private:
     QMovie *animation;
 };
+
+}} // namespace elapse::widgets
 
 #endif // SPINNER_H

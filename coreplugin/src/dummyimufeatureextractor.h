@@ -4,7 +4,9 @@
 #include <elapse/elements/featurextractor.h>
 #include <elapse/displayable.h>
 
-class HeadWidget;
+namespace elapse {
+namespace widgets { class HeadWidget; }
+namespace coreplugin {
 
 
 /*!
@@ -15,7 +17,7 @@ class HeadWidget;
  * \ingroup core-plugin
  */
 
-class DummyImuFeatureExtractor : public elapse::BaseFeatureExtractor,
+class DummyImuFeatureExtractor : public elapse::elements::BaseFeatureExtractor,
                                  public elapse::Displayable
 {
     Q_OBJECT
@@ -27,14 +29,16 @@ public:
     QWidget *getWidget();
 
 private:
-    void analyseSample(elapse::SamplePtr sample);
+    void analyseSample(elapse::data::SamplePtr sample);
     std::vector<double> features();
-    void removeDataBefore(elapse::TimeStamp time);
+    void removeDataBefore(elapse::time::Point time);
 
-    void updateHeadWidget(const elapse::ImuSample *sample);
+    void updateHeadWidget(const elapse::data::ImuSample *sample);
 
-    HeadWidget *headWidget;
+    widgets::HeadWidget *headWidget;
     elapse::time::Series<int> sampleFlags;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // DUMMYIMUFEATUREEXTRACTOR_H

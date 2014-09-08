@@ -5,6 +5,8 @@
 
 class HeadMesh;
 
+namespace elapse { namespace widgets {
+
 class HeadWidget : public QGLWidget
 {
     Q_OBJECT
@@ -45,5 +47,7 @@ private:
     QColor headColour;
     QColor bgndColour;
 };
+
+}} // namespace elapse::widgets
 
 #endif

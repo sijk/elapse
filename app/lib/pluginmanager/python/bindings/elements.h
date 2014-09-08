@@ -11,6 +11,8 @@
 #include "elapse/elements/outputaction.h"
 #include "elapse/elements/datasink.h"
 
+using namespace elapse::elements;
+
 namespace py = boost::python;
 
 
@@ -22,7 +24,7 @@ namespace py = boost::python;
     try { expr; } \
     catch (const py::error_already_set&) { \
         qxtLog->trace(QString("Error in '%1'").arg(#expr)); \
-        logPythonException(); \
+        elapse::plugin::python::logException(); \
     }
 
 /*!
@@ -33,15 +35,15 @@ namespace py = boost::python;
     try { return expr; } \
     catch (const py::error_already_set&) { \
         qxtLog->trace(QString("Error in '%1'").arg(#expr)); \
-        logPythonException(); \
+        elapse::plugin::python::logException(); \
     } \
     return def
 
 
-struct FeatureExtractorWrap : elapse::FeatureExtractor,
-                              py::wrapper<elapse::FeatureExtractor>
+struct FeatureExtractorWrap : FeatureExtractor,
+                              py::wrapper<FeatureExtractor>
 {
-    void setStartTime(elapse::TimeStamp timestamp) {
+    void setStartTime(elapse::time::Point timestamp) {
         PYCATCH(this->get_override("setStartTime")(timestamp));
     }
     void setWindowLength(uint ms) {
@@ -50,26 +52,26 @@ struct FeatureExtractorWrap : elapse::FeatureExtractor,
     void setWindowStep(uint ms) {
         PYCATCH(this->get_override("setWindowStep")(ms));
     }
-    void onSample(elapse::SamplePtr sample) {
+    void onSample(elapse::data::SamplePtr sample) {
         PYCATCH(this->get_override("onSample")(sample));
     }
 };
 
-class BaseFeatureExtractorPublic : public elapse::BaseFeatureExtractor
+class BaseFeatureExtractorPublic : public BaseFeatureExtractor
 {
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
 public:
-    using elapse::BaseFeatureExtractor::analyseSample;
-    using elapse::BaseFeatureExtractor::removeDataBefore;
-    using elapse::BaseFeatureExtractor::reset;
+    using BaseFeatureExtractor::analyseSample;
+    using BaseFeatureExtractor::removeDataBefore;
+    using BaseFeatureExtractor::reset;
     virtual py::list pyfeatures() = 0;
 };
 
 struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
                                   py::wrapper<BaseFeatureExtractorPublic>
 {
-    void analyseSample(elapse::SamplePtr sample) {
+    void analyseSample(elapse::data::SamplePtr sample) {
         PYCATCH(this->get_override("analyseSample")(sample));
     }
     std::vector<double> features() {
@@ -82,7 +84,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     py::list pyfeatures() {
         PYCATCH_RETURN(this->get_override("features")(), {});
     }
-    void removeDataBefore(elapse::TimeStamp time) {
+    void removeDataBefore(elapse::time::Point time) {
         PYCATCH(this->get_override("removeDataBefore")(time));
     }
     void reset() {
@@ -93,12 +95,21 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     void default_reset() {
         PYCATCH(this->BaseFeatureExtractorPublic::reset());
     }
+    elapse::data::Signal::Type signalType() const {
+        using elapse::data::Signal;
+        py::object self(py::handle<>(py::detail::wrapper_base_::get_owner(*this)));
+        if (PyObject_HasAttrString(self.ptr(), "signalType")) {
+            auto sigType = py::str(self.attr("signalType"));
+            return Signal::fromString(py::extract<const char*>(sigType));
+        }
+        return Signal::INVALID;
+    }
 };
 
-struct ClassifierWrap : elapse::Classifier,
-                        py::wrapper<elapse::Classifier>
+struct ClassifierWrap : Classifier,
+                        py::wrapper<Classifier>
 {
-    void onFeatures(elapse::FeatureVector features) {
+    void onFeatures(elapse::data::FeatureVector features) {
         PYCATCH(this->get_override("onFeatures")(features));
     }
     void reset() {
@@ -106,45 +117,45 @@ struct ClassifierWrap : elapse::Classifier,
     }
 };
 
-class BaseClassifierPublic : public elapse::BaseClassifier
+class BaseClassifierPublic : public BaseClassifier
 {
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
 public:
-    using elapse::BaseClassifier::classify;
+    using BaseClassifier::classify;
 };
 
 struct BaseClassifierWrap : BaseClassifierPublic,
                             py::wrapper<BaseClassifierPublic>
 {
-    elapse::CognitiveState classify(QList<elapse::FeatureVector> featureVectors) {
+    elapse::data::CognitiveState classify(QList<elapse::data::FeatureVector> featureVectors) {
         PYCATCH_RETURN(this->get_override("classify")(featureVectors),
-                       elapse::CognitiveState(0));
+                       elapse::data::CognitiveState(0));
     }
 };
 
-struct OutputActionWrap : elapse::OutputAction,
-                          py::wrapper<elapse::OutputAction>
+struct OutputActionWrap : OutputAction,
+                          py::wrapper<OutputAction>
 {
-    void onState(elapse::CognitiveState state) {
+    void onState(elapse::data::CognitiveState state) {
         PYCATCH(this->get_override("onState")(state));
     }
 };
 
-class DataSinkPublic : public elapse::DataSink
+class DataSinkPublic : public DataSink
 {
     // Make the protected virtual methods public so they can be overriden
     // by python classes.
 public:
-    using elapse::DataSink::getCaptureInfo;
-    using elapse::DataSink::needsNewCaptureInfo;
-    using elapse::DataSink::startSaving;
-    using elapse::DataSink::stopSaving;
-    using elapse::DataSink::saveData;
-    using elapse::DataSink::saveSample;
-    using elapse::DataSink::saveFeatureVector;
-    using elapse::DataSink::saveCognitiveState;
-    using elapse::DataSink::saveDeviceConfig;
+    using DataSink::getCaptureInfo;
+    using DataSink::needsNewCaptureInfo;
+    using DataSink::startSaving;
+    using DataSink::stopSaving;
+    using DataSink::saveData;
+    using DataSink::saveSample;
+    using DataSink::saveFeatureVector;
+    using DataSink::saveCognitiveState;
+    using DataSink::saveDeviceConfig;
 };
 
 struct DataSinkWrap : DataSinkPublic,
@@ -165,36 +176,36 @@ struct DataSinkWrap : DataSinkPublic,
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config) {
         PYCATCH(this->get_override("saveDeviceConfig")(config));
     }
-    void saveData(elapse::Signal::Type signalType, QByteArray data) {
+    void saveData(elapse::data::Signal::Type signalType, QByteArray data) {
         if (py::override fn = this->get_override("saveData"))
             PYCATCH(fn(signalType, data));
         DataSinkPublic::saveData(signalType, data);
     }
-    void default_saveData(elapse::Signal::Type signalType, QByteArray data) {
+    void default_saveData(elapse::data::Signal::Type signalType, QByteArray data) {
         PYCATCH(this->DataSinkPublic::saveData(signalType, data));
     }
-    void saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
+    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
         if (py::override fn = this->get_override("saveSample"))
             PYCATCH(fn(signalType, sample));
         DataSinkPublic::saveSample(signalType, sample);
     }
-    void default_saveSample(elapse::Signal::Type signalType, elapse::SamplePtr sample) {
+    void default_saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
         PYCATCH(this->DataSinkPublic::saveSample(signalType, sample));
     }
-    void saveFeatureVector(elapse::FeatureVector featureVector) {
+    void saveFeatureVector(elapse::data::FeatureVector featureVector) {
         if (py::override fn = this->get_override("saveFeatureVector"))
             PYCATCH(fn(featureVector));
         DataSinkPublic::saveFeatureVector(featureVector);
     }
-    void default_saveFeatureVector(elapse::FeatureVector featureVector) {
+    void default_saveFeatureVector(elapse::data::FeatureVector featureVector) {
         PYCATCH(this->DataSinkPublic::saveFeatureVector(featureVector));
     }
-    void saveCognitiveState(elapse::CognitiveState state) {
+    void saveCognitiveState(elapse::data::CognitiveState state) {
         if (py::override fn = this->get_override("saveCognitiveState"))
             PYCATCH(fn(state));
         DataSinkPublic::saveCognitiveState(state);
     }
-    void default_saveCognitiveState(elapse::CognitiveState state) {
+    void default_saveCognitiveState(elapse::data::CognitiveState state) {
         PYCATCH(this->DataSinkPublic::saveCognitiveState(state));
     }
 };
@@ -229,13 +240,13 @@ void export_elements()
     scope elements_scope = elements;
 
     class_<FeatureExtractorWrap, boost::noncopyable>("FeatureExtractor")
-        .def("setStartTime", pure_virtual(&elapse::FeatureExtractor::setStartTime))
-        .def("setWindowLength", pure_virtual(&elapse::FeatureExtractor::setWindowLength))
-        .def("setWindowStep", pure_virtual(&elapse::FeatureExtractor::setWindowStep))
-        .def("onSample", pure_virtual(&elapse::FeatureExtractor::onSample))
-        .def("newFeatures", &elapse::FeatureExtractor::newFeatures);
+        .def("setStartTime", pure_virtual(&FeatureExtractor::setStartTime))
+        .def("setWindowLength", pure_virtual(&FeatureExtractor::setWindowLength))
+        .def("setWindowStep", pure_virtual(&FeatureExtractor::setWindowStep))
+        .def("onSample", pure_virtual(&FeatureExtractor::onSample))
+        .def("newFeatures", &FeatureExtractor::newFeatures);
 
-    class_<BaseFeatureExtractorWrap, bases<elapse::FeatureExtractor>,
+    class_<BaseFeatureExtractorWrap, bases<FeatureExtractor>,
            boost::noncopyable>("BaseFeatureExtractor")
         .def("analyseSample", pure_virtual(&BaseFeatureExtractorPublic::analyseSample))
         .def("features", pure_virtual(&BaseFeatureExtractorPublic::pyfeatures))
@@ -244,16 +255,16 @@ void export_elements()
                       &BaseFeatureExtractorWrap::default_reset);
 
     class_<ClassifierWrap, boost::noncopyable>("Classifier")
-        .def("onFeatures", pure_virtual(&elapse::Classifier::onFeatures))
-        .def("reset", pure_virtual(&elapse::Classifier::reset))
-        .def("newState", &elapse::Classifier::newState);
+        .def("onFeatures", pure_virtual(&Classifier::onFeatures))
+        .def("reset", pure_virtual(&Classifier::reset))
+        .def("newState", &Classifier::newState);
 
-    class_<BaseClassifierWrap, bases<elapse::Classifier>,
+    class_<BaseClassifierWrap, bases<Classifier>,
             boost::noncopyable>("BaseClassifier")
         .def("classify", pure_virtual(&BaseClassifierPublic::classify));
 
     class_<OutputActionWrap, boost::noncopyable>("OutputAction")
-        .def("onState", pure_virtual(&elapse::OutputAction::onState));
+        .def("onState", pure_virtual(&OutputAction::onState));
 
     class_<DataSinkWrap, boost::noncopyable>("DataSink")
         .def("startSaving", pure_virtual(&DataSinkPublic::startSaving))

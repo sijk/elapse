@@ -1,5 +1,5 @@
 include(../../../staticlib.pri)
-include($$ROOT/common/interfaces.pri)
+include($$ROOT/common/hardware.pri)
 
 QT      += dbus network
 

@@ -5,7 +5,7 @@
 #include <elapse/elements/datasource.h>
 
 
-class FooDummySource : public elapse::DataSource
+class FooDummySource : public elapse::elements::DataSource
 {
     Q_OBJECT
 

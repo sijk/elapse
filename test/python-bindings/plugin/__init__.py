@@ -44,24 +44,25 @@ def test(fn):
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+from elapse.data import Signal
 
 @test
 def SignalTypes():
-    assert elapse.Signal.toString(elapse.Signal.EEG) == 'EEG'
-    assert elapse.Signal.toString(elapse.Signal.VIDEO) == 'VIDEO'
-    assert elapse.Signal.toString(elapse.Signal.IMU) == 'IMU'
+    assert Signal.toString(Signal.EEG) == 'EEG'
+    assert Signal.toString(Signal.VIDEO) == 'VIDEO'
+    assert Signal.toString(Signal.IMU) == 'IMU'
 
-    assert elapse.Signal.fromString('EEG') == elapse.Signal.EEG
-    assert elapse.Signal.fromString('VIDEO') == elapse.Signal.VIDEO
-    assert elapse.Signal.fromString('IMU') == elapse.Signal.IMU
+    assert Signal.fromString('EEG') == Signal.EEG
+    assert Signal.fromString('VIDEO') == Signal.VIDEO
+    assert Signal.fromString('IMU') == Signal.IMU
 
-    assert elapse.Signal.toString(elapse.Signal.INVALID) == 'INVALID'
-    assert elapse.Signal.fromString('INVALID') == elapse.Signal.INVALID
+    assert Signal.toString(Signal.INVALID) == 'INVALID'
+    assert Signal.fromString('INVALID') == Signal.INVALID
 
-    assert elapse.Signal.toString(elapse.Signal.Type(42)) == None
-    assert elapse.Signal.fromString('foobar') == elapse.Signal.INVALID
+    assert Signal.toString(Signal.Type(42)) == None
+    assert Signal.fromString('foobar') == Signal.INVALID
 
-    assert elapse.Signal.count() == 3
+    assert Signal.count() == 3
 
 def assertNotDefaultConstructible(cls):
     try:
@@ -73,12 +74,12 @@ def assertNotDefaultConstructible(cls):
 
 @test
 def CreateSample():
-    assertNotDefaultConstructible(elapse.Sample)
+    assertNotDefaultConstructible(elapse.data.Sample)
 
 @test
 def CreateEegSample():
-    s = elapse.EegSample()
-    assert isinstance(s, elapse.Sample)
+    s = elapse.data.EegSample()
+    assert isinstance(s, elapse.data.Sample)
     assert s.timestamp == 0
     assert s.seqnum == 0
     assert s.leadOff == 0
@@ -86,8 +87,8 @@ def CreateEegSample():
 
 @test
 def CreateVideoSample():
-    s = elapse.VideoSample()
-    assert isinstance(s, elapse.Sample)
+    s = elapse.data.VideoSample()
+    assert isinstance(s, elapse.data.Sample)
     assert s.timestamp == 0
     assert s.w == 0
     assert s.h == 0
@@ -95,18 +96,18 @@ def CreateVideoSample():
 
 @test
 def CreateImuSample():
-    s = elapse.ImuSample()
-    assert isinstance(s, elapse.Sample)
+    s = elapse.data.ImuSample()
+    assert isinstance(s, elapse.data.Sample)
     assert s.timestamp == 0
     assert s.acc == (0,0,0)
     assert s.gyr == (0,0,0)
 
 @test
 def CreateFeatureVector():
-    assertNotDefaultConstructible(elapse.FeatureVector)
+    assertNotDefaultConstructible(elapse.data.FeatureVector)
 
-    v = elapse.FeatureVector(elapse.Signal.EEG, 42)
-    assert v.signalType == elapse.Signal.EEG
+    v = elapse.data.FeatureVector(Signal.EEG, 42)
+    assert v.signalType == Signal.EEG
     assert v.startTime == 42
     assert len(v.features) == 0
 
@@ -115,9 +116,9 @@ def CreateFeatureVector():
 
 @test
 def CreateCogState():
-    assertNotDefaultConstructible(elapse.CognitiveState)
+    assertNotDefaultConstructible(elapse.data.CognitiveState)
 
-    c = elapse.CognitiveState(42)
+    c = elapse.data.CognitiveState(42)
     assert c.startTime == 42
     assert len(c.state) == 0
 
@@ -132,7 +133,7 @@ def CreateFeatureExtractor():
     fx = FX()
 
     try:
-        fx.onSample(elapse.EegSample())
+        fx.onSample(elapse.data.EegSample())
     except:
         pass
     else:
@@ -141,7 +142,7 @@ def CreateFeatureExtractor():
 @test
 def BaseFeatExMethods():
     class BFX(elapse.elements.BaseFeatureExtractor):
-        pass
+        signalType = Signal.EEG
     fx = flexmock(BFX())
 
     # Necessary configuration before calling onSample
@@ -151,6 +152,6 @@ def BaseFeatExMethods():
     fx.should_call('onSample').once()
     fx.should_receive('analyseSample').once()
 
-    sample = elapse.EegSample()
+    sample = elapse.data.EegSample()
     sample.timestamp = 2
     fx.onSample(sample)

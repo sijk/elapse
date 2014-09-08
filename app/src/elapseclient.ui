@@ -89,7 +89,7 @@
               </widget>
              </item>
              <item>
-              <widget class="Spinner" name="spinnerConnecting">
+              <widget class="elapse::widgets::Spinner" name="spinnerConnecting">
                <property name="minimumSize">
                 <size>
                  <width>20</width>
@@ -152,7 +152,7 @@
      </widget>
     </item>
     <item>
-     <widget class="Spinner" name="spinnerStarting">
+     <widget class="elapse::widgets::Spinner" name="spinnerStarting">
       <property name="minimumSize">
        <size>
         <width>20</width>
@@ -325,7 +325,7 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>Spinner</class>
+   <class>elapse::widgets::Spinner</class>
    <extends>QLabel</extends>
    <header>spinner.h</header>
   </customwidget>

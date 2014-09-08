@@ -4,6 +4,7 @@
 #include <elapse/elements/featurextractor.h>
 #include <elapse/timestamps.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The DummyVideoFeatureExtractor class is a placeholder
@@ -16,7 +17,7 @@
  * \ingroup core-plugin
  */
 
-class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
+class DummyVideoFeatureExtractor : public elapse::elements::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")
@@ -24,15 +25,17 @@ class DummyVideoFeatureExtractor : public elapse::BaseFeatureExtractor
 public:
     Q_INVOKABLE DummyVideoFeatureExtractor();
 
-    void setStartTime(elapse::TimeStamp timestamp);
+    void setStartTime(elapse::time::Point timestamp);
 
 protected:
-    void analyseSample(elapse::SamplePtr sample);
+    void analyseSample(elapse::data::SamplePtr sample);
     std::vector<double> features();
-    void removeDataBefore(elapse::TimeStamp time);
+    void removeDataBefore(elapse::time::Point time);
 
 private:
     elapse::time::Series<double> means;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // DUMMYVIDEOFEATUREEXTRACTOR_H

@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName("NeuroTech");
     a.setApplicationName("Elapse client");
 
-    ElapseClient elapseClient;
+    elapse::client::ElapseClient elapseClient;
     elapseClient.show();
 
     return a.exec();

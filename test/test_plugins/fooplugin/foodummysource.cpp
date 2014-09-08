@@ -1,4 +1,4 @@
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "foodummysource.h"
 
 

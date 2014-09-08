@@ -25,7 +25,7 @@ public:
         QUdpSocket().writeDatagram(testData, QHostAddress::LocalHost, port);
     }
 
-    UdpDataSource src;
+    elapse::coreplugin::UdpDataSource src;
     QSignalSpy eegReady;
     QSignalSpy videoReady;
     QSignalSpy imuReady;

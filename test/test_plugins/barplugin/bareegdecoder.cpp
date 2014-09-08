@@ -1,8 +1,8 @@
-#include <elapse/sampletypes.h>
+#include <elapse/datatypes.h>
 #include "bareegdecoder.h"
 
-using elapse::EegSample;
-using elapse::SamplePtr;
+using elapse::data::EegSample;
+using elapse::data::SamplePtr;
 
 
 BarEegDecoder::BarEegDecoder()

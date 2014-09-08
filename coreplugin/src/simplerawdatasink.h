@@ -6,6 +6,7 @@
 #include <QTime>
 #include <elapse/elements/datasink.h>
 
+namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The SimpleRawDataSink class dumps raw data to disk using a
@@ -21,7 +22,7 @@
  * \ingroup core-plugin
  */
 
-class SimpleRawDataSink : public elapse::DataSink
+class SimpleRawDataSink : public elapse::elements::DataSink
 {
     Q_OBJECT
 public:
@@ -33,7 +34,7 @@ public:
     bool getCaptureInfo();
 
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(elapse::Signal::Type signalType, QByteArray data);
+    void saveData(elapse::data::Signal::Type signalType, QByteArray data);
 
 protected:
     virtual QString getDirectory() const;
@@ -44,5 +45,7 @@ private:
     QDataStream stream;
     QTime time;
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // SIMPLERAWDATASINK_H

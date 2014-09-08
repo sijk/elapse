@@ -4,13 +4,19 @@
 #include <boost/python.hpp>
 #include <QMap>
 #include <QDir>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
 
-namespace pyhost {
+namespace elapse { namespace plugin {
 
-using boost::python::object;
+/*!
+ * \brief Helper functions for working with plugins implemented in Python.
+ */
 
-extern QMap<QObject*, object> instances;
+namespace python {
+
+namespace py = boost::python;
+
+extern QMap<QObject*, py::object> instances;
 
 void removeInstance(QObject *obj);
 
@@ -18,14 +24,14 @@ void initPython();
 
 void addParentToPythonPath(QDir dir);
 
-QMap<QString, object> getClasses(const QString &moduleName);
+QMap<QString, py::object> getClasses(const QString &moduleName);
 
-QString baseClassName(object cls);
+QString baseClassName(py::object cls);
 
-elapse::Signal::Type signalType(object cls);
+data::Signal::Type signalType(py::object cls);
 
-QObject *extractQObject(object obj, const QString &cls);
+QObject *extractQObject(py::object obj, const QString &cls);
 
-} // namespace python
+}}} // namespace elapse::plugin::python
 
 #endif // PYTHON_HOST_H

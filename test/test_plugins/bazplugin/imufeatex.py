@@ -1,7 +1,7 @@
 import elapse
 
 class BazImuFeatEx(elapse.elements.BaseFeatureExtractor):
-    signalType = elapse.Signal.IMU
+    signalType = elapse.data.Signal.IMU
 
     def analyseSample(self, sample):
         pass

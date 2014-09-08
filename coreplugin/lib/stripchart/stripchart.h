@@ -8,6 +8,7 @@ class QTimer;
 class QwtPlot;
 class QwtPlotCurve;
 
+namespace elapse { namespace widgets {
 
 /*!
  * \brief The StripChart class provides a generic stripchart widget for
@@ -63,5 +64,7 @@ private:
     QTimer *timer;
     bool needs_redraw;
 };
+
+}} // namespace elapse::widgets
 
 #endif // STRIPCHART_H

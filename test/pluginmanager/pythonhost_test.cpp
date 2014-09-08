@@ -4,14 +4,14 @@
 
 #include "pythonpluginhost.h"
 
-using elapse::FeatureExtractor;
+using elapse::elements::FeatureExtractor;
 
 
 // Make methods public for testability
-class PublicPythonPluginHost : public PythonPluginHost
+class PublicPythonPluginHost : public elapse::plugin::PythonHost
 {
 public:
-    using PythonPluginHost::getInfo;
+    using elapse::plugin::PythonHost::getInfo;
 };
 
 class PythonPluginHostTest : public ::testing::Test
@@ -43,7 +43,7 @@ TEST_F(PythonPluginHostTest, InfoForBazPlugin)
 {
     auto info = host.getInfo(bazPluginPath);
 
-    EXPECT_EQ(info.plugin.host, PluginHostID::Python);
+    EXPECT_EQ(info.plugin.host, elapse::plugin::HostID::Python);
     EXPECT_EQ(info.plugin.name, QString("bazplugin"));
     EXPECT_EQ(info.plugin.path, bazPluginPath);
 
@@ -51,11 +51,11 @@ TEST_F(PythonPluginHostTest, InfoForBazPlugin)
 
     EXPECT_EQ(info.classes[0].className, QString("BazEegFeatEx"));
     EXPECT_EQ(info.classes[0].elementClass, QString("FeatureExtractor"));
-    EXPECT_EQ(info.classes[0].signalType, elapse::Signal::EEG);
+    EXPECT_EQ(info.classes[0].signalType, elapse::data::Signal::EEG);
 
     EXPECT_EQ(info.classes[1].className, QString("BazImuFeatEx"));
     EXPECT_EQ(info.classes[1].elementClass, QString("FeatureExtractor"));
-    EXPECT_EQ(info.classes[1].signalType, elapse::Signal::IMU);
+    EXPECT_EQ(info.classes[1].signalType, elapse::data::Signal::IMU);
 }
 
 TEST_F(PythonPluginHostTest, InstantiateBazEegFeatEx)

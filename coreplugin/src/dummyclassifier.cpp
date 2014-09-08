@@ -1,8 +1,10 @@
 #include <QxtLogger>
 #include "dummyclassifier.h"
 
-using elapse::FeatureVector;
-using elapse::CognitiveState;
+namespace elapse { namespace coreplugin {
+
+using elapse::data::FeatureVector;
+using elapse::data::CognitiveState;
 
 
 /*!
@@ -20,3 +22,5 @@ CognitiveState DummyClassifier::classify(QList<FeatureVector> featureVectors)
     cog.state = { 1.0 };
     return cog;
 }
+
+}} // namespace elapse::coreplugin

@@ -4,6 +4,8 @@
 #include <elapse/elements/decoder.h>
 #include <elapse/displayable.h>
 
+namespace elapse { namespace coreplugin {
+
 class EegDecoderPrivate;
 
 
@@ -13,7 +15,8 @@ class EegDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class EegDecoder : public elapse::SampleDecoder, public elapse::Displayable
+class EegDecoder : public elapse::elements::SampleDecoder,
+                   public elapse::Displayable
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")
@@ -45,5 +48,7 @@ private:
     EegDecoderPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(EegDecoder)
 };
+
+}} // namespace elapse::coreplugin
 
 #endif // EEGDECODER_H

@@ -3,19 +3,20 @@
 
 #include <QtPlugin>
 
-namespace elapse {
+namespace elapse { namespace plugin {
 
 /*!
- * \brief The PluginInterface class is implemented by all plugins.
+ * \brief The plugin::Interface interface is implemented by all plugins
+ * written in C++.
  *
  * A plugin is simply a shared library containing one or more classes, and the
- * PluginInterface exposes a list of those classes to the host application.
+ * plugin::Interface exposes a list of those classes to the host application.
  *
  * \headerfile elapse/plugin.h
  * \ingroup plugins-ext
  */
 
-class PluginInterface
+class Interface
 {
 public:
     typedef QList<QMetaObject> ClassList;
@@ -28,26 +29,8 @@ public:
     virtual ClassList classes() = 0;
 };
 
-} // namespace elapse
 
-
-/*!
- * \brief The interface ID of the elapse::PluginInterface.
- *
- * All plugins must include the line
- * \code Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid) \endcode after the
- * \c Q_OBJECT macro.
- *
- * \ingroup plugins-ext
- */
-
-#define ElapsePluginInterface_iid "org.nzbri.elapse.PluginInterface"
-Q_DECLARE_INTERFACE(elapse::PluginInterface, ElapsePluginInterface_iid)
-
-
-#ifndef DOXYGEN
-
-namespace elapse {
+namespace detail {
 
 template<typename... Args> struct MetaObjects;
 
@@ -70,30 +53,44 @@ struct MetaObjects<T1, Tn...>
     /*!
      * Extract the QMetaObjects from the template arguments.
      */
-    static PluginInterface::ClassList get()
+    static Interface::ClassList get()
     {
         Q_STATIC_ASSERT((std::is_base_of<QObject,T1>::value));
-        return PluginInterface::ClassList() << T1::staticMetaObject
-                                            << MetaObjects<Tn...>::get();
+        return Interface::ClassList() << T1::staticMetaObject
+                                      << MetaObjects<Tn...>::get();
     }
 };
 
 template<> struct MetaObjects<>
 {
-    static PluginInterface::ClassList get() { return {}; }
+    static Interface::ClassList get() { return {}; }
 };
 
-} // namespace elapse
+} // namespace detail
+}} // namespace elapse::plugin
 
-#endif
+/*!
+ * \brief The interface ID of the elapse::plugin::Interface.
+ *
+ * All plugins must include the line
+ * \code Q_PLUGIN_METADATA(IID ElapsePluginInterface_iid) \endcode after the
+ * \c Q_OBJECT macro.
+ *
+ * \ingroup plugins-ext
+ */
+
+#define ElapsePluginInterface_iid "org.nzbri.elapse.PluginInterface"
+Q_DECLARE_INTERFACE(elapse::plugin::Interface, ElapsePluginInterface_iid)
 
 
 /*!
- * Implement elapse::PluginInterface::classes(), returning the
+ * Implement elapse::plugin::Interface::classes(), returning the
  * staticMetaObjects of the given \a Classes.
  * \ingroup plugins-ext
  */
 #define ELAPSE_EXPORT_CLASSES(Classes...) \
-    ClassList classes() { return elapse::MetaObjects<Classes>::get(); }
+    ClassList classes() { \
+        return elapse::plugin::detail::MetaObjects<Classes>::get(); \
+    }
 
 #endif // PLUGIN_H

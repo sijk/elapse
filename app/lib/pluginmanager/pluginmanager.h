@@ -5,18 +5,26 @@
 #include <QDir>
 #include "elementset.h"
 
-class PluginManagerPrivate;
+namespace elapse {
+
+/*!
+ * \brief Dynamically load elapse::elements from plugins.
+ */
+
+namespace plugin {
+
+class ManagerPrivate;
 
 
 /*!
- * \brief The PluginManager class handles the finding and loading of plugins.
+ * \brief The plugin::Manager class handles the finding and loading of plugins.
  *
- * The PluginManager has multiple PluginHost%s which do the actual work of
- * finding and loading plugins. The PluginManager presents a unified interface
- * to the collection of PluginHost%s, distributing work to them and
+ * The plugin::Manager has multiple plugin::Host%s which do the actual work of
+ * finding and loading plugins. The plugin::Manager presents a unified interface
+ * to the collection of plugin::Host%s, distributing work to them and
  * aggregating the results.
  *
- * The PluginManager also provides two ways to select which elements to load
+ * The plugin::Manager also provides two ways to select which elements to load
  * from plugins. Firstly, it presents a GUI that lists the available
  * implementations for each type of element and allows the user to select them.
  * Secondly, it can load the most recently used set of elements from the
@@ -25,14 +33,14 @@ class PluginManagerPrivate;
  * \ingroup plugins-int
  */
 
-class PluginManager : public QDialog
+class Manager : public QDialog
 {
     Q_OBJECT
     Q_PROPERTY(QDir searchPath READ searchPath WRITE setSearchPath)
 
 public:
-    explicit PluginManager(QWidget *parent = nullptr);
-    ~PluginManager();
+    explicit Manager(QWidget *parent = nullptr);
+    ~Manager();
 
     QDir searchPath() const;
     void setSearchPath(QDir newPath);
@@ -42,14 +50,16 @@ public slots:
     void loadElementsFromSettings();
 
 signals:
-    void elementsLoaded(ElementSetPtr elements);
+    void elementsLoaded(elements::ElementSetPtr elements);
 
 private slots:
     void loadElementsFromGuiSelection();
 
 private:
-    PluginManagerPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(PluginManager)
+    ManagerPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(Manager)
 };
+
+}} // namespace elapse::plugin
 
 #endif // PLUGINMANAGER_H

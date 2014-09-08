@@ -2,12 +2,14 @@
 #define PLUGINMANAGER_GLOBAL_H
 
 #include <QtCore>
-#include "elapse/sampletypes.h"
+#include "elapse/datatypes.h"
+
+namespace elapse { namespace plugin {
 
 /*!
- * \brief The PluginHostID enum lists the available PluginHost%s.
+ * \brief The HostID enum lists the available plugin::Host%s.
  */
-enum class PluginHostID
+enum class HostID
 {
     Static,
     Native,
@@ -22,7 +24,7 @@ struct PluginInfo
 {
     QString name;                    ///< The name of the plugin
     QString path;                    ///< Absolute path to the plugin file
-    PluginHostID host;               ///< Which PluginHost can load this plugin
+    HostID host;               ///< Which PluginHost can load this plugin
 };
 
 /*!
@@ -32,7 +34,7 @@ struct PluginInfo
 struct ClassInfo
 {
     QString elementClass;            ///< The element base class this class inherits from
-    elapse::Signal::Type signalType; ///< The signal type this class works with (if specified)
+    data::Signal::Type signalType;   ///< The signal type this class works with (if specified)
     QString className;               ///< The name of the class
 };
 
@@ -45,5 +47,7 @@ struct PluginData
     PluginInfo plugin;               ///< Info about the plugin
     QList<ClassInfo> classes;        ///< Info about the classes the plugin provides
 };
+
+}} // namespace elapse::plugin
 
 #endif // PLUGINMANAGER_GLOBAL_H
