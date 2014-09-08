@@ -21,7 +21,7 @@ void ImuDecoder::onData(QByteArray data)
     QDataStream stream(data);
     stream.setVersion(QDataStream::Qt_4_6);
 
-    auto sample = new ImuSample;
+    auto sample = ImuSample::create();
     qint32 ax, ay, az;
     qint32 gx, gy, gz;
 
@@ -33,5 +33,5 @@ void ImuDecoder::onData(QByteArray data)
     sample->acc = QVector3D(ax, ay, az);
     sample->gyr = QVector3D(gx, gy, gz);
 
-    emit newSample(SamplePtr(sample));
+    emit newSample(sample);
 }

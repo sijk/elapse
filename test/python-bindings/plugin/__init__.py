@@ -1,4 +1,10 @@
 import elapse
+try:
+    from flexmock import flexmock, flexmock_teardown
+except ImportError:
+    def flexmock(*args, **kwargs):
+        raise ImportError, 'You need to install the "flexmock" package to run this test'
+    def flexmock_teardown(): pass
 
 
 # The list of test classes is automatically populated by the test decorator
@@ -23,6 +29,7 @@ def test(fn):
             print '[ RUN      ]', self.testname
             try:
                 fn()
+                flexmock_teardown()
             except Exception, e:
                 print '[  FAILED  ]', e
                 raise
@@ -56,17 +63,17 @@ def SignalTypes():
 
     assert elapse.Signal.count() == 3
 
-@test
-def CreateSample():
-    s = elapse.Sample()
-    assert s.timestamp == 0
-
+def assertNotDefaultConstructible(cls):
     try:
-        s.timestamp = 42
-    except AttributeError, e:
+        instance = cls()
+    except:
         pass
     else:
-        raise AttributeError, "Sample.timestamp should be read-only"
+        raise TypeError, str(cls) + " should not be default-constructible"
+
+@test
+def CreateSample():
+    assertNotDefaultConstructible(elapse.Sample)
 
 @test
 def CreateEegSample():
@@ -96,12 +103,7 @@ def CreateImuSample():
 
 @test
 def CreateFeatureVector():
-    try:
-        v = elapse.FeatureVector()
-    except:
-        pass
-    else:
-        raise TypeError, "FeatureVector should not have a default ctor"
+    assertNotDefaultConstructible(elapse.FeatureVector)
 
     v = elapse.FeatureVector(elapse.Signal.EEG, 42)
     assert v.signalType == elapse.Signal.EEG
@@ -113,12 +115,7 @@ def CreateFeatureVector():
 
 @test
 def CreateCogState():
-    try:
-        c = elapse.CognitiveState()
-    except:
-        pass
-    else:
-        raise TypeError, "CognitiveState should not have a default ctor"
+    assertNotDefaultConstructible(elapse.CognitiveState)
 
     c = elapse.CognitiveState(42)
     assert c.startTime == 42
@@ -140,3 +137,20 @@ def CreateFeatureExtractor():
         pass
     else:
         raise TypeError, 'FeatureExtractor.onSample() should be pure virtual'
+
+@test
+def BaseFeatExMethods():
+    class BFX(elapse.elements.BaseFeatureExtractor):
+        pass
+    fx = flexmock(BFX())
+
+    # Necessary configuration before calling onSample
+    fx.should_receive('removeDataBefore').once()
+    fx.setStartTime(1)
+
+    fx.should_call('onSample').once()
+    fx.should_receive('analyseSample').once()
+
+    sample = elapse.EegSample()
+    sample.timestamp = 2
+    fx.onSample(sample)

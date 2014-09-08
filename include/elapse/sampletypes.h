@@ -42,45 +42,82 @@ struct Sample
     virtual ~Sample() {}
 
     TimeStamp timestamp;
+
+protected:
+    Sample() = default;
 };
 
 
-struct EegSample : Sample
+using SamplePtr = std::shared_ptr<const Sample>;
+
+
+namespace detail {
+
+template<class SubType>
+struct BaseSample : Sample
+{
+private:
+    struct Constructible : SubType {};  // Make SubType's default ctor public
+
+public:
+    using ptr = std::shared_ptr<SubType>;
+    using const_ptr = std::shared_ptr<const SubType>;
+
+    static ptr create()
+    {
+        return std::make_shared<Constructible>();
+    }
+
+    template<class T, class... Args>
+    static ptr createSubClass(Args&&... args)
+    {
+        Q_STATIC_ASSERT((std::is_base_of<SubType, T>::value));
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
+
+    static const_ptr staticCastFrom(SamplePtr s)
+    {
+        return std::static_pointer_cast<const SubType>(s);
+    }
+
+    static const_ptr dynamicCastFrom(SamplePtr s)
+    {
+        return std::dynamic_pointer_cast<const SubType>(s);
+    }
+};
+
+} // namespace detail
+
+
+struct EegSample : detail::BaseSample<EegSample>
 {
     quint32 seqnum;
     quint16 leadOff;
     std::vector<double> values;
+
+protected:
+    EegSample() = default;
 };
 
 
-struct VideoSample : Sample
+struct VideoSample : detail::BaseSample<VideoSample>
 {
     int w, h;
     QByteArray data;
+
+protected:
+    VideoSample() = default;
 };
 
 
-struct ImuSample : Sample
+struct ImuSample : detail::BaseSample<ImuSample>
 {
     QVector3D acc;
     QVector3D gyr;
+
+protected:
+    ImuSample() = default;
 };
-
-
-template<typename T>
-using sample_ptr = std::shared_ptr<typename std::enable_if<std::is_base_of<Sample, T>::value, T>::type>;
-
-using SamplePtr = sample_ptr<const Sample>;
-
-template<typename T> sample_ptr<const T> static_sample_cast(SamplePtr s)
-{
-    return std::static_pointer_cast<const T>(s);
-}
-
-template<typename T> sample_ptr<const T> dynamic_sample_cast(SamplePtr s)
-{
-    return std::dynamic_pointer_cast<const T>(s);
-}
 
 
 struct FeatureVector

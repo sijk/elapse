@@ -47,12 +47,14 @@ public:
     }
 };
 
-template<typename SampleType = elapse::Sample>
+struct DummySample : elapse::detail::BaseSample<DummySample> {};
+
+template<typename SampleType = DummySample>
 elapse::SamplePtr createSample(TimeStamp time)
 {
-    SampleType *sample = new SampleType;
+    auto sample = SampleType::create();
     sample->timestamp = time;
-    return elapse::SamplePtr(sample);
+    return sample;
 }
 
 template<typename SampleType>

@@ -20,7 +20,7 @@ QWidget *DummyImuFeatureExtractor::getWidget()
 void DummyImuFeatureExtractor::analyseSample(elapse::SamplePtr sample)
 {
     if (headWidget)
-        updateHeadWidget(elapse::static_sample_cast<elapse::ImuSample>(sample).get());
+        updateHeadWidget(elapse::ImuSample::staticCastFrom(sample).get());
 
     sampleFlags[sample->timestamp] = 1;
 }

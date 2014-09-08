@@ -14,7 +14,7 @@ void BarEegDecoder::onData(QByteArray data)
     Q_UNUSED(data);
 
     for (int i = 0; i < 20; i++) {
-        auto sample = new EegSample;
+        auto sample = EegSample::create();
 
         sample->seqnum = i;
         sample->timestamp = 0;
@@ -23,7 +23,7 @@ void BarEegDecoder::onData(QByteArray data)
         for (int chan = 0; chan < 8; chan++)
             sample->values.push_back(i * 100);
 
-        emit newSample(SamplePtr(sample));
+        emit newSample(sample);
     }
 }
 

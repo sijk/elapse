@@ -24,7 +24,7 @@ public:
     uint nChannels;
 
     double toMicroVolts(double value) const;
-    static void checkSequenceNumber(const EegSample *sample);
+    static void checkSequenceNumber(elapse::EegSample::const_ptr sample);
 
     QWidget *widgetContainer;
     QSlider *spacingSlider;
@@ -32,7 +32,7 @@ public:
     StripChart *stripChart;
 
     void createStripChart();
-    void plotData(const EegSample *sample);
+    void plotData(elapse::EegSample::const_ptr sample);
 };
 
 
@@ -57,7 +57,7 @@ double EegDecoderPrivate::toMicroVolts(double reading) const
  * Check whether the current \a sample has a sequence number exactly one greater
  * than that of the previous sample, and log a warning message if it's not.
  */
-void EegDecoderPrivate::checkSequenceNumber(const EegSample *sample)
+void EegDecoderPrivate::checkSequenceNumber(EegSample::const_ptr sample)
 {
     static quint32 prev_seqnum = 0;
 
@@ -122,7 +122,7 @@ void EegDecoderPrivate::createStripChart()
 /*!
  * Append the data from the given \a sample to the StripChart.
  */
-void EegDecoderPrivate::plotData(const EegSample *sample)
+void EegDecoderPrivate::plotData(EegSample::const_ptr sample)
 {
     stripChart->appendData(sample->values);
 }
@@ -224,7 +224,7 @@ void EegDecoder::onData(QByteArray data)
     stream.setByteOrder(QDataStream::LittleEndian);
 
     while (!stream.atEnd()) {
-        auto sample = new EegSample;
+        auto sample = EegSample::create();
 
         stream >> sample->seqnum;
         stream >> sample->timestamp;
@@ -243,7 +243,7 @@ void EegDecoder::onData(QByteArray data)
 
         d->plotData(sample);
         d->checkSequenceNumber(sample);
-        emit newSample(SamplePtr(sample));
+        emit newSample(sample);
     }
 }
 

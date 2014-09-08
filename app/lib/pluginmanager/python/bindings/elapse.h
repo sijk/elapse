@@ -12,13 +12,10 @@
 #include "gui.h"
 
 
-struct VideoSample_wrap : elapse::VideoSample
+std::vector<uchar> getVideoSampleData(elapse::VideoSample::const_ptr s)
 {
-    std::vector<uchar> getData() const
-    {
-        return std::vector<uchar>(data.cbegin(), data.cend());
-    }
-};
+    return std::vector<uchar>(s->data.cbegin(), s->data.cend());
+}
 
 struct QVector3DConverter
 {
@@ -33,6 +30,7 @@ struct QVector3DConverter
 BOOST_PYTHON_MODULE(elapse)
 {
     using namespace boost::python;
+    using boost::noncopyable;
 
     // Turn this module into a package
     scope().attr("__path__") = "elapse";
@@ -60,29 +58,37 @@ BOOST_PYTHON_MODULE(elapse)
             .export_values();
     }
 
-    class_<elapse::Sample>("Sample")
-        .def_readonly("timestamp", &elapse::Sample::timestamp);
+    class_<elapse::Sample, noncopyable>("Sample", no_init)
+        .def_readwrite("timestamp", &elapse::Sample::timestamp);
 
-    class_<elapse::EegSample, bases<elapse::Sample>>("EegSample")
+    class_<elapse::EegSample, bases<elapse::Sample>, elapse::EegSample::ptr, noncopyable>("EegSample", no_init)
+        .def("__init__", make_constructor(&elapse::EegSample::create))
         .def_readonly("seqnum", &elapse::EegSample::seqnum)
         .def_readonly("leadOff", &elapse::EegSample::seqnum)
         .def_readonly("values", &elapse::EegSample::values);
 
-    class_<VideoSample_wrap, bases<elapse::Sample>>("VideoSample")
+    class_<elapse::VideoSample, bases<elapse::Sample>, elapse::VideoSample::ptr, noncopyable>("VideoSample", no_init)
+        .def("__init__", make_constructor(&elapse::VideoSample::create))
         .def_readonly("w", &elapse::VideoSample::w)
         .def_readonly("h", &elapse::VideoSample::h)
-        .add_property("data", &VideoSample_wrap::getData);
+        .add_property("data", &getVideoSampleData);
 
-    class_<elapse::ImuSample, bases<elapse::Sample>>("ImuSample")
+    class_<elapse::ImuSample, bases<elapse::Sample>, elapse::ImuSample::ptr, noncopyable>("ImuSample", no_init)
+        .def("__init__", make_constructor(&elapse::ImuSample::create))
         .add_property("acc", make_getter(&elapse::ImuSample::acc,
                                          return_value_policy<return_by_value>()))
         .add_property("gyr", make_getter(&elapse::ImuSample::gyr,
                                          return_value_policy<return_by_value>()));
 
     register_ptr_to_python<elapse::SamplePtr>();
-    register_ptr_to_python<elapse::sample_ptr<elapse::EegSample>>();
-    register_ptr_to_python<elapse::sample_ptr<elapse::VideoSample>>();
-    register_ptr_to_python<elapse::sample_ptr<elapse::ImuSample>>();
+
+    implicitly_convertible<elapse::EegSample::ptr, elapse::EegSample::const_ptr>();
+    implicitly_convertible<elapse::VideoSample::ptr, elapse::VideoSample::const_ptr>();
+    implicitly_convertible<elapse::ImuSample::ptr, elapse::ImuSample::const_ptr>();
+
+    implicitly_convertible<elapse::EegSample::const_ptr, elapse::SamplePtr>();
+    implicitly_convertible<elapse::VideoSample::const_ptr, elapse::SamplePtr>();
+    implicitly_convertible<elapse::ImuSample::const_ptr, elapse::SamplePtr>();
 
     class_<elapse::FeatureVector>("FeatureVector",
                                   init<elapse::Signal::Type, elapse::TimeStamp>())

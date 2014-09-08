@@ -204,8 +204,8 @@ void VideoDecoderPrivate::onFrameDecoded()
         timestamp = frameTimes.dequeue();
     }
 
-    auto frame = new GstVideoSample(buff, timestamp);
-    emit q->newSample(SamplePtr(frame));
+    auto frame = elapse::VideoSample::createSubClass<GstVideoSample>(buff, timestamp);
+    emit q->newSample(frame);
 }
 
 /*!

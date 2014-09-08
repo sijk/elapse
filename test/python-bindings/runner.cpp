@@ -23,8 +23,6 @@ public:
 
     PluginManager *manager;
     PluginManagerPrivate *priv;
-
-    SuppressLogging nolog;
 };
 
 
