@@ -28,13 +28,13 @@ class Pipeline : public QObject
 public:
     explicit Pipeline(QObject *parent = nullptr);
 
-    ElementSetPtr elements() const;
+    elements::ElementSetPtr elements() const;
 
     void setWindowLength(uint ms);
     void setWindowStep(uint ms);
 
 public slots:
-    void setElements(ElementSetPtr newElements);
+    void setElements(elements::ElementSetPtr newElements);
     void setDeviceConfig(QMap<QString, QVariantMap> config);
 
     void start();
@@ -49,7 +49,7 @@ private slots:
     void setStartTime(elapse::data::SamplePtr sample);
 
 private:
-    ElementSetPtr _elements;
+    elements::ElementSetPtr _elements;
     bool startTimeIsSet;
 };
 

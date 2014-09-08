@@ -212,7 +212,7 @@ void ElapseClient::connectToDevice()
 /*!
  * Add widgets from Displayable elements.
  */
-void ElapseClient::loadElementWidgets(ElementSetPtr elements)
+void ElapseClient::loadElementWidgets(elements::ElementSetPtr elements)
 {
     foreach (auto &element, elements->allElements())
         addDockWidgetFrom(element.data());

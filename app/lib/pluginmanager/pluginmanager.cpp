@@ -211,11 +211,12 @@ void plugin::ManagerPrivate::createElement(QSharedPointer<T> &element,
 }
 
 /*!
- * \return a new ElementSet populated with the objects described by \a info.
+ * \return a new elements::ElementSet populated with the objects described
+ * by \a info.
  */
-ElementSetPtr plugin::ManagerPrivate::createElements(const ElementSetInfo &info)
+elements::ElementSetPtr plugin::ManagerPrivate::createElements(const ElementSetInfo &info)
 {
-    ElementSetPtr e = ElementSetPtr::create();
+    auto e = elements::ElementSetPtr::create();
 
     createElement(e->dataSource,                       info.value("DataSource"));
     createElement(e->dataSink,                         info.value("DataSink"));
@@ -231,7 +232,7 @@ ElementSetPtr plugin::ManagerPrivate::createElements(const ElementSetInfo &info)
     for (const auto &element : e->allElements()) {
         if (element.isNull()) {
             qxtLog->warning("Failed to load all elements from plugins.");
-            return ElementSetPtr();
+            return elements::ElementSetPtr();
         }
     }
 

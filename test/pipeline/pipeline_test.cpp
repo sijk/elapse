@@ -251,7 +251,7 @@ protected:
         action = new MockOutputAction;
         dataSink = new MockDataSink;
 
-        elements = ElementSetPtr::create();
+        elements = elements::ElementSetPtr::create();
         elements->dataSource.reset(dataSource);
         elements->sampleDecoders[Signal::EEG].reset(eegDecoder);
         elements->sampleDecoders[Signal::VIDEO].reset(vidDecoder);
@@ -284,7 +284,7 @@ public:
     elapse::elements::BaseFeatureExtractorPrivate *vidFeatExPriv;
     elapse::elements::BaseFeatureExtractorPrivate *imuFeatExPriv;
 
-    ElementSetPtr elements;
+    elapse::elements::ElementSetPtr elements;
     elapse::client::Pipeline pipeline;
 
     SuppressLogging nolog;

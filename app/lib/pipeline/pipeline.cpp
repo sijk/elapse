@@ -6,6 +6,7 @@
 namespace elapse { namespace client {
 
 using namespace elapse::time::literals;
+using elapse::data::Signal;
 
 /*!
  * \page pipeline-arch Signal Pipeline Structure
@@ -83,9 +84,9 @@ Pipeline::Pipeline(QObject *parent) :
 }
 
 /*!
- * \return the Pipeline's ElementSet.
+ * \return the Pipeline's elements::ElementSet.
  */
-ElementSetPtr Pipeline::elements() const
+elements::ElementSetPtr Pipeline::elements() const
 {
     return _elements;
 }
@@ -114,12 +115,12 @@ void Pipeline::setWindowStep(uint ms)
  * This method also sets up the connections between the elements and propagates
  * signals from elements to the Pipeline.
  *
- * ElementSet lifetimes are handled automatically, so if you call setElements()
- * when the Pipeline already has an ElementSet the old set will be released
- * (and destroyed if nothing else holds a reference to it) and replaced by the
- * new set.
+ * elements::ElementSet lifetimes are handled automatically, so if you call
+ * setElements() when the Pipeline already has an elements::ElementSet the
+ * old set will be released (and destroyed if nothing else holds a reference
+ * to it) and replaced by the new set.
  */
-void Pipeline::setElements(ElementSetPtr newElements)
+void Pipeline::setElements(elements::ElementSetPtr newElements)
 {
     _elements = newElements;
 

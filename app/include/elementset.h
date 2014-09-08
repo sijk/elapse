@@ -10,8 +10,7 @@
 #include "elapse/elements/outputaction.h"
 #include "elapse/elements/datasink.h"
 
-using elapse::data::Signal;
-
+namespace elapse { namespace elements {
 
 /*!
  * \brief The ElementSet struct holds pointers to a complete set of
@@ -28,12 +27,12 @@ struct ElementSet
 {
     template<class T> using Ptr = QSharedPointer<T>; // for readability
 
-    Ptr<elapse::elements::DataSource> dataSource;
-    QMap<Signal::Type, Ptr<elapse::elements::SampleDecoder>> sampleDecoders;
-    QMap<Signal::Type, Ptr<elapse::elements::FeatureExtractor>> featureExtractors;
-    Ptr<elapse::elements::Classifier> classifier;
-    Ptr<elapse::elements::OutputAction> action;
-    Ptr<elapse::elements::DataSink> dataSink;
+    Ptr<DataSource> dataSource;
+    QMap<data::Signal::Type, Ptr<SampleDecoder>> sampleDecoders;
+    QMap<data::Signal::Type, Ptr<FeatureExtractor>> featureExtractors;
+    Ptr<Classifier> classifier;
+    Ptr<OutputAction> action;
+    Ptr<DataSink> dataSink;
 
     QList<Ptr<QObject>> allElements() const;
 };
@@ -66,5 +65,6 @@ inline QList<ElementSet::Ptr<QObject>> ElementSet::allElements() const
  */
 typedef QSharedPointer<ElementSet> ElementSetPtr;
 
+}} // namespace elapse::elements
 
 #endif // ELEMENTS_H

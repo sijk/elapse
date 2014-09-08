@@ -31,7 +31,7 @@ public:
 
     ElementSetInfo getSelectedElements() const;
     ElementSetInfo getSavedElements() const;
-    ElementSetPtr createElements(const ElementSetInfo &info);
+    elements::ElementSetPtr createElements(const ElementSetInfo &info);
     void selectElements(const ElementSetInfo &info);
     void saveElements(const ElementSetInfo &info);
 
