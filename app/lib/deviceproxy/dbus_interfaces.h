@@ -25,6 +25,14 @@ namespace elapse { namespace client {
  * elapse::hardware namespace that pass calls through to QDBusAbstractInterface
  * subclasses generated from the XML interface definitions.
  *
+ * These classes are necessary because Qt prevents diamond inheritance from
+ * QObject. (The QObject internals use static_cast which doesn't work with
+ * diamond inheritance, be it virtual or otherwise.) Both the elapse::hardware
+ * interfaces and the generated D-Bus interfaces inherit from QObject, so
+ * it's not possible to just have a class that inherits from both. The
+ * work-around is to make the D-Bus interface a private member of these
+ * classes and manually forward all of the method calls. Yuck.
+ *
  * \code
  * Client → dbus::Foo (hardware::Foo) → org::nzbri::elapse::Foo (QDBusAbstractInterface) → D-Bus
  * \endcode
