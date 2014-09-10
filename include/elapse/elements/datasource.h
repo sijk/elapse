@@ -99,7 +99,7 @@ public:
  * data from disk, rather than from the device itself.
  *
  * OfflineDataSource%s implement the ConfigManager interface and expose this
- * interface to D-Bus via the ::config classes.
+ * interface to D-Bus via the elapse::client::config classes.
  *
  * \headerfile elapse/elements/datasource.h
  * \ingroup pipeline-elements

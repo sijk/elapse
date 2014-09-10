@@ -19,6 +19,7 @@ namespace data {
 
 /*!
     \class Signal
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The Signal class is a wrapper providing introspection
@@ -66,6 +67,7 @@ private:
 
 /*!
     \class Sample
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The Sample class is the base class for all samples acquired from
@@ -178,6 +180,7 @@ public:
 
 /*!
     \class EegSample
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The EegSample class holds the data for one multi-channel sample of
@@ -211,6 +214,7 @@ protected:
 
 /*!
     \class VideoSample
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The VideoSample class holds the data for one frame of video.
@@ -239,6 +243,7 @@ protected:
 
 /*!
     \class ImuSample
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The ImuSample class holds the data for one 6-axis sample from
@@ -263,6 +268,7 @@ protected:
 
 /*!
     \class FeatureVector
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The FeatureVector struct holds a set of meaningful values extracted
@@ -302,6 +308,7 @@ struct FeatureVector
 
 /*!
     \class CognitiveState
+    \headerfile elapse/datatypes.h
     \ingroup signal-datatypes
 
     \brief The CognitiveState class holds a set of values representing

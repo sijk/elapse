@@ -1,45 +1,69 @@
 /*!
     \page plugin-api Plugin API
 
-    This page will document the Elapse plugin API for implementing signal
+    This page documents the Elapse plugin API for implementing signal
     processing and classification algorithms.
 
-    \section plugin-design Plugin System Design
+    \tableofcontents
 
-    ...
+    Plugin System Design                                        {#plugin-design}
+    ====================
 
-    \section plugin-examples Example Plugins
+    The Elapse framework provides all of the infrastructure to implement
+    cognitive state monitoring applications but does not implement any signal
+    processing itself. All signal processing and classification is provided by
+    plugins. Plugins can be implemented in several languages, though not every
+    language supports every element type. See the diagrams
+    [here](\ref structure) and [here](\ref pipeline-arch) for an overview of
+    the structure of the signal processing pipeline. See
+    [here](\ref pipeline-elements) for documentation on each element in the
+    pipeline. See below for how to implement these elements as plugins.
 
-    The following pages give complete examples of how to implement a plugins
+    Example plugins                                           {#plugin-examples}
+    ===============
+
+    The following pages give complete examples of how to implement a plugin
     in each of the supported languages.
 
-    \li \subpage plugin-ex-cpp
-    \li \subpage plugin-ex-py
+    - \subpage plugin-example-cpp
+    - \subpage plugin-example-py
 
 
-    \section plugin-api-docs API Documentation
+    API Documentation                                         {#plugin-api-docs}
+    =================
 
-    \li \ref plugins-ext
+    C++
+    ---
+
+    - \ref plugins-ext
+    - \ref pipeline-elements "Element base classes"
+
+    Python
+    ------
+
+    - \ref plugin-bindings-py
 */
 
 /*!
     \defgroup plugins-ext C++ Plugin API
+
+    The classes and macros required for implementing Elapse plugins in C++.
 */
 
 /*!
-    \page plugin-ex-cpp C++ plugin example
+    \page plugin-example-cpp C++ plugin example
 
     \todo Mention the need for a Q_INVOKABLE default constructor.
 */
 
 /*!
-    \page plugin-ex-py Python plugin example
+    \page plugin-example-py Python plugin example
 
     ...
 */
 
 /*!
-    \defgroup plugins-ext-py Python Plugin API
+    \defgroup plugin-bindings-py Python bindings
     \htmlinclude elapse-python.html
 */
 
