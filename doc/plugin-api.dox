@@ -53,7 +53,79 @@
 /*!
     \page plugin-example-cpp C++ plugin example
 
-    \todo Mention the need for a Q_INVOKABLE default constructor.
+    This example defines a plugin called ``MyPlugin`` which provides two
+    elements: ``EegPower`` and ``SimpleClassifier``.
+
+    \tableofcontents
+
+    Code                                                                 {#code}
+    ====
+
+    - \ref cpp/myplugin/CMakeLists.txt
+    - \ref cpp/myplugin/myplugin.h
+    - \ref cpp/myplugin/eegpower.h
+    - \ref cpp/myplugin/eegpower.cpp
+
+    The EegPower element                                             {#eegpower}
+    --------------------
+
+    ...
+    \todo Mention the need for a ``Q_INVOKABLE`` default constructor.
+
+    The SimpleClassifier element                             {#simpleclassifier}
+    ----------------------------
+
+    ...
+
+    Plugin header                                                      {#plugin}
+    -------------
+
+    Now that we've defined our elements, we need to wrap them up as a plugin.
+
+    First we include the Elapse plugin header file,
+    \snippet cpp/myplugin/myplugin.h include plugin
+    and then the headers for each of our elements.
+    \snippet cpp/myplugin/myplugin.h include elements
+    Define a class called `MyPlugin`. The name of this class is what will show
+    up as the name of the plugin in the application's plugin manager. The class
+    must publicly inherit from both `QObject` and elapse::plugin::Interface in
+    that order.
+    \snippet cpp/myplugin/myplugin.h class def
+    Every plugin must include the following three lines at the start of the
+    class definition. They set up the magic that makes plugin loading work.
+    \snippet cpp/myplugin/myplugin.h metadata
+    Finally, we export the list of elements that our plugin provides.
+    \snippet cpp/myplugin/myplugin.h export
+
+    Project file                                                      {#project}
+    ------------
+
+    \dontinclude cpp/myplugin/CMakeLists.txt
+    A ``CMakeLists.txt`` file is required to build the plugin.
+    First we need some standard CMake boilerplate:
+    \until project
+    The argument to ``project()`` will become the name of the shared library.
+    Then we find the ``Elapse`` package which defines how to build
+    an Elapse plugin.
+    \skipline find_package
+    We define an Elapse plugin, passing the filename of the header
+    containing the ``Plugin`` class as the ``HEADER`` argument and
+    the C++ files as ``SOURCES``.
+    \skip add
+    \until )
+    That's it. You can also pass a ``LIBRARIES`` argument listing the libraries
+    that your plugin needs to link against.
+
+
+    Building                                                            {#build}
+    ========
+
+    ...
+
+    \example cpp/myplugin/CMakeLists.txt     Part of the \ref plugin-example-cpp
+    \example cpp/myplugin/myplugin.h         Part of the \ref plugin-example-cpp
+    \example cpp/myplugin/eegpower.h         Part of the \ref plugin-example-cpp
+    \example cpp/myplugin/eegpower.cpp       Part of the \ref plugin-example-cpp
 */
 
 /*!
