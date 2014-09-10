@@ -40,5 +40,6 @@
 
 /*!
     \defgroup plugins-ext-py Python Plugin API
+    \htmlinclude elapse-python.html
 */
 
