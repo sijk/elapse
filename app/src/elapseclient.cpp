@@ -226,6 +226,8 @@ void ElapseClient::loadElementWidgets(elements::ElementSetPtr elements)
 void ElapseClient::addDockWidgetFrom(QObject *object)
 {
     QString className = object->metaObject()->className();
+    className = className.mid(className.lastIndexOf(':') + 1)
+                         .replace(QRegExp("([a-z])([A-Z])"), "\\1 \\2");
 
     auto displayable = dynamic_cast<Displayable*>(object);
     if (!displayable) {
