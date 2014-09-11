@@ -266,6 +266,10 @@ void ElapseClient::setDockWidgetsVisible(bool visible)
     }
 }
 
+/*!
+ * Write the default hardware configuration to the settings file. This will
+ * not overwrite any existing settings.
+ */
 void ElapseClient::createDefaultHardwareConfig()
 {
     QSettings settings;
@@ -287,11 +291,13 @@ void ElapseClient::createDefaultHardwareConfig()
     settings.endGroup();
 }
 
-void ElapseClient::configure()
+/*!
+ * Read the hardware configuration from the settings file and apply it to the
+ * device.
+ */
+void ElapseClient::applyHardwareConfig()
 {
     QSettings settings;
-
-    // Configure the device according to the settings file
 
     settings.beginGroup("hardware");
     std::vector<std::pair<const char*, QObject*>> sensors = {
@@ -343,8 +349,14 @@ void ElapseClient::configure()
         settings.endGroup();
     }
     settings.endGroup();
+}
 
-    // Other setup
+/*!
+ * Configure the client. Configuration of the hardware is done in start().
+ */
+void ElapseClient::configure()
+{
+    QSettings settings;
 
     settings.beginGroup("pipeline/window");
     pipeline->setWindowLength(settings.value("length", 1000).toUInt());
@@ -364,15 +376,25 @@ void ElapseClient::configure()
             pipeline->elements()->dataSink.data(), SLOT(getCaptureInfo()));
 }
 
+/*!
+ * Clean up client configuration to avoid dangling references.
+ */
 void ElapseClient::unconfigure()
 {
     batteryMonitor->setBattery(nullptr);
     disconnect(ui->actionSetCaptureInfo, SIGNAL(triggered()), 0, 0);
 }
 
+/*!
+ * Start data capture.
+ */
 void ElapseClient::start()
 {
     pipeline->start();
+
+    // Must be done here rather than in configure() because some
+    // OfflineDataSources need to be start()ed before they can be configured.
+    applyHardwareConfig();
 
     auto cfg = proxy->getDeviceConfig();
     pipeline->setDeviceConfig(cfg);
@@ -380,6 +402,9 @@ void ElapseClient::start()
     proxy->device()->startStreaming();
 }
 
+/*!
+ * Stop data capture.
+ */
 void ElapseClient::stop()
 {
     proxy->device()->stopStreaming();

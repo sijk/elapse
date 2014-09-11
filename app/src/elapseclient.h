@@ -53,6 +53,7 @@ private slots:
     void loadElementWidgets(elapse::elements::ElementSetPtr elements);
     void connectToDevice();
     void createDefaultHardwareConfig();
+    void applyHardwareConfig();
     void configure();
     void unconfigure();
     void start();
