@@ -49,7 +49,7 @@ bool getPluginDataFrom(T &plugin, PluginData &data)
         ClassInfo cls;
         cls.elementClass = stripNamespace(baseClass(&obj)->className());
         cls.signalType = signalType(obj);
-        cls.className = obj.className();
+        cls.className = stripNamespace(obj.className());
         data.classes.append(cls);
     }
 
@@ -67,7 +67,7 @@ QObject *instantiateClassFrom(QObject *pluginInstance, const QString &className)
         return nullptr;
 
     for (const QMetaObject &obj : factory->classes()) {
-        if (obj.className() == className) {
+        if (stripNamespace(obj.className()) == className) {
             QObject *object = obj.newInstance();
             if (object)
                 return object;
