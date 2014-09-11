@@ -50,7 +50,7 @@ private slots:
     void showErrorMessage(QString message);
     void warnBatteryLow();
     void maybeAutoConnect();
-    void loadElementWidgets(elements::ElementSetPtr elements);
+    void loadElementWidgets(elapse::elements::ElementSetPtr elements);
     void connectToDevice();
     void createDefaultHardwareConfig();
     void configure();

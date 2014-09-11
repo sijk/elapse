@@ -56,10 +56,10 @@ ElapseClient::ElapseClient(QWidget *parent) :
 
     connect(ui->actionPlugins, SIGNAL(triggered()),
             pluginManager, SLOT(loadElementsFromGui()));
-    connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
-            pipeline, SLOT(setElements(ElementSetPtr)));
-    connect(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)),
-            SLOT(loadElementWidgets(ElementSetPtr)));
+    connect(pluginManager, SIGNAL(elementsLoaded(elapse::elements::ElementSetPtr)),
+            pipeline, SLOT(setElements(elapse::elements::ElementSetPtr)));
+    connect(pluginManager, SIGNAL(elementsLoaded(elapse::elements::ElementSetPtr)),
+            SLOT(loadElementWidgets(elapse::elements::ElementSetPtr)));
 
     connect(pipeline, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
     connect(proxy, SIGNAL(error(QString)), SLOT(showErrorMessage(QString)));
@@ -147,7 +147,7 @@ void ElapseClient::buildStateMachine()
     uninitialised->assignProperty(ui->actionConnect, "enabled", false);
     uninitialised->assignProperty(ui->groupConnect, "visible", false);
     uninitialised->assignProperty(ui->buttonPlugins, "visible", true);
-    auto initialised = uninitialised->addTransition(pluginManager, SIGNAL(elementsLoaded(ElementSetPtr)), disconnected);
+    auto initialised = uninitialised->addTransition(pluginManager, SIGNAL(elementsLoaded(elapse::elements::ElementSetPtr)), disconnected);
     connect(uninitialised, SIGNAL(entered()), pluginManager, SLOT(loadElementsFromSettings()));
     connect(initialised, SIGNAL(triggered()), SLOT(maybeAutoConnect()));
 

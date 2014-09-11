@@ -50,7 +50,7 @@ public slots:
     void loadElementsFromSettings();
 
 signals:
-    void elementsLoaded(elements::ElementSetPtr elements);
+    void elementsLoaded(elapse::elements::ElementSetPtr elements);
 
 private slots:
     void loadElementsFromGuiSelection();

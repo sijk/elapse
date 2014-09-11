@@ -34,7 +34,7 @@ public:
     void setWindowStep(uint ms);
 
 public slots:
-    void setElements(elements::ElementSetPtr newElements);
+    void setElements(elapse::elements::ElementSetPtr newElements);
     void setDeviceConfig(QMap<QString, QVariantMap> config);
 
     void start();
