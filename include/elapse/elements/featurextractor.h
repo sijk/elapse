@@ -70,7 +70,7 @@ class BaseFeatureExtractor : public FeatureExtractor
     Q_OBJECT
 
 public:
-    explicit BaseFeatureExtractor();
+    BaseFeatureExtractor();
     ~BaseFeatureExtractor();
 
     void setStartTime(time::Point timestamp);

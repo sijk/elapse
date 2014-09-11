@@ -108,7 +108,7 @@ class OfflineDataSource : public DataSource, public ConfigManager
 {
     Q_OBJECT
 public:
-    explicit OfflineDataSource();
+    OfflineDataSource();
     ~OfflineDataSource();
 
 protected:
