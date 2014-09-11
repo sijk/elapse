@@ -96,7 +96,7 @@ elements::ElementSetPtr Pipeline::elements() const
  */
 void Pipeline::setWindowLength(uint ms)
 {
-    foreach(auto &featureExtractor, _elements->featureExtractors)
+    for (auto &featureExtractor : _elements->featureExtractors)
         featureExtractor->setWindowLength(ms);
 }
 
@@ -105,7 +105,7 @@ void Pipeline::setWindowLength(uint ms)
  */
 void Pipeline::setWindowStep(uint ms)
 {
-    foreach(auto &featureExtractor, _elements->featureExtractors)
+    for (auto &featureExtractor : _elements->featureExtractors)
         featureExtractor->setWindowStep(ms);
 }
 
@@ -153,7 +153,7 @@ void Pipeline::setElements(elements::ElementSetPtr newElements)
     connect(_elements->dataSource.data(), SIGNAL(started()), SIGNAL(started()));
     connect(_elements->dataSource.data(), SIGNAL(finished()), SIGNAL(error()));
     connect(_elements->dataSource.data(), SIGNAL(error(QString)), SIGNAL(error(QString)));
-    foreach (auto &decoder, _elements->sampleDecoders)
+    for (auto &decoder : _elements->sampleDecoders)
         connect(decoder.data(), SIGNAL(error(QString)), SIGNAL(error(QString)));
 
     // Connect DataSink
@@ -194,10 +194,10 @@ void Pipeline::setElements(elements::ElementSetPtr newElements)
  */
 void Pipeline::setDeviceConfig(QMap<QString, QVariantMap> config)
 {
-    foreach (auto &sampleDecoder, _elements->sampleDecoders)
+    for (auto &sampleDecoder : _elements->sampleDecoders)
         sampleDecoder->configure(config);
 
-    foreach (auto &featureExtractor, _elements->featureExtractors)
+    for (auto &featureExtractor : _elements->featureExtractors)
         featureExtractor->configure(config);
 
     _elements->dataSink->saveDeviceConfig(config);
@@ -217,7 +217,7 @@ void Pipeline::start()
         emit error();
         return;
     }
-    foreach (auto &decoder, _elements->sampleDecoders)
+    for (auto &decoder : _elements->sampleDecoders)
         decoder->start();
     _elements->classifier->reset();
     _elements->dataSource->start();
@@ -233,7 +233,7 @@ void Pipeline::stop()
 
     qxtLog->info("Stopping pipeline");
     _elements->dataSource->stop();
-    foreach (auto &decoder, _elements->sampleDecoders)
+    for (auto &decoder : _elements->sampleDecoders)
         decoder->stop();
     _elements->dataSink->stop();
     emit stopped();
@@ -255,7 +255,7 @@ void Pipeline::setStartTime(data::SamplePtr sample)
     time::Point startTime = sample->timestamp + 1_s;
 
     qxtLog->debug("Setting start time to", time::format(startTime));
-    foreach (auto &featureExtractor, _elements->featureExtractors)
+    for (auto &featureExtractor : _elements->featureExtractors)
         featureExtractor->setStartTime(startTime);
 
     startTimeIsSet = true;

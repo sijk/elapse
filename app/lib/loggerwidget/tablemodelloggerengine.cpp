@@ -56,9 +56,8 @@ void TableModelLoggerEngine::writeFormatted(QxtLogger::LogLevel level,
     item.time = QTime::currentTime().toString("hh:mm:ss.zzz");
 
     QTextStream message(&item.message);
-    foreach (QVariant msg, messages) {
+    for (const QVariant &msg : messages)
         message << msg.toString() << " ";
-    }
 
     _model->appendItem(item);
 }

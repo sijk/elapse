@@ -39,13 +39,13 @@ public:
     SuppressLogging()
     {
         enabledEngines = qxtLog->allEnabledLoggerEngines();
-        foreach (const QString &engine, enabledEngines)
+        for (const QString &engine : enabledEngines)
             qxtLog->disableLoggerEngine(engine);
     }
 
     ~SuppressLogging()
     {
-        foreach (const QString &engine, enabledEngines)
+        for (const QString &engine : enabledEngines)
             qxtLog->enableLoggerEngine(engine);
     }
 
@@ -61,8 +61,7 @@ bool recursiveRmDir(const QString &dirname)
     auto flags = QDir::AllEntries|QDir::System|QDir::Hidden|QDir::NoDotAndDotDot;
 
     if (dir.exists()) {
-        foreach (QFileInfo info, dir.entryInfoList(flags))
-        {
+        for (const QFileInfo &info : dir.entryInfoList(flags)) {
             result = info.isDir()
                    ? recursiveRmDir(info.absoluteFilePath())
                    : QFile::remove(info.absoluteFilePath());

@@ -214,7 +214,7 @@ void ElapseClient::connectToDevice()
  */
 void ElapseClient::loadElementWidgets(elements::ElementSetPtr elements)
 {
-    foreach (auto &element, elements->allElements())
+    for (auto &element : elements->allElements())
         addDockWidgetFrom(element.data());
 }
 
@@ -258,7 +258,7 @@ void ElapseClient::setDockWidgetsVisible(bool visible)
 {
     bool offlineSource = pipeline->elements()->dataSource->isOfflineSource();
     auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
-    foreach (auto dockWidget, dockWidgets) {
+    for (auto dockWidget : dockWidgets) {
         if (dockWidget->windowTitle() == "BatteryMonitor")
             dockWidget->setVisible(visible && !offlineSource);
         else

@@ -27,7 +27,7 @@ int main(int argc, char** argv)
                        app.applicationDirPath());
 
     QSettings settings;
-    foreach (auto key, settings.allKeys())
+    for (auto key : settings.allKeys())
         settings.remove(key);
 
     testing::InitGoogleMock(&argc, argv);
