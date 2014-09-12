@@ -30,7 +30,7 @@ using elapse::data::VideoSample;
 
 #define PIPELINE \
     "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
-    "ffdec_h264 ! videoflip method=upper-left-diagonal ! " \
+    "ffdec_h264 ! videoflip method=upper-right-diagonal ! " \
     "tee name=t  ! queue ! appsink name=appsink " \
              "t. ! queue ! xvimagesink name=displaysink sync=false"
 
