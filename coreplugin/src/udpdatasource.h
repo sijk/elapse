@@ -14,7 +14,7 @@ namespace elapse { namespace coreplugin {
  * \ingroup core-plugin
  */
 
-class UdpDataSource : public elapse::elements::DataSource
+class UdpDataSource : public elements::DataSource
 {
     Q_OBJECT
 public:

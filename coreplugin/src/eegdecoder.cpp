@@ -13,7 +13,6 @@
 namespace elapse { namespace coreplugin {
 
 using elapse::data::EegSample;
-using elapse::data::SamplePtr;
 
 
 class EegDecoderPrivate
@@ -71,8 +70,8 @@ void EegDecoderPrivate::checkSequenceNumber(EegSample::const_ptr sample)
 }
 
 /*!
- * Create a StripChart for displaying the EEG, along with a slider to adjust
- * the scale.
+ * Create a widgets::StripChart for displaying the EEG, along with a slider
+ * to adjust the scale.
  */
 void EegDecoderPrivate::createStripChart()
 {
@@ -122,7 +121,7 @@ void EegDecoderPrivate::createStripChart()
 }
 
 /*!
- * Append the data from the given \a sample to the StripChart.
+ * Append the data from the given \a sample to the widgets::StripChart.
  */
 void EegDecoderPrivate::plotData(EegSample::const_ptr sample)
 {
@@ -215,7 +214,7 @@ void EegDecoder::setNChannels(uint nChannels)
 }
 
 /*!
- * Decode the given \a data and emit EegSample%s.
+ * Decode the given \a data and emit data::EegSample%s.
  */
 void EegDecoder::onData(QByteArray data)
 {
@@ -250,7 +249,7 @@ void EegDecoder::onData(QByteArray data)
 }
 
 /*!
- * \return a StripChart displaying the measured EEG data, along with
+ * \return a widgets::StripChart displaying the measured EEG data, along with
  * associated widgets to adjust the plot scale.
  */
 QWidget *EegDecoder::getWidget()

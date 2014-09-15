@@ -8,16 +8,16 @@ namespace elapse { namespace coreplugin {
 
 /*!
  * \brief The DummyVideoFeatureExtractor class is a placeholder
- * FeatureExtractor for VideoSample%s.
+ * elements::FeatureExtractor for data::VideoSample%s.
  *
- * It outputs a two-element FeatureVector containing:
+ * It outputs a two-element data::FeatureVector containing:
  *   -# the mean pixel intensity of all of the frames in the window,
  *   -# the variance of the mean pixel intensity of each frame in the window.
  *
  * \ingroup core-plugin
  */
 
-class DummyVideoFeatureExtractor : public elapse::elements::BaseFeatureExtractor
+class DummyVideoFeatureExtractor : public elements::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "VIDEO")
@@ -25,15 +25,15 @@ class DummyVideoFeatureExtractor : public elapse::elements::BaseFeatureExtractor
 public:
     Q_INVOKABLE DummyVideoFeatureExtractor();
 
-    void setStartTime(elapse::time::Point timestamp);
+    void setStartTime(time::Point timestamp);
 
 protected:
-    void analyseSample(elapse::data::SamplePtr sample);
+    void analyseSample(data::SamplePtr sample);
     std::vector<double> features();
-    void removeDataBefore(elapse::time::Point time);
+    void removeDataBefore(time::Point time);
 
 private:
-    elapse::time::Series<double> means;
+    time::Series<double> means;
 };
 
 }} // namespace elapse::coreplugin

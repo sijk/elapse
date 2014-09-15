@@ -6,19 +6,19 @@
 namespace elapse { namespace coreplugin {
 
 /*!
- * \brief The DummyClassifier class is a black hole for FeatureVector%s.
+ * \brief The DummyClassifier class is a black hole for data::FeatureVector%s.
  *
  * \ingroup core-plugin
  */
 
-class DummyClassifier : public elapse::elements::BaseClassifier
+class DummyClassifier : public elements::BaseClassifier
 {
     Q_OBJECT
 public:
     Q_INVOKABLE DummyClassifier();
 
 protected:
-    elapse::data::CognitiveState classify(QList<elapse::data::FeatureVector> featureVectors);
+    data::CognitiveState classify(QList<data::FeatureVector> featureVectors);
 };
 
 }} // namespace elapse::coreplugin

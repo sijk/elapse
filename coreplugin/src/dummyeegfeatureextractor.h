@@ -7,12 +7,13 @@
 namespace elapse { namespace coreplugin {
 
 /*!
- * \brief The DummyEegFeatureExtractor class is a black hole for EegSample%s.
+ * \brief The DummyEegFeatureExtractor class is a black hole for
+ * data::EegSample%s.
  *
  * \ingroup core-plugin
  */
 
-class DummyEegFeatureExtractor : public elapse::elements::BaseFeatureExtractor
+class DummyEegFeatureExtractor : public elements::BaseFeatureExtractor
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "EEG")
@@ -21,12 +22,12 @@ public:
     Q_INVOKABLE DummyEegFeatureExtractor();
 
 protected:
-    void analyseSample(elapse::data::SamplePtr sample);
+    void analyseSample(data::SamplePtr sample);
     std::vector<double> features();
-    void removeDataBefore(elapse::time::Point time);
+    void removeDataBefore(time::Point time);
 
 private:
-    elapse::time::Series<int> sampleFlags;
+    time::Series<int> sampleFlags;
 };
 
 }} // namespace elapse::coreplugin

@@ -3,8 +3,7 @@
 
 namespace elapse { namespace coreplugin {
 
-using namespace elapse;
-using namespace elapse::data;
+using elapse::data::ImuSample;
 
 
 DummyImuFeatureExtractor::DummyImuFeatureExtractor() :
@@ -23,7 +22,7 @@ QWidget *DummyImuFeatureExtractor::getWidget()
     return headWidget;
 }
 
-void DummyImuFeatureExtractor::analyseSample(SamplePtr sample)
+void DummyImuFeatureExtractor::analyseSample(data::SamplePtr sample)
 {
     if (headWidget)
         updateHeadWidget(ImuSample::staticCastFrom(sample).get());

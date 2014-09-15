@@ -10,14 +10,15 @@ namespace coreplugin {
 
 
 /*!
- * \brief The DummyImuFeatureExtractor class is a black hole for ImuSample%s.
+ * \brief The DummyImuFeatureExtractor class is a black hole for
+ * data::ImuSample%s.
  *
  * It exposes a 3D head model widget which displays the measured orientation.
  *
  * \ingroup core-plugin
  */
 
-class DummyImuFeatureExtractor : public elapse::elements::BaseFeatureExtractor,
+class DummyImuFeatureExtractor : public elements::BaseFeatureExtractor,
                                  public elapse::Displayable
 {
     Q_OBJECT
@@ -29,14 +30,14 @@ public:
     QWidget *getWidget();
 
 private:
-    void analyseSample(elapse::data::SamplePtr sample);
+    void analyseSample(data::SamplePtr sample);
     std::vector<double> features();
-    void removeDataBefore(elapse::time::Point time);
+    void removeDataBefore(time::Point time);
 
-    void updateHeadWidget(const elapse::data::ImuSample *sample);
+    void updateHeadWidget(const data::ImuSample *sample);
 
     widgets::HeadWidget *headWidget;
-    elapse::time::Series<int> sampleFlags;
+    time::Series<int> sampleFlags;
 };
 
 }} // namespace elapse::coreplugin

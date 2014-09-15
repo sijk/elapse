@@ -85,7 +85,7 @@ void SimpleRawDataSink::saveDeviceConfig(const QMap<QString, QVariantMap> &confi
  * Dump the \a signalType and \a data to the currently-open data file
  * via a QDataStream.
  */
-void SimpleRawDataSink::saveData(elapse::data::Signal::Type signalType,
+void SimpleRawDataSink::saveData(data::Signal::Type signalType,
                                  QByteArray data)
 {
     Q_ASSERT(file.isOpen());

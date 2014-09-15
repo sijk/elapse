@@ -18,7 +18,6 @@
 #include "util/gstwrappedbuffer.h"
 #include "videodecoder.h"
 
-using elapse::data::SamplePtr;
 using elapse::data::VideoSample;
 
 
@@ -116,7 +115,7 @@ public:
     QPointer<QGst::Ui::VideoWidget> displaysink;
     QSize videoSize;
 
-    QQueue<elapse::time::Point> frameTimes;
+    QQueue<time::Point> frameTimes;
     QMutex frameTimesLock;  ///< Serialize access to frameTimes.
 
     void onInputData(QByteArray data);
@@ -181,15 +180,15 @@ VideoDecoderPrivate::~VideoDecoderPrivate()
 void VideoDecoderPrivate::onInputData(QByteArray data)
 {
     // Extract the real timestamp from the received data.
-    const elapse::time::Point time = data.right(16).toULongLong(nullptr, 16);
+    const time::Point time = data.right(16).toULongLong(nullptr, 16);
     {
         QMutexLocker lock(&frameTimesLock);
 
         // Sanity check. This occasionally happens and I'm not sure why...
         if (!frameTimes.isEmpty() && time < frameTimes.last()) {
             qxtLog->warning("VideoDecoder: time went backwards!");
-            qxtLog->debug("prev =", elapse::time::format(frameTimes.last()),
-                          "this =", elapse::time::format(time));
+            qxtLog->debug("prev =", time::format(frameTimes.last()),
+                          "this =", time::format(time));
         }
 
         // Store the real timestamp if it's not already stored.
@@ -216,7 +215,7 @@ void VideoDecoderPrivate::onFrameDecoded()
         return;
 
     // Retrieve the real timestamp for this frame
-    elapse::time::Point timestamp;
+    time::Point timestamp;
     {
         QMutexLocker lock(&frameTimesLock);
         Q_ASSERT(!frameTimes.isEmpty());

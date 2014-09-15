@@ -10,7 +10,7 @@ namespace elapse { namespace coreplugin {
  * \ingroup core-plugin
  */
 
-class BlackHoleDataSink : public elapse::elements::DataSink
+class BlackHoleDataSink : public elements::DataSink
 {
     Q_OBJECT
 public:
@@ -22,10 +22,10 @@ public:
     bool getCaptureInfo();
 
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(elapse::data::Signal::Type signalType, QByteArray data);
-    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample);
-    void saveFeatureVector(elapse::data::FeatureVector featureVector);
-    void saveCognitiveState(elapse::data::CognitiveState state);
+    void saveData(data::Signal::Type signalType, QByteArray data);
+    void saveSample(data::Signal::Type signalType, data::SamplePtr sample);
+    void saveFeatureVector(data::FeatureVector featureVector);
+    void saveCognitiveState(data::CognitiveState state);
 };
 
 }} // namespace elapse::coreplugin

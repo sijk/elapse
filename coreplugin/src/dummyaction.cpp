@@ -13,7 +13,7 @@ DummyAction::DummyAction()
 /*!
  * Ignore the received \a state.
  */
-void DummyAction::onState(elapse::data::CognitiveState state)
+void DummyAction::onState(data::CognitiveState state)
 {
     Q_UNUSED(state)
     qxtLog->debug("Updated cognitive state");

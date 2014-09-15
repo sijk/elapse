@@ -15,7 +15,7 @@ class EegDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class EegDecoder : public elapse::elements::SampleDecoder,
+class EegDecoder : public elements::SampleDecoder,
                    public elapse::Displayable
 {
     Q_OBJECT

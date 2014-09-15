@@ -11,7 +11,7 @@ namespace elapse { namespace coreplugin {
  * \ingroup core-plugin
  */
 
-class ImuDecoder : public elapse::elements::SampleDecoder
+class ImuDecoder : public elements::SampleDecoder
 {
     Q_OBJECT
     Q_CLASSINFO("SignalType", "IMU")

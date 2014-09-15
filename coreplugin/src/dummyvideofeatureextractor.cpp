@@ -12,9 +12,7 @@ T sum(const Container &c)
 
 namespace elapse { namespace coreplugin {
 
-using namespace elapse;
-using namespace elapse::data;
-
+using elapse::data::VideoSample;
 
 /*!
  * Create a DummyVideoFeatureExtractor.
@@ -32,7 +30,7 @@ void DummyVideoFeatureExtractor::setStartTime(time::Point timestamp)
 /*!
  * Calculate the mean intensity of the pixels in the given \a sample.
  */
-void DummyVideoFeatureExtractor::analyseSample(SamplePtr sample)
+void DummyVideoFeatureExtractor::analyseSample(data::SamplePtr sample)
 {
     auto frame = VideoSample::staticCastFrom(sample);
     double meanIntensity = sum(frame->data) / (frame->w * frame->h);
@@ -57,7 +55,7 @@ std::vector<double> DummyVideoFeatureExtractor::features()
     return { meanIntensity, meanSqDiff };
 }
 
-void DummyVideoFeatureExtractor::removeDataBefore(elapse::time::Point time)
+void DummyVideoFeatureExtractor::removeDataBefore(time::Point time)
 {
     means.removeValuesBefore(time);
 }

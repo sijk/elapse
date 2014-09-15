@@ -15,14 +15,14 @@ namespace elapse { namespace coreplugin {
  * The only capture info required for this sink is the directory into
  * which the data files will be saved.
  *
- * Note that this class only supports saving raw data — not Sample%s or
- * FeatureVector%s or CognitiveState. The saved data can be loaded again by a
- * SimpleRawDataSource.
+ * Note that this class only supports saving raw data — not data::Sample%s or
+ * data::FeatureVector%s or data::CognitiveState. The saved data can be loaded
+ * again by a SimpleRawDataSource.
  *
  * \ingroup core-plugin
  */
 
-class SimpleRawDataSink : public elapse::elements::DataSink
+class SimpleRawDataSink : public elements::DataSink
 {
     Q_OBJECT
 public:
@@ -34,7 +34,7 @@ public:
     bool getCaptureInfo();
 
     void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(elapse::data::Signal::Type signalType, QByteArray data);
+    void saveData(data::Signal::Type signalType, QByteArray data);
 
 protected:
     virtual QString getDirectory() const;

@@ -14,7 +14,7 @@ class VideoDecoderPrivate;
  * \ingroup core-plugin
  */
 
-class VideoDecoder : public elapse::elements::SampleDecoder,
+class VideoDecoder : public elements::SampleDecoder,
                      public elapse::Displayable
 {
     Q_OBJECT
