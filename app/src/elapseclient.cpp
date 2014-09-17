@@ -255,7 +255,7 @@ void ElapseClient::setDockWidgetsVisible(bool visible)
     bool offlineSource = pipeline->elements()->dataSource()->isOfflineSource();
     auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
     for (auto dockWidget : dockWidgets) {
-        if (dockWidget->windowTitle() == "BatteryMonitor")
+        if (dockWidget->windowTitle() == "Battery Monitor")
             dockWidget->setVisible(visible && !offlineSource);
         else
             dockWidget->setVisible(visible);
