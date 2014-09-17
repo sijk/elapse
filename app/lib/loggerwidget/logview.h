@@ -49,8 +49,8 @@ protected:
 
 private:
     std::unique_ptr<Ui::LogView> ui;
-    TableModelLoggerEngine *engine;
-    LogFilterProxyModel *proxyModel;
+    std::unique_ptr<TableModelLoggerEngine> engine;
+    std::unique_ptr<LogFilterProxyModel> proxyModel;
 };
 
 }} // namespace elapse::log

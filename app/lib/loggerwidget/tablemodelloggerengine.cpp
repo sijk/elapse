@@ -21,12 +21,11 @@ TableModelLoggerEngine::TableModelLoggerEngine() :
 }
 
 /*!
- * Unregister this logger engine and destroys it.
+ * Unregister this logger engine and destroy it.
  */
 TableModelLoggerEngine::~TableModelLoggerEngine()
 {
     qxtLog->removeLoggerEngine(this);
-    delete _model;
 }
 
 void TableModelLoggerEngine::initLoggerEngine()
@@ -67,7 +66,7 @@ void TableModelLoggerEngine::writeFormatted(QxtLogger::LogLevel level,
  */
 QAbstractItemModel *TableModelLoggerEngine::model()
 {
-    return _model;
+    return _model.get();
 }
 
 }} // namespace elapse::log
