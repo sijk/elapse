@@ -86,9 +86,9 @@ Pipeline::Pipeline(QObject *parent) :
 /*!
  * \return the Pipeline's elements::ElementSet.
  */
-elements::ElementSetPtr Pipeline::elements() const
+const elements::ElementSet *Pipeline::elements() const
 {
-    return _elements;
+    return _elements.get();
 }
 
 /*!
