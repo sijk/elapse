@@ -22,25 +22,13 @@ OfflineDataSourcePrivate::OfflineDataSourcePrivate(ConfigManager *config) :
 }
 
 
-/*!
- * Construct a new OfflineDataSource.
- */
-OfflineDataSource::OfflineDataSource() :
-    d_ptr(nullptr)
-{
-}
+OfflineDataSource::OfflineDataSource() { }
 
-/*!
- * Destroy this OfflineDataSource.
- */
-OfflineDataSource::~OfflineDataSource()
-{
-    delete d_ptr;
-}
+OfflineDataSource::~OfflineDataSource() { }
 
 void OfflineDataSource::exposeDeviceInterface()
 {
-    d_ptr = new OfflineDataSourcePrivate(this);
+    d_ptr.reset(new OfflineDataSourcePrivate(this));
 }
 
 

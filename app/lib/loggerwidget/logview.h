@@ -1,10 +1,10 @@
 #ifndef LOGVIEW_H
 #define LOGVIEW_H
 
+#include <memory>
 #include <QDialog>
 
 class QxtLoggerEngine;
-
 namespace Ui { class LogView; }
 
 namespace elapse {
@@ -48,9 +48,9 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 
 private:
-    Ui::LogView *ui;
-    TableModelLoggerEngine *engine;
-    LogFilterProxyModel *proxyModel;
+    std::unique_ptr<Ui::LogView> ui;
+    std::unique_ptr<TableModelLoggerEngine> engine;
+    std::unique_ptr<LogFilterProxyModel> proxyModel;
 };
 
 }} // namespace elapse::log

@@ -2,6 +2,7 @@
 #define FEATUREXTRACTOR_H
 
 #include <QObject>
+#include <QScopedPointer>
 #include "elapse/datatypes.h"
 #include "elapse/timestamps.h"
 
@@ -116,7 +117,7 @@ protected:
     virtual data::Signal::Type signalType() const;
 
 private:
-    BaseFeatureExtractorPrivate * const d_ptr;
+    const QScopedPointer<BaseFeatureExtractorPrivate> d_ptr;
     Q_DECLARE_PRIVATE(BaseFeatureExtractor)
 };
 

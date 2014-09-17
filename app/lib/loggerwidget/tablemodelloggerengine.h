@@ -1,6 +1,7 @@
 #ifndef TABLEMODELLOGGERENGINE_H
 #define TABLEMODELLOGGERENGINE_H
 
+#include <memory>
 #include <QxtLoggerEngine>
 
 class QAbstractItemModel;
@@ -31,7 +32,7 @@ public:
     QAbstractItemModel *model();
 
 private:
-    LogModel *_model;
+    std::unique_ptr<LogModel> _model;
 };
 
 }} // namespace elapse::log

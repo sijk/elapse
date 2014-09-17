@@ -26,7 +26,7 @@ public:
 protected:
     PluginData getInfo(const QString &pluginPath);
     QObject *instantiateClass(const PluginInfo &plugin, const ClassInfo &cls);
-    Deleter deleter();
+    elements::ElementDeleter deleter();
 };
 
 }} // namespace elapse::plugin

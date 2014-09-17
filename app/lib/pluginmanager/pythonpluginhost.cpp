@@ -69,10 +69,10 @@ QObject *PythonHost::instantiateClass(const PluginInfo &plugin,
 }
 
 /*!
- * \return a plugin::Host::Deleter that will remove objects from the
+ * \return an elements::ElementDeleter that will remove objects from the
  * internal cache of Python instances.
  */
-Host::Deleter PythonHost::deleter()
+elements::ElementDeleter PythonHost::deleter()
 {
     return &python::removeInstance;
 }

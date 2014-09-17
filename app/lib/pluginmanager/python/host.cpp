@@ -34,8 +34,8 @@ void initPython()
     if (initialized) return;
     initialized = true;
 
-    char *name = const_cast<char*>(qPrintable(qApp->applicationName()));
-    Py_SetProgramName(name);
+    static QByteArray appName = qApp->applicationName().toLatin1();
+    Py_SetProgramName(appName.data());
     Py_Initialize();
 
     // Export our wrappers to python

@@ -36,9 +36,9 @@ LogView::LogView(QWidget *parent) :
     ui->setupUi(this);
 
     proxyModel->setSourceModel(engine->model());
-    ui->tableView->setModel(proxyModel);
+    ui->tableView->setModel(proxyModel.get());
 
-    connect(proxyModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
+    connect(proxyModel.get(), SIGNAL(rowsInserted(QModelIndex,int,int)),
             ui->tableView, SLOT(scrollToBottom()));
 
     ui->comboBox->setModel(&levelNames);
@@ -48,7 +48,7 @@ LogView::LogView(QWidget *parent) :
             this, SLOT(setFilterLevel(int)));
 
     connect(ui->searchText, SIGNAL(textChanged(QString)),
-            proxyModel, SLOT(setFilterRegExp(QString)));
+            proxyModel.get(), SLOT(setFilterRegExp(QString)));
 
     QShortcut *findShortcut = new QShortcut(QKeySequence::Find, this);
     connect(findShortcut, SIGNAL(activated()),
@@ -58,21 +58,14 @@ LogView::LogView(QWidget *parent) :
         QMetaObject::invokeMethod(this, "show", Qt::QueuedConnection);
 }
 
-/*!
- * Delete this LogView.
- */
-LogView::~LogView()
-{
-    delete engine;
-    delete ui;
-}
+LogView::~LogView() { }
 
 /*!
  * \return the TableModelLoggerEngine.
  */
 QxtLoggerEngine *LogView::loggerEngine()
 {
-    return engine;
+    return engine.get();
 }
 
 /*!

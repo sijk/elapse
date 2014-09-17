@@ -28,7 +28,7 @@ class Pipeline : public QObject
 public:
     explicit Pipeline(QObject *parent = nullptr);
 
-    elements::ElementSetPtr elements() const;
+    const elements::ElementSet *elements() const;
 
     void setWindowLength(uint ms);
     void setWindowStep(uint ms);

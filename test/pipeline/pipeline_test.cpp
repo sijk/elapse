@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <QPointer>
+#include <memory>
 #include <QSignalSpy>
 #include <elapse/elements/datasource.h>
 #include <elapse/elements/decoder.h>
@@ -237,6 +237,17 @@ public:
 
 class PipelineTest : public ::testing::Test
 {
+    struct _ElementSet : elements::ElementSet
+    {
+        friend class PipelineTest;
+    };
+
+    template<class T>
+    elements::ElementPtr<T> take_ownership(T* ptr)
+    {
+        return elements::ElementPtr<T>(ptr, std::default_delete<QObject>());
+    }
+
 protected:
     void SetUp()
     {
@@ -251,17 +262,18 @@ protected:
         action = new MockOutputAction;
         dataSink = new MockDataSink;
 
-        elements = elements::ElementSetPtr::create();
-        elements->dataSource.reset(dataSource);
-        elements->sampleDecoders[Signal::EEG].reset(eegDecoder);
-        elements->sampleDecoders[Signal::VIDEO].reset(vidDecoder);
-        elements->sampleDecoders[Signal::IMU].reset(imuDecoder);
-        elements->featureExtractors[Signal::EEG].reset(eegFeatEx);
-        elements->featureExtractors[Signal::VIDEO].reset(vidFeatEx);
-        elements->featureExtractors[Signal::IMU].reset(imuFeatEx);
-        elements->classifier.reset(classifier);
-        elements->action.reset(action);
-        elements->dataSink.reset(dataSink);
+        auto e = std::make_shared<_ElementSet>();
+        e->_dataSource                       = take_ownership(dataSource);
+        e->_sampleDecoders[Signal::EEG]      = take_ownership(eegDecoder);
+        e->_sampleDecoders[Signal::VIDEO]    = take_ownership(vidDecoder);
+        e->_sampleDecoders[Signal::IMU]      = take_ownership(imuDecoder);
+        e->_featureExtractors[Signal::EEG]   = take_ownership(eegFeatEx);
+        e->_featureExtractors[Signal::VIDEO] = take_ownership(vidFeatEx);
+        e->_featureExtractors[Signal::IMU]   = take_ownership(imuFeatEx);
+        e->_classifier                       = take_ownership(classifier);
+        e->_action                           = take_ownership(action);
+        e->_dataSink                         = take_ownership(dataSink);
+        elements = e;
 
         eegFeatExPriv = elapse::elements::BaseFeatureExtractorPrivate::expose(eegFeatEx);
         vidFeatExPriv = elapse::elements::BaseFeatureExtractorPrivate::expose(vidFeatEx);
@@ -269,16 +281,16 @@ protected:
     }
 
 public:
-    QPointer<MockDataSource> dataSource;
-    QPointer<MockEegDecoder> eegDecoder;
-    QPointer<MockVidDecoder> vidDecoder;
-    QPointer<MockImuDecoder> imuDecoder;
-    QPointer<MockEegFeatureExtractor> eegFeatEx;
-    QPointer<MockVidFeatureExtractor> vidFeatEx;
-    QPointer<MockImuFeatureExtractor> imuFeatEx;
-    QPointer<MockClassifier> classifier;
-    QPointer<MockOutputAction> action;
-    QPointer<MockDataSink> dataSink;
+    MockDataSource *dataSource;
+    MockEegDecoder *eegDecoder;
+    MockVidDecoder *vidDecoder;
+    MockImuDecoder *imuDecoder;
+    MockEegFeatureExtractor *eegFeatEx;
+    MockVidFeatureExtractor *vidFeatEx;
+    MockImuFeatureExtractor *imuFeatEx;
+    MockClassifier *classifier;
+    MockOutputAction *action;
+    MockDataSink *dataSink;
 
     elapse::elements::BaseFeatureExtractorPrivate *eegFeatExPriv;
     elapse::elements::BaseFeatureExtractorPrivate *vidFeatExPriv;

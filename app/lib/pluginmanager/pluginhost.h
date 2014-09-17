@@ -2,6 +2,7 @@
 #define PLUGINHOST_H
 
 #include "pluginmanager_global.h"
+#include "elementset.h"
 
 namespace elapse { namespace plugin {
 
@@ -33,13 +34,14 @@ public:
 
     /*!
      * \return an instance of class \a cls from the given \a plugin.
-     * The instance is wrapped in a QSharedPointer with a custom deleter().
+     * The instance is wrapped in an elements::ElementPtr with a custom
+     * deleter().
      */
-    template<class T> QSharedPointer<T>
+    template<class T> elements::ElementPtr<T>
     instantiate(const PluginInfo &plugin, const ClassInfo &cls)
     {
         QObject *instance = instantiateClass(plugin, cls);
-        return QSharedPointer<T>(qobject_cast<T*>(instance), deleter());
+        return elements::ElementPtr<T>(qobject_cast<T*>(instance), deleter());
     }
 
 protected:
@@ -58,15 +60,9 @@ protected:
     instantiateClass(const PluginInfo &plugin, const ClassInfo &cls) = 0;
 
     /*!
-     * A custom deleter function for objects instantiated by this Host.
-     */
-    typedef std::function<void(QObject*)> Deleter;
-
-    /*!
      * \return a custom deleter function for the instantiated objects.
-     * Defaults to \c QObject::deleteLater.
      */
-    virtual Deleter deleter() { return &QObject::deleteLater; }
+    virtual elements::ElementDeleter deleter() { return std::default_delete<QObject>(); }
 };
 
 }} // namespace elapse::plugin

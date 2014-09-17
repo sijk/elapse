@@ -1,6 +1,7 @@
 #ifndef DUMMYIMUFEATUREEXTRACTOR_H
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
+#include <QPointer>
 #include <elapse/elements/featurextractor.h>
 #include <elapse/displayable.h>
 
@@ -36,7 +37,7 @@ private:
 
     void updateHeadWidget(const data::ImuSample *sample);
 
-    widgets::HeadWidget *headWidget;
+    QPointer<widgets::HeadWidget> headWidget;
     time::Series<int> sampleFlags;
 };
 

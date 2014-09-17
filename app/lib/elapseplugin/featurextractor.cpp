@@ -38,10 +38,7 @@ BaseFeatureExtractor::BaseFeatureExtractor() :
 {
 }
 
-BaseFeatureExtractor::~BaseFeatureExtractor()
-{
-    delete d_ptr;
-}
+BaseFeatureExtractor::~BaseFeatureExtractor() { }
 
 void BaseFeatureExtractor::setStartTime(time::Point timestamp)
 {

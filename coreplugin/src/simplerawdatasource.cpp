@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <QFile>
 #include <QThread>
+#include <QPointer>
 #include <QxtLogger>
 #include <elapse/datatypes.h>
 #include "simplerawdatasource.h"
@@ -42,8 +43,8 @@ class SimpleRawDataSourcePrivate
 public:
     SimpleRawDataSourcePrivate(SimpleRawDataSource *q);
 
-    QWidget *createWidget();
-    QWidget *widget;
+    void createWidget();
+    QPointer<QWidget> widget;
     QLineEdit *lineEdit;
 
     bool start();
@@ -92,7 +93,6 @@ void DataLoader::run()
 
 
 SimpleRawDataSourcePrivate::SimpleRawDataSourcePrivate(SimpleRawDataSource *q) :
-    widget(nullptr),
     loader(this)
 {
     q->connect(&loader, SIGNAL(started()), SIGNAL(started()));
@@ -102,7 +102,7 @@ SimpleRawDataSourcePrivate::SimpleRawDataSourcePrivate(SimpleRawDataSource *q) :
     q->connect(&loader, SIGNAL(imuReady(QByteArray)), SIGNAL(imuReady(QByteArray)));
 }
 
-QWidget *SimpleRawDataSourcePrivate::createWidget()
+void SimpleRawDataSourcePrivate::createWidget()
 {
     widget = new QWidget;
     auto layout = new QHBoxLayout(widget);
@@ -117,8 +117,6 @@ QWidget *SimpleRawDataSourcePrivate::createWidget()
         lineEdit->setText(QFileDialog::getOpenFileName(qApp->activeWindow(),
                           "Open data file", "", "Raw data files (*.dat)"));
     });
-
-    return widget;
 }
 
 bool SimpleRawDataSourcePrivate::start()
@@ -141,22 +139,13 @@ void SimpleRawDataSourcePrivate::stop()
 }
 
 
-/*!
- * Construct a new SimpleRawDataSource.
- */
 SimpleRawDataSource::SimpleRawDataSource() :
     d_ptr(new SimpleRawDataSourcePrivate(this))
 {
     exposeDeviceInterface();
 }
 
-/*!
- * Destroy this SimpleRawDataSource.
- */
-SimpleRawDataSource::~SimpleRawDataSource()
-{
-    delete d_ptr;
-}
+SimpleRawDataSource::~SimpleRawDataSource() { }
 
 /*!
  * Get device configuration values that had been saved to the data file.
@@ -174,7 +163,9 @@ QVariant SimpleRawDataSource::get(const QString &subSystem,
 QWidget *SimpleRawDataSource::getWidget()
 {
     Q_D(SimpleRawDataSource);
-    return d->widget ? d->widget : d->createWidget();
+    if (!d->widget)
+        d->createWidget();
+    return d->widget;
 }
 
 /*!

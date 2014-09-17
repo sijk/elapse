@@ -15,7 +15,7 @@ public:
     {
         manager = new plugin::Manager;
         priv = plugin::ManagerPrivate::expose(manager);
-        priv->hosts.remove(plugin::HostID::Static);
+        priv->hosts.erase(plugin::HostID::Static);
         manager->setSearchPath(qApp->applicationDirPath() + "/plugins");
     }
 
@@ -33,7 +33,7 @@ TEST_F(PythonBindingsTest, RunPythonTests)
 {
     ASSERT_EQ(priv->pluginData.size(), 1);
     const plugin::PluginData &info = priv->pluginData.first();
-    plugin::Host *host = priv->hosts[info.plugin.host];
+    plugin::Host *host = priv->hosts[info.plugin.host].get();
 
     for (const plugin::ClassInfo &test : info.classes) {
         auto pyTestPassed = host->instantiate<FeatureExtractor>(info.plugin, test);
