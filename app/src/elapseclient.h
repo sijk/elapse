@@ -8,7 +8,6 @@ class QStateMachine;
 namespace Ui { class ElapseClient; }
 
 namespace elapse {
-
 namespace log { class LogView; }
 namespace plugin { class Manager; }
 

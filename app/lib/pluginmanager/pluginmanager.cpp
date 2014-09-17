@@ -198,7 +198,7 @@ plugin::ManagerPrivate::ElementSetInfo plugin::ManagerPrivate::getSavedElements(
  * result in \a element.
  */
 template<class T>
-void plugin::ManagerPrivate::createElement(QSharedPointer<T> &element,
+void plugin::ManagerPrivate::createElement(elements::ElementPtr<T> &element,
                                            const ElementInfo &info)
 {
     const PluginInfo &plugin = *info.first;
@@ -206,7 +206,7 @@ void plugin::ManagerPrivate::createElement(QSharedPointer<T> &element,
 
     element = hosts[plugin.host]->instantiate<T>(plugin, cls);
 
-    if (element.isNull())
+    if (!element)
         qxtLog->debug("Failed to instantiate", cls.className, "from", plugin.name);
 }
 
@@ -216,21 +216,26 @@ void plugin::ManagerPrivate::createElement(QSharedPointer<T> &element,
  */
 elements::ElementSetPtr plugin::ManagerPrivate::createElements(const ElementSetInfo &info)
 {
-    auto e = elements::ElementSetPtr::create();
+    struct _ElementSet : elements::ElementSet
+    {
+        friend class plugin::ManagerPrivate;
+    };
 
-    createElement(e->dataSource,                       info.value("DataSource"));
-    createElement(e->dataSink,                         info.value("DataSink"));
-    createElement(e->sampleDecoders[Signal::EEG],      info.value("EegSampleDecoder"));
-    createElement(e->sampleDecoders[Signal::VIDEO],    info.value("VidSampleDecoder"));
-    createElement(e->sampleDecoders[Signal::IMU],      info.value("ImuSampleDecoder"));
-    createElement(e->featureExtractors[Signal::EEG],   info.value("EegFeatureExtractor"));
-    createElement(e->featureExtractors[Signal::VIDEO], info.value("VidFeatureExtractor"));
-    createElement(e->featureExtractors[Signal::IMU],   info.value("ImuFeatureExtractor"));
-    createElement(e->classifier,                       info.value("Classifier"));
-    createElement(e->action,                           info.value("OutputAction"));
+    auto e = std::make_shared<_ElementSet>();
 
-    for (const auto &element : e->allElements()) {
-        if (element.isNull()) {
+    createElement(e->_dataSource,                       info.value("DataSource"));
+    createElement(e->_dataSink,                         info.value("DataSink"));
+    createElement(e->_sampleDecoders[Signal::EEG],      info.value("EegSampleDecoder"));
+    createElement(e->_sampleDecoders[Signal::VIDEO],    info.value("VidSampleDecoder"));
+    createElement(e->_sampleDecoders[Signal::IMU],      info.value("ImuSampleDecoder"));
+    createElement(e->_featureExtractors[Signal::EEG],   info.value("EegFeatureExtractor"));
+    createElement(e->_featureExtractors[Signal::VIDEO], info.value("VidFeatureExtractor"));
+    createElement(e->_featureExtractors[Signal::IMU],   info.value("ImuFeatureExtractor"));
+    createElement(e->_classifier,                       info.value("Classifier"));
+    createElement(e->_action,                           info.value("OutputAction"));
+
+    for (const auto element : e->allElements()) {
+        if (!element) {
             qxtLog->warning("Failed to load all elements from plugins.");
             return elements::ElementSetPtr();
         }

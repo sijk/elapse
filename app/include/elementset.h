@@ -1,7 +1,8 @@
 #ifndef ELEMENTS_H
 #define ELEMENTS_H
 
-#include <QSharedPointer>
+#include <memory>
+#include <map>
 #include "elapse/datatypes.h"
 #include "elapse/elements/datasource.h"
 #include "elapse/elements/decoder.h"
@@ -11,6 +12,17 @@
 #include "elapse/elements/datasink.h"
 
 namespace elapse { namespace elements {
+
+/*!
+ * Custom deleter function type for element classes.
+ */
+using ElementDeleter = std::function<void(QObject*)>;
+
+/*!
+ * Unique pointer to an element (with a custom [deleter](\ref ElementDeleter)).
+ */
+template<class T> using ElementPtr = std::unique_ptr<T, ElementDeleter>;
+
 
 /*!
  * \brief The ElementSet struct holds pointers to a complete set of
@@ -25,34 +37,68 @@ namespace elapse { namespace elements {
 
 struct ElementSet
 {
-    template<class T> using Ptr = QSharedPointer<T>; // for readability
+    DataSource* dataSource() const { return _dataSource.get(); }
+    SampleDecoder* sampleDecoder(data::Signal::Type type) const;
+    QList<SampleDecoder*> sampleDecoders() const;
+    FeatureExtractor* featureExtractor(data::Signal::Type type) const;
+    QList<FeatureExtractor*> featureExtractors() const;
+    Classifier* classifier() const { return _classifier.get(); }
+    OutputAction* action() const { return _action.get(); }
+    DataSink* dataSink() const { return _dataSink.get(); }
 
-    Ptr<DataSource> dataSource;
-    QMap<data::Signal::Type, Ptr<SampleDecoder>> sampleDecoders;
-    QMap<data::Signal::Type, Ptr<FeatureExtractor>> featureExtractors;
-    Ptr<Classifier> classifier;
-    Ptr<OutputAction> action;
-    Ptr<DataSink> dataSink;
+    QList<QObject*> allElements() const;
 
-    QList<Ptr<QObject>> allElements() const;
+protected:
+    ElementPtr<DataSource> _dataSource;
+    std::map<data::Signal::Type, ElementPtr<SampleDecoder>> _sampleDecoders;
+    std::map<data::Signal::Type, ElementPtr<FeatureExtractor>> _featureExtractors;
+    ElementPtr<Classifier> _classifier;
+    ElementPtr<OutputAction> _action;
+    ElementPtr<DataSink> _dataSink;
 };
 
+
+inline SampleDecoder *ElementSet::sampleDecoder(data::Signal::Type type) const
+{
+    return _sampleDecoders.at(type).get();
+}
+
+inline QList<SampleDecoder *> ElementSet::sampleDecoders() const
+{
+    QList<SampleDecoder*> list;
+    for (const auto &i : _sampleDecoders)
+        list.append(i.second.get());
+    return list;
+}
+
+inline FeatureExtractor *ElementSet::featureExtractor(data::Signal::Type type) const
+{
+    return _featureExtractors.at(type).get();
+}
+
+inline QList<FeatureExtractor *> ElementSet::featureExtractors() const
+{
+    QList<FeatureExtractor*> list;
+    for (const auto &i : _featureExtractors)
+        list.append(i.second.get());
+    return list;
+}
 
 /*!
  * \return a list of all the elements in the set.
  */
-inline QList<ElementSet::Ptr<QObject>> ElementSet::allElements() const
+inline QList<QObject*> ElementSet::allElements() const
 {
-    QList<Ptr<QObject>> elements;
+    QList<QObject*> elements;
 
-    elements.append(dataSource);
-    for (auto &decoder : sampleDecoders)
-        elements.append(decoder);
-    for (auto &extractor : featureExtractors)
-        elements.append(extractor);
-    elements.append(classifier);
-    elements.append(action);
-    elements.append(dataSink);
+    elements.append(dataSource());
+    for (auto sampleDecoder : sampleDecoders())
+        elements.append(sampleDecoder);
+    for (auto featureExtractor : featureExtractors())
+        elements.append(featureExtractor);
+    elements.append(classifier());
+    elements.append(action());
+    elements.append(dataSink());
 
     return elements;
 }
@@ -63,7 +109,7 @@ inline QList<ElementSet::Ptr<QObject>> ElementSet::allElements() const
  * ElementSet when nothing refers to it.
  * \ingroup signal-pipeline
  */
-typedef QSharedPointer<ElementSet> ElementSetPtr;
+typedef std::shared_ptr<ElementSet> ElementSetPtr;
 
 }} // namespace elapse::elements
 

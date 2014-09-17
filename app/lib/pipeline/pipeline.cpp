@@ -96,7 +96,7 @@ elements::ElementSetPtr Pipeline::elements() const
  */
 void Pipeline::setWindowLength(uint ms)
 {
-    for (auto &featureExtractor : _elements->featureExtractors)
+    for (auto featureExtractor : _elements->featureExtractors())
         featureExtractor->setWindowLength(ms);
 }
 
@@ -105,7 +105,7 @@ void Pipeline::setWindowLength(uint ms)
  */
 void Pipeline::setWindowStep(uint ms)
 {
-    for (auto &featureExtractor : _elements->featureExtractors)
+    for (auto featureExtractor : _elements->featureExtractors())
         featureExtractor->setWindowStep(ms);
 }
 
@@ -125,65 +125,65 @@ void Pipeline::setElements(elements::ElementSetPtr newElements)
     _elements = newElements;
 
     // Connect elements
-    connect(_elements->dataSource.data(), SIGNAL(eegReady(QByteArray)),
-            _elements->sampleDecoders[Signal::EEG].data(), SLOT(onData(QByteArray)));
-    connect(_elements->dataSource.data(), SIGNAL(videoReady(QByteArray)),
-            _elements->sampleDecoders[Signal::VIDEO].data(), SLOT(onData(QByteArray)));
-    connect(_elements->dataSource.data(), SIGNAL(imuReady(QByteArray)),
-            _elements->sampleDecoders[Signal::IMU].data(), SLOT(onData(QByteArray)));
+    connect(_elements->dataSource(), SIGNAL(eegReady(QByteArray)),
+            _elements->sampleDecoder(Signal::EEG), SLOT(onData(QByteArray)));
+    connect(_elements->dataSource(), SIGNAL(videoReady(QByteArray)),
+            _elements->sampleDecoder(Signal::VIDEO), SLOT(onData(QByteArray)));
+    connect(_elements->dataSource(), SIGNAL(imuReady(QByteArray)),
+            _elements->sampleDecoder(Signal::IMU), SLOT(onData(QByteArray)));
 
-    connect(_elements->sampleDecoders[Signal::EEG].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
-            _elements->featureExtractors[Signal::EEG].data(), SLOT(onSample(elapse::data::SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::VIDEO].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
-            _elements->featureExtractors[Signal::VIDEO].data(), SLOT(onSample(elapse::data::SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::IMU].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
-            _elements->featureExtractors[Signal::IMU].data(), SLOT(onSample(elapse::data::SamplePtr)));
+    connect(_elements->sampleDecoder(Signal::EEG), SIGNAL(newSample(elapse::data::SamplePtr)),
+            _elements->featureExtractor(Signal::EEG), SLOT(onSample(elapse::data::SamplePtr)));
+    connect(_elements->sampleDecoder(Signal::VIDEO), SIGNAL(newSample(elapse::data::SamplePtr)),
+            _elements->featureExtractor(Signal::VIDEO), SLOT(onSample(elapse::data::SamplePtr)));
+    connect(_elements->sampleDecoder(Signal::IMU), SIGNAL(newSample(elapse::data::SamplePtr)),
+            _elements->featureExtractor(Signal::IMU), SLOT(onSample(elapse::data::SamplePtr)));
 
-    connect(_elements->featureExtractors[Signal::EEG].data(), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->classifier.data(), SLOT(onFeatures(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractors[Signal::VIDEO].data(), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->classifier.data(), SLOT(onFeatures(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractors[Signal::IMU].data(), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->classifier.data(), SLOT(onFeatures(elapse::data::FeatureVector)));
+    connect(_elements->featureExtractor(Signal::EEG), SIGNAL(newFeatures(elapse::data::FeatureVector)),
+            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector)));
+    connect(_elements->featureExtractor(Signal::VIDEO), SIGNAL(newFeatures(elapse::data::FeatureVector)),
+            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector)));
+    connect(_elements->featureExtractor(Signal::IMU), SIGNAL(newFeatures(elapse::data::FeatureVector)),
+            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector)));
 
-    connect(_elements->classifier.data(), SIGNAL(newState(elapse::data::CognitiveState)),
-            _elements->action.data(), SLOT(onState(elapse::data::CognitiveState)));
+    connect(_elements->classifier(), SIGNAL(newState(elapse::data::CognitiveState)),
+            _elements->action(), SLOT(onState(elapse::data::CognitiveState)));
 
     // Propagate signals from elements
-    connect(_elements->dataSource.data(), SIGNAL(started()), SIGNAL(started()));
-    connect(_elements->dataSource.data(), SIGNAL(finished()), SIGNAL(error()));
-    connect(_elements->dataSource.data(), SIGNAL(error(QString)), SIGNAL(error(QString)));
-    for (auto &decoder : _elements->sampleDecoders)
-        connect(decoder.data(), SIGNAL(error(QString)), SIGNAL(error(QString)));
+    connect(_elements->dataSource(), SIGNAL(started()), SIGNAL(started()));
+    connect(_elements->dataSource(), SIGNAL(finished()), SIGNAL(error()));
+    connect(_elements->dataSource(), SIGNAL(error(QString)), SIGNAL(error(QString)));
+    for (auto decoder : _elements->sampleDecoders())
+        connect(decoder, SIGNAL(error(QString)), SIGNAL(error(QString)));
 
     // Connect DataSink
-    connect(_elements->dataSource.data(), SIGNAL(eegReady(QByteArray)),
-            _elements->dataSink.data(), SLOT(onEegData(QByteArray)));
-    connect(_elements->dataSource.data(), SIGNAL(videoReady(QByteArray)),
-            _elements->dataSink.data(), SLOT(onVideoData(QByteArray)));
-    connect(_elements->dataSource.data(), SIGNAL(imuReady(QByteArray)),
-            _elements->dataSink.data(), SLOT(onImuData(QByteArray)));
-    connect(_elements->sampleDecoders[Signal::EEG].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
-            _elements->dataSink.data(), SLOT(onEegSample(elapse::data::SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::VIDEO].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
-            _elements->dataSink.data(), SLOT(onVideoSample(elapse::data::SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::IMU].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
-            _elements->dataSink.data(), SLOT(onImuSample(elapse::data::SamplePtr)));
-    connect(_elements->featureExtractors[Signal::EEG].data(), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->dataSink.data(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractors[Signal::VIDEO].data(), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->dataSink.data(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractors[Signal::IMU].data(), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->dataSink.data(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
-    connect(_elements->classifier.data(), SIGNAL(newState(elapse::data::CognitiveState)),
-            _elements->dataSink.data(), SLOT(onCognitiveState(elapse::data::CognitiveState)));
+    connect(_elements->dataSource(), SIGNAL(eegReady(QByteArray)),
+            _elements->dataSink(), SLOT(onEegData(QByteArray)));
+    connect(_elements->dataSource(), SIGNAL(videoReady(QByteArray)),
+            _elements->dataSink(), SLOT(onVideoData(QByteArray)));
+    connect(_elements->dataSource(), SIGNAL(imuReady(QByteArray)),
+            _elements->dataSink(), SLOT(onImuData(QByteArray)));
+    connect(_elements->sampleDecoder(Signal::EEG), SIGNAL(newSample(elapse::data::SamplePtr)),
+            _elements->dataSink(), SLOT(onEegSample(elapse::data::SamplePtr)));
+    connect(_elements->sampleDecoder(Signal::VIDEO), SIGNAL(newSample(elapse::data::SamplePtr)),
+            _elements->dataSink(), SLOT(onVideoSample(elapse::data::SamplePtr)));
+    connect(_elements->sampleDecoder(Signal::IMU), SIGNAL(newSample(elapse::data::SamplePtr)),
+            _elements->dataSink(), SLOT(onImuSample(elapse::data::SamplePtr)));
+    connect(_elements->featureExtractor(Signal::EEG), SIGNAL(newFeatures(elapse::data::FeatureVector)),
+            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
+    connect(_elements->featureExtractor(Signal::VIDEO), SIGNAL(newFeatures(elapse::data::FeatureVector)),
+            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
+    connect(_elements->featureExtractor(Signal::IMU), SIGNAL(newFeatures(elapse::data::FeatureVector)),
+            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
+    connect(_elements->classifier(), SIGNAL(newState(elapse::data::CognitiveState)),
+            _elements->dataSink(), SLOT(onCognitiveState(elapse::data::CognitiveState)));
 
     // Watch for first sample to set start time
-    connect(_elements->sampleDecoders[Signal::EEG].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
+    connect(_elements->sampleDecoder(Signal::EEG), SIGNAL(newSample(elapse::data::SamplePtr)),
             SLOT(setStartTime(elapse::data::SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::VIDEO].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
+    connect(_elements->sampleDecoder(Signal::VIDEO), SIGNAL(newSample(elapse::data::SamplePtr)),
             SLOT(setStartTime(elapse::data::SamplePtr)));
-    connect(_elements->sampleDecoders[Signal::IMU].data(), SIGNAL(newSample(elapse::data::SamplePtr)),
+    connect(_elements->sampleDecoder(Signal::IMU), SIGNAL(newSample(elapse::data::SamplePtr)),
             SLOT(setStartTime(elapse::data::SamplePtr)));
 }
 
@@ -194,13 +194,13 @@ void Pipeline::setElements(elements::ElementSetPtr newElements)
  */
 void Pipeline::setDeviceConfig(QMap<QString, QVariantMap> config)
 {
-    for (auto &sampleDecoder : _elements->sampleDecoders)
+    for (auto sampleDecoder : _elements->sampleDecoders())
         sampleDecoder->configure(config);
 
-    for (auto &featureExtractor : _elements->featureExtractors)
+    for (auto featureExtractor : _elements->featureExtractors())
         featureExtractor->configure(config);
 
-    _elements->dataSink->saveDeviceConfig(config);
+    _elements->dataSink()->saveDeviceConfig(config);
 }
 
 /*!
@@ -213,14 +213,14 @@ void Pipeline::start()
     startTimeIsSet = false;
 
     qxtLog->info("Starting pipeline");
-    if (!_elements->dataSink->start()) {
+    if (!_elements->dataSink()->start()) {
         emit error();
         return;
     }
-    for (auto &decoder : _elements->sampleDecoders)
+    for (auto decoder : _elements->sampleDecoders())
         decoder->start();
-    _elements->classifier->reset();
-    _elements->dataSource->start();
+    _elements->classifier()->reset();
+    _elements->dataSource()->start();
 }
 
 /*!
@@ -232,10 +232,10 @@ void Pipeline::stop()
         return;
 
     qxtLog->info("Stopping pipeline");
-    _elements->dataSource->stop();
-    for (auto &decoder : _elements->sampleDecoders)
+    _elements->dataSource()->stop();
+    for (auto decoder : _elements->sampleDecoders())
         decoder->stop();
-    _elements->dataSink->stop();
+    _elements->dataSink()->stop();
     emit stopped();
 }
 
@@ -255,7 +255,7 @@ void Pipeline::setStartTime(data::SamplePtr sample)
     time::Point startTime = sample->timestamp + 1_s;
 
     qxtLog->debug("Setting start time to", time::format(startTime));
-    for (auto &featureExtractor : _elements->featureExtractors)
+    for (auto featureExtractor : _elements->featureExtractors())
         featureExtractor->setStartTime(startTime);
 
     startTimeIsSet = true;

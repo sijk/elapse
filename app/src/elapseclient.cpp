@@ -201,7 +201,7 @@ void ElapseClient::connectToDevice()
 {
     auto elements = pipeline->elements();
     Q_ASSERT(elements);
-    if (elements->dataSource->isOfflineSource()) {
+    if (elements->dataSource()->isOfflineSource()) {
         proxy->connectTo("localhost");
     } else {
         QString host = QSettings().value("host", DEFAULT_ADDR).toString();
@@ -214,8 +214,8 @@ void ElapseClient::connectToDevice()
  */
 void ElapseClient::loadElementWidgets(elements::ElementSetPtr elements)
 {
-    for (auto &element : elements->allElements())
-        addDockWidgetFrom(element.data());
+    for (auto element : elements->allElements())
+        addDockWidgetFrom(element);
 }
 
 /*!
@@ -258,7 +258,7 @@ bool ElapseClient::dockWidgetsVisible() const
 
 void ElapseClient::setDockWidgetsVisible(bool visible)
 {
-    bool offlineSource = pipeline->elements()->dataSource->isOfflineSource();
+    bool offlineSource = pipeline->elements()->dataSource()->isOfflineSource();
     auto dockWidgets = findChildren<QDockWidget*>("", Qt::FindDirectChildrenOnly);
     for (auto dockWidget : dockWidgets) {
         if (dockWidget->windowTitle() == "BatteryMonitor")
@@ -375,7 +375,7 @@ void ElapseClient::configure()
         warnBatteryLow();
 
     connect(ui->actionSetCaptureInfo, SIGNAL(triggered()),
-            pipeline->elements()->dataSink.data(), SLOT(getCaptureInfo()));
+            pipeline->elements()->dataSink(), SLOT(getCaptureInfo()));
 }
 
 /*!

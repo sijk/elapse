@@ -36,7 +36,7 @@ public:
     void saveElements(const ElementSetInfo &info);
 
     template<class T>
-    void createElement(QSharedPointer<T> &element, const ElementInfo &info);
+    void createElement(elements::ElementPtr<T> &element, const ElementInfo &info);
 
     QStandardItem *findItemWithIndices(const QStandardItemModel *model,
                                        int pluginIndex, int classIndex);

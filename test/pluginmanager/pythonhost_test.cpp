@@ -63,7 +63,7 @@ TEST_F(PythonPluginHostTest, InstantiateBazEegFeatEx)
     auto info = host.getInfo(bazPluginPath);
     auto cls = info.classes[0];
     auto instance = host.instantiate<FeatureExtractor>(info.plugin, cls);
-    ASSERT_FALSE(instance.isNull());
+    ASSERT_FALSE(!instance);
     EXPECT_EQ(instance->metaObject()->superClass(),
               &FeatureExtractor::staticMetaObject);
 }
