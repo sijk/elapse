@@ -1,4 +1,5 @@
 #include "elapse/elements/featurextractor.h"
+#include "elapse/elements/simple/eegfeaturextractor.h"
 #include "elapse/timestamps.h"
 #include "featurextractor_p.h"
 
@@ -108,6 +109,49 @@ void BaseFeatureExtractor::reset()
 Signal::Type BaseFeatureExtractor::signalType() const
 {
     return BaseFeatureExtractorPrivate::findSignalType(this);
+}
+
+
+/*! Store the sampleRate for later. */
+void SimpleEegFeatureExtractor::configure(QMap<QString, QVariantMap> config)
+{
+    sampFreq = config["eeg"]["sampleRate"].toUInt();
+}
+
+/*! Save the \a sample for later. */
+void SimpleEegFeatureExtractor::analyseSample(SamplePtr sample)
+{
+    auto eeg = EegSample::staticCastFrom(sample);
+    samples[eeg->timestamp] = eeg;
+}
+
+/*!
+ * Create an Eigen matrix from the EEG samples in the current window and pass
+ * it to extractFeatures().
+ */
+std::vector<double> SimpleEegFeatureExtractor::features()
+{
+    uint nSamples = samples.size();
+    Q_ASSERT(nSamples > 0);
+    uint nChannels = samples.cbegin()->second->values.size();
+
+    // Eigen's default storage order is column-major, so store EEG data as
+    // one column per channel.
+    Eigen::MatrixXd data(nSamples, nChannels);
+
+    uint r = 0;
+    for (const auto &sample : samples) {
+        const data::EegSample *eeg = sample.second.get();
+        Eigen::Map<const Eigen::RowVectorXd> row(eeg->values.data(), nChannels);
+        data.row(r++) = row;
+    }
+
+    return extractFeatures(data, sampFreq);
+}
+
+void SimpleEegFeatureExtractor::removeDataBefore(time::Point time)
+{
+    samples.removeValuesBefore(time);
 }
 
 }} // namespace elapse::elements

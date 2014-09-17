@@ -3,8 +3,9 @@ include($$ROOT/common/hardware.pri)
 
 QT       = core gui dbus
 TEMPLATE = lib
-CONFIG  += shared qxt
+CONFIG  += shared qxt link_pkgconfig
 QXT     += core
+PKGCONFIG= eigen3
 
 TARGET   = elapseplugin
 
@@ -26,7 +27,8 @@ HEADERS += \
     elapse/elements/featurextractor.h \
     elapse/elements/classifier.h \
     elapse/elements/outputaction.h \
-    elapse/elements/datasink.h
+    elapse/elements/datasink.h \
+    elapse/elements/simple/eegfeaturextractor.h
 
 LIBS += -L$$OUT_PWD/../../../common/dbus/ -ldbus
 INCLUDEPATH += $$PWD/../../../common/dbus

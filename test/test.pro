@@ -12,3 +12,4 @@ SUBDIRS += simplerawdatasinksource
 SUBDIRS += configdbus
 SUBDIRS += pipeline
 SUBDIRS += python-bindings
+SUBDIRS += simpleeegfeatureextractor
