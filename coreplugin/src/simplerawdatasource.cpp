@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QThread>
 #include <QPointer>
+#include <QSettings>
 #include <QxtLogger>
 #include <elapse/datatypes.h>
 #include "simplerawdatasource.h"
@@ -15,6 +16,8 @@
 namespace elapse { namespace coreplugin {
 
 using elapse::data::Signal;
+
+static const QString dataDir("/plugins/core/simplerawdatasource/dataDir");
 
 
 class DataLoader : public QThread
@@ -115,7 +118,8 @@ void SimpleRawDataSourcePrivate::createWidget()
 
     QObject::connect(button, &QPushButton::clicked, [=]{
         lineEdit->setText(QFileDialog::getOpenFileName(qApp->activeWindow(),
-                          "Open data file", "", "Raw data files (*.dat)"));
+                          "Open data file", QSettings().value(dataDir).toString(),
+                          "Raw data files (*.dat)"));
     });
 }
 
@@ -174,7 +178,9 @@ QWidget *SimpleRawDataSource::getWidget()
 void SimpleRawDataSource::start()
 {
     Q_D(SimpleRawDataSource);
-    if (!d->start()) {
+    if (d->start()) {
+        QSettings().setValue(dataDir, QFileInfo(d->file.fileName()).absolutePath());
+    } else {
         auto fileName = d->file.fileName();
         if (fileName.isEmpty())
             emit error("Please choose a data file to load.");
