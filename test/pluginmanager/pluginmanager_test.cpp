@@ -16,7 +16,7 @@ public:
     {
         manager = new plugin::Manager;
         priv = plugin::ManagerPrivate::expose(manager);
-        priv->hosts.remove(plugin::HostID::Static);
+        priv->hosts.erase(plugin::HostID::Static);
         testPluginPath = qApp->applicationDirPath() + "/../test_plugins";
         qxtLog->enableAllLogLevels();
     }

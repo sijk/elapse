@@ -2,6 +2,8 @@
 #define PLUGINMANAGER_P_H
 
 #include <QStandardItemModel>
+#include <memory>
+#include <map>
 #include "pluginmanager.h"
 #include "ui_pluginmanager.h"
 #include "pluginmanager_global.h"
@@ -13,13 +15,12 @@ class ManagerPrivate
 {
 public:
     ManagerPrivate(plugin::Manager *q);
-    ~ManagerPrivate();
 
     static ManagerPrivate *expose(plugin::Manager *manager);
 
     Ui::PluginManager ui;
     QDir searchPath;
-    QMap<HostID, Host*> hosts;
+    std::map<HostID, std::unique_ptr<Host>> hosts;
     QList<PluginData> pluginData;
 
     void searchForPlugins();

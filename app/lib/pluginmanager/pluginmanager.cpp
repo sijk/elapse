@@ -21,9 +21,9 @@ plugin::ManagerPrivate::ManagerPrivate(plugin::Manager *q) :
 {
     ui.setupUi(q);
 
-    hosts[HostID::Static] = new StaticHost;
-    hosts[HostID::Native] = new NativeHost;
-    hosts[HostID::Python] = new PythonHost;
+    hosts[HostID::Static].reset(new StaticHost);
+    hosts[HostID::Native].reset(new NativeHost);
+    hosts[HostID::Python].reset(new PythonHost);
 
     elements = {
         { &dataSourceModel,   ui.dataSource,            "DataSource",       Signal::INVALID, "DataSource"          },
@@ -45,11 +45,6 @@ plugin::ManagerPrivate::ManagerPrivate(plugin::Manager *q) :
     });
 }
 
-plugin::ManagerPrivate::~ManagerPrivate()
-{
-    qDeleteAll(hosts);
-}
-
 plugin::ManagerPrivate *plugin::ManagerPrivate::expose(plugin::Manager *manager)
 {
     return manager->d_func();
@@ -62,8 +57,8 @@ void plugin::ManagerPrivate::searchForPlugins()
 {
     pluginData.clear();
 
-    for (plugin::Host *host : hosts) {
-        auto plugins = host->searchForPluginsIn(searchPath);
+    for (auto &host : hosts) {
+        auto plugins = host.second->searchForPluginsIn(searchPath);
         pluginData.append(plugins);
     }
 }
