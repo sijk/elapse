@@ -1,6 +1,7 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
+#include <memory>
 #include <QxtLogger>
 #include "common/qenum-utils.h"
 #include "common/dbus/paths.h"
@@ -103,17 +104,16 @@ public:
         d(common::dbus::service, common::dbus::eegPath, connection)
     { }
 
-    ~EegAdc() { qDeleteAll(_channels); }
-
 public:
     hardware::EegChannel *channel(uint i)
     {
-        if (_channels.isEmpty()) {
+        if (_channels.empty()) {
             uint n = nChannels();
+            _channels.reserve(n);
             for (uint i = 0; i < n; i++)
-                _channels.append(new EegChannel(i, d.connection()));
+                _channels.emplace_back(new EegChannel(i, d.connection()));
         }
-        return _channels.at(i);
+        return _channels.at(i).get();
     }
     uint nChannels() const { return d.nChannels(); }
     uint bytesPerChunk() const { return d.bytesPerChunk(); }
@@ -144,7 +144,7 @@ public slots:
 
 private:
     org::nzbri::elapse::Eeg::EegAdc d;
-    QList<EegChannel*> _channels;
+    std::vector<std::unique_ptr<EegChannel>> _channels;
 };
 
 
