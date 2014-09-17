@@ -15,26 +15,19 @@ namespace elapse { namespace client {
  * Create a new DeviceProxy as a child of the given \a parent.
  */
 DeviceProxy::DeviceProxy(QObject *parent) :
-    QObject(parent),
-    dev(nullptr)
+    QObject(parent)
 {
     connect(&connectionChecker, SIGNAL(timeout()), SLOT(checkConnectivity()));
 }
 
-/*!
- * Delete this DeviceProxy.
- */
-DeviceProxy::~DeviceProxy()
-{
-    delete dev;
-}
+DeviceProxy::~DeviceProxy() { }
 
 /*!
  * \return the D-Bus interface for the root device object.
  */
 hardware::Device *DeviceProxy::device() const
 {
-    return dev;
+    return dev.get();
 }
 
 /*!
@@ -151,7 +144,7 @@ void DeviceProxy::connectInBackground()
         }
     }
 
-    dev = new dbus::Device(bus);
+    dev.reset(new dbus::Device(bus));
     if (!dev->checkConnected()) {
         emit error("The server is not running on the device.");
         return;
@@ -167,10 +160,7 @@ void DeviceProxy::connectInBackground()
 void DeviceProxy::disconnect()
 {
     connectionChecker.stop();
-
-    delete dev;
-    dev = nullptr;
-
+    dev.reset();
     emit disconnected();
 }
 

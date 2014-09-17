@@ -1,6 +1,7 @@
 #ifndef DEVICEPROXY_H
 #define DEVICEPROXY_H
 
+#include <memory>
 #include <QObject>
 #include <QList>
 #include <QTimer>
@@ -46,7 +47,7 @@ private:
     void connectInBackground();
     bool detectLocalAddressByConnectingTo(const QString& host, quint16 port);
 
-    dbus::Device *dev;
+    std::unique_ptr<dbus::Device> dev;
     QString deviceAddr;
     QString localAddr;
     QTimer connectionChecker;
