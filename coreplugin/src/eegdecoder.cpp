@@ -230,6 +230,8 @@ void EegDecoder::onData(QByteArray data)
         stream >> sample->seqnum;
         stream >> sample->timestamp;
 
+        sample->values.reserve(d->nChannels);
+
         for (uint chip = 0; chip < d->nChannels / CHANNELS_PER_CHIP; chip++) {
             stream >> be24;
             status = be24.to32bit();
