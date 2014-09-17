@@ -1,6 +1,7 @@
 #ifndef ELAPSECLIENT_H
 #define ELAPSECLIENT_H
 
+#include <memory>
 #include <QMainWindow>
 #include "elementset.h"
 
@@ -65,7 +66,7 @@ private:
     void setDockWidgetsVisible(bool visible);
     void buildStateMachine();
 
-    Ui::ElapseClient *ui;
+    std::unique_ptr<Ui::ElapseClient> ui;
     log::LogView *logView;
     QStateMachine *machine;
     plugin::Manager *pluginManager;

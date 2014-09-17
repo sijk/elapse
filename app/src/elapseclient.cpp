@@ -67,13 +67,7 @@ ElapseClient::ElapseClient(QWidget *parent) :
     buildStateMachine();
 }
 
-/*!
- * Destroy this ElapseClient.
- */
-ElapseClient::~ElapseClient()
-{
-    delete ui;
-}
+ElapseClient::~ElapseClient() { }
 
 void ElapseClient::showErrorMessage(QString message)
 {

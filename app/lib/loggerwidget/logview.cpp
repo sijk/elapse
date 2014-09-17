@@ -64,7 +64,6 @@ LogView::LogView(QWidget *parent) :
 LogView::~LogView()
 {
     delete engine;
-    delete ui;
 }
 
 /*!
