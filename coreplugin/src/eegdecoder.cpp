@@ -2,6 +2,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QLayout>
+#include <QPointer>
 #include <QxtLogger>
 #include <elapse/datatypes.h>
 #include "util/bigendian24.h"
@@ -27,7 +28,7 @@ public:
     double toMicroVolts(double value) const;
     static void checkSequenceNumber(EegSample::const_ptr sample);
 
-    QWidget *widgetContainer;
+    QPointer<QWidget> widgetContainer;
     QSlider *spacingSlider;
     QLabel *spacingValue;
     widgets::StripChart *stripChart;
@@ -40,8 +41,7 @@ public:
 EegDecoderPrivate::EegDecoderPrivate() :
     vref(0),
     gain(1),
-    nChannels(8),
-    widgetContainer(nullptr)
+    nChannels(8)
 {
 }
 
