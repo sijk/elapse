@@ -2,6 +2,7 @@
 #define STRIPCHART_H
 
 #include <QWidget>
+#include <memory>
 
 class QVBoxLayout;
 class QTimer;
@@ -52,7 +53,7 @@ private:
 
     QVBoxLayout *layout;
     QwtPlot *plot;
-    QList<QwtPlotCurve*> lines;
+    std::vector<std::unique_ptr<QwtPlotCurve>> lines;
     QVector<double> tdata;
     QList<QVector<double>> ydata;
 

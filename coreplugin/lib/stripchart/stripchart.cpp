@@ -1,5 +1,6 @@
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QxtLogger>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_draw.h>
@@ -38,17 +39,16 @@ namespace elapse { namespace widgets {
  */
 StripChart::StripChart(QWidget *parent) :
     QWidget(parent),
-    plot(new QwtPlot(parent)),
+    plot(new QwtPlot(this)),
     _nStrips(1),
     _nSamples(100),
     _spacing(1.0),
     _rate(10),
-    timer(new QTimer)
+    timer(new QTimer(this))
 {
     // Create a layout and add the plot
-    layout = new QVBoxLayout;
+    layout = new QVBoxLayout(this);
     layout->addWidget(plot);
-    setLayout(layout);
 
     plot->setCanvasBackground(Qt::white);
 
@@ -57,16 +57,7 @@ StripChart::StripChart(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(redraw()));
 }
 
-/*!
- * Destroy this StripChart.
- */
-StripChart::~StripChart()
-{
-    delete timer;
-    delete layout;
-    qDeleteAll(lines);
-    delete plot;
-}
+StripChart::~StripChart() { }
 
 /*!
  * Helper function to set up the QwtPlotCurves, axis labels, and so on given the
@@ -75,10 +66,10 @@ StripChart::~StripChart()
 void StripChart::createStrips()
 {
     // Delete any existing lines
-    qDeleteAll(lines);
     lines.clear();
     ydata.clear();
 
+    lines.reserve(_nStrips);
     tdata.resize(_nSamples);
     ydata.reserve(_nStrips);
 
@@ -88,14 +79,14 @@ void StripChart::createStrips()
 
     // Create `nstrips` arrays of y data and associated plot curves
     for (uint i = 0; i < _nStrips; i++) {
-        QwtPlotCurve *line = new QwtPlotCurve;
-        line->setPen(lineColours[i % lineColours.size()]);
-        line->attach(plot);
-        lines.append(line);
+        lines.emplace_back(new QwtPlotCurve);
+        auto &line = **lines.rbegin();
+        line.setPen(lineColours[i % lineColours.size()]);
+        line.attach(plot);
 
         QVector<double> linedata(_nSamples);
         ydata.append(linedata);
-        line->setSamples(tdata, linedata);
+        line.setSamples(tdata, linedata);
     }
 
     // Configure plot
@@ -142,7 +133,7 @@ void StripChart::redraw()
     }
 
     // Re-plot data
-    for (int i = 0; i < lines.size(); i++)
+    for (uint i = 0; i < lines.size(); i++)
         lines[i]->setSamples(tdata, ydata[i]);
     plot->replot();
     needs_redraw = false;
