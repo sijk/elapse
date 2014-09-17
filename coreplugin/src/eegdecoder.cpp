@@ -139,13 +139,7 @@ EegDecoder::EegDecoder() :
 {
 }
 
-/*!
- * Destroy this EegDecoder.
- */
-EegDecoder::~EegDecoder()
-{
-    delete d_ptr;
-}
+EegDecoder::~EegDecoder() { }
 
 /*!
  * Configure gain, vref, and nChannels to match the given hardware \a config.

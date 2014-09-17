@@ -277,13 +277,7 @@ VideoDecoder::VideoDecoder() :
 {
 }
 
-/*!
- * Destroy this VideoDecoder.
- */
-VideoDecoder::~VideoDecoder()
-{
-    delete d_ptr;
-}
+VideoDecoder::~VideoDecoder() { }
 
 /*!
  * Executed when \a data is available for decoding. Feeds the data into the

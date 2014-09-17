@@ -2,6 +2,7 @@
 #define DATASOURCE_H
 
 #include <QObject>
+#include <QScopedPointer>
 class QByteArray;
 
 namespace elapse { namespace elements {
@@ -121,7 +122,7 @@ protected:
     void exposeDeviceInterface();
 
 private:
-    OfflineDataSourcePrivate *d_ptr;
+    QScopedPointer<OfflineDataSourcePrivate> d_ptr;
     Q_DECLARE_PRIVATE(OfflineDataSource)
 };
 

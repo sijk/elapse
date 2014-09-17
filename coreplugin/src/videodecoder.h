@@ -1,6 +1,7 @@
 #ifndef VIDEODECODER_H
 #define VIDEODECODER_H
 
+#include <QScopedPointer>
 #include <elapse/elements/decoder.h>
 #include <elapse/displayable.h>
 
@@ -32,7 +33,7 @@ public slots:
     void onData(QByteArray data);
 
 private:
-    VideoDecoderPrivate * const d_ptr;
+    const QScopedPointer<VideoDecoderPrivate> d_ptr;
     Q_DECLARE_PRIVATE(VideoDecoder)
 };
 

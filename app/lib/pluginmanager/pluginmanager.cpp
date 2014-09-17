@@ -332,10 +332,7 @@ plugin::Manager::Manager(QWidget *parent) :
     setSearchPath(QSettings().value("plugins-path").toString());
 }
 
-plugin::Manager::~Manager()
-{
-    delete d_ptr;
-}
+plugin::Manager::~Manager() { }
 
 /*!
  * \return the absolute path in which plugins will be searched for.

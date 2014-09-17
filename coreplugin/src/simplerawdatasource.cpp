@@ -141,22 +141,13 @@ void SimpleRawDataSourcePrivate::stop()
 }
 
 
-/*!
- * Construct a new SimpleRawDataSource.
- */
 SimpleRawDataSource::SimpleRawDataSource() :
     d_ptr(new SimpleRawDataSourcePrivate(this))
 {
     exposeDeviceInterface();
 }
 
-/*!
- * Destroy this SimpleRawDataSource.
- */
-SimpleRawDataSource::~SimpleRawDataSource()
-{
-    delete d_ptr;
-}
+SimpleRawDataSource::~SimpleRawDataSource() { }
 
 /*!
  * Get device configuration values that had been saved to the data file.

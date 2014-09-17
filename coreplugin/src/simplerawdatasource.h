@@ -1,6 +1,7 @@
 #ifndef SIMPLERAWDATASOURCE_H
 #define SIMPLERAWDATASOURCE_H
 
+#include <QScopedPointer>
 #include <elapse/elements/datasource.h>
 #include <elapse/displayable.h>
 
@@ -32,7 +33,7 @@ public slots:
     void stop();
 
 private:
-    SimpleRawDataSourcePrivate * const d_ptr;
+    const QScopedPointer<SimpleRawDataSourcePrivate> d_ptr;
     Q_DECLARE_PRIVATE(SimpleRawDataSource)
 };
 

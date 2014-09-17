@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QDir>
+#include <QScopedPointer>
 #include "elementset.h"
 
 namespace elapse {
@@ -56,7 +57,7 @@ private slots:
     void loadElementsFromGuiSelection();
 
 private:
-    ManagerPrivate * const d_ptr;
+    const QScopedPointer<ManagerPrivate> d_ptr;
     Q_DECLARE_PRIVATE(Manager)
 };
 
