@@ -26,6 +26,12 @@ struct QVector3DConverter
     }
 };
 
+template<class T>
+typename T::const_ptr fromSample(elapse::data::SamplePtr sample)
+{
+    return T::dynamicCastFrom(sample);
+}
+
 
 BOOST_PYTHON_MODULE(elapse)
 {
@@ -70,24 +76,33 @@ BOOST_PYTHON_MODULE(elapse)
 
         class_<EegSample, bases<Sample>, EegSample::ptr, noncopyable>("EegSample", no_init)
             .def("__init__", make_constructor(&EegSample::create))
+            .def("fromSample", &fromSample<EegSample>)
+            .staticmethod("fromSample")
             .def_readonly("seqnum", &EegSample::seqnum)
             .def_readonly("leadOff", &EegSample::seqnum)
             .def_readonly("values", &EegSample::values);
 
         class_<VideoSample, bases<Sample>, VideoSample::ptr, noncopyable>("VideoSample", no_init)
             .def("__init__", make_constructor(&VideoSample::create))
+            .def("fromSample", &fromSample<VideoSample>)
+            .staticmethod("fromSample")
             .def_readonly("w", &VideoSample::w)
             .def_readonly("h", &VideoSample::h)
             .add_property("data", &getVideoSampleData);
 
         class_<ImuSample, bases<Sample>, ImuSample::ptr, noncopyable>("ImuSample", no_init)
             .def("__init__", make_constructor(&ImuSample::create))
+            .def("fromSample", &fromSample<ImuSample>)
+            .staticmethod("fromSample")
             .add_property("acc", make_getter(&ImuSample::acc,
                                              return_value_policy<return_by_value>()))
             .add_property("gyr", make_getter(&ImuSample::gyr,
                                              return_value_policy<return_by_value>()));
 
         register_ptr_to_python<SamplePtr>();
+        register_ptr_to_python<EegSample::const_ptr>();
+        register_ptr_to_python<VideoSample::const_ptr>();
+        register_ptr_to_python<ImuSample::const_ptr>();
 
         implicitly_convertible<EegSample::ptr, EegSample::const_ptr>();
         implicitly_convertible<VideoSample::ptr, VideoSample::const_ptr>();
