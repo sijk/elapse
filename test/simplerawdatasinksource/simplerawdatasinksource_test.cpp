@@ -32,6 +32,7 @@ public:
     void TearDown()
     {
         ASSERT_TRUE(recursiveRmDir(dataDir));
+        clearSettings();
     }
 
     SimpleRawDataSinkNoGui dataSink;

@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QDir>
+#include <QSettings>
 #include <QxtLogger>
 
 
@@ -73,6 +74,14 @@ bool recursiveRmDir(const QString &dirname)
     }
 
     return result;
+}
+
+
+void clearSettings()
+{
+    QSettings settings;
+    for (const auto &key : settings.allKeys())
+        settings.remove(key);
 }
 
 

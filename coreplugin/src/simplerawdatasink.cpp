@@ -1,15 +1,19 @@
 #include <QDateTime>
 #include <QFileDialog>
+#include <QSettings>
 #include <QxtLogger>
 #include "simplerawdatasink.h"
 
 namespace elapse { namespace coreplugin {
+
+static const QString dataDirKey("plugins/core/simplerawdatasink/dataDir");
 
 /*!
  * Create a new SimpleRawDataSink.
  */
 SimpleRawDataSink::SimpleRawDataSink()
 {
+    dataDir = QSettings().value(dataDirKey).toString();
 }
 
 /*!
@@ -63,7 +67,12 @@ bool SimpleRawDataSink::getCaptureInfo()
 
     dataDir.setPath(dir);
     dataDir.makeAbsolute();
-    return dataDir.exists();
+    if (dataDir.exists()) {
+        QSettings().setValue(dataDirKey, dataDir.absolutePath());
+        return true;
+    }
+
+    return false;
 }
 
 // Implemented as a virtual method for testability
