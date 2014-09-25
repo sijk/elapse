@@ -56,6 +56,33 @@
     \li \ref plugins-ext
     \li \ref widgets
 
+    \section memory Memory management policies
+
+    - To express ownership of a pointer, use one of the following
+      (in order of preference):
+        - QObject parent
+            - For instances of QObject subclasses.
+        - std::unique_ptr
+            - For everything else.
+        - QScopedPointer
+            - Only for pimpl d_ptrs.
+        - std::shared_ptr
+            - If unique_ptr semantics are inappropriate.
+
+    - To express non-owning observation of a pointer, use:
+        - Raw pointer or reference
+
+    Raw pointers are always non-owning. The lifetime of the pointee must be
+    managed either by a QObject parent or by a smart pointer. Never assign
+    a heap-allocated instance to a raw pointer.
+
+    The only time that a smart pointer should be passed by value is when
+    ownership is being transferred. In general, you should pass raw pointers
+    or references.
+
+    If these rules are followed then nothing should ever need to be explicitly
+    ``delete``d.
+
     \section legal Licence Information
 
     The core Elapse application is licensed under the terms of the ...
