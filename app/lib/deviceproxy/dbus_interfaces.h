@@ -8,9 +8,11 @@
 #include "common/hardware.h"
 
 // Generated headers
-#include "elapse_interface.h"
-#include "eeg_interface.h"
-#include "imu_interface.h"
+#include "deviceinterface.h"
+#include "batteryinterface.h"
+#include "eegadcinterface.h"
+#include "eegchannelinterface.h"
+#include "imuinterface.h"
 
 
 namespace elapse { namespace client {

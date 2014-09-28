@@ -2,3 +2,4 @@
 *.autosave
 doc/html
 *.pyc
+build*/
