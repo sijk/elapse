@@ -11,7 +11,7 @@ function(add_elapse_plugin)
     endif()
 
     add_library(${PLUGIN_NAME} MODULE ${PLUGIN_HEADER} ${PLUGIN_SOURCES})
-    target_link_libraries(${PLUGIN_NAME} elapse::elapseplugin ${PLUGIN_LIBRARIES})
+    target_link_libraries(${PLUGIN_NAME} elapse::elements ${PLUGIN_LIBRARIES})
     set_target_properties(${PLUGIN_NAME} PROPERTIES
         AUTOMOC ON
         COMPILE_DEFINITIONS QT_PLUGIN

@@ -1,4 +1,4 @@
 add_elapse_test(
     SOURCES     simpleeegfeatex_test.cpp
-    LIBRARIES   elapseplugin
+    LIBRARIES   elements
 )

@@ -7,6 +7,6 @@ add_custom_target(copy_py_test_plugin
 add_elapse_test(
     SOURCES     runner.cpp
     LIBRARIES   pluginmanager
-                elapseplugin
+                elements
     DEPENDS     copy_py_test_plugin
 )

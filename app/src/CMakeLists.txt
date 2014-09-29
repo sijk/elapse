@@ -31,7 +31,7 @@ target_link_libraries(elapse
     pipeline
     pluginmanager
     loggerwidget
-    elapseplugin
+    elements
 )
 
 install(

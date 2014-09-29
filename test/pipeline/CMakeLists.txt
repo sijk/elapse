@@ -1,6 +1,6 @@
 add_elapse_test(
     SOURCES     pipeline_test.cpp
     LIBRARIES   pipeline
-                elapseplugin
+                elements
     COMPILE_OPTIONS -Wno-unused-variable
 )

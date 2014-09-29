@@ -3,6 +3,6 @@ add_elapse_test(
                 nativehost_test.cpp
                 pythonhost_test.cpp
     LIBRARIES   pluginmanager
-                elapseplugin
+                elements
     DEPENDS     test_plugins
 )
