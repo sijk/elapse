@@ -44,3 +44,9 @@ target_link_libraries(coreplugin
 target_compile_definitions(coreplugin PRIVATE QT_STATICPLUGIN QT_PLUGIN)
 
 set_target_properties(coreplugin PROPERTIES AUTOMOC TRUE)
+
+# Ignore -pedantic warnings from within QtGStreamer
+set_source_files_properties(
+    videodecoder.cpp util/gstwrappedbuffer.cpp
+    PROPERTIES COMPILE_FLAGS -Wno-pedantic
+)

@@ -60,7 +60,6 @@ private slots:
     void stop();
 
 private:
-    void connectSaveActions();
     void addDockWidgetFrom(QObject *object);
     bool dockWidgetsVisible() const;
     void setDockWidgetsVisible(bool visible);

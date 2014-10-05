@@ -214,7 +214,7 @@ void EegDecoder::onData(QByteArray data)
 {
     Q_D(EegDecoder);
     BigEndian24 be24;
-    quint32 status;
+    qint32 status;
     QDataStream stream(data);
     stream.setByteOrder(QDataStream::LittleEndian);
 

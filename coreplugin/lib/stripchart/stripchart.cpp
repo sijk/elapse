@@ -103,7 +103,7 @@ void StripChart::createStrips()
  */
 void StripChart::appendData(const std::vector<double> &data)
 {
-    Q_ASSERT(uint(data.size()) == _nStrips);
+    Q_ASSERT(data.size() == _nStrips);
 
     for (size_t i = 0; i < data.size(); i++) {
         ydata[i].pop_front();

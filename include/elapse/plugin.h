@@ -85,12 +85,12 @@ Q_DECLARE_INTERFACE(elapse::plugin::Interface, ElapsePluginInterface_iid)
 
 /*!
  * Implement elapse::plugin::Interface::classes(), returning the
- * staticMetaObjects of the given \a Classes.
+ * staticMetaObjects of the given classes.
  * \ingroup plugins-ext
  */
-#define ELAPSE_EXPORT_CLASSES(Classes...) \
+#define ELAPSE_EXPORT_CLASSES(...) \
     ClassList classes() { \
-        return elapse::plugin::detail::MetaObjects<Classes>::get(); \
+        return elapse::plugin::detail::MetaObjects<__VA_ARGS__>::get(); \
     }
 
 #endif // PLUGIN_H

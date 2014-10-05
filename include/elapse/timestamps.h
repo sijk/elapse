@@ -90,9 +90,9 @@ class Series : public std::map<time::Point, T>
 {
 public:
     /*!
-     * Remove all values which have time::Point%s less than the given \a time.
+     * Remove all values from time::Point%s earlier than the given \a time.
      *
-     * Relies on the fact that std::maps are sorted by their keys.
+     * Relies on the fact that std::map%s are sorted by their keys.
      */
     void removeValuesBefore(time::Point time)
     {

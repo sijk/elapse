@@ -18,21 +18,23 @@
 #include "util/gstwrappedbuffer.h"
 #include "videodecoder.h"
 
+namespace {
+
+const char SRC_CAPS[] = R"-(
+    application/x-rtp, media=(string)video,
+    clock-rate=(int)90000, encoding-name=(string)H264,
+    sprop-parameter-sets=(string)"Z0KAHukFD5CAAAH0AAB1MAIA\,aM48gAA\=",
+    payload=(int)96
+)-";
+
+const char PIPELINE[] = R"(
+    appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 !
+    ffdec_h264 ! videoflip method=upper-right-diagonal !
+    tee name=t  ! queue ! appsink name=appsink
+             t. ! queue ! xvimagesink name=displaysink sync=false
+)";
+
 using elapse::data::VideoSample;
-
-
-#define SRC_CAPS \
-    "application/x-rtp, media=(string)video, "\
-    "clock-rate=(int)90000, encoding-name=(string)H264, "\
-    "sprop-parameter-sets=(string)\"Z0KAHukFD5CAAAH0AAB1MAIA\\,aM48gAA\\=\", "\
-    "payload=(int)96"
-
-#define PIPELINE \
-    "appsrc name=src ! rtph264depay ! video/x-h264,framerate=60/1 ! " \
-    "ffdec_h264 ! videoflip method=upper-right-diagonal ! " \
-    "tee name=t  ! queue ! appsink name=appsink " \
-             "t. ! queue ! xvimagesink name=displaysink sync=false"
-
 
 /*!
  * \brief The GstVideoSample struct makes a QGst::Buffer look like a
@@ -85,6 +87,7 @@ signals:
     void bufferReady();
 };
 
+} // namespace
 
 namespace elapse { namespace coreplugin {
 
