@@ -1,0 +1,5 @@
+add_subdirectory(elements)
+add_subdirectory(deviceproxy)
+add_subdirectory(pipeline)
+add_subdirectory(pluginmanager)
+add_subdirectory(loggerwidget)

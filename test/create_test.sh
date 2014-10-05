@@ -30,14 +30,14 @@ fi
 cp -r template "$testlower"
 cd "$testlower"
 
-for f in template.pro template_test.cpp
+for f in CMakeLists.txt template_test.cpp
 do
     sed -i "s/template/$testlower/g" "$f"
     sed -i "s/Template/$testname/g" "$f"
-    mv "$f" $(echo "$f" | sed "s/template/$testlower/")
 done
+
+mv "template_test.cpp" "${testlower}_test.cpp"
 
 cd ..
 
-echo "SUBDIRS += $testlower" >> test.pro
-
+echo "add_subdirectory($testlower)" >> CMakeLists.txt
