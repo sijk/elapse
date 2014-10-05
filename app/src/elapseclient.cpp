@@ -283,6 +283,7 @@ void ElapseClient::createDefaultHardwareConfig()
     setDefault("eeg/all-channels/enabled", true);
     setDefault("eeg/all-channels/gain", hardware::EegChannel::x24);
     setDefault("eeg/all-channels/inputMux", hardware::EegChannel::Normal);
+    setDefault("imu/sampleRate", 10);
 
     settings.endGroup();
 }
