@@ -1,12 +1,14 @@
 #include <QCoreApplication>
 #include <QxtLogger>
+#include <boost/python.hpp>
 #include "bindings/elapse.h"
 #include "exception.h"
 #include "host.h"
 
-namespace elapse { namespace plugin { namespace python {
+namespace py = boost::python;
 
-using data::Signal;
+namespace {
+
 
 /*!
  * A cache to keep a reference to boost::python::object%s, keyed by their
@@ -15,6 +17,21 @@ using data::Signal;
  * removeInstance() removes the python object from this cache.
  */
 QMap<QObject*, py::object> instances;
+
+}
+
+namespace elapse { namespace plugin { namespace python {
+
+using data::Signal;
+
+/*!
+ * Add the python \a instance corresponding to the given \a obj to the
+ * internal cache.
+ */
+void storeInstance(QObject *obj, py::object instance)
+{
+    instances[obj] = instance;
+}
 
 /*!
  * Remove the python object corresponding to the given \a obj from the
@@ -30,16 +47,13 @@ void removeInstance(QObject *obj)
  */
 void initPython()
 {
-    static bool initialized = false;
-    if (initialized) return;
-    initialized = true;
+    if (Py_IsInitialized())
+        return;
 
     static QByteArray appName = qApp->applicationName().toLatin1();
     Py_SetProgramName(appName.data());
+    PyImport_AppendInittab("elapse", &initelapse);
     Py_Initialize();
-
-    // Export our wrappers to python
-    initelapse();
 }
 
 /*!

@@ -59,7 +59,7 @@ QObject *PythonHost::instantiateClass(const PluginInfo &plugin,
         auto classes = python::getClasses(dir.dirName());
         boost::python::object pyobj = classes[cls.className]();
         obj = python::extractQObject(pyobj, cls.elementClass);
-        python::instances[obj] = pyobj;
+        python::storeInstance(obj, pyobj);
     } catch (const boost::python::error_already_set&) {
         python::logException();
         return nullptr;
