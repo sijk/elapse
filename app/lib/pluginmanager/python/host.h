@@ -23,6 +23,8 @@ void initPython();
 
 void addParentToPythonPath(QDir dir);
 
+void registerClass(object cls);
+
 QMap<QString, object> getClasses(const QString &moduleName);
 
 QString baseClassName(object cls);

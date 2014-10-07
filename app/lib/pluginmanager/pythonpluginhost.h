@@ -9,8 +9,8 @@ namespace elapse { namespace plugin {
  * \brief The PythonHost class loads plugins implemented in Python.
  *
  * The PythonHost internally launches a Python interpreter which is used
- * to load Python packages. A plugin is a Python package containing a list of
- * class objects called `classes`.
+ * to load Python plugins. A plugin is a Python package containing one or
+ * more subclasses of elapse::elements decorated with `@elapse.export`.
  *
  * \note Python plugins must be packages, not modules — i.e.
  * \c "foo/__init__.py" not \c "foo.py".

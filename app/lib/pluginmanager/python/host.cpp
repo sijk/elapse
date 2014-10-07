@@ -9,6 +9,11 @@ namespace py = boost::python;
 
 namespace {
 
+/*!
+ * A list of classes exported by modules, keyed by the module name and
+ * class name.
+ */
+QMap<QString, QMap<QString, py::object>> classRegistry;
 
 /*!
  * A cache to keep a reference to boost::python::object%s, keyed by their
@@ -70,25 +75,31 @@ void addParentToPythonPath(QDir dir)
 }
 
 /*!
+ * Called from python as a class decorator. Stores the given \a cls in the
+ * internal class registry keyed by its module name and class name.
+ */
+void registerClass(py::object cls)
+{
+    QString moduleName(py::extract<const char*>(cls.attr("__module__")));
+    QString className(py::extract<const char*>(cls.attr("__name__")));
+
+    // If the class is defined in a submodule, store only the top-level module
+    moduleName = moduleName.left(moduleName.indexOf('.'));
+
+    // TODO: check cls is a valid element class
+    classRegistry[moduleName][className] = cls;
+}
+
+/*!
  * Load the python module with the given \a moduleName and get the list of
  * elapse::elements classes that it exports.
  * \return a mapping from class names to python class objects.
+ * \see registerClass
  */
 QMap<QString, py::object> getClasses(const QString &moduleName)
 {
-    QMap<QString, py::object> classes;
-
-    py::object module = py::import(qPrintable(moduleName));
-    py::list classList = py::extract<py::list>(module.attr("classes"));
-    const uint nClasses = py::len(classList);
-    for (uint i = 0; i < nClasses; i++) {
-        py::object cls = classList[i];
-        // typecheck
-        auto className = py::extract<const char*>(cls.attr("__name__"))();
-        classes[className] = cls;
-    }
-
-    return classes;
+    py::object module = py::import(moduleName.toLatin1().constData());
+    return classRegistry[moduleName];
 }
 
 /*!

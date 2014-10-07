@@ -6,6 +6,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include "elapse/datatypes.h"
+#include "python/host.h"
 #include "elements.h"
 #include "log.h"
 #include "settings.h"
@@ -46,6 +47,8 @@ BOOST_PYTHON_MODULE(elapse)
     export_log();
     export_settings();
     export_gui();
+
+    def("export", &elapse::plugin::python::registerClass);
 
     {
         object data(handle<>(borrowed(PyImport_AddModule("elapse.data"))));
