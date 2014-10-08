@@ -43,7 +43,7 @@ public slots:
 
 signals:
     /*! Emitted when a complete window has been analysed. */
-    void newFeatures(elapse::data::FeatureVector features);
+    void newFeatures(elapse::data::FeatureVector::const_ptr features);
 };
 
 

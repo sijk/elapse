@@ -71,7 +71,7 @@ public:
 struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
                                   py::wrapper<BaseFeatureExtractorPublic>
 {
-    void analyseSample(elapse::data::SamplePtr sample) {
+    void analyseSample(elapse::data::SamplePtr sample) override {
         PYCATCH(this->get_override("analyseSample")(sample));
     }
     std::vector<double> features() {
@@ -109,7 +109,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
 struct ClassifierWrap : Classifier,
                         py::wrapper<Classifier>
 {
-    void onFeatures(elapse::data::FeatureVector features) {
+    void onFeatures(elapse::data::FeatureVector::const_ptr features) {
         PYCATCH(this->get_override("onFeatures")(features));
     }
     void reset() {
@@ -123,21 +123,28 @@ class BaseClassifierPublic : public BaseClassifier
     // by python classes.
 public:
     using BaseClassifier::classify;
+    virtual py::list pyclassify(py::tuple featureVectors) = 0;
 };
 
 struct BaseClassifierWrap : BaseClassifierPublic,
                             py::wrapper<BaseClassifierPublic>
 {
-    elapse::data::CognitiveState classify(QList<elapse::data::FeatureVector> featureVectors) {
-        PYCATCH_RETURN(this->get_override("classify")(featureVectors),
-                       elapse::data::CognitiveState(0));
+    std::vector<double> classify(const FeatureSet &featureVectors) final {
+        py::list state;
+        py::tuple pyVectors(featureVectors);
+        PYCATCH(state = this->pyclassify(pyVectors));
+        py::stl_input_iterator<double> begin(state), end;
+        return std::vector<double>(begin, end);
+    }
+    virtual py::list pyclassify(py::tuple featureVectors) override {
+        PYCATCH_RETURN(this->get_override("classify")(featureVectors), {});
     }
 };
 
 struct OutputActionWrap : OutputAction,
                           py::wrapper<OutputAction>
 {
-    void onState(elapse::data::CognitiveState state) {
+    void onState(elapse::data::CognitiveState::const_ptr state) {
         PYCATCH(this->get_override("onState")(state));
     }
 };
@@ -192,20 +199,20 @@ struct DataSinkWrap : DataSinkPublic,
     void default_saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
         PYCATCH(this->DataSinkPublic::saveSample(signalType, sample));
     }
-    void saveFeatureVector(elapse::data::FeatureVector featureVector) {
+    void saveFeatureVector(elapse::data::FeatureVector::const_ptr featureVector) {
         if (py::override fn = this->get_override("saveFeatureVector"))
             PYCATCH(fn(featureVector));
         DataSinkPublic::saveFeatureVector(featureVector);
     }
-    void default_saveFeatureVector(elapse::data::FeatureVector featureVector) {
+    void default_saveFeatureVector(elapse::data::FeatureVector::const_ptr featureVector) {
         PYCATCH(this->DataSinkPublic::saveFeatureVector(featureVector));
     }
-    void saveCognitiveState(elapse::data::CognitiveState state) {
+    void saveCognitiveState(elapse::data::CognitiveState::const_ptr state) {
         if (py::override fn = this->get_override("saveCognitiveState"))
             PYCATCH(fn(state));
         DataSinkPublic::saveCognitiveState(state);
     }
-    void default_saveCognitiveState(elapse::data::CognitiveState state) {
+    void default_saveCognitiveState(elapse::data::CognitiveState::const_ptr state) {
         PYCATCH(this->DataSinkPublic::saveCognitiveState(state));
     }
 };
@@ -261,7 +268,7 @@ void export_elements()
 
     class_<BaseClassifierWrap, bases<Classifier>,
             boost::noncopyable>("BaseClassifier")
-        .def("classify", pure_virtual(&BaseClassifierPublic::classify));
+        .def("classify", pure_virtual(&BaseClassifierPublic::pyclassify));
 
     class_<OutputActionWrap, boost::noncopyable>("OutputAction")
         .def("onState", pure_virtual(&OutputAction::onState));

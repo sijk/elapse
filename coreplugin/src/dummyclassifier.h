@@ -18,7 +18,7 @@ public:
     Q_INVOKABLE DummyClassifier();
 
 protected:
-    data::CognitiveState classify(QList<data::FeatureVector> featureVectors);
+    std::vector<double> classify(const FeatureSet &featureVectors) override;
 };
 
 }} // namespace elapse::coreplugin

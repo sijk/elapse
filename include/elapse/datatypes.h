@@ -51,7 +51,7 @@ public:
     static Type fromString(const char *type)
     { return Type(typeEnum().keyToValue(type)); }
 
-    static int count()
+    static uint count()
     { return typeEnum().keyCount() - 1; }
 
 private:
@@ -294,6 +294,9 @@ struct FeatureVector
 
     FeatureVector(Signal::Type signalType, time::Point startTime) :
         signalType(signalType), startTime(startTime) {}
+
+    using ptr = std::shared_ptr<FeatureVector>;
+    using const_ptr = std::shared_ptr<const FeatureVector>;
 };
 
 
@@ -326,6 +329,9 @@ struct CognitiveState
     std::vector<double> state;
 
     CognitiveState(time::Point startTime) : startTime(startTime) {}
+
+    using ptr = std::shared_ptr<CognitiveState>;
+    using const_ptr = std::shared_ptr<const CognitiveState>;
 };
 
 }} // namespace elapse::data

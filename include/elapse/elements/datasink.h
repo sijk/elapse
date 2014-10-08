@@ -36,8 +36,8 @@ public slots:
     void onEegSample(elapse::data::SamplePtr sample);
     void onVideoSample(elapse::data::SamplePtr sample);
     void onImuSample(elapse::data::SamplePtr sample);
-    void onFeatureVector(elapse::data::FeatureVector featureVector);
-    void onCognitiveState(elapse::data::CognitiveState state);
+    void onFeatureVector(elapse::data::FeatureVector::const_ptr featureVector);
+    void onCognitiveState(elapse::data::CognitiveState::const_ptr state);
 
     /*!
      * Allow the user to set any metadata about the data that will be captured
@@ -95,12 +95,12 @@ protected:
      * Derived classes may inspect FeatureVector::signalType to find the
      * type of the signal from which the \a featureVector was extracted.
      */
-    virtual void saveFeatureVector(data::FeatureVector featureVector);
+    virtual void saveFeatureVector(data::FeatureVector::const_ptr featureVector);
 
     /*!
      * Called when there is a new cognitive \a state to be saved.
      */
-    virtual void saveCognitiveState(data::CognitiveState state);
+    virtual void saveCognitiveState(data::CognitiveState::const_ptr state);
 
 public:
     /*!

@@ -3,54 +3,61 @@
 #include "elapse/timestamps.h"
 #include "elapse/elements/classifier.h"
 
-using elapse::data::Signal;
+namespace elapse { namespace elements {
 
-
-void elapse::elements::BaseClassifier::onFeatures(elapse::data::FeatureVector featVect)
+void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
 {
-    Q_ASSERT(featVect.startTime > 0);
+    const time::Point timestamp = featVect->startTime;
+    Q_ASSERT(timestamp > 0);
 
     // Ensure we're not adding a FeatureVector to a feature set that was
     // previously removed for being incomplete
     auto firstSet = timestampedFeatureSets.cbegin();
     auto lastSet = timestampedFeatureSets.cend();
     Q_ASSERT((firstSet != lastSet)
-             ? (featVect.startTime >= firstSet->first)
+             ? (timestamp >= firstSet->first)
              : true);
 
     // Add the current feature vector to the queue
-    FeatureSet &featureSet = timestampedFeatureSets[featVect.startTime];
-    Q_ASSERT(!featureSet.contains(featVect.signalType));
-    featureSet.insert(featVect.signalType, featVect);
+    FeatureSet &featureSet = timestampedFeatureSets[timestamp];
+    Q_ASSERT(std::none_of(featureSet.cbegin(), featureSet.cend(),
+             [&](const data::FeatureVector::const_ptr &existing){
+                 return featVect->signalType == existing->signalType;
+             }));
+    featureSet.insert(featVect);
 
     // If we have a complete set of feature vectors for this time point...
-    if (featureSet.size() == Signal::count()) {
+    if (featureSet.size() == data::Signal::count()) {
         // If there are incomplete feature sets from windows earlier
         // than the current one, assume they'll remain forever incomplete
         // and remove them.
         // TODO: figure out how this happens...
         auto first = timestampedFeatureSets.begin();
-        auto current = timestampedFeatureSets.find(featVect.startTime);
+        auto current = timestampedFeatureSets.find(timestamp);
         if (first != current) {
             qxtLog->debug() << "Removing" << (int)std::distance(first, current)
                             << "incomplete feature sets before complete set at"
-                            << elapse::time::format(current->first);
+                            << time::format(current->first);
 
             while (first != current)
                 first = timestampedFeatureSets.erase(first);
         }
 
         // Analyse the feature set
-        emit newState(classify(featureSet.values()));
-        timestampedFeatureSets.erase(featVect.startTime);
+        auto cognitiveState = std::make_shared<data::CognitiveState>(timestamp);
+        cognitiveState->state = classify(featureSet);
+        emit newState(cognitiveState);
+        timestampedFeatureSets.erase(timestamp);
 
         qxtLog->debug() << (uint)timestampedFeatureSets.size()
                         << "partial feature sets pending";
     }
 }
 
-void elapse::elements::BaseClassifier::reset()
+void BaseClassifier::reset()
 {
     timestampedFeatureSets.clear();
 }
+
+}} // namespace elapse::elements
 

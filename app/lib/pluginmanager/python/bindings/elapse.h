@@ -115,15 +115,22 @@ BOOST_PYTHON_MODULE(elapse)
         implicitly_convertible<VideoSample::const_ptr, SamplePtr>();
         implicitly_convertible<ImuSample::const_ptr, SamplePtr>();
 
-        class_<FeatureVector>("FeatureVector",
-                              init<Signal::Type, elapse::time::Point>())
+        class_<FeatureVector, FeatureVector::ptr>("FeatureVector",
+            init<Signal::Type, elapse::time::Point>())
             .def_readonly("signalType", &FeatureVector::signalType)
             .def_readonly("startTime", &FeatureVector::startTime)
             .def_readonly("features", &FeatureVector::features);
 
-        class_<CognitiveState>("CognitiveState", init<elapse::time::Point>())
+        register_ptr_to_python<FeatureVector::const_ptr>();
+        implicitly_convertible<FeatureVector::ptr, FeatureVector::const_ptr>();
+
+        class_<CognitiveState, CognitiveState::ptr>("CognitiveState",
+            init<elapse::time::Point>())
             .def_readonly("startTime", &CognitiveState::startTime)
             .def_readonly("state", &CognitiveState::state);
+
+        register_ptr_to_python<CognitiveState::const_ptr>();
+        implicitly_convertible<CognitiveState::ptr, CognitiveState::const_ptr>();
     }
 
     // ---

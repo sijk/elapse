@@ -24,12 +24,9 @@ class OutputAction : public QObject
 
 public slots:
     /*!
-     * Called when \a features are available for classification. This slot will
-     * be called by each FeatureExtractor, and it is the responsibility of
-     * OutputAction subclasses to match up and process the corresponding
-     * FeatureVector%s.
+     * Take some action based on the user's cognitive \a state.
      */
-    virtual void onState(elapse::data::CognitiveState state) = 0;
+    virtual void onState(elapse::data::CognitiveState::const_ptr state) = 0;
 };
 
 }} // namespace elapse::elements
