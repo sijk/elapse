@@ -67,7 +67,7 @@ void initPython()
 void addParentToPythonPath(QDir dir)
 {
     dir.cdUp();
-    const char *path = qPrintable(dir.absolutePath());
+    auto path = py::str(dir.absolutePath().toStdString());
 
     py::list sys_path = py::extract<py::list>(py::import("sys").attr("path"));
     if (!sys_path.contains(path))
@@ -98,7 +98,7 @@ void registerClass(py::object cls)
  */
 QMap<QString, py::object> getClasses(const QString &moduleName)
 {
-    py::object module = py::import(moduleName.toLatin1().constData());
+    py::object module = py::import(py::str(moduleName.toStdString()));
     return classRegistry[moduleName];
 }
 
