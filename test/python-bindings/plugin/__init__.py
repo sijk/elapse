@@ -7,9 +7,6 @@ except ImportError:
     def flexmock_teardown(): pass
 
 
-# The list of test classes is automatically populated by the test decorator
-classes = []
-
 def test(fn):
     '''
     A decorator which creates an elapse element class whose constructor
@@ -38,7 +35,7 @@ def test(fn):
 
     # Name the class according to the name of the function
     testClass = type('test_' + fn.__name__, (Test,), {})
-    classes.append(testClass)
+    elapse.export(testClass)
     return testClass
 
 

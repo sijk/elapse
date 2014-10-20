@@ -87,8 +87,9 @@ void BaseFeatureExtractor::onSample(SamplePtr sample)
     } while (sample->timestamp >= nextWindowEnd);
 
     if (sample->timestamp >= windowEnd) {
-        FeatureVector featureVector(d->signalType, d->windowStart);
-        featureVector.features = features();
+        auto featureVector = std::make_shared<FeatureVector>(d->signalType,
+                                                             d->windowStart);
+        featureVector->features = features();
         emit newFeatures(featureVector);
 
         removeDataBefore(nextWindowStart);

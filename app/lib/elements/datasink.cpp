@@ -84,7 +84,7 @@ void DataSink::onImuSample(SamplePtr sample)
  * Called when a FeatureExtractor emits a \a featureVector. Calls
  * saveFeatureVector().
  */
-void DataSink::onFeatureVector(FeatureVector featureVector)
+void DataSink::onFeatureVector(FeatureVector::const_ptr featureVector)
 {
     saveFeatureVector(featureVector);
 }
@@ -93,7 +93,7 @@ void DataSink::onFeatureVector(FeatureVector featureVector)
  * Called when the Classifier emits a new cognitive \a state. Calls
  * saveCognitiveState().
  */
-void DataSink::onCognitiveState(CognitiveState state)
+void DataSink::onCognitiveState(CognitiveState::const_ptr state)
 {
     saveCognitiveState(state);
 }
@@ -124,7 +124,7 @@ void DataSink::saveSample(Signal::Type signalType, SamplePtr sample)
     }
 }
 
-void DataSink::saveFeatureVector(FeatureVector featureVector)
+void DataSink::saveFeatureVector(FeatureVector::const_ptr featureVector)
 {
     Q_UNUSED(featureVector);
 
@@ -136,7 +136,7 @@ void DataSink::saveFeatureVector(FeatureVector featureVector)
     }
 }
 
-void DataSink::saveCognitiveState(CognitiveState state)
+void DataSink::saveCognitiveState(CognitiveState::const_ptr state)
 {
     Q_UNUSED(state);
 

@@ -1,12 +1,19 @@
 #include <QCoreApplication>
 #include <QxtLogger>
+#include <boost/python.hpp>
 #include "bindings/elapse.h"
 #include "exception.h"
 #include "host.h"
 
-namespace elapse { namespace plugin { namespace python {
+namespace py = boost::python;
 
-using data::Signal;
+namespace {
+
+/*!
+ * A list of classes exported by modules, keyed by the module name and
+ * class name.
+ */
+QMap<QString, QMap<QString, py::object>> classRegistry;
 
 /*!
  * A cache to keep a reference to boost::python::object%s, keyed by their
@@ -15,6 +22,21 @@ using data::Signal;
  * removeInstance() removes the python object from this cache.
  */
 QMap<QObject*, py::object> instances;
+
+}
+
+namespace elapse { namespace plugin { namespace python {
+
+using data::Signal;
+
+/*!
+ * Add the python \a instance corresponding to the given \a obj to the
+ * internal cache.
+ */
+void storeInstance(QObject *obj, py::object instance)
+{
+    instances[obj] = instance;
+}
 
 /*!
  * Remove the python object corresponding to the given \a obj from the
@@ -30,16 +52,13 @@ void removeInstance(QObject *obj)
  */
 void initPython()
 {
-    static bool initialized = false;
-    if (initialized) return;
-    initialized = true;
+    if (Py_IsInitialized())
+        return;
 
     static QByteArray appName = qApp->applicationName().toLatin1();
     Py_SetProgramName(appName.data());
+    PyImport_AppendInittab("elapse", &initelapse);
     Py_Initialize();
-
-    // Export our wrappers to python
-    initelapse();
 }
 
 /*!
@@ -48,7 +67,7 @@ void initPython()
 void addParentToPythonPath(QDir dir)
 {
     dir.cdUp();
-    const char *path = qPrintable(dir.absolutePath());
+    auto path = py::str(dir.absolutePath().toStdString());
 
     py::list sys_path = py::extract<py::list>(py::import("sys").attr("path"));
     if (!sys_path.contains(path))
@@ -56,25 +75,31 @@ void addParentToPythonPath(QDir dir)
 }
 
 /*!
+ * Called from python as a class decorator. Stores the given \a cls in the
+ * internal class registry keyed by its module name and class name.
+ */
+void registerClass(py::object cls)
+{
+    QString moduleName(py::extract<const char*>(cls.attr("__module__")));
+    QString className(py::extract<const char*>(cls.attr("__name__")));
+
+    // If the class is defined in a submodule, store only the top-level module
+    moduleName = moduleName.left(moduleName.indexOf('.'));
+
+    // TODO: check cls is a valid element class
+    classRegistry[moduleName][className] = cls;
+}
+
+/*!
  * Load the python module with the given \a moduleName and get the list of
  * elapse::elements classes that it exports.
  * \return a mapping from class names to python class objects.
+ * \see registerClass
  */
 QMap<QString, py::object> getClasses(const QString &moduleName)
 {
-    QMap<QString, py::object> classes;
-
-    py::object module = py::import(qPrintable(moduleName));
-    py::list classList = py::extract<py::list>(module.attr("classes"));
-    const uint nClasses = py::len(classList);
-    for (uint i = 0; i < nClasses; i++) {
-        py::object cls = classList[i];
-        // typecheck
-        auto className = py::extract<const char*>(cls.attr("__name__"))();
-        classes[className] = cls;
-    }
-
-    return classes;
+    py::object module = py::import(py::str(moduleName.toStdString()));
+    return classRegistry[moduleName];
 }
 
 /*!

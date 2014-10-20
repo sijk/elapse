@@ -139,15 +139,15 @@ void Pipeline::setElements(elements::ElementSetPtr newElements)
     connect(_elements->sampleDecoder(Signal::IMU), SIGNAL(newSample(elapse::data::SamplePtr)),
             _elements->featureExtractor(Signal::IMU), SLOT(onSample(elapse::data::SamplePtr)));
 
-    connect(_elements->featureExtractor(Signal::EEG), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractor(Signal::VIDEO), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractor(Signal::IMU), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector)));
+    connect(_elements->featureExtractor(Signal::EEG), SIGNAL(newFeatures(elapse::data::FeatureVector::const_ptr)),
+            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector::const_ptr)));
+    connect(_elements->featureExtractor(Signal::VIDEO), SIGNAL(newFeatures(elapse::data::FeatureVector::const_ptr)),
+            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector::const_ptr)));
+    connect(_elements->featureExtractor(Signal::IMU), SIGNAL(newFeatures(elapse::data::FeatureVector::const_ptr)),
+            _elements->classifier(), SLOT(onFeatures(elapse::data::FeatureVector::const_ptr)));
 
-    connect(_elements->classifier(), SIGNAL(newState(elapse::data::CognitiveState)),
-            _elements->action(), SLOT(onState(elapse::data::CognitiveState)));
+    connect(_elements->classifier(), SIGNAL(newState(elapse::data::CognitiveState::const_ptr)),
+            _elements->action(), SLOT(onState(elapse::data::CognitiveState::const_ptr)));
 
     // Propagate signals from elements
     connect(_elements->dataSource(), SIGNAL(started()), SIGNAL(started()));
@@ -169,14 +169,14 @@ void Pipeline::setElements(elements::ElementSetPtr newElements)
             _elements->dataSink(), SLOT(onVideoSample(elapse::data::SamplePtr)));
     connect(_elements->sampleDecoder(Signal::IMU), SIGNAL(newSample(elapse::data::SamplePtr)),
             _elements->dataSink(), SLOT(onImuSample(elapse::data::SamplePtr)));
-    connect(_elements->featureExtractor(Signal::EEG), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractor(Signal::VIDEO), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
-    connect(_elements->featureExtractor(Signal::IMU), SIGNAL(newFeatures(elapse::data::FeatureVector)),
-            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector)));
-    connect(_elements->classifier(), SIGNAL(newState(elapse::data::CognitiveState)),
-            _elements->dataSink(), SLOT(onCognitiveState(elapse::data::CognitiveState)));
+    connect(_elements->featureExtractor(Signal::EEG), SIGNAL(newFeatures(elapse::data::FeatureVector::const_ptr)),
+            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector::const_ptr)));
+    connect(_elements->featureExtractor(Signal::VIDEO), SIGNAL(newFeatures(elapse::data::FeatureVector::const_ptr)),
+            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector::const_ptr)));
+    connect(_elements->featureExtractor(Signal::IMU), SIGNAL(newFeatures(elapse::data::FeatureVector::const_ptr)),
+            _elements->dataSink(), SLOT(onFeatureVector(elapse::data::FeatureVector::const_ptr)));
+    connect(_elements->classifier(), SIGNAL(newState(elapse::data::CognitiveState::const_ptr)),
+            _elements->dataSink(), SLOT(onCognitiveState(elapse::data::CognitiveState::const_ptr)));
 
     // Watch for first sample to set start time
     connect(_elements->sampleDecoder(Signal::EEG), SIGNAL(newSample(elapse::data::SamplePtr)),

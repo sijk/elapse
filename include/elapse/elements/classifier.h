@@ -2,6 +2,7 @@
 #define CLASSIFIER_H
 
 #include <QObject>
+#include <set>
 #include "elapse/datatypes.h"
 #include "elapse/timestamps.h"
 
@@ -30,7 +31,7 @@ public slots:
      * Classifier subclasses to match up and process the corresponding
      * FeatureVector%s.
      */
-    virtual void onFeatures(elapse::data::FeatureVector features) = 0;
+    virtual void onFeatures(elapse::data::FeatureVector::const_ptr features) = 0;
 
     /*!
      * Called when the pipeline starts to reset any internal state.
@@ -42,7 +43,7 @@ signals:
      * Emitted when the CognitiveState has been classified from the latest
      * set of FeatureVector%s.
      */
-    void newState(elapse::data::CognitiveState state);
+    void newState(elapse::data::CognitiveState::const_ptr state);
 };
 
 
@@ -64,18 +65,19 @@ class BaseClassifier : public Classifier
     Q_OBJECT
 
 public slots:
-    void onFeatures(elapse::data::FeatureVector featVect);
+    void onFeatures(elapse::data::FeatureVector::const_ptr featVect);
     void reset();
 
 protected:
+    using FeatureSet = std::set<data::FeatureVector::const_ptr>;
+
     /*!
      * Derived classes should implement this method to classify the user's
      * current CognitiveState given the list of \a featureVectors.
      */
-    virtual data::CognitiveState classify(QList<data::FeatureVector> featureVectors) = 0;
+    virtual std::vector<double> classify(const FeatureSet &featureVectors) = 0;
 
 private:
-    typedef QMap<data::Signal::Type, data::FeatureVector> FeatureSet;
     time::Series<FeatureSet> timestampedFeatureSets;
 };
 

@@ -3,8 +3,8 @@
 
 namespace elapse { namespace coreplugin {
 
-using elapse::data::FeatureVector;
-using elapse::data::CognitiveState;
+using data::FeatureVector;
+using data::CognitiveState;
 
 
 /*!
@@ -14,13 +14,11 @@ DummyClassifier::DummyClassifier()
 {
 }
 
-CognitiveState DummyClassifier::classify(QList<FeatureVector> featureVectors)
+std::vector<double> DummyClassifier::classify(const FeatureSet &featureVectors)
 {
+    Q_UNUSED(featureVectors);
     qxtLog->debug() << "Classify cognitive state";
-
-    CognitiveState cog(featureVectors.first().startTime);
-    cog.state = { 1.0 };
-    return cog;
+    return { 1.0 };
 }
 
 }} // namespace elapse::coreplugin

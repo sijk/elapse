@@ -178,7 +178,7 @@ class MockClassifier : public elapse::elements::BaseClassifier
 {
     Q_OBJECT
 public:
-    MOCK_METHOD1(classify, CognitiveState(QList<FeatureVector>));
+    MOCK_METHOD1(classify, std::vector<double>(const FeatureSet&));
     MOCK_METHOD0(reset, void());
 
     MockClassifier()
@@ -197,7 +197,7 @@ class MockOutputAction : public elapse::elements::OutputAction
 {
     Q_OBJECT
 public:
-    MOCK_METHOD1(onState, void(CognitiveState));
+    MOCK_METHOD1(onState, void(CognitiveState::const_ptr));
 };
 
 class MockDataSink : public elapse::elements::DataSink
@@ -211,8 +211,8 @@ public:
     MOCK_METHOD1(saveDeviceConfig, void(const QMap<QString, QVariantMap>&));
     MOCK_METHOD2(saveData, void(Signal::Type, QByteArray));
     MOCK_METHOD2(saveSample, void(Signal::Type, SamplePtr));
-    MOCK_METHOD1(saveFeatureVector, void(FeatureVector));
-    MOCK_METHOD1(saveCognitiveState, void(CognitiveState));
+    MOCK_METHOD1(saveFeatureVector, void(FeatureVector::const_ptr));
+    MOCK_METHOD1(saveCognitiveState, void(CognitiveState::const_ptr));
 
     MockDataSink()
     {
@@ -511,7 +511,7 @@ TEST_F(PipelineTest, IgnoreSamplesBeforeStartTime)
 TEST_F(PipelineTest, FeatureExtractorWindowing)
 {
     std::vector<double> features = { 1, 2, 3 };
-    CognitiveState state = { 42 };
+    auto state = std::make_shared<CognitiveState>(42);
 
     EXPECT_CALL(*dataSink, saveData(_,_)).Times(13);
     EXPECT_CALL(*dataSink, saveSample(_,_)).Times(13);
@@ -609,7 +609,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
             EXPECT_CALL(*imuFeatEx, analyseSample(_));
         }
 
-        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state->state));
         EXPECT_CALL(*action, onState(_));
 
         dataSource->emitEeg(2500_ms);
@@ -648,7 +648,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
             EXPECT_CALL(*imuFeatEx, analyseSample(_));
         }
 
-        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state->state));
         EXPECT_CALL(*action, onState(_));
 
         dataSource->emitEeg(3000_ms);
@@ -667,7 +667,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowing)
 TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
 {
     std::vector<double> features = { 1, 2, 3 };
-    CognitiveState state = { 42 };
+    auto state = std::make_shared<CognitiveState>(42);
 
     dataSink->ignoreCalls();
     QSignalSpy error(&pipeline, SIGNAL(error(QString)));
@@ -748,7 +748,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
     //  VID  xxxxxxxxxxxx
     //  IMU  xxxxxx
     {
-        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state->state));
         EXPECT_CALL(*action, onState(_));
 
         EXPECT_CALL(*vidDecoder, onData(_)).Times(81);
@@ -776,7 +776,7 @@ TEST_F(PipelineTest, FeatureExtractorWindowingWithDelay)
     //  VID  xxxxxxxxxxxx
     //  IMU  xxxxxx      x
     {
-        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state));
+        EXPECT_CALL(*classifier, classify(_)).WillOnce(Return(state->state));
         EXPECT_CALL(*action, onState(_));
 
         EXPECT_CALL(*imuDecoder, onData(_));

@@ -1,5 +1,6 @@
 import elapse
 
+@elapse.export
 class BazEegFeatEx(elapse.elements.BaseFeatureExtractor):
     signalType = elapse.data.Signal.EEG
 
