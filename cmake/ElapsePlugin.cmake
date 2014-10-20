@@ -12,6 +12,7 @@ function(add_elapse_plugin)
 
     add_library(${PLUGIN_NAME} MODULE ${PLUGIN_HEADER} ${PLUGIN_SOURCES})
     target_link_libraries(${PLUGIN_NAME} elapse::elements ${PLUGIN_LIBRARIES})
+    target_include_directories(${PLUGIN_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
     set_target_properties(${PLUGIN_NAME} PROPERTIES
         AUTOMOC ON
         COMPILE_DEFINITIONS QT_PLUGIN

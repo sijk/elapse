@@ -70,13 +70,13 @@ void DataLoader::run()
     stopped = false;
 
     int dt;
-    Signal::Type signalType;
+    int signalType;
     QByteArray data;
     bool first = true;
 
     while (!d->stream.atEnd() && !stopped)
     {
-        d->stream >> dt >> (int&)signalType >> data;
+        d->stream >> dt >> signalType >> data;
 
         if (first)
             first = false;

@@ -10,6 +10,7 @@ void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
     const time::Point timestamp = featVect->startTime;
     Q_ASSERT(timestamp > 0);
 
+#ifdef Q_DEBUG
     // Ensure we're not adding a FeatureVector to a feature set that was
     // previously removed for being incomplete
     auto firstSet = timestampedFeatureSets.cbegin();
@@ -17,6 +18,7 @@ void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
     Q_ASSERT((firstSet != lastSet)
              ? (timestamp >= firstSet->first)
              : true);
+#endif
 
     // Add the current feature vector to the queue
     FeatureSet &featureSet = timestampedFeatureSets[timestamp];
