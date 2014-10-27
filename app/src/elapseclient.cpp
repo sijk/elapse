@@ -13,7 +13,20 @@
 #include "elapseclient.h"
 #include "ui_elapseclient.h"
 
-#define DEFAULT_ADDR    "192.168.2.2"
+namespace {
+
+const char* DEFAULT_ADDR = "192.168.2.2";
+
+const char* ABOUT_TEXT = R"""(
+<h3>Elapse Client</h3>
+<p>&copy; NeuroTech, 2014</p>
+<p>
+The Elapse platform is a real-time cognitive monitoring system. This
+application, the client, receives and processes data from the Elapse device.
+</p>
+)""";
+
+} // namespace
 
 namespace elapse { namespace client {
 
@@ -48,6 +61,9 @@ ElapseClient::ElapseClient(QWidget *parent) :
     ui->autoConnect->setChecked(QSettings().value("auto-connect").toBool());
 
     addDockWidgetFrom(batteryMonitor);
+
+    connect(ui->actionAbout, &QAction::triggered,
+            [this]{ QMessageBox::about(this, "About Elapse", ABOUT_TEXT); });
 
     connect(ui->actionLogView, SIGNAL(triggered(bool)),
             logView, SLOT(setVisible(bool)));
