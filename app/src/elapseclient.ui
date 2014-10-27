@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Elapse</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../img/images.qrc">
+    <normaloff>:/img/elapse-icon.svg</normaloff>:/img/elapse-icon.svg</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -330,7 +334,9 @@
    <header>spinner.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../img/images.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionQuit</sender>
