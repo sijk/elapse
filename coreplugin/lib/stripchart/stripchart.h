@@ -2,14 +2,11 @@
 #define STRIPCHART_H
 
 #include <QWidget>
-#include <memory>
-
-class QVBoxLayout;
-class QTimer;
-class QwtPlot;
-class QwtPlotCurve;
+#include <QScopedPointer>
 
 namespace elapse { namespace widgets {
+
+class StripChartPrivate;
 
 /*!
  * \brief The StripChart class provides a generic stripchart widget for
@@ -28,10 +25,10 @@ namespace elapse { namespace widgets {
 class StripChart : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(uint nStrips MEMBER _nStrips WRITE setNStrips)
-    Q_PROPERTY(uint nSamples MEMBER _nSamples WRITE setNSamples)
-    Q_PROPERTY(double stripSpacing MEMBER _spacing WRITE setSpacing)
-    Q_PROPERTY(uint rate MEMBER _rate)
+    Q_PROPERTY(uint nStrips READ nStrips WRITE setNStrips)
+    Q_PROPERTY(uint nSamples READ nSamples WRITE setNSamples)
+    Q_PROPERTY(double stripSpacing READ spacing WRITE setSpacing)
+    Q_PROPERTY(uint rate READ rate)
 
 public:
     explicit StripChart(QWidget *parent = nullptr);
@@ -40,30 +37,21 @@ public:
 public slots:
     void appendData(const std::vector<double> &data);
 
+    uint nStrips() const;
     void setNStrips(uint n);
+
+    uint nSamples() const;
     void setNSamples(uint n);
+
+    double spacing() const;
     void setSpacing(double spacing);
     void setSpacing(int spacing) { setSpacing(double(spacing)); }
 
-private slots:
-    void redraw();
+    uint rate() const;
 
 private:
-    void createStrips();
-
-    QVBoxLayout *layout;
-    QwtPlot *plot;
-    std::vector<std::unique_ptr<QwtPlotCurve>> lines;
-    QVector<double> tdata;
-    QList<QVector<double>> ydata;
-
-    uint _nStrips;
-    uint _nSamples;
-    double _spacing;
-    uint _rate;
-
-    QTimer *timer;
-    bool needs_redraw;
+    const QScopedPointer<StripChartPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(StripChart)
 };
 
 }} // namespace elapse::widgets
