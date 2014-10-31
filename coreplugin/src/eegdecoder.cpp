@@ -2,6 +2,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QLayout>
+#include <QCheckBox>
 #include <QPointer>
 #include <QxtLogger>
 #include <elapse/datatypes.h>
@@ -31,6 +32,7 @@ public:
     QPointer<QWidget> widgetContainer;
     QSlider *spacingSlider;
     QLabel *spacingValue;
+    QCheckBox *demean;
     widgets::StripChart *stripChart;
 
     void createStripChart();
@@ -110,14 +112,22 @@ void EegDecoderPrivate::createStripChart()
     units->setText("uV");
     spacingLayout->addWidget(units);
 
+    demean = new QCheckBox(widgetContainer);
+    demean->setText("De-mean");
+    spacingLayout->addSpacing(10);
+    spacingLayout->addWidget(demean);
+
     layout->addLayout(spacingLayout);
 
     QObject::connect(spacingSlider, SIGNAL(valueChanged(int)),
                      spacingValue, SLOT(setNum(int)));
     QObject::connect(spacingSlider, SIGNAL(valueChanged(int)),
                      stripChart, SLOT(setSpacing(int)));
+    QObject::connect(demean, SIGNAL(toggled(bool)),
+                     stripChart, SLOT(setDemean(bool)));
 
     spacingSlider->setValue(6e3);
+    demean->setChecked(stripChart->demean());
 }
 
 /*!
