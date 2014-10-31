@@ -28,6 +28,7 @@ class StripChart : public QWidget
     Q_PROPERTY(uint nStrips READ nStrips WRITE setNStrips)
     Q_PROPERTY(uint nSamples READ nSamples WRITE setNSamples)
     Q_PROPERTY(double stripSpacing READ spacing WRITE setSpacing)
+    Q_PROPERTY(bool demean READ demean WRITE setDemean)
     Q_PROPERTY(uint rate READ rate)
 
 public:
@@ -46,6 +47,9 @@ public slots:
     double spacing() const;
     void setSpacing(double spacing);
     void setSpacing(int spacing) { setSpacing(double(spacing)); }
+
+    bool demean() const;
+    void setDemean(bool demean);
 
     uint rate() const;
 

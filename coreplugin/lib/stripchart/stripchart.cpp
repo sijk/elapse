@@ -1,10 +1,13 @@
 #include <memory>
+#include <numeric>
+#include <cmath>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QxtLogger>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_draw.h>
+#include <boost/circular_buffer.hpp>
 #include "stripchart.h"
 
 
@@ -52,11 +55,12 @@ public:
     QwtPlot *plot;
     std::vector<std::unique_ptr<QwtPlotCurve>> lines;
     QVector<double> tdata;
-    QList<QVector<double>> ydata;
+    std::vector<boost::circular_buffer<double>> data;
 
     uint nStrips;
     uint nSamples;
     double spacing;
+    bool demean;
     uint rate;
 
     QTimer *timer;
@@ -70,6 +74,7 @@ StripChartPrivate::StripChartPrivate(StripChart *q) :
     nStrips(1),
     nSamples(100),
     spacing(1.0),
+    demean(true),
     rate(10),
     timer(new QTimer(q))
 {
@@ -92,15 +97,14 @@ void StripChartPrivate::createStrips()
 
     // Delete any existing lines
     lines.clear();
-    ydata.clear();
+    data.clear();
 
     lines.reserve(nStrips);
     tdata.resize(nSamples);
-    ydata.reserve(nStrips);
+    data.resize(nStrips);
 
     // Create array of time data
-    for (uint i = 0; i < nSamples; i++)
-        tdata[i] = i;
+    std::iota(tdata.begin(), tdata.end(), 0);
 
     // Create `nstrips` arrays of y data and associated plot curves
     for (uint i = 0; i < nStrips; i++) {
@@ -109,9 +113,8 @@ void StripChartPrivate::createStrips()
         line.setPen(lineColours[i % lineColours.size()]);
         line.attach(plot);
 
-        QVector<double> linedata(nSamples);
-        ydata.append(linedata);
-        line.setSamples(tdata, linedata);
+        data.at(i).assign(nSamples, nSamples, NAN);
+        line.setSamples(tdata, QVector<double>(nSamples, -i*spacing));
     }
 
     // Configure plot
@@ -134,8 +137,28 @@ void StripChartPrivate::redraw()
     }
 
     // Re-plot data
-    for (uint i = 0; i < lines.size(); i++)
-        lines[i]->setSamples(tdata, ydata[i]);
+    for (uint i = 0; i < lines.size(); i++) {
+        auto &values = data.at(i);
+
+        double mean = 0;
+        if (demean) {
+            double sum = 0;
+            double count = 0;
+            for (double x : values) {
+                if (!std::isnan(x)) {
+                    sum += x;
+                    count++;
+                }
+            }
+            if (count > 0)
+                mean = sum / count;
+        }
+
+        QVector<double> ydata(nSamples);
+        std::transform(values.begin(), values.end(), ydata.begin(),
+                       [=](double x){ return x - mean - i*spacing; });
+        lines[i]->setSamples(tdata, ydata);
+    }
     plot->replot();
     needsRedraw = false;
 }
@@ -162,10 +185,8 @@ void StripChart::appendData(const std::vector<double> &data)
     Q_D(StripChart);
     Q_ASSERT(data.size() == d->nStrips);
 
-    for (size_t i = 0; i < data.size(); i++) {
-        d->ydata[i].pop_front();
-        d->ydata[i].push_back(data[i] - i * d->spacing);
-    }
+    for (size_t i = 0; i < data.size(); i++)
+        d->data.at(i).push_back(data.at(i));
 
     // Keep note that we have new data to plot
     bool first_data = !d->needsRedraw;
@@ -236,17 +257,7 @@ double StripChart::spacing() const
 void StripChart::setSpacing(double spacing)
 {
     Q_D(StripChart);
-    double delta = spacing - d->spacing;
     d->spacing = spacing;
-
-    if (delta) {
-        for (uint i = 0; i < d->nStrips; i++) {
-            for (uint t = 0; t < d->nSamples; t++) {
-                d->ydata[i][t] -= i * delta;
-            }
-            d->lines[i]->setSamples(d->tdata, d->ydata[i]);
-        }
-    }
 
     d->plot->setAxisScaleDraw(QwtPlot::yLeft, new StripChartScaleDraw(d->spacing));
     d->plot->setAxisScale(QwtPlot::yLeft,
@@ -256,6 +267,24 @@ void StripChart::setSpacing(double spacing)
 
     d->needsRedraw = true;
     d->redraw();
+}
+
+/*!
+ * Whether the data is de-meaned before plotting.
+ */
+bool StripChart::demean() const
+{
+    Q_D(const StripChart);
+    return d->demean;
+}
+
+/*!
+ * Set whether to \a demean the data before plotting.
+ */
+void StripChart::setDemean(bool demean)
+{
+    Q_D(StripChart);
+    d->demean = demean;
 }
 
 /*!
