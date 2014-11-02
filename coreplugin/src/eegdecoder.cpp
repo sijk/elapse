@@ -2,6 +2,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QLayout>
+#include <QCheckBox>
 #include <QPointer>
 #include <QxtLogger>
 #include <elapse/datatypes.h>
@@ -25,12 +26,14 @@ public:
     quint8 gain;
     uint nChannels;
 
+    quint32 prevSeqnum;
     double toMicroVolts(double value) const;
-    static void checkSequenceNumber(const EegSample &sample);
+    void checkSequenceNumber(const EegSample &sample);
 
     QPointer<QWidget> widgetContainer;
     QSlider *spacingSlider;
     QLabel *spacingValue;
+    QCheckBox *demean;
     widgets::StripChart *stripChart;
 
     void createStripChart();
@@ -41,7 +44,8 @@ public:
 EegDecoderPrivate::EegDecoderPrivate() :
     vref(0),
     gain(1),
-    nChannels(8)
+    nChannels(8),
+    prevSeqnum(0)
 {
 }
 
@@ -60,13 +64,11 @@ double EegDecoderPrivate::toMicroVolts(double reading) const
  */
 void EegDecoderPrivate::checkSequenceNumber(const EegSample &sample)
 {
-    static quint32 prev_seqnum = 0;
-
-    int dropped = sample.seqnum - prev_seqnum - 1;
+    int dropped = sample.seqnum - prevSeqnum - 1;
     if (dropped)
         qxtLog->debug(dropped, "dropped samples");
 
-    prev_seqnum = sample.seqnum;
+    prevSeqnum = sample.seqnum;
 }
 
 /*!
@@ -110,14 +112,22 @@ void EegDecoderPrivate::createStripChart()
     units->setText("uV");
     spacingLayout->addWidget(units);
 
+    demean = new QCheckBox(widgetContainer);
+    demean->setText("De-mean");
+    spacingLayout->addSpacing(10);
+    spacingLayout->addWidget(demean);
+
     layout->addLayout(spacingLayout);
 
     QObject::connect(spacingSlider, SIGNAL(valueChanged(int)),
                      spacingValue, SLOT(setNum(int)));
     QObject::connect(spacingSlider, SIGNAL(valueChanged(int)),
                      stripChart, SLOT(setSpacing(int)));
+    QObject::connect(demean, SIGNAL(toggled(bool)),
+                     stripChart, SLOT(setDemean(bool)));
 
     spacingSlider->setValue(6e3);
+    demean->setChecked(stripChart->demean());
 }
 
 /*!
@@ -146,65 +156,14 @@ EegDecoder::~EegDecoder() { }
  */
 void EegDecoder::configure(QMap<QString, QVariantMap> config)
 {
-    setNChannels(config["eeg"]["nChannels"].toUInt());
-    setVref(config["eeg"]["vref"].toDouble());
-    setGain(config["eeg/channel/0"]["gain"].toUInt());
-}
-
-/*!
- * The device's current gain setting for all channels.
- */
-quint8 EegDecoder::gain() const
-{
-    Q_D(const EegDecoder);
-    return d->gain;
-}
-
-/*!
- * Set the device's current \a gain setting for all channels.
- */
-void EegDecoder::setGain(quint8 gain)
-{
     Q_D(EegDecoder);
-    d->gain = gain;
-}
 
-/*!
- * The device's current reference voltage in microvolts.
- */
-double EegDecoder::vref() const
-{
-    Q_D(const EegDecoder);
-    return d->vref;
-}
+    d->nChannels = config["eeg"]["nChannels"].toUInt();
+    d->vref = config["eeg"]["vref"].toDouble();
+    d->gain = config["eeg/channel/0"]["gain"].toUInt();
 
-/*!
- * Set the device's current reference voltage to \a vref in microvolts.
- */
-void EegDecoder::setVref(double vref)
-{
-    Q_D(EegDecoder);
-    d->vref = vref;
-}
-
-/*!
- * The number of EEG channels that the device has.
- */
-uint EegDecoder::nChannels() const
-{
-    Q_D(const EegDecoder);
-    return d->nChannels;
-}
-
-/*!
- * Set the number of EEG channels that the device has to \a nChannels.
- */
-void EegDecoder::setNChannels(uint nChannels)
-{
-    Q_D(EegDecoder);
-    d->nChannels = nChannels;
     if (d->stripChart)
-        d->stripChart->setNStrips(nChannels);
+        d->stripChart->setNStrips(d->nChannels);
 }
 
 /*!
