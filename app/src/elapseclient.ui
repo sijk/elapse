@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Elapse</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../img/images.qrc">
+    <normaloff>:/img/elapse-icon.svg</normaloff>:/img/elapse-icon.svg</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -184,14 +188,21 @@
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menu_View">
+   <widget class="QMenu" name="menuView">
     <property name="title">
      <string>&amp;View</string>
     </property>
     <addaction name="actionLogView"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menu_View"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="connectedToolBar">
    <property name="windowTitle">
@@ -321,6 +332,14 @@
     <string>Set capture info</string>
    </property>
   </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
+   <property name="text">
+    <string>About Elapse</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -330,7 +349,9 @@
    <header>spinner.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../img/images.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionQuit</sender>

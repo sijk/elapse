@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/img">
         <file>spinner.gif</file>
+        <file>elapse-icon.svg</file>
     </qresource>
 </RCC>
