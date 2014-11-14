@@ -1,0 +1,143 @@
+Software
+========
+
+GCC
+---
+C++ compiler.
+
+version: >= 4.8
+apt:
+    build-essential
+
+
+CMake
+-----
+Build system.
+
+version: >= 2.8.12
+apt:
+    cmake
+
+
+Doxygen
+-------
+Extract documentation from source code.
+
+version: >= 1.8.6
+apt:
+    doxygen
+
+
+Sphinx
+------
+Document Python code.
+
+version: >= 1.1
+pip:
+    Sphinx
+    sphinxcontrib-doxylink
+
+
+Java
+----
+To run PlantUML (bundled in tools/) to generate diagrams in the documentation.
+
+version: >= 7
+apt:
+    openjdk-7-jre-headless
+
+
+
+Libraries
+=========
+
+Qt
+--
+Application development framework -- GUI, plugins, etc.
+
+version: >= 5.2
+licence: LGPL
+apt:
+    qtcreator
+    qttools5-dev
+    qttools5-dev-tools
+
+
+Qwt
+---
+Technical GUI widgets.
+
+version: 6.1.0
+licence: LGPL + exceptions
+source:
+    svn://svn.code.sf.net/p/qwt/code/branches/qwt-6.1
+
+
+GStreamer
+---------
+Receive and decode video.
+
+version: 0.10.36
+licence: LGPL
+apt:
+    gstreamer0.10-plugins-base
+    gstreamer0.10-plugins-good
+    gstreamer0.10-plugins-bad
+    gstreamer0.10-plugins-ugly
+    gstreamer0.10-tools
+
+    ppa:mc3man/trusty-media
+        gstreamer0.10-ffmpeg
+
+
+QtGStreamer
+-----------
+Qt bindings for GStreamer.
+
+version: 0.10.3
+licence: LGPL
+source:
+    http://anongit.freedesktop.org/git/gstreamer/qt-gstreamer.git
+
+
+Python
+------
+Implement signal processing plugins in Python.
+
+version: 2.7
+licence: PSFL
+apt:
+    python2.7-dev
+
+
+Boost
+-----
+Various C++ libraries.
+
+version: >= 1.54
+licence: BSL
+apt:
+    libboost-dev
+    libboost-python-dev
+
+
+Eigen
+-----
+Matrix computation.
+
+version: >= 3
+licence: MPL 2.0
+apt:
+    libeigen3-dev
+
+
+OpenCV
+------
+Computer vision.
+
+version: 2.4
+licence: BSD
+apt:
+    libopencv-dev
+
+
