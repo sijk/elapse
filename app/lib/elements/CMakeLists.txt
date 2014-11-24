@@ -24,6 +24,7 @@ set(elements_HDRS
 qt5_wrap_cpp(elements_SRCS ${elements_HDRS})
 
 add_library(elements SHARED ${elements_SRCS})
+set_target_properties(elements PROPERTIES OUTPUT_NAME elapseelements)
 
 target_include_directories(elements
     PUBLIC  ${EIGEN3_INCLUDE_DIR}
