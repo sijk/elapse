@@ -19,15 +19,18 @@ if(NOT ${QXT_FOUND_QXTCORE})
             "CMAKE_PREFIX_PATH appropriately.")
 endif()
 
-include(GNUInstallDirs)
-set(INSTALL_BIN_DIR ${CMAKE_INSTALL_BINDIR}
+set(INSTALL_BIN_DIR bin
     CACHE PATH "Installation directory for executables")
-set(INSTALL_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR}
+set(INSTALL_INC_DIR include
     CACHE PATH "Installation directory for header files")
-set(INSTALL_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/elapse
+set(INSTALL_LIB_DIR lib
     CACHE PATH "Installation directory for libraries")
-set(INSTALL_DOC_DIR ${CMAKE_INSTALL_DOCDIR}
+set(INSTALL_DOC_DIR share/doc/elapse-client
     CACHE PATH "Installation directory for documentation")
+set(INSTALL_DESKTOP_DIR share/applications
+    CACHE PATH "Installation directory for desktop files")
+set(INSTALL_ICON_DIR share/pixmaps
+    CACHE PATH "Installation directory for icon files")
 
 set(ELAPSE_ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(ELAPSE_ROOT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -49,9 +52,9 @@ add_subdirectory(doc)
 install(
     EXPORT ElapseTargets
     NAMESPACE elapse::
-    DESTINATION ${INSTALL_LIB_DIR}/cmake
+    DESTINATION ${INSTALL_LIB_DIR}/cmake/Elapse
 )
 install(
     FILES cmake/ElapseConfig.cmake cmake/ElapsePlugin.cmake
-    DESTINATION ${INSTALL_LIB_DIR}/cmake
+    DESTINATION ${INSTALL_LIB_DIR}/cmake/Elapse
 )
