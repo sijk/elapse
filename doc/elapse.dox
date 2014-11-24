@@ -1,18 +1,59 @@
 /*!
     \mainpage Elapse developer documentation
 
-    \section start You are here
+    \tableofcontents
+
+    You are here                                                        {#start}
+    ============
 
     This is the developer documentation for the Elapse client-side application.
-    You need to read this if you're hacking on the core application itself. If
-    you're wanting to develop plugins for signal processing/classification,
+    You only need to read this if you're working on the core application itself.
+    If you're wanting to develop plugins for signal processing/classification,
     go and read the \ref plugin-api documentation instead.
 
-    \section overview Overviews and Guides
+    Software structure                                              {#structure}
+    ==================
 
-    The following pages describe the design of the core Elapse application.
+    The following paragraph gives a very brief overview of the structure of the
+    Elapse framework. Follow the linked words to start exploring the
+    documentation. For a more detailed high-level overview of the software
+    design, read the relevant section of my thesis.
 
-    \li ...
+    The core of the Elapse application is the [ElapseClient]. It uses a
+    [DeviceProxy] to communicate with the device. The application's
+    functionality is centred on a [Pipeline] containing signal processing
+    [elements]. The pipeline contains:
+
+    - a [DataSource] which receives data from the device,
+    - several [SampleDecoders] which decode the raw data into meaningful values,
+    - [FeatureExtractors] which extract salient features from sequences of
+      [Samples],
+    - a [Classifier] which classifies the user's [CognitiveState] from a set
+      of [FeatureVectors],
+    - and an [OutputAction] which takes some action based on the classified
+      cognitive state.
+
+    The application has a [plugin manager] which loads a [set] of signal
+    processing elements from [plugins]. Plugins can be implemented in a number
+    of languages. A [core plugin] provides default implementations for all of
+    the elements.
+
+    [ElapseClient]:       \ref elapse::client::ElapseClient
+    [DeviceProxy]:        \ref elapse::client::DeviceProxy
+    [Pipeline]:           \ref signal-pipeline
+    [elements]:           \ref pipeline-elements
+    [DataSource]:         \ref elapse::elements::DataSource
+    [SampleDecoders]:     \ref elapse::elements::SampleDecoder
+    [FeatureExtractors]:  \ref elapse::elements::FeatureExtractor
+    [Classifier]:         \ref elapse::elements::Classifier
+    [OutputAction]:       \ref elapse::elements::OutputAction
+    [Samples]:            \ref signal-datatypes
+    [FeatureVectors]:     \ref elapse::data::FeatureVector
+    [CognitiveState]:     \ref elapse::data::CognitiveState
+    [plugin manager]:     \ref elapse::plugin::Manager
+    [plugins]:            \ref plugin-api
+    [set]:                \ref elapse::elements::ElementSet
+    [core plugin]:        \ref core-plugin
 
     @startuml{structure.png}
 
@@ -43,30 +84,33 @@
 
     @enduml
 
-    \section build-install Building & Installing
+    Building & Installing                                       {#build-install}
+    =====================
 
     ...
 
-    \section doclist Code Documentation
+    Code Documentation                                                {#doclist}
+    ==================
 
-    \li \ref app
-    \li \ref signal-pipeline
-    \li \ref core-plugin
-    \li \ref plugins-int
-    \li \ref plugins-ext
-    \li \ref widgets
+    - \ref app
+    - \ref signal-pipeline
+    - \ref core-plugin
+    - \ref plugins-int
+    - \ref plugins-ext
+    - \ref widgets
 
-    \section memory Memory management policies
+    Memory management policies                                         {#memory}
+    ==========================
 
     - To express ownership of a pointer, use one of the following
       (in order of preference):
         - QObject parent
             - For instances of QObject subclasses.
-        - std::unique_ptr
+        - ``std::unique_ptr``
             - For everything else.
-        - QScopedPointer
+        - ``QScopedPointer``
             - Only for pimpl d_ptrs.
-        - std::shared_ptr
+        - ``std::shared_ptr``
             - If unique_ptr semantics are inappropriate.
 
     - To express non-owning observation of a pointer, use:
@@ -83,7 +127,8 @@
     If these rules are followed then nothing should ever need to be explicitly
     ``delete``d.
 
-    \section legal Licence Information
+    Licence Information                                                 {#legal}
+    ===================
 
     The core Elapse application is licensed under the terms of the ...
 */
@@ -146,13 +191,19 @@
     These classes provide default implementations of \ref pipeline-elements.
 */
 
+namespace elapse {
 /*!
     \defgroup plugins-int Internal Plugin Management
     \ingroup app
 
-    These classes enable the core application to search for and load plugins.
-    They also provide the base classes for the plugins themselves. 
+    The Elapse framework has a plugin::Manager for loading a [set of elements]
+    (\ref elements::ElementSet) from plugins. The plugin manager provides a
+    GUI and maintains a list of all of the available plugins, but the actual
+    work of searching for and loading plugins is delegated to several
+    plugin::Host%s. There is one plugin host for each supported language (as
+    well as one especially for the statically-linked core plugin).
 */
+}
 
 /*!
     \defgroup widgets Widgets

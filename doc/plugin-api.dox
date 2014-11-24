@@ -1,44 +1,141 @@
 /*!
     \page plugin-api Plugin API
 
-    This page will document the Elapse plugin API for implementing signal
+    This page documents the Elapse plugin API for implementing signal
     processing and classification algorithms.
 
-    \section plugin-design Plugin System Design
+    \tableofcontents
 
-    ...
+    Plugin System Design                                        {#plugin-design}
+    ====================
 
-    \section plugin-examples Example Plugins
+    The Elapse framework provides all of the infrastructure to implement
+    cognitive state monitoring applications but does not implement any signal
+    processing itself. All signal processing and classification is provided by
+    plugins. Plugins can be implemented in several languages, though not every
+    language supports every element type. See the diagrams
+    [here](\ref structure) and [here](\ref pipeline-arch) for an overview of
+    the structure of the signal processing pipeline. See
+    [here](\ref pipeline-elements) for documentation on each element in the
+    pipeline. See below for how to implement these elements as plugins.
 
-    The following pages give complete examples of how to implement a plugins
+    Example plugins                                           {#plugin-examples}
+    ===============
+
+    The following pages give complete examples of how to implement a plugin
     in each of the supported languages.
 
-    \li \subpage plugin-ex-cpp
-    \li \subpage plugin-ex-py
+    - \subpage plugin-example-cpp
+    - \subpage plugin-example-py
 
 
-    \section plugin-api-docs API Documentation
+    API Documentation                                         {#plugin-api-docs}
+    =================
 
-    \li \ref plugins-ext
+    C++
+    ---
+
+    - \ref plugins-ext
+    - \ref pipeline-elements "Element base classes"
+
+    Python
+    ------
+
+    - \ref plugin-bindings-py
 */
 
 /*!
     \defgroup plugins-ext C++ Plugin API
+
+    The classes and macros required for implementing Elapse plugins in C++.
 */
 
 /*!
-    \page plugin-ex-cpp C++ plugin example
+    \page plugin-example-cpp C++ plugin example
 
-    \todo Mention the need for a Q_INVOKABLE default constructor.
+    This example defines a plugin called ``MyPlugin`` which provides two
+    elements: ``EegPower`` and ``SimpleClassifier``.
+
+    \tableofcontents
+
+    Code                                                                 {#code}
+    ====
+
+    - \ref cpp/myplugin/CMakeLists.txt
+    - \ref cpp/myplugin/myplugin.h
+    - \ref cpp/myplugin/eegpower.h
+    - \ref cpp/myplugin/eegpower.cpp
+
+    The EegPower element                                             {#eegpower}
+    --------------------
+
+    ...
+    \todo Mention the need for a ``Q_INVOKABLE`` default constructor.
+
+    The SimpleClassifier element                             {#simpleclassifier}
+    ----------------------------
+
+    ...
+
+    Plugin header                                                      {#plugin}
+    -------------
+
+    Now that we've defined our elements, we need to wrap them up as a plugin.
+
+    First we include the Elapse plugin header file,
+    \snippet cpp/myplugin/myplugin.h include plugin
+    and then the headers for each of our elements.
+    \snippet cpp/myplugin/myplugin.h include elements
+    Define a class called `MyPlugin`. The name of this class is what will show
+    up as the name of the plugin in the application's plugin manager. The class
+    must publicly inherit from both `QObject` and elapse::plugin::Interface in
+    that order.
+    \snippet cpp/myplugin/myplugin.h class def
+    Every plugin must include the following three lines at the start of the
+    class definition. They set up the magic that makes plugin loading work.
+    \snippet cpp/myplugin/myplugin.h metadata
+    Finally, we export the list of elements that our plugin provides.
+    \snippet cpp/myplugin/myplugin.h export
+
+    Project file                                                      {#project}
+    ------------
+
+    \dontinclude cpp/myplugin/CMakeLists.txt
+    A ``CMakeLists.txt`` file is required to build the plugin.
+    First we need some standard CMake boilerplate:
+    \until project
+    The argument to ``project()`` will become the name of the shared library.
+    Then we find the ``Elapse`` package which defines how to build
+    an Elapse plugin.
+    \skipline find_package
+    We define an Elapse plugin, passing the filename of the header
+    containing the ``Plugin`` class as the ``HEADER`` argument and
+    the C++ files as ``SOURCES``.
+    \skip add
+    \until )
+    That's it. You can also pass a ``LIBRARIES`` argument listing the libraries
+    that your plugin needs to link against.
+
+
+    Building                                                            {#build}
+    ========
+
+    ...
+
+    \example cpp/myplugin/CMakeLists.txt     Part of the \ref plugin-example-cpp
+    \example cpp/myplugin/myplugin.h         Part of the \ref plugin-example-cpp
+    \example cpp/myplugin/eegpower.h         Part of the \ref plugin-example-cpp
+    \example cpp/myplugin/eegpower.cpp       Part of the \ref plugin-example-cpp
 */
 
 /*!
-    \page plugin-ex-py Python plugin example
+    \page plugin-example-py Python plugin example
 
     ...
 */
 
 /*!
-    \defgroup plugins-ext-py Python Plugin API
+    \defgroup plugin-bindings-py Python bindings
+    \htmlinclude elapse-python.html
 */
 

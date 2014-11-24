@@ -1,0 +1,13 @@
+{% extends "basic/layout.html" %}
+
+{#
+    The output will be embedded in Doxygen, so we need to disable
+    a bunch of unnecessary stuff.
+#}
+
+{% set embedded = true %}
+{% set script_files = [] %}
+{% block relbar1 %}{% endblock %}
+{% block relbar2 %}{% endblock %}
+{% block footer %}{% endblock %}
+
