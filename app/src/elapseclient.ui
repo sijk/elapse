@@ -14,7 +14,7 @@
    <string>Elapse</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../img/images.qrc">
+   <iconset resource="../resources/images.qrc">
     <normaloff>:/img/elapse-icon.svg</normaloff>:/img/elapse-icon.svg</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -334,7 +334,9 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset theme="help-about"/>
+    <iconset theme="help-about">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>About Elapse</string>
@@ -350,7 +352,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../img/images.qrc"/>
+  <include location="../resources/images.qrc"/>
  </resources>
  <connections>
   <connection>
