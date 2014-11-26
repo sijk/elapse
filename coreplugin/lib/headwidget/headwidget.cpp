@@ -28,7 +28,7 @@ HeadWidget::~HeadWidget()
 
 QSize HeadWidget::minimumSizeHint() const
 {
-    return QSize(40, 50);
+    return QSize(100, 100);
 }
 
 QSize HeadWidget::sizeHint() const

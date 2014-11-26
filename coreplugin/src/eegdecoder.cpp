@@ -94,7 +94,7 @@ void EegDecoderPrivate::createStripChart()
     spacingLayout->setSpacing(6);
 
     auto spacingLabel = new QLabel(widgetContainer);
-    spacingLabel->setText("Amplitude:");
+    spacingLabel->setText("Zoom:");
     spacingLayout->addWidget(spacingLabel);
 
     spacingSlider = new QSlider(widgetContainer);
