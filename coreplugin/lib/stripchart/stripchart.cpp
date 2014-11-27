@@ -8,8 +8,12 @@
 #include <qwt_plot_curve.h>
 #include <qwt_scale_draw.h>
 #include <boost/circular_buffer.hpp>
+#include <boost/range/adaptors.hpp>
+#include <boost/range/algorithm.hpp>
+#include <boost/range/numeric.hpp>
 #include "stripchart.h"
 
+using namespace boost::adaptors;
 
 namespace {
 
@@ -136,27 +140,23 @@ void StripChartPrivate::redraw()
         return;
     }
 
+    auto notNaN = [](double x){ return !std::isnan(x); };
+
     // Re-plot data
     for (uint i = 0; i < lines.size(); i++) {
         auto &values = data.at(i);
 
         double mean = 0;
         if (demean) {
-            double sum = 0;
-            double count = 0;
-            for (double x : values) {
-                if (!std::isnan(x)) {
-                    sum += x;
-                    count++;
-                }
-            }
+            double sum = boost::accumulate(values | filtered(notNaN), 0.0);
+            long count = boost::count_if(values, notNaN);
             if (count > 0)
                 mean = sum / count;
         }
 
         QVector<double> ydata(nSamples);
-        std::transform(values.begin(), values.end(), ydata.begin(),
-                       [=](double x){ return x - mean - i*spacing; });
+        boost::transform(values, ydata.begin(),
+                         [=](double x){ return x - mean - i*spacing; });
         lines[i]->setSamples(tdata, ydata);
     }
     plot->replot();
