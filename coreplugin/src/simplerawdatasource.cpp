@@ -180,6 +180,8 @@ void SimpleRawDataSource::start()
     Q_D(SimpleRawDataSource);
     if (d->start()) {
         QSettings().setValue(dataDir, QFileInfo(d->file.fileName()).absolutePath());
+        if (d->widget)
+            d->widget->setEnabled(false);
     } else {
         auto fileName = d->file.fileName();
         if (fileName.isEmpty())
@@ -196,6 +198,8 @@ void SimpleRawDataSource::stop()
 {
     Q_D(SimpleRawDataSource);
     d->stop();
+    if (d->widget)
+        d->widget->setEnabled(true);
 }
 
 }} // namespace elapse::coreplugin
