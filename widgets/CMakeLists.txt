@@ -2,8 +2,10 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Qwt REQUIRED)
+find_package(OpenCV REQUIRED)
 
 set(widgets_SRCS
+    cvmatwidget/cvmatwidget.cpp
     dialwithsector/dialwithsector.cpp
     headwidget/headwidget.cpp
     headwidget/headmesh.cpp
@@ -12,6 +14,7 @@ set(widgets_SRCS
 )
 
 set(widgets_HDRS
+    cvmatwidget/cvmatwidget.h
     dialwithsector/dialwithsector.h
     headwidget/headwidget.h
     headwidget/headmesh.h
@@ -28,14 +31,16 @@ target_link_libraries(widgets
     PUBLIC  Qt5::Widgets
             Qt5::OpenGL
             Qwt
+            ${OpenCV_LIBRARIES}
     PRIVATE ${OPENGL_gl_LIBRARY}
 )
 
-target_include_directories(widgets INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dialwithsector>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headwidget>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/spinner>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stripchart>
+target_include_directories(widgets
+    INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dialwithsector>
+              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headwidget>
+              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/spinner>
+              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stripchart>
+    PUBLIC    ${OpenCV_INCLUDE_DIRS}
 )
 
 set_target_properties(widgets PROPERTIES OUTPUT_NAME elapsewidgets)
@@ -47,9 +52,10 @@ install(
     INCLUDES DESTINATION ${INSTALL_INC_DIR}
 )
 install(
-    FILES spinner/spinner.h
+    FILES cvmatwidget/cvmatwidget.h
           dialwithsector/dialwithsector.h
           headwidget/headwidget.h
+          spinner/spinner.h
           stripchart/stripchart.h
     DESTINATION ${INSTALL_INC_DIR}/elapse/widgets
 )
