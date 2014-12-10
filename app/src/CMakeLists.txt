@@ -24,13 +24,11 @@ target_include_directories(elapse-client
 
 target_link_libraries(elapse-client
     Qt5::Widgets
-    Qwt
     deviceproxy
     pipeline
     pluginmanager
     loggerwidget
-    spinner
-    dialwithsector
+    widgets
     elements
 )
 

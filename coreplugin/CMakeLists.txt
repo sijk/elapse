@@ -31,8 +31,7 @@ target_include_directories(coreplugin
 )
 
 target_link_libraries(coreplugin
-    PRIVATE headwidget
-            stripchart
+    PRIVATE widgets
             Qt5::Widgets
             Qt5::Network
             ${GSTREAMER_LIBRARIES}
