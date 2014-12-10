@@ -23,11 +23,11 @@ public:
     TableModelLoggerEngine();
     ~TableModelLoggerEngine();
 
-    void initLoggerEngine();
-    void killLoggerEngine();
-    bool isInitialized() const;
+    void initLoggerEngine() override;
+    void killLoggerEngine() override;
+    bool isInitialized() const override;
     void writeFormatted(QxtLogger::LogLevel level,
-                        const QList<QVariant> &messages);
+                        const QList<QVariant> &messages) override;
 
     QAbstractItemModel *model();
 

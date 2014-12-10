@@ -25,12 +25,12 @@ public:
     Q_INVOKABLE VideoDecoder();
     ~VideoDecoder();
 
-    QWidget *getWidget();
+    QWidget *getWidget() override;
 
 public slots:
-    void start();
-    void stop();
-    void onData(QByteArray data);
+    void start() override;
+    void stop() override;
+    void onData(QByteArray data) override;
 
 private:
     const QScopedPointer<VideoDecoderPrivate> d_ptr;

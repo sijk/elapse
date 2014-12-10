@@ -25,12 +25,12 @@ public:
     Q_INVOKABLE SimpleRawDataSource();
     ~SimpleRawDataSource();
 
-    QVariant get(const QString &subSystem, const QString &property);
-    QWidget *getWidget();
+    QVariant get(const QString &subSystem, const QString &property) override;
+    QWidget *getWidget() override;
 
 public slots:
-    void start();
-    void stop();
+    void start() override;
+    void stop() override;
 
 private:
     const QScopedPointer<SimpleRawDataSourcePrivate> d_ptr;

@@ -12,7 +12,7 @@ using elapse::data::Signal;
 class SimpleRawDataSinkNoGui : public elapse::coreplugin::SimpleRawDataSink
 {
 protected:
-    QString getDirectory() const
+    QString getDirectory() const override
     {
         return QDir(qApp->applicationDirPath()).absoluteFilePath("tmp");
     }
@@ -22,14 +22,14 @@ protected:
 class SimpleRawDataSinkTest : public testing::Test
 {
 public:
-    void SetUp()
+    void SetUp() override
     {
         dataDir = QDir(qApp->applicationDirPath()).absoluteFilePath("tmp");
         ASSERT_FALSE(QDir(dataDir).exists());
         ASSERT_TRUE(QDir().mkpath(dataDir));
     }
 
-    void TearDown()
+    void TearDown() override
     {
         ASSERT_TRUE(recursiveRmDir(dataDir));
         clearSettings();

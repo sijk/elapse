@@ -249,7 +249,7 @@ class PipelineTest : public ::testing::Test
     }
 
 protected:
-    void SetUp()
+    void SetUp() override
     {
         dataSource = new MockDataSource;
         eegDecoder = new MockEegDecoder;

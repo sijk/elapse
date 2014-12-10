@@ -14,12 +14,12 @@ namespace elapse { namespace plugin {
 class StaticHost : public Host
 {
 public:
-    QList<PluginData> searchForPluginsIn(QDir &dir);
+    QList<PluginData> searchForPluginsIn(QDir &dir) override;
 
 protected:
-    PluginData getInfo(const QString &pluginPath);
+    PluginData getInfo(const QString &pluginPath) override;
     QObject *instantiateClass(const PluginInfo &pluginInfo,
-                              const ClassInfo &classInfo);
+                              const ClassInfo &classInfo) override;
 };
 
 }} // namespace elapse::plugin

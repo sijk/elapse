@@ -37,19 +37,19 @@ public:
     { }
 
 public:
-    uint sampleRate() const
+    uint sampleRate() const override
     { return config->get("imu", "sampleRate").toUInt(); }
-    AccRange accRange() const
+    AccRange accRange() const override
     { return AccRange(config->get("imu", "accRange").toInt()); }
-    GyrRange gyrRange() const
+    GyrRange gyrRange() const override
     { return GyrRange(config->get("imu", "gyrRange").toInt()); }
-    void setSampleRate(uint hz) { Q_UNUSED(hz) }
-    void setAccRange(AccRange range) { Q_UNUSED(range) }
-    void setGyrRange(GyrRange range) { Q_UNUSED(range) }
+    void setSampleRate(uint hz) override { Q_UNUSED(hz) }
+    void setAccRange(AccRange range) override { Q_UNUSED(range) }
+    void setGyrRange(GyrRange range) override { Q_UNUSED(range) }
 
 public slots:
-    void start() { }
-    void stop() { }
+    void start() override { }
+    void stop() override { }
 
 private:
     ConfigManager *config;
@@ -71,17 +71,17 @@ public:
     { }
 
 public:
-    Gain gain() const
+    Gain gain() const override
     { return Gain(config->get(chan, "gain").toInt()); }
-    InputMux inputMux() const {
+    InputMux inputMux() const override {
         QString mux = config->get(chan, "inputMux").toString();
         return InputMux(stringToEnum<EegChannel>("InputMux", mux));
     }
-    bool enabled() const
+    bool enabled() const override
     { return config->get(chan, "enabled").toBool(); }
-    void setGain(Gain gain) { Q_UNUSED(gain) }
-    void setInputMux(InputMux mux) { Q_UNUSED(mux) }
-    void setEnabled(bool enabled) { Q_UNUSED(enabled) }
+    void setGain(Gain gain) override { Q_UNUSED(gain) }
+    void setInputMux(InputMux mux) override { Q_UNUSED(mux) }
+    void setEnabled(bool enabled) override { Q_UNUSED(enabled) }
 
 private:
     ConfigManager *config;
@@ -103,30 +103,30 @@ public:
     { }
 
 public:
-    uint nChannels() const
+    uint nChannels() const override
     { return config->get("eeg", "nChannels").toUInt(); }
-    uint bytesPerChunk() const
+    uint bytesPerChunk() const override
     { return config->get("eeg", "bytesPerChunk").toUInt(); }
-    double vref() const
+    double vref() const override
     { return config->get("eeg", "vref").toDouble(); }
-    uint samplesPerChunk() const
+    uint samplesPerChunk() const override
     { return config->get("eeg", "samplesPerChunk").toUInt(); }
-    SampleRate sampleRate() const
+    SampleRate sampleRate() const override
     { return SampleRate(config->get("eeg", "sampleRate").toInt()); }
-    bool useRefElec() const
+    bool useRefElec() const override
     { return config->get("eeg", "useRefElec").toBool(); }
-    bool enableTestSignal() const
+    bool enableTestSignal() const override
     { return config->get("eeg", "enableTestSignal").toBool(); }
-    LeadOffFreq leadOffFreq() const
+    LeadOffFreq leadOffFreq() const override
     { return LeadOffFreq(config->get("eeg", "leadOffFreq").toInt()); }
-    LeadOffMag leadOffMag() const
+    LeadOffMag leadOffMag() const override
     { return LeadOffMag(config->get("eeg", "leadOffMag").toInt()); }
-    bool leadOffSensePos() const
+    bool leadOffSensePos() const override
     { return config->get("eeg", "leadOffSensePos").toBool(); }
-    bool leadOffSenseNeg() const
+    bool leadOffSenseNeg() const override
     { return config->get("eeg", "leadOffSenseNeg").toBool(); }
 
-    hardware::EegChannel *channel(uint i)
+    hardware::EegChannel *channel(uint i) override
     {
         if (_channels.empty()) {
             uint n = nChannels();
@@ -136,20 +136,21 @@ public:
         return _channels.at(i);
     }
 
-    void setSamplesPerChunk(uint samples) { Q_UNUSED(samples) }
-    void setSampleRate(SampleRate rate) { Q_UNUSED(rate) }
-    void setUseRefElec(bool use) { Q_UNUSED(use) }
-    void setEnableTestSignal(bool enable) { Q_UNUSED(enable) }
-    void setLeadOffFreq(LeadOffFreq freq) { Q_UNUSED(freq) }
-    void setLeadOffMag(LeadOffMag mag) { Q_UNUSED(mag) }
-    void setLeadOffSensePos(bool enable) { Q_UNUSED(enable) }
-    void setLeadOffSenseNeg(bool enable) { Q_UNUSED(enable) }
+    void setSamplesPerChunk(uint samples) override { Q_UNUSED(samples) }
+    void setSampleRate(SampleRate rate) override { Q_UNUSED(rate) }
+    void setUseRefElec(bool use) override { Q_UNUSED(use) }
+    void setEnableTestSignal(bool enable) override { Q_UNUSED(enable) }
+    void setLeadOffFreq(LeadOffFreq freq) override { Q_UNUSED(freq) }
+    void setLeadOffMag(LeadOffMag mag) override { Q_UNUSED(mag) }
+    void setLeadOffSensePos(bool enable) override { Q_UNUSED(enable) }
+    void setLeadOffSenseNeg(bool enable) override { Q_UNUSED(enable) }
 
 public slots:
-    void start() { }
-    void stop() { }
-    void reset() { }
-    void setAllChannels(const QVariantMap &properties) { Q_UNUSED(properties) }
+    void start() override { }
+    void stop() override { }
+    void reset() override { }
+    void setAllChannels(const QVariantMap &properties) override
+    { Q_UNUSED(properties) }
 
 private:
     ConfigManager *config;
@@ -171,15 +172,15 @@ public:
     { }
 
 public:
-    double lowThresh() const
+    double lowThresh() const override
     { return config->get("battery", "lowThresh").toDouble(); }
-    double criticalThresh() const
+    double criticalThresh() const override
     { return config->get("battery", "criticalThresh").toDouble(); }
-    bool isLow() const
+    bool isLow() const override
     { return config->get("battery", "isLow").toBool(); }
-    double voltage() const
+    double voltage() const override
     { return config->get("battery", "voltage").toDouble(); }
-    void setLowThresh(double value) { Q_UNUSED(value) }
+    void setLowThresh(double value) override { Q_UNUSED(value) }
 
 private:
     ConfigManager *config;
@@ -204,16 +205,16 @@ public:
     { }
 
 public:
-    hardware::EegAdc *eeg() { return _eeg; }
-    hardware::Camera *camera() { return nullptr; }
-    hardware::Imu *imu() { return _imu; }
-    hardware::Battery *battery() { return _battery; }
+    hardware::EegAdc *eeg() override { return _eeg; }
+    hardware::Camera *camera() override { return nullptr; }
+    hardware::Imu *imu() override { return _imu; }
+    hardware::Battery *battery() override { return _battery; }
 
 public slots:
-    bool isAccessible() const { return true; }
-    void setClientAddress(const QString &address) { Q_UNUSED(address) }
-    void startStreaming() { }
-    void stopStreaming() { }
+    bool isAccessible() const override { return true; }
+    void setClientAddress(const QString &address) override { Q_UNUSED(address) }
+    void startStreaming() override { }
+    void stopStreaming() override { }
 
 private:
     ConfigManager *config;

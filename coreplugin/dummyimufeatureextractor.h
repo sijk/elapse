@@ -28,12 +28,12 @@ class DummyImuFeatureExtractor : public elements::BaseFeatureExtractor,
 public:
     Q_INVOKABLE DummyImuFeatureExtractor();
 
-    QWidget *getWidget();
+    QWidget *getWidget() override;
 
 private:
-    void analyseSample(data::SamplePtr sample);
-    std::vector<double> features();
-    void removeDataBefore(time::Point time);
+    void analyseSample(data::SamplePtr sample) override;
+    std::vector<double> features() override;
+    void removeDataBefore(time::Point time) override;
 
     void updateHeadWidget(const data::ImuSample *sample);
 

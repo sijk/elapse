@@ -22,7 +22,7 @@ class SimpleEegFeatureExtractor : public BaseFeatureExtractor
     Q_CLASSINFO("SignalType", "EEG")
 
 public:
-    void configure(QMap<QString, QVariantMap> config);
+    void configure(QMap<QString, QVariantMap> config) override;
 
 protected:
     void analyseSample(data::SamplePtr sample) final;

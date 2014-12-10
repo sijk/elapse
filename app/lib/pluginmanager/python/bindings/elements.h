@@ -43,16 +43,16 @@ namespace py = boost::python;
 struct FeatureExtractorWrap : FeatureExtractor,
                               py::wrapper<FeatureExtractor>
 {
-    void setStartTime(elapse::time::Point timestamp) {
+    void setStartTime(elapse::time::Point timestamp) override {
         PYCATCH(this->get_override("setStartTime")(timestamp));
     }
-    void setWindowLength(uint ms) {
+    void setWindowLength(uint ms) override {
         PYCATCH(this->get_override("setWindowLength")(ms));
     }
-    void setWindowStep(uint ms) {
+    void setWindowStep(uint ms) override {
         PYCATCH(this->get_override("setWindowStep")(ms));
     }
-    void onSample(elapse::data::SamplePtr sample) {
+    void onSample(elapse::data::SamplePtr sample) override {
         PYCATCH(this->get_override("onSample")(sample));
     }
 };
@@ -74,7 +74,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     void analyseSample(elapse::data::SamplePtr sample) override {
         PYCATCH(this->get_override("analyseSample")(sample));
     }
-    std::vector<double> features() {
+    std::vector<double> features() final {
         // py::list  ->  vector<double>
         py::list feat;
         PYCATCH(feat = this->pyfeatures());
@@ -84,10 +84,10 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     py::list pyfeatures() {
         PYCATCH_RETURN(this->get_override("features")(), {});
     }
-    void removeDataBefore(elapse::time::Point time) {
+    void removeDataBefore(elapse::time::Point time) override {
         PYCATCH(this->get_override("removeDataBefore")(time));
     }
-    void reset() {
+    void reset() override {
         if (py::override fn = this->get_override("reset"))
             PYCATCH(fn());
         BaseFeatureExtractorPublic::reset();
@@ -95,7 +95,7 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
     void default_reset() {
         PYCATCH(this->BaseFeatureExtractorPublic::reset());
     }
-    elapse::data::Signal::Type signalType() const {
+    elapse::data::Signal::Type signalType() const override {
         using elapse::data::Signal;
         py::object self(py::handle<>(py::detail::wrapper_base_::get_owner(*this)));
         if (PyObject_HasAttrString(self.ptr(), "signalType")) {
@@ -109,10 +109,10 @@ struct BaseFeatureExtractorWrap : BaseFeatureExtractorPublic,
 struct ClassifierWrap : Classifier,
                         py::wrapper<Classifier>
 {
-    void onFeatures(elapse::data::FeatureVector::const_ptr features) {
+    void onFeatures(elapse::data::FeatureVector::const_ptr features) override {
         PYCATCH(this->get_override("onFeatures")(features));
     }
-    void reset() {
+    void reset() override {
         PYCATCH(this->get_override("reset")());
     }
 };
@@ -168,22 +168,22 @@ public:
 struct DataSinkWrap : DataSinkPublic,
                       py::wrapper<DataSinkPublic>
 {
-    bool startSaving() {
+    bool startSaving() override {
         PYCATCH_RETURN(this->get_override("startSaving")(), false);
     }
-    void stopSaving() {
+    void stopSaving() override {
         PYCATCH(this->get_override("stopSaving")());
     }
-    bool needsNewCaptureInfo() {
+    bool needsNewCaptureInfo() override {
         PYCATCH_RETURN(this->get_override("needsNewCaptureInfo")(), false);
     }
-    bool getCaptureInfo() {
+    bool getCaptureInfo() override {
         PYCATCH_RETURN(this->get_override("getCaptureInfo")(), false);
     }
-    void saveDeviceConfig(const QMap<QString, QVariantMap> &config) {
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config) override {
         PYCATCH(this->get_override("saveDeviceConfig")(config));
     }
-    void saveData(elapse::data::Signal::Type signalType, QByteArray data) {
+    void saveData(elapse::data::Signal::Type signalType, QByteArray data) override {
         if (py::override fn = this->get_override("saveData"))
             PYCATCH(fn(signalType, data));
         DataSinkPublic::saveData(signalType, data);
@@ -191,7 +191,7 @@ struct DataSinkWrap : DataSinkPublic,
     void default_saveData(elapse::data::Signal::Type signalType, QByteArray data) {
         PYCATCH(this->DataSinkPublic::saveData(signalType, data));
     }
-    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
+    void saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) override {
         if (py::override fn = this->get_override("saveSample"))
             PYCATCH(fn(signalType, sample));
         DataSinkPublic::saveSample(signalType, sample);
@@ -199,7 +199,7 @@ struct DataSinkWrap : DataSinkPublic,
     void default_saveSample(elapse::data::Signal::Type signalType, elapse::data::SamplePtr sample) {
         PYCATCH(this->DataSinkPublic::saveSample(signalType, sample));
     }
-    void saveFeatureVector(elapse::data::FeatureVector::const_ptr featureVector) {
+    void saveFeatureVector(elapse::data::FeatureVector::const_ptr featureVector) override {
         if (py::override fn = this->get_override("saveFeatureVector"))
             PYCATCH(fn(featureVector));
         DataSinkPublic::saveFeatureVector(featureVector);
@@ -207,7 +207,7 @@ struct DataSinkWrap : DataSinkPublic,
     void default_saveFeatureVector(elapse::data::FeatureVector::const_ptr featureVector) {
         PYCATCH(this->DataSinkPublic::saveFeatureVector(featureVector));
     }
-    void saveCognitiveState(elapse::data::CognitiveState::const_ptr state) {
+    void saveCognitiveState(elapse::data::CognitiveState::const_ptr state) override {
         if (py::override fn = this->get_override("saveCognitiveState"))
             PYCATCH(fn(state));
         DataSinkPublic::saveCognitiveState(state);

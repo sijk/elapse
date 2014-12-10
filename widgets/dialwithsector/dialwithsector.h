@@ -19,7 +19,7 @@ public:
 
 protected:
     void drawScaleContents(QPainter *painter,
-                           const QPointF &center, double radius) const;
+                           const QPointF &center, double radius) const override;
 
 private:
     double sectorBound;

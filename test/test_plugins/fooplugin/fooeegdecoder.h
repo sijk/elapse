@@ -13,7 +13,7 @@ public:
     Q_INVOKABLE FooEegDecoder();
 
 public slots:
-    void onData(QByteArray data);
+    void onData(QByteArray data) override;
 };
 
 #endif // FOOEEGDECODER_H

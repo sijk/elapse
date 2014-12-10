@@ -16,16 +16,16 @@ class BlackHoleDataSink : public elements::DataSink
 public:
     Q_INVOKABLE BlackHoleDataSink();
 
-    bool startSaving();
-    void stopSaving();
-    bool needsNewCaptureInfo();
-    bool getCaptureInfo();
+    bool startSaving() override;
+    void stopSaving() override;
+    bool needsNewCaptureInfo() override;
+    bool getCaptureInfo() override;
 
-    void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(data::Signal::Type signalType, QByteArray data);
-    void saveSample(data::Signal::Type signalType, data::SamplePtr sample);
-    void saveFeatureVector(data::FeatureVector featureVector);
-    void saveCognitiveState(data::CognitiveState state);
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config) override;
+    void saveData(data::Signal::Type signalType, QByteArray data) override;
+    void saveSample(data::Signal::Type signalType, data::SamplePtr sample) override;
+    void saveFeatureVector(data::FeatureVector::const_ptr featureVector) override;
+    void saveCognitiveState(data::CognitiveState::const_ptr state) override;
 };
 
 }} // namespace elapse::coreplugin

@@ -24,9 +24,10 @@ public:
     PythonHost();
 
 protected:
-    PluginData getInfo(const QString &pluginPath);
-    QObject *instantiateClass(const PluginInfo &plugin, const ClassInfo &cls);
-    elements::ElementDeleter deleter();
+    PluginData getInfo(const QString &pluginPath) override;
+    QObject *instantiateClass(const PluginInfo &plugin,
+                              const ClassInfo &cls) override;
+    elements::ElementDeleter deleter() override;
 };
 
 }} // namespace elapse::plugin

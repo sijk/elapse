@@ -55,16 +55,16 @@ public:
     { }
 
 public:
-    uint sampleRate() const { return d.sampleRate(); }
-    void setSampleRate(uint hz) { d.setSampleRate(hz); }
-    AccRange accRange() const { return AccRange(d.accRange()); }
-    void setAccRange(AccRange range) { d.setAccRange(range); }
-    GyrRange gyrRange() const { return GyrRange(d.gyrRange()); }
-    void setGyrRange(GyrRange range) { d.setGyrRange(range); }
+    uint sampleRate() const override { return d.sampleRate(); }
+    void setSampleRate(uint hz) override { d.setSampleRate(hz); }
+    AccRange accRange() const override { return AccRange(d.accRange()); }
+    void setAccRange(AccRange range) override { d.setAccRange(range); }
+    GyrRange gyrRange() const override { return GyrRange(d.gyrRange()); }
+    void setGyrRange(GyrRange range) override { d.setGyrRange(range); }
 
 public slots:
-    void start() { d.start(); }
-    void stop() { d.stop(); }
+    void start() override { d.start(); }
+    void stop() override { d.stop(); }
 
 private:
     org::nzbri::elapse::Imu d;
@@ -86,14 +86,14 @@ public:
     { }
 
 public:
-    Gain gain() const { return Gain(d.gain()); }
-    void setGain(Gain gain) { d.setGain(gain); }
-    InputMux inputMux() const
+    Gain gain() const override { return Gain(d.gain()); }
+    void setGain(Gain gain) override { d.setGain(gain); }
+    InputMux inputMux() const override
     { return InputMux(stringToEnum<EegChannel>("InputMux", d.inputMux())); }
-    void setInputMux(InputMux mux)
+    void setInputMux(InputMux mux) override
     { d.setInputMux(enumToString<EegChannel>("InputMux", mux)); }
-    bool enabled() const { return d.enabled(); }
-    void setEnabled(bool enabled) { d.setEnabled(enabled); }
+    bool enabled() const override { return d.enabled(); }
+    void setEnabled(bool enabled) override { d.setEnabled(enabled); }
 
 private:
     org::nzbri::elapse::Eeg::EegChannel d;
@@ -115,7 +115,7 @@ public:
     { }
 
 public:
-    hardware::EegChannel *channel(uint i)
+    hardware::EegChannel *channel(uint i) override
     {
         if (_channels.empty()) {
             uint n = nChannels();
@@ -125,31 +125,31 @@ public:
         }
         return _channels.at(i).get();
     }
-    uint nChannels() const { return d.nChannels(); }
-    uint bytesPerChunk() const { return d.bytesPerChunk(); }
-    double vref() const { return d.vref(); }
-    uint samplesPerChunk() const { return d.samplesPerChunk(); }
-    void setSamplesPerChunk(uint samples) { d.setSamplesPerChunk(samples); }
-    SampleRate sampleRate() const { return SampleRate(d.sampleRate()); }
-    void setSampleRate(SampleRate rate) { d.setSampleRate(rate); }
-    bool useRefElec() const { return d.useRefElec(); }
-    void setUseRefElec(bool use) { d.setUseRefElec(use); }
-    bool enableTestSignal() const { return d.enableTestSignal(); }
-    void setEnableTestSignal(bool enable) { d.setEnableTestSignal(enable); }
-    LeadOffFreq leadOffFreq() const { return LeadOffFreq(d.leadOffFreq()); }
-    void setLeadOffFreq(LeadOffFreq freq) { d.setLeadOffFreq(freq); }
-    LeadOffMag leadOffMag() const { return LeadOffMag(d.leadOffMag()); }
-    void setLeadOffMag(LeadOffMag mag) { d.setLeadOffMag(mag); }
-    bool leadOffSensePos() const { return d.leadOffSensePos(); }
-    void setLeadOffSensePos(bool enable) { d.setLeadOffSensePos(enable); }
-    bool leadOffSenseNeg() const { return d.leadOffSenseNeg(); }
-    void setLeadOffSenseNeg(bool enable) { d.setLeadOffSenseNeg(enable); }
+    uint nChannels() const override { return d.nChannels(); }
+    uint bytesPerChunk() const override { return d.bytesPerChunk(); }
+    double vref() const override { return d.vref(); }
+    uint samplesPerChunk() const override { return d.samplesPerChunk(); }
+    void setSamplesPerChunk(uint samples) override { d.setSamplesPerChunk(samples); }
+    SampleRate sampleRate() const override { return SampleRate(d.sampleRate()); }
+    void setSampleRate(SampleRate rate) override { d.setSampleRate(rate); }
+    bool useRefElec() const override { return d.useRefElec(); }
+    void setUseRefElec(bool use) override { d.setUseRefElec(use); }
+    bool enableTestSignal() const override { return d.enableTestSignal(); }
+    void setEnableTestSignal(bool enable) override { d.setEnableTestSignal(enable); }
+    LeadOffFreq leadOffFreq() const override { return LeadOffFreq(d.leadOffFreq()); }
+    void setLeadOffFreq(LeadOffFreq freq) override { d.setLeadOffFreq(freq); }
+    LeadOffMag leadOffMag() const override { return LeadOffMag(d.leadOffMag()); }
+    void setLeadOffMag(LeadOffMag mag) override { d.setLeadOffMag(mag); }
+    bool leadOffSensePos() const override { return d.leadOffSensePos(); }
+    void setLeadOffSensePos(bool enable) override { d.setLeadOffSensePos(enable); }
+    bool leadOffSenseNeg() const override { return d.leadOffSenseNeg(); }
+    void setLeadOffSenseNeg(bool enable) override { d.setLeadOffSenseNeg(enable); }
 
 public slots:
-    void start() { d.start(); }
-    void stop() { d.stop(); }
-    void reset() { d.reset(); }
-    void setAllChannels(const QVariantMap &properties)
+    void start() override { d.start(); }
+    void stop() override { d.stop(); }
+    void reset() override { d.reset(); }
+    void setAllChannels(const QVariantMap &properties) override
     { d.setAllChannels(properties); }
 
 private:
@@ -173,11 +173,11 @@ public:
     { }
 
 public:
-    double lowThresh() const { return d.lowThresh(); }
-    void setLowThresh(double value) { d.setLowThresh(value); }
-    double criticalThresh() const { return d.criticalThresh(); }
-    bool isLow() const { return d.isLow(); }
-    double voltage() const { return d.voltage(); }
+    double lowThresh() const override { return d.lowThresh(); }
+    void setLowThresh(double value) override { d.setLowThresh(value); }
+    double criticalThresh() const override { return d.criticalThresh(); }
+    bool isLow() const override { return d.isLow(); }
+    double voltage() const override { return d.voltage(); }
 
 private:
     org::nzbri::elapse::Battery d;
@@ -219,16 +219,16 @@ public:
     }
 
 public:
-    hardware::EegAdc *eeg() { return _eeg; }
-    hardware::Camera *camera() { return nullptr; }
-    hardware::Imu *imu() { return _imu; }
-    hardware::Battery *battery() { return _battery; }
+    hardware::EegAdc *eeg() override { return _eeg; }
+    hardware::Camera *camera() override { return nullptr; }
+    hardware::Imu *imu() override { return _imu; }
+    hardware::Battery *battery() override { return _battery; }
 
 public slots:
-    bool isAccessible() const { return d.isAccessible(); }
-    void setClientAddress(const QString &address) { d.setClientAddress(address); }
-    void startStreaming() { d.startStreaming(); }
-    void stopStreaming() { d.stopStreaming(); }
+    bool isAccessible() const override { return d.isAccessible(); }
+    void setClientAddress(const QString &address) override { d.setClientAddress(address); }
+    void startStreaming() override { d.startStreaming(); }
+    void stopStreaming() override { d.stopStreaming(); }
 
 private:
     mutable org::nzbri::elapse::Device d;

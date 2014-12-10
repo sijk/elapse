@@ -11,7 +11,7 @@ namespace plugin = elapse::plugin;
 class PythonBindingsTest : public testing::Test
 {
 public:
-    void SetUp()
+    void SetUp() override
     {
         manager = new plugin::Manager;
         priv = plugin::ManagerPrivate::expose(manager);
@@ -19,7 +19,7 @@ public:
         manager->setSearchPath(qApp->applicationDirPath() + "/plugins");
     }
 
-    void TearDown()
+    void TearDown() override
     {
         delete manager;
     }

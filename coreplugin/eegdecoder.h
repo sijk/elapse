@@ -26,12 +26,12 @@ public:
     Q_INVOKABLE EegDecoder();
     ~EegDecoder();
 
-    void configure(QMap<QString, QVariantMap> config);
+    void configure(QMap<QString, QVariantMap> config) override;
 
-    QWidget *getWidget();
+    QWidget *getWidget() override;
 
 public slots:
-    void onData(QByteArray data);
+    void onData(QByteArray data) override;
 
 private:
     const QScopedPointer<EegDecoderPrivate> d_ptr;

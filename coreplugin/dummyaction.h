@@ -18,7 +18,7 @@ public:
     Q_INVOKABLE DummyAction();
 
 public slots:
-    void onState(elapse::data::CognitiveState::const_ptr state);
+    void onState(elapse::data::CognitiveState::const_ptr state) override;
 };
 
 }} // namespace elapse::coreplugin

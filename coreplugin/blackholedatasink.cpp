@@ -78,7 +78,7 @@ void BlackHoleDataSink::saveSample(Signal::Type signalType, SamplePtr sample)
 /*!
  * Do nothing.
  */
-void BlackHoleDataSink::saveFeatureVector(FeatureVector featureVector)
+void BlackHoleDataSink::saveFeatureVector(FeatureVector::const_ptr featureVector)
 {
     Q_UNUSED(featureVector)
 }
@@ -86,7 +86,7 @@ void BlackHoleDataSink::saveFeatureVector(FeatureVector featureVector)
 /*!
  * Do nothing.
  */
-void BlackHoleDataSink::saveCognitiveState(CognitiveState state)
+void BlackHoleDataSink::saveCognitiveState(CognitiveState::const_ptr state)
 {
     Q_UNUSED(state)
 }

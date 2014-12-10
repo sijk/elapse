@@ -22,9 +22,9 @@ public:
     Q_INVOKABLE DummyEegFeatureExtractor();
 
 protected:
-    void analyseSample(data::SamplePtr sample);
-    std::vector<double> features();
-    void removeDataBefore(time::Point time);
+    void analyseSample(data::SamplePtr sample) override;
+    std::vector<double> features() override;
+    void removeDataBefore(time::Point time) override;
 
 private:
     time::Series<int> sampleFlags;

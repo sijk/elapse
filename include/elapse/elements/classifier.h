@@ -65,8 +65,8 @@ class BaseClassifier : public Classifier
     Q_OBJECT
 
 public slots:
-    void onFeatures(elapse::data::FeatureVector::const_ptr featVect);
-    void reset();
+    void onFeatures(elapse::data::FeatureVector::const_ptr featVect) override;
+    void reset() override;
 
 protected:
     using FeatureSet = std::set<data::FeatureVector::const_ptr>;

@@ -28,13 +28,13 @@ class SimpleRawDataSink : public elements::DataSink
 public:
     Q_INVOKABLE SimpleRawDataSink();
 
-    bool startSaving();
-    void stopSaving();
-    bool needsNewCaptureInfo();
-    bool getCaptureInfo();
+    bool startSaving() override;
+    void stopSaving() override;
+    bool needsNewCaptureInfo() override;
+    bool getCaptureInfo() override;
 
-    void saveDeviceConfig(const QMap<QString, QVariantMap> &config);
-    void saveData(data::Signal::Type signalType, QByteArray data);
+    void saveDeviceConfig(const QMap<QString, QVariantMap> &config) override;
+    void saveData(data::Signal::Type signalType, QByteArray data) override;
 
 protected:
     virtual QString getDirectory() const;

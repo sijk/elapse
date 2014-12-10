@@ -74,13 +74,13 @@ public:
     BaseFeatureExtractor();
     ~BaseFeatureExtractor();
 
-    void setStartTime(time::Point timestamp);
+    void setStartTime(time::Point timestamp) override;
 
-    void setWindowLength(uint length);
-    void setWindowStep(uint step);
+    void setWindowLength(uint length) override;
+    void setWindowStep(uint step) override;
 
 public slots:
-    void onSample(elapse::data::SamplePtr sample);
+    void onSample(elapse::data::SamplePtr sample) override;
 
 protected:
     /*!

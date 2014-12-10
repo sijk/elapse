@@ -25,12 +25,12 @@ class DummyVideoFeatureExtractor : public elements::BaseFeatureExtractor
 public:
     Q_INVOKABLE DummyVideoFeatureExtractor();
 
-    void setStartTime(time::Point timestamp);
+    void setStartTime(time::Point timestamp) override;
 
 protected:
-    void analyseSample(data::SamplePtr sample);
-    std::vector<double> features();
-    void removeDataBefore(time::Point time);
+    void analyseSample(data::SamplePtr sample) override;
+    std::vector<double> features() override;
+    void removeDataBefore(time::Point time) override;
 
 private:
     time::Series<double> means;

@@ -12,7 +12,7 @@ namespace plugin = elapse::plugin;
 class PluginManagerTest : public testing::Test
 {
 public:
-    void SetUp()
+    void SetUp() override
     {
         manager = new plugin::Manager;
         priv = plugin::ManagerPrivate::expose(manager);
@@ -21,7 +21,7 @@ public:
         qxtLog->enableAllLogLevels();
     }
 
-    void TearDown()
+    void TearDown() override
     {
         delete manager;
     }

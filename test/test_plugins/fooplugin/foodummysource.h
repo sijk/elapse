@@ -13,8 +13,8 @@ public:
     Q_INVOKABLE FooDummySource();
 
 public slots:
-    void start();
-    void stop();
+    void start() override;
+    void stop() override;
 
 private slots:
     void emitDummyData();

@@ -15,8 +15,8 @@ public:
     HeadWidget(QWidget *parent = 0);
     ~HeadWidget();
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
 
 public slots:
     void setXRotation(int angle);
@@ -32,11 +32,11 @@ signals:
     void zRotationChanged(int angle);
 
 protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int width, int height);
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int width, int height) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     HeadMesh *head;

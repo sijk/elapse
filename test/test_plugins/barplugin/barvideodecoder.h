@@ -13,7 +13,7 @@ public:
     Q_INVOKABLE BarVideoDecoder();
 
 public slots:
-    void onData(QByteArray data);
+    void onData(QByteArray data) override;
 };
 
 #endif // BARVIDEODECODER_H

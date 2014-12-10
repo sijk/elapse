@@ -26,7 +26,7 @@ public:
     void setMinimumLogLevel(QxtLogger::LogLevel level);
 
 protected:
-    bool filterAcceptsRow(int srcRow, const QModelIndex &srcParent) const;
+    bool filterAcceptsRow(int srcRow, const QModelIndex &srcParent) const override;
 
 private:
     QxtLogger::LogLevel minLevel;

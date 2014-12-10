@@ -17,7 +17,7 @@ public:
 class PythonPluginHostTest : public ::testing::Test
 {
 public:
-    void SetUp()
+    void SetUp() override
     {
         QDir pluginDir(qApp->applicationDirPath());
         pluginDir.cdUp();

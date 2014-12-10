@@ -20,7 +20,7 @@ public:
     Q_INVOKABLE ImuDecoder();
 
 public slots:
-    void onData(QByteArray data);
+    void onData(QByteArray data) override;
 };
 
 }} // namespace elapse::coreplugin

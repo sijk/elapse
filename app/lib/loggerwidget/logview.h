@@ -43,9 +43,9 @@ private slots:
     void setFilterLevel(int idx);
 
 protected:
-    void showEvent(QShowEvent *);
-    void hideEvent(QHideEvent *);
-    void keyPressEvent(QKeyEvent *event);
+    void showEvent(QShowEvent *) override;
+    void hideEvent(QHideEvent *) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     std::unique_ptr<Ui::LogView> ui;

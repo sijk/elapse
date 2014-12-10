@@ -13,7 +13,7 @@ public:
     Q_INVOKABLE BarEegDecoder();
 
 public slots:
-    void onData(QByteArray data);
+    void onData(QByteArray data) override;
 };
 
 #endif // BAREEGDECODER_H
