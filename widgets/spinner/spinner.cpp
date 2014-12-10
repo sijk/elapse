@@ -1,6 +1,8 @@
 #include <QMovie>
 #include "spinner.h"
 
+static void loadResources() { Q_INIT_RESOURCE(spinner); }
+
 namespace elapse { namespace widgets {
 
 /*!
@@ -10,6 +12,7 @@ Spinner::Spinner(QWidget *parent) :
     QLabel(parent),
     animation(new QMovie(":/img/spinner.gif", "GIF", this))
 {
+    ::loadResources();
 }
 
 /*!

@@ -5,13 +5,11 @@ set(elapse_SRCS
     main.cpp
     elapseclient.cpp
     batterymonitor.cpp
-    spinner.cpp
 )
 
 set(elapse_HDRS
     elapseclient.h
     batterymonitor.h
-    spinner.h
 )
 
 qt5_wrap_cpp(elapse_SRCS ${elapse_HDRS})
@@ -31,6 +29,8 @@ target_link_libraries(elapse-client
     pipeline
     pluginmanager
     loggerwidget
+    spinner
+    dialwithsector
     elements
 )
 

@@ -6,10 +6,9 @@
 #include <QPointer>
 #include "elapse/displayable.h"
 
-class DialWithSector;
-
 namespace elapse {
 namespace hardware { class Battery; }
+namespace widgets { class DialWithSector; }
 namespace client {
 
 
@@ -37,7 +36,7 @@ private slots:
 
 private:
     hardware::Battery *battery;
-    QPointer<DialWithSector> gauge;
+    QPointer<widgets::DialWithSector> gauge;
     QTimer timer;
 };
 

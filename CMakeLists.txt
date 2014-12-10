@@ -42,6 +42,7 @@ set(ELAPSE_ROOT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${ELAPSE_ROOT_SOURCE_DIR}/include)
 
 add_subdirectory(common)
+add_subdirectory(widgets)
 add_subdirectory(coreplugin)
 add_subdirectory(app)
 
