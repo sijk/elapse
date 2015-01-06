@@ -15,9 +15,8 @@ void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
     // previously removed for being incomplete
     auto firstSet = timestampedFeatureSets.cbegin();
     auto lastSet = timestampedFeatureSets.cend();
-    Q_ASSERT((firstSet != lastSet)
-             ? (timestamp >= firstSet->first)
-             : true);
+    if (firstSet != lastSet)
+        Q_ASSERT(timestamp >= firstSet->first);
 #endif
 
     // Add the current feature vector to the queue
@@ -30,6 +29,7 @@ void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
 
     // If we have a complete set of feature vectors for this time point...
     if (featureSet.size() == data::Signal::count()) {
+#ifdef Q_DEBUG
         // If there are incomplete feature sets from windows earlier
         // than the current one, assume they'll remain forever incomplete
         // and remove them.
@@ -44,6 +44,7 @@ void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
             while (first != current)
                 first = timestampedFeatureSets.erase(first);
         }
+#endif
 
         // Analyse the feature set
         auto cognitiveState = std::make_shared<data::CognitiveState>(timestamp);
@@ -51,8 +52,11 @@ void BaseClassifier::onFeatures(data::FeatureVector::const_ptr featVect)
         emit newState(cognitiveState);
         timestampedFeatureSets.erase(timestamp);
 
-        qxtLog->debug() << (uint)timestampedFeatureSets.size()
-                        << "partial feature sets pending";
+#ifdef Q_DEBUG
+        auto pending = timestampedFeatureSets.size();
+        if (pending > 0)
+            qxtLog->debug() << (uint)pending << "partial feature sets pending";
+#endif
     }
 }
 

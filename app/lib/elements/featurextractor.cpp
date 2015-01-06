@@ -74,9 +74,8 @@ void BaseFeatureExtractor::onSample(SamplePtr sample)
 
     Q_ASSERT(d->signalType != Signal::INVALID);
 
-    if (sample->timestamp < d->windowStart) {
+    if (sample->timestamp < d->windowStart)
         return;
-    }
 
     time::Point windowEnd = d->windowStart + d->windowLength;
     time::Point nextWindowStart = d->windowStart;
@@ -129,9 +128,10 @@ void SimpleEegFeatureExtractor::analyseSample(SamplePtr sample)
  */
 std::vector<double> SimpleEegFeatureExtractor::features()
 {
-    uint nSamples = samples.size();
-    Q_ASSERT(nSamples > 0);
-    uint nChannels = samples.cbegin()->second->values.size();
+    size_t nSamples = samples.size();
+    if (nSamples == 0)
+        return {};
+    size_t nChannels = samples.cbegin()->second->values.size();
 
     // Eigen's default storage order is column-major, so store EEG data as
     // one column per channel.
