@@ -17,7 +17,8 @@ namespace elapse { namespace coreplugin {
 
 using elapse::data::Signal;
 
-static const QString dataDir("/plugins/core/simplerawdatasource/dataDir");
+static const QString settingsRoot("/plugins/core/simplerawdatasource");
+static const QString dataDir(settingsRoot + "/dataDir");
 
 
 class DataLoader : public QThread
@@ -57,6 +58,7 @@ public:
     QDataStream stream;
     QMap<QString, QVariantMap> deviceConfig;
     DataLoader loader;
+    int startTime;
 };
 
 
@@ -73,13 +75,18 @@ void DataLoader::run()
     int signalType;
     QByteArray data;
     bool first = true;
+    int elapsedTime = 0;
 
     while (!d->stream.atEnd() && !stopped)
     {
         d->stream >> dt >> signalType >> data;
 
+        elapsedTime += dt;
+
         if (first)
             first = false;
+        else if (d->startTime > 0 && elapsedTime < d->startTime)
+            QThread::msleep(1);
         else
             QThread::msleep(dt);
 
@@ -103,6 +110,9 @@ SimpleRawDataSourcePrivate::SimpleRawDataSourcePrivate(SimpleRawDataSource *q) :
     q->connect(&loader, SIGNAL(videoReady(QByteArray)), SIGNAL(videoReady(QByteArray)));
     q->connect(&loader, SIGNAL(eegReady(QByteArray)), SIGNAL(eegReady(QByteArray)));
     q->connect(&loader, SIGNAL(imuReady(QByteArray)), SIGNAL(imuReady(QByteArray)));
+
+    startTime = QSettings().value(settingsRoot+"/startTime", 0).toInt() * 1000;
+    qxtLog->debug("Loader start at", qulonglong(startTime));
 }
 
 void SimpleRawDataSourcePrivate::createWidget()
