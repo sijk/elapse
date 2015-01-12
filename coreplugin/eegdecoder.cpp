@@ -23,7 +23,6 @@ public:
     EegDecoderPrivate();
 
     double vref;
-    quint8 gain;
     uint nChannels;
 
     quint32 prevSeqnum;
@@ -43,19 +42,17 @@ public:
 
 EegDecoderPrivate::EegDecoderPrivate() :
     vref(0),
-    gain(1),
     nChannels(8),
     prevSeqnum(0)
 {
 }
 
 /*!
- * \return the \a reading converted to microvolts, given the current gain()
- * and vref().
+ * \return the \a reading converted to microvolts, given the current vref().
  */
 double EegDecoderPrivate::toMicroVolts(double reading) const
 {
-    return reading / gain * vref / ((1 << 23) - 1);
+    return reading * vref / ((1 << 23) - 1);
 }
 
 /*!
@@ -152,7 +149,7 @@ EegDecoder::EegDecoder() :
 EegDecoder::~EegDecoder() { }
 
 /*!
- * Configure gain, vref, and nChannels to match the given hardware \a config.
+ * Configure vref and nChannels to match the given hardware \a config.
  */
 void EegDecoder::configure(QMap<QString, QVariantMap> config)
 {
@@ -160,7 +157,6 @@ void EegDecoder::configure(QMap<QString, QVariantMap> config)
 
     d->nChannels = config["eeg"]["nChannels"].toUInt();
     d->vref = config["eeg"]["vref"].toDouble();
-    d->gain = config["eeg/channel/0"]["gain"].toUInt();
 
     if (d->stripChart)
         d->stripChart->setNStrips(d->nChannels);
