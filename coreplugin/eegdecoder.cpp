@@ -126,7 +126,7 @@ void EegDecoderPrivate::createStripChart()
     QObject::connect(demean, SIGNAL(toggled(bool)),
                      stripChart, SLOT(setDemean(bool)));
 
-    spacingSlider->setValue(6e3);
+    spacingSlider->setValue(1e3);
     demean->setChecked(stripChart->demean());
 }
 
