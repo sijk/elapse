@@ -1,5 +1,6 @@
 find_package(Qt5Widgets REQUIRED)
 find_package(Qwt REQUIRED)
+find_package(Qxt REQUIRED)
 
 set(elapse_SRCS
     main.cpp

@@ -1,152 +1,65 @@
-#############
-## basic FindQxt.cmake
-## This is an *EXTREMELY BASIC* cmake find/config file for
-## those times you have a cmake project and wish to use
-## libQxt.
-##
-## It should be noted that at the time of writing, that
-## I (mschnee) have an extremely limited understanding of the
-## way Find*.cmake files work, but I have attempted to
-## emulate what FindQt4.cmake and a few others do.
-##
-##  To enable a specific component, set your QXT_USE_${modname}:
-##  SET(QXT_USE_QXTCORE TRUE)
-##  SET(QXT_USE_QXTGUI FALSE)
-##  Currently available components:
-##  QxtCore, QxtGui, QxtNetwork, QxtWeb, QxtSql
-##  Auto-including directories are enabled with INCLUDE_DIRECTORIES(), but
-##  can be accessed if necessary via ${QXT_INCLUDE_DIRS}
-##
-## To add the libraries to your build, TARGET_LINK_LIBRARIES(), such as...
-##  TARGET_LINK_LIBRARIES(YourTargetNameHere ${QXT_LIBRARIES})
-## ...or..
-##  TARGET_LINK_LIBRARIES(YourTargetNameHere ${QT_LIBRARIES} ${QXT_LIBRARIES})
-################### TODO:
-##      The purpose of this cmake file is to find what components
-##  exist, regardless of how libQxt was build or configured, thus
-##  it should search/find all possible options.  As I am not aware
-##  that any module requires anything special to be used, adding all
-##  modules to ${QXT_MODULES} below should be sufficient.
-##      Eventually, there should be version numbers, but
-##  I am still too unfamiliar with cmake to determine how to do
-##  version checks and comparisons.
-##      At the moment, this cmake returns a failure if you
-##  try to use a component that doesn't exist.  I don't know how to
-##  set up warnings.
-##      It would be nice having a FindQxt.cmake and a UseQxt.cmake
-##  file like done for Qt - one to check for everything in advance
+find_package(Threads REQUIRED)
 
-##############
+if(Qxt_DIR)
+    list(INSERT CMAKE_PREFIX_PATH 0 ${Qxt_DIR})
+endif()
 
-###### setup
-SET(QXT_MODULES QxtGui QxtWeb QxtZeroConf QxtNetwork QxtSql QxtBerkeley QxtCore)
-SET(QXT_FOUND_MODULES)
-FOREACH(mod ${QXT_MODULES})
-    STRING(TOUPPER ${mod} U_MOD)
-    SET(QXT_${U_MOD}_INCLUDE_DIR NOTFOUND)
-    SET(QXT_${U_MOD}_LIB_DEBUG NOTFOUND)
-    SET(QXT_${U_MOD}_LIB_RELEASE NOTFOUND)
-    SET(QXT_FOUND_${U_MOD} FALSE)
-ENDFOREACH(mod)
-SET(QXT_QXTGUI_DEPENDSON QxtCore)
-SET(QXT_QXTWEB_DEPENDSON QxtCore QxtNetwork)
-SET(QXT_QXTZEROCONF_DEPENDSON QxtCore QxtNetwork)
-SET(QXT_QXTNETWORK_DEPENDSON QxtCore)
-SET(QXT_QXTQSQL_DEPENDSON QxtCore)
-SET(QXT_QXTBERKELEY_DEPENDSON QxtCore)
+set(QxtNetwork_MOD_DEPS     Core)
+set(QxtWidgets_MOD_DEPS     Core)
+set(QxtWeb_MOD_DEPS         Core Network)
+set(QxtZeroConf_MOD_DEPS    Core Network)
+set(QxtSql_MOD_DEPS         Core)
+set(QxtBerkeley_MOD_DEPS    Core)
 
-FOREACH(mod ${QXT_MODULES})
-    STRING(TOUPPER ${mod} U_MOD)
-    FIND_PATH(QXT_${U_MOD}_INCLUDE_DIR ${mod}
-        PATH_SUFFIXES ${mod} include/${mod} Qxt/include/${mod} include/Qxt/${mod}
-        PATHS
-        ~/Library/Frameworks/
-        /Library/Frameworks/
-        /sw/
-        /usr/local/
-        /usr
-        /opt/local/
-        /opt/csw
-        /opt
-        "C:\\"
-        "C:\\Program Files\\"
-        "C:\\Program Files(x86)\\"
-    )
-    FIND_LIBRARY(QXT_${U_MOD}_LIB_RELEASE NAME ${mod}
-        PATH_SUFFIXES Qxt/lib64 Qxt/lib lib64 lib
-        PATHS
-        /sw
-        /usr/local
-        /usr
-        /opt/local
-        /opt/csw
-        /opt
-        "C:\\"
-        "C:\\Program Files"
-        "C:\\Program Files(x86)"
-    )
-    FIND_LIBRARY(QXT_${U_MOD}_LIB_DEBUG NAME ${mod}d
-        PATH_SUFFIXES Qxt/lib64 Qxt/lib lib64 lib
-        PATHS
-        /sw
-        /usr/local
-        /usr
-        /opt/local
-        /opt/csw
-        /opt
-        "C:\\"
-        "C:\\Program Files"
-        "C:\\Program Files(x86)"
-    )
-    IF (QXT_${U_MOD}_LIB_RELEASE)
-        SET(QXT_FOUND_MODULES "${QXT_FOUND_MODULES} ${mod}")
-    ENDIF (QXT_${U_MOD}_LIB_RELEASE)
+set(QxtCore_LIB_DEPS        Qt5::Core ${CMAKE_THREAD_LIBS_INIT})
+set(QxtNetwork_LIB_DEPS     Qt5::Network)
 
-    IF (QXT_${U_MOD}_LIB_DEBUG)
-        SET(QXT_FOUND_MODULES "${QXT_FOUND_MODULES} ${mod}")
-    ENDIF (QXT_${U_MOD}_LIB_DEBUG)
-ENDFOREACH(mod)
+# Handle COMPONENTS arguments to find_package()
+set(QXT_MODULES Core)
+if(Qxt_FIND_COMPONENTS)
+    foreach(comp ${Qxt_FIND_COMPONENTS})
+        list(APPEND QXT_MODULES ${comp})
+        foreach(dep ${Qxt${comp}_MOD_DEPS})
+            list(APPEND QXT_MODULES ${dep})
+        endforeach()
+    endforeach()
+    list(REMOVE_DUPLICATES QXT_MODULES)
+endif()
 
-FOREACH(mod ${QXT_MODULES})
-    STRING(TOUPPER ${mod} U_MOD)
-    IF(QXT_${U_MOD}_INCLUDE_DIR AND QXT_${U_MOD}_LIB_RELEASE)
-        SET(QXT_FOUND_${U_MOD} TRUE)
-    ENDIF(QXT_${U_MOD}_INCLUDE_DIR AND QXT_${U_MOD}_LIB_RELEASE)
-ENDFOREACH(mod)
+# Find the requested modules
+set(QXT_MODULE_VARS)
+foreach(mod ${QXT_MODULES})
+    # Find the library
+    find_library(Qxt${mod}_LIBRARY Qxt${mod})
 
+    # Find the include path
+    find_path(Qxt${mod}_INCLUDE_DIR Qxt${mod}/Qxt${mod})
+    set(Qxt${mod}_INCLUDE_DIR ${Qxt${mod}_INCLUDE_DIR}/Qxt${mod})
 
-##### find and include
-# To use a Qxt Library....
-#   SET(QXT_FIND_COMPONENTS QxtCore, QxtGui)
-# ...and this will do the rest
-IF( QXT_FIND_COMPONENTS )
-    FOREACH( component ${QXT_FIND_COMPONENTS} )
-        STRING( TOUPPER ${component} _COMPONENT )
-        SET(QXT_USE_${_COMPONENT} TRUE)
-    ENDFOREACH( component )
-ENDIF( QXT_FIND_COMPONENTS )
+    # Store the variable names for later
+    list(APPEND QXT_MODULE_VARS Qxt${mod}_LIBRARY Qxt${mod}_INCLUDE_DIR)
 
-SET(QXT_LIBRARIES "")
-SET(QXT_INCLUDE_DIRS "")
+    # Add Qxt module dependencies to library dependencies
+    foreach(dep ${Qxt${mod}_MOD_DEPS})
+        list(APPEND Qxt${mod}_LIB_DEPS Qxt::${mod})
+    endforeach()
+endforeach()
 
-# like FindQt4.cmake, in order of dependence
-FOREACH( module ${QXT_MODULES} )
-    STRING(TOUPPER ${module} U_MOD)
-    IF(QXT_USE_${U_MOD} OR QXT_DEPENDS_${U_MOD})
-        IF(QXT_FOUND_${U_MOD})
-            STRING(REPLACE "QXT" "" qxt_module_def "${U_MOD}")
-            ADD_DEFINITIONS(-DQXT_${qxt_module_def}_LIB)
-            SET(QXT_INCLUDE_DIRS ${QXT_INCLUDE_DIRS} ${QXT_${U_MOD}_INCLUDE_DIR})
-            INCLUDE_DIRECTORIES(${QXT_${U_MOD}_INCLUDE_DIR})
-            SET(QXT_LIBRARIES ${QXT_LIBRARIES} ${QXT_${U_MOD}_LIB_RELEASE})
-        ELSE(QXT_FOUND_${U_MOD})
-            MESSAGE("Could not find Qxt Module ${module}")
-            RETURN()
-        ENDIF(QXT_FOUND_${U_MOD})
-        FOREACH(dep ${QXT_${U_MOD}_DEPENDSON})
-            STRING(TOUPPER ${dep} U_DEP)
-            SET(QXT_DEPENDS_${U_DEP} TRUE)
-        ENDFOREACH(dep)
-    ENDIF(QXT_USE_${U_MOD} OR QXT_DEPENDS_${U_MOD})
-ENDFOREACH(module)
-MESSAGE(STATUS "Found Qxt Libraries:${QXT_FOUND_MODULES}")
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Qxt DEFAULT_MSG ${QXT_MODULE_VARS})
+mark_as_advanced(${QXT_MODULE_VARS})
+
+# Create imported library targets for the modules
+if(QXT_FOUND)
+    foreach(mod ${QXT_MODULES})
+        if(NOT TARGET Qxt::${mod})
+            add_library(Qxt::${mod} STATIC IMPORTED)
+            set_target_properties(Qxt::${mod} PROPERTIES
+                IMPORTED_LOCATION ${Qxt${mod}_LIBRARY}
+                INTERFACE_INCLUDE_DIRECTORIES ${Qxt${mod}_INCLUDE_DIR}
+                INTERFACE_LINK_LIBRARIES "${Qxt${mod}_LIB_DEPS}"
+            )
+        endif()
+    endforeach()
+endif()
+

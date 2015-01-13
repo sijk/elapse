@@ -11,12 +11,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE TRUE)
 
-set(QXT_FIND_COMPONENTS QxtCore)
-find_package(Qxt REQUIRED)
-if(NOT ${QXT_FOUND_QXTCORE})
-    message(FATAL_ERROR "Could not find Qxt.\n"
-            "Ensure you have libqxt installed and then configure "
-            "CMAKE_PREFIX_PATH appropriately.")
+add_subdirectory(3rdparty)
+if(NEEDS_REBUILD)
+    return()
 endif()
 
 set(INSTALL_BIN_DIR bin
@@ -52,7 +49,7 @@ if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
-set(BUILD_DOCS ON CACHE BOOL "Build the documentation")
+option(BUILD_DOCS "Build the documentation" ON)
 add_subdirectory(doc)
 
 install(

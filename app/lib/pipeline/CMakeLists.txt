@@ -1,4 +1,5 @@
 find_package(Qt5Gui REQUIRED)
+find_package(Qxt REQUIRED)
 
 set(pipeline_SRCS
     pipeline.cpp
@@ -17,5 +18,6 @@ target_include_directories(pipeline
 )
 
 target_link_libraries(pipeline
-    Qt5::Gui
+    PUBLIC  Qt5::Gui
+    PRIVATE Qxt::Core
 )

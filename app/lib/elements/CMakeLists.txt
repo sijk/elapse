@@ -1,5 +1,6 @@
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5DBus REQUIRED)
+find_package(Qxt REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 set(elements_SRCS
@@ -28,13 +29,13 @@ set_target_properties(elements PROPERTIES OUTPUT_NAME elapseelements)
 
 target_include_directories(elements
     PUBLIC  ${EIGEN3_INCLUDE_DIR}
-            ${QXT_INCLUDE_DIRS}
     PRIVATE ${ELAPSE_COMMON_INCLUDE_DIRS}
 )
 
 target_link_libraries(elements
     PUBLIC  Qt5::Gui
     PRIVATE dbus
+            Qxt::Core
 )
 
 target_compile_options(elements

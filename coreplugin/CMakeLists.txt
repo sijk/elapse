@@ -2,6 +2,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5GStreamer REQUIRED)
+find_package(Qxt REQUIRED)
 find_package(PkgConfig)
 pkg_search_module(GSTREAMER REQUIRED gstreamer-0.10)
 
@@ -34,6 +35,7 @@ target_link_libraries(coreplugin
     PRIVATE widgets
             Qt5::Widgets
             Qt5::Network
+            Qxt::Core
             ${GSTREAMER_LIBRARIES}
             ${QTGSTREAMER_LIBRARIES}
             ${QTGSTREAMER_UI_LIBRARIES}

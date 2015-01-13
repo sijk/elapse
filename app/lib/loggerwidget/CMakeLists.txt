@@ -1,4 +1,5 @@
 find_package(Qt5Widgets REQUIRED)
+find_package(Qxt REQUIRED)
 
 set(loggerwidget_SRCS
     logview.cpp
@@ -20,5 +21,5 @@ add_library(loggerwidget STATIC ${loggerwidget_SRCS})
 
 target_link_libraries(loggerwidget
     Qt5::Widgets
-    ${QXT_LIBRARIES}
+    Qxt::Core
 )

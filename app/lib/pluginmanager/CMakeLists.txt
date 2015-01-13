@@ -1,4 +1,5 @@
 find_package(Qt5Widgets REQUIRED)
+find_package(Qxt REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(Boost COMPONENTS python REQUIRED)
 
@@ -32,4 +33,5 @@ target_link_libraries(pluginmanager
     PRIVATE ${PYTHON_LIBRARIES}
             ${Boost_LIBRARIES}
             coreplugin
+            Qxt::Core
 )

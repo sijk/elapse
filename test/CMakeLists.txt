@@ -1,5 +1,6 @@
 find_package(Qt5Test)
 find_package(Qt5Widgets)
+find_package(Qxt)
 find_package(Threads)
 include(CMakeParseArguments)
 
@@ -24,12 +25,12 @@ function(add_elapse_test)
         ${ELAPSE_TEST_SOURCE_DIR}/test_main.cpp
     )
     target_include_directories(${TEST_NAME} PRIVATE ${TEST_INCLUDES})
-    target_link_libraries(${TEST_NAME} 
-        Qt5::Test 
+    target_link_libraries(${TEST_NAME}
+        Qt5::Test
+        Qxt::Core
         gmock
         ${CMAKE_THREAD_LIBS_INIT}
         ${TEST_LIBRARIES}
-        ${QXT_LIBRARIES}
     )
     target_compile_options(${TEST_NAME} PRIVATE ${TEST_COMPILE_OPTIONS})
     set_target_properties(${TEST_NAME} PROPERTIES AUTOMOC TRUE)

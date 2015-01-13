@@ -1,5 +1,6 @@
 find_package(Qt5DBus REQUIRED)
 find_package(Qt5Network REQUIRED)
+find_package(Qxt REQUIRED)
 
 set(deviceproxy_SRCS
     deviceproxy.cpp
@@ -21,6 +22,7 @@ target_include_directories(deviceproxy
 )
 
 target_link_libraries(deviceproxy
-    Qt5::DBus
-    Qt5::Network
+    PUBLIC  Qt5::DBus
+            Qt5::Network
+    PRIVATE Qxt::Core
 )

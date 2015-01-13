@@ -2,7 +2,8 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5OpenGL REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Qwt REQUIRED)
-find_package(OpenCV REQUIRED)
+find_package(Qxt REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
 set(widgets_SRCS
     cvmatwidget/cvmatwidget.cpp
@@ -33,6 +34,7 @@ target_link_libraries(widgets
             Qwt
             ${OpenCV_LIBRARIES}
     PRIVATE ${OPENGL_gl_LIBRARY}
+            Qxt::Core
 )
 
 target_include_directories(widgets
