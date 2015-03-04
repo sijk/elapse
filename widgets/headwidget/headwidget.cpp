@@ -1,6 +1,7 @@
 #include <math.h>
 #include <QtWidgets>
 #include <QtOpenGL>
+#include "util/ratelimiter.h"
 #include "headmesh.h"
 #include "headwidget.h"
 
@@ -24,8 +25,10 @@ public:
 };
 
 HeadWidget::HeadWidget(QWidget *parent) :
-    QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+    QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
+    d_ptr(new HeadWidgetPrivate)
 {
+    connect(&d_ptr->update, SIGNAL(ready()), SLOT(updateGL()));
 }
 
 HeadWidget::~HeadWidget()
@@ -57,7 +60,7 @@ void HeadWidget::setXRotation(int angle)
     if (angle != d->xRot) {
         d->xRot = angle;
         emit xRotationChanged(angle);
-        updateGL();
+        d->update();
     }
 }
 
@@ -68,7 +71,7 @@ void HeadWidget::setYRotation(int angle)
     if (angle != d->yRot) {
         d->yRot = angle;
         emit yRotationChanged(angle);
-        updateGL();
+        d->update();
     }
 }
 
@@ -79,7 +82,7 @@ void HeadWidget::setZRotation(int angle)
     if (angle != d->zRot) {
         d->zRot = angle;
         emit zRotationChanged(angle);
-        updateGL();
+        d->update();
     }
 }
 
