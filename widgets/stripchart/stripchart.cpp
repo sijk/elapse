@@ -1,7 +1,6 @@
 #include <memory>
 #include <numeric>
 #include <cmath>
-#include <QTimer>
 #include <QVBoxLayout>
 #include <QxtLogger>
 #include <qwt_plot.h>
@@ -11,6 +10,7 @@
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/range/numeric.hpp>
+#include "util/ratelimiter.h"
 #include "stripchart.h"
 
 using namespace boost::adaptors;
@@ -65,10 +65,8 @@ public:
     uint nSamples;
     double spacing;
     bool demean;
-    uint rate;
 
-    QTimer *timer;
-    bool needsRedraw;
+    RateLimiter update;
 };
 
 
@@ -79,8 +77,7 @@ StripChartPrivate::StripChartPrivate(StripChart *q) :
     nSamples(100),
     spacing(1.0),
     demean(true),
-    rate(10),
-    timer(new QTimer(q))
+    update(30)
 {
     // Create a layout and add the plot
     layout = new QVBoxLayout(q);
@@ -88,7 +85,7 @@ StripChartPrivate::StripChartPrivate(StripChart *q) :
 
     plot->setCanvasBackground(Qt::white);
 
-    QObject::connect(timer, &QTimer::timeout, [this]{ redraw(); });
+    QObject::connect(&update, &RateLimiter::ready, [this]{ redraw(); });
 }
 
 /*!
@@ -134,12 +131,6 @@ void StripChartPrivate::createStrips()
  */
 void StripChartPrivate::redraw()
 {
-    // If no data has arrived during the last refresh period, stop the timer.
-    if (!needsRedraw) {
-        timer->stop();
-        return;
-    }
-
     auto notNaN = [](double x){ return !std::isnan(x); };
 
     // Re-plot data
@@ -160,7 +151,6 @@ void StripChartPrivate::redraw()
         lines[i]->setSamples(tdata, ydata);
     }
     plot->replot();
-    needsRedraw = false;
 }
 
 
@@ -188,15 +178,7 @@ void StripChart::appendData(const std::vector<double> &data)
     for (size_t i = 0; i < data.size(); i++)
         d->data.at(i).push_back(data.at(i));
 
-    // Keep note that we have new data to plot
-    bool first_data = !d->needsRedraw;
-    d->needsRedraw = true;
-
-    // Start the timer to redraw at the specified rate
-    if (!d->timer->isActive()) {
-        if (first_data) d->redraw();
-        d->timer->start(1e3 / d->rate);
-    }
+    d->update();
 }
 
 /*!
@@ -265,8 +247,7 @@ void StripChart::setSpacing(double spacing)
                           0.99 * d->spacing,
                           d->spacing);
 
-    d->needsRedraw = true;
-    d->redraw();
+    d->update();
 }
 
 /*!
@@ -293,7 +274,7 @@ void StripChart::setDemean(bool demean)
 uint StripChart::rate() const
 {
     Q_D(const StripChart);
-    return d->rate;
+    return d->update.rate();
 }
 
 }} // namespace elapse::widgets
