@@ -2,10 +2,11 @@
 #define HEADWIDGET_H
 
 #include <QGLWidget>
-
-class HeadMesh;
+#include <QScopedPointer>
 
 namespace elapse { namespace widgets {
+
+class HeadWidgetPrivate;
 
 class HeadWidget : public QGLWidget
 {
@@ -35,17 +36,10 @@ protected:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int width, int height) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    HeadMesh *head;
-    int xRot;
-    int yRot;
-    int zRot;
-    QPoint lastPos;
-    QColor headColour;
-    QColor bgndColour;
+    const QScopedPointer<HeadWidgetPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(HeadWidget)
 };
 
 }} // namespace elapse::widgets

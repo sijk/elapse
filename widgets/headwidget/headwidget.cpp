@@ -8,18 +8,24 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+static const QColor headColour = QColor::fromCmykF(0.0, 0.1, 0.2, 0.3);
+static const QColor bgndColour = QColor::fromRgb(30, 30, 60);
+
 namespace elapse { namespace widgets {
 
-HeadWidget::HeadWidget(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+class HeadWidgetPrivate
 {
-    head = 0;
-    xRot = 0;
-    yRot = 0;
-    zRot = 0;
+public:
+    QScopedPointer<HeadMesh> head;
+    int xRot = 0;
+    int yRot = 0;
+    int zRot = 0;
+    RateLimiter update {30};
+};
 
-    headColour = QColor::fromCmykF(0.0, 0.1, 0.2, 0.3);
-    bgndColour = QColor::fromRgb(30, 30, 60);
+HeadWidget::HeadWidget(QWidget *parent) :
+    QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+{
 }
 
 HeadWidget::~HeadWidget()
@@ -46,9 +52,10 @@ static void qNormalizeAngle(int &angle)
 
 void HeadWidget::setXRotation(int angle)
 {
+    Q_D(HeadWidget);
     qNormalizeAngle(angle);
-    if (angle != xRot) {
-        xRot = angle;
+    if (angle != d->xRot) {
+        d->xRot = angle;
         emit xRotationChanged(angle);
         updateGL();
     }
@@ -56,9 +63,10 @@ void HeadWidget::setXRotation(int angle)
 
 void HeadWidget::setYRotation(int angle)
 {
+    Q_D(HeadWidget);
     qNormalizeAngle(angle);
-    if (angle != yRot) {
-        yRot = angle;
+    if (angle != d->yRot) {
+        d->yRot = angle;
         emit yRotationChanged(angle);
         updateGL();
     }
@@ -66,9 +74,10 @@ void HeadWidget::setYRotation(int angle)
 
 void HeadWidget::setZRotation(int angle)
 {
+    Q_D(HeadWidget);
     qNormalizeAngle(angle);
-    if (angle != zRot) {
-        zRot = angle;
+    if (angle != d->zRot) {
+        d->zRot = angle;
         emit zRotationChanged(angle);
         updateGL();
     }
@@ -91,10 +100,11 @@ void HeadWidget::setZRotation(double radians)
 
 void HeadWidget::initializeGL()
 {
+    Q_D(HeadWidget);
     qglClearColor(bgndColour);
 
-    head = new HeadMesh(this);
-    head->setColor(headColour);
+    d->head.reset(new HeadMesh(this));
+    d->head->setColor(headColour);
 
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
@@ -107,6 +117,7 @@ void HeadWidget::initializeGL()
 
 void HeadWidget::paintGL()
 {
+    Q_D(HeadWidget);
     // Centre of rotation
     float x0 = 0, y0 = -0.3, z0 = -0.2;
 
@@ -115,11 +126,11 @@ void HeadWidget::paintGL()
     glTranslatef(0.0, 0.0, -10.0);
     glTranslatef(x0, y0, z0);
     // Intrinsic rotation about (x0,y0,z0)
-    glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
-    glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
+    glRotatef(d->zRot / 16.0, 0.0, 0.0, 1.0);
+    glRotatef(d->yRot / 16.0, 0.0, 1.0, 0.0);
+    glRotatef(d->xRot / 16.0, 1.0, 0.0, 0.0);
     glTranslatef(-x0, -y0, -z0);
-    head->draw();
+    d->head->draw();
 }
 
 void HeadWidget::resizeGL(int width, int height)
@@ -131,26 +142,6 @@ void HeadWidget::resizeGL(int width, int height)
     glLoadIdentity();
     glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
     glMatrixMode(GL_MODELVIEW);
-}
-
-void HeadWidget::mousePressEvent(QMouseEvent *event)
-{
-    lastPos = event->pos();
-}
-
-void HeadWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    int dx = event->x() - lastPos.x();
-    int dy = event->y() - lastPos.y();
-
-    if (event->buttons() & Qt::LeftButton) {
-        setXRotation(xRot + 8 * dy);
-        setYRotation(yRot + 8 * dx);
-    } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(xRot + 8 * dy);
-        setZRotation(zRot + 8 * dx);
-    }
-    lastPos = event->pos();
 }
 
 }} // namespace elapse::widgets
