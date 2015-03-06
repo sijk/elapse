@@ -1,6 +1,7 @@
 #include <math.h>
 #include <QtWidgets>
 #include <QtOpenGL>
+#include "util/ratelimiter.h"
 #include "headmesh.h"
 #include "headwidget.h"
 
@@ -8,18 +9,29 @@
 #define GL_MULTISAMPLE  0x809D
 #endif
 
+static const QColor headColour = QColor::fromCmykF(0.0, 0.1, 0.2, 0.3);
+static const QColor bgndColour = QColor::fromRgb(30, 30, 60);
+
 namespace elapse { namespace widgets {
 
-HeadWidget::HeadWidget(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+class HeadWidgetPrivate
 {
-    head = 0;
-    xRot = 0;
-    yRot = 0;
-    zRot = 0;
+public:
+    HeadMesh *head = nullptr;
+    int xRot = 0;
+    int yRot = 0;
+    int zRot = 0;
+    RateLimiter update {30};
+};
 
-    headColour = QColor::fromCmykF(0.0, 0.1, 0.2, 0.3);
-    bgndColour = QColor::fromRgb(30, 30, 60);
+/*!
+ * Create a new HeadWidget as a child of the given \a parent.
+ */
+HeadWidget::HeadWidget(QWidget *parent) :
+    QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
+    d_ptr(new HeadWidgetPrivate)
+{
+    connect(&d_ptr->update, SIGNAL(ready()), SLOT(updateGL()));
 }
 
 HeadWidget::~HeadWidget()
@@ -44,57 +56,79 @@ static void qNormalizeAngle(int &angle)
         angle -= 360 * 16;
 }
 
+/*!
+ * Set the rotation \a angle about the x axis in 1/16ths of a degree.
+ */
 void HeadWidget::setXRotation(int angle)
 {
+    Q_D(HeadWidget);
     qNormalizeAngle(angle);
-    if (angle != xRot) {
-        xRot = angle;
-        emit xRotationChanged(angle);
-        updateGL();
+    if (angle != d->xRot) {
+        d->xRot = angle;
+        d->update();
     }
 }
 
+/*!
+ * Set the rotation \a angle about the y axis in 1/16ths of a degree.
+ */
 void HeadWidget::setYRotation(int angle)
 {
+    Q_D(HeadWidget);
     qNormalizeAngle(angle);
-    if (angle != yRot) {
-        yRot = angle;
-        emit yRotationChanged(angle);
-        updateGL();
+    if (angle != d->yRot) {
+        d->yRot = angle;
+        d->update();
     }
 }
 
+/*!
+ * Set the rotation \a angle about the z axis in 1/16ths of a degree.
+ */
 void HeadWidget::setZRotation(int angle)
 {
+    Q_D(HeadWidget);
     qNormalizeAngle(angle);
-    if (angle != zRot) {
-        zRot = angle;
-        emit zRotationChanged(angle);
-        updateGL();
+    if (angle != d->zRot) {
+        d->zRot = angle;
+        d->update();
     }
 }
 
+/*!
+ * Set the rotation angle about the x axis in \a radians.
+ */
 void HeadWidget::setXRotation(double radians)
 {
     setXRotation(int(radians * 180 / M_PI * 16));
 }
 
+/*!
+ * Set the rotation angle about the y axis in \a radians.
+ */
 void HeadWidget::setYRotation(double radians)
 {
     setYRotation(int(radians * 180 / M_PI * 16));
 }
 
+/*!
+ * Set the rotation angle about the z axis in \a radians.
+ */
 void HeadWidget::setZRotation(double radians)
 {
     setZRotation(int(radians * 180 / M_PI * 16));
 }
 
+/*!
+ * Load the head mesh and initialise OpenGL.
+ */
 void HeadWidget::initializeGL()
 {
+    Q_D(HeadWidget);
     qglClearColor(bgndColour);
 
-    head = new HeadMesh(this);
-    head->setColor(headColour);
+    d->head = new HeadMesh(this);
+    d->head->setColor(headColour);
 
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
@@ -105,8 +139,12 @@ void HeadWidget::initializeGL()
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 }
 
+/*!
+ * Render the head mesh with the appropriate rotation.
+ */
 void HeadWidget::paintGL()
 {
+    Q_D(HeadWidget);
     // Centre of rotation
     float x0 = 0, y0 = -0.3, z0 = -0.2;
 
@@ -115,13 +153,17 @@ void HeadWidget::paintGL()
     glTranslatef(0.0, 0.0, -10.0);
     glTranslatef(x0, y0, z0);
     // Intrinsic rotation about (x0,y0,z0)
-    glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
-    glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
+    glRotatef(d->zRot / 16.0, 0.0, 0.0, 1.0);
+    glRotatef(d->yRot / 16.0, 0.0, 1.0, 0.0);
+    glRotatef(d->xRot / 16.0, 1.0, 0.0, 0.0);
     glTranslatef(-x0, -y0, -z0);
-    head->draw();
+    d->head->draw();
 }
 
+/*!
+ * Handle widget resizing - center the head within an area of \a width by
+ * \a height.
+ */
 void HeadWidget::resizeGL(int width, int height)
 {
     int side = qMin(width, height);
@@ -131,26 +173,6 @@ void HeadWidget::resizeGL(int width, int height)
     glLoadIdentity();
     glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
     glMatrixMode(GL_MODELVIEW);
-}
-
-void HeadWidget::mousePressEvent(QMouseEvent *event)
-{
-    lastPos = event->pos();
-}
-
-void HeadWidget::mouseMoveEvent(QMouseEvent *event)
-{
-    int dx = event->x() - lastPos.x();
-    int dy = event->y() - lastPos.y();
-
-    if (event->buttons() & Qt::LeftButton) {
-        setXRotation(xRot + 8 * dy);
-        setYRotation(yRot + 8 * dx);
-    } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(xRot + 8 * dy);
-        setZRotation(zRot + 8 * dx);
-    }
-    lastPos = event->pos();
 }
 
 }} // namespace elapse::widgets

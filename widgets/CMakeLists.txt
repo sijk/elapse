@@ -12,6 +12,7 @@ set(widgets_SRCS
     headwidget/headmesh.cpp
     spinner/spinner.cpp
     stripchart/stripchart.cpp
+    util/ratelimiter.cpp
 )
 
 set(widgets_HDRS
@@ -21,6 +22,7 @@ set(widgets_HDRS
     headwidget/headmesh.h
     spinner/spinner.h
     stripchart/stripchart.h
+    util/ratelimiter.h
 )
 
 qt5_wrap_cpp(widgets_SRCS ${widgets_HDRS})

@@ -5,6 +5,7 @@ find_package(Qt5GStreamer REQUIRED)
 find_package(Qxt REQUIRED)
 find_package(PkgConfig)
 pkg_search_module(GSTREAMER REQUIRED gstreamer-0.10)
+find_package(Eigen3 REQUIRED)
 
 set(coreplugin_SRCS
     udpdatasource.cpp
@@ -20,6 +21,7 @@ set(coreplugin_SRCS
     blackholedatasink.cpp
     simplerawdatasink.cpp
     util/gstwrappedbuffer.cpp
+    util/interpolate.cpp
 )
 
 qt5_wrap_cpp(coreplugin_SRCS coreplugin.h)
@@ -29,6 +31,7 @@ add_library(coreplugin STATIC ${coreplugin_SRCS})
 target_include_directories(coreplugin
     PRIVATE ${GSTREAMER_INCLUDE_DIRS}
             ${QTGSTREAMER_INCLUDE_DIR}
+            ${EIGEN3_INCLUDE_DIR}
 )
 
 target_link_libraries(coreplugin
