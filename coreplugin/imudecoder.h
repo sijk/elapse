@@ -11,6 +11,11 @@ class ImuDecoderPrivate;
 /*!
  * \brief The ImuDecoder class decodes the byte stream from the IMU.
  *
+ * The accelerometer and gyroscope have different sampling rates (!) so the
+ * gyroscope data is interpolated to match the timestamps of the accelerometer
+ * data.
+ *
+ * \see splinterp()
  * \ingroup core-plugin
  */
 

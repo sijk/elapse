@@ -47,6 +47,10 @@ ImuDecoderPrivate::ImuDecoderPrivate(ImuDecoder *q) :
 {
 }
 
+/*!
+ * Parse the sample data from the given \a bytes, interpolate the gyro data
+ * to match the accelerometer timestamps, and emit ImuSample%s.
+ */
 void ImuDecoderPrivate::handleBytes(const QByteArray &bytes)
 {
     Q_Q(ImuDecoder);
@@ -58,6 +62,17 @@ void ImuDecoderPrivate::handleBytes(const QByteArray &bytes)
         emit q->newSample(sample);
 }
 
+/*!
+ * The passed \a bytes array contains several 3-axis samples from either the
+ * accelerometer or the gyroscope, along with the timestamp of the most
+ * recent sample in the block. Extract these samples from the byte array
+ * and populate the timestamps of all of the samples given the final
+ * timestamp and the known sampling rate. These samples are pushed into
+ * the internal queue of acc or gyr samples as appropriate.
+ *
+ * See the documentation for the LSM330DLC driver for details of the binary
+ * data structure.
+ */
 void ImuDecoderPrivate::extractSamplesFrom(const QByteArray &bytes)
 {
     Q_ASSERT(samplePeriod != 0);
@@ -82,6 +97,18 @@ void ImuDecoderPrivate::extractSamplesFrom(const QByteArray &bytes)
     }
 }
 
+/*!
+ * Given the queued 3-axis acc and gyr samples (at different sampling rates),
+ * interpolate the gyro samples to match the timestamps of the accelerometer
+ * samples, then create 6-axis ImuSample%s from the pairs.
+ *
+ * The interpolating spline is fitted to the 32 most recent gyro samples
+ * in all cases, regardless of how many samples are being interpolated. This
+ * is perhaps not the most efficient implementation but it means we can just
+ * use a circular buffer and be done with it.
+ *
+ * \return a vector of the interpolated samples.
+ */
 QVector<ImuSample::ptr> ImuDecoderPrivate::interpolateSamples()
 {
     QVector<ImuSample::ptr> samples;
@@ -162,6 +189,9 @@ ImuDecoder::~ImuDecoder()
 {
 }
 
+/*!
+ * Store the IMU's sampleRate so that we can interpolate timestamps.
+ */
 void ImuDecoder::configure(QMap<QString, QVariantMap> config)
 {
     Q_D(ImuDecoder);
@@ -171,7 +201,7 @@ void ImuDecoder::configure(QMap<QString, QVariantMap> config)
 }
 
 /*!
- * Decode the given \a data and emit ImuSample%s.
+ * Decode the given \a data and emit data::ImuSample%s.
  */
 void ImuDecoder::onData(QByteArray data)
 {
