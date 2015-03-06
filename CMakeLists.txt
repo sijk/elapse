@@ -52,6 +52,11 @@ endif()
 option(BUILD_DOCS "Build the documentation" ON)
 add_subdirectory(doc)
 
+add_custom_target(run
+    COMMAND elapse-client
+    DEPENDS elapse-client
+)
+
 install(
     EXPORT ElapseTargets
     NAMESPACE elapse::
