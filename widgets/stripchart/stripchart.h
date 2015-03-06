@@ -20,6 +20,7 @@ class StripChartPrivate;
  * while ensuring display responsiveness.
  *
  * \see RateLimiter
+ * \headerfile elapse/widgets/stripchart.h
  * \ingroup widgets
  */
 

@@ -9,6 +9,8 @@ namespace elapse { namespace widgets {
 
 /*!
  * \brief The CvMatWidget class is a QWidget for displaying a cv::Mat.
+ * \headerfile elapse/widgets/cvmatwidget.h
+ * \ingroup widgets
  */
 class CvMatWidget : public QWidget
 {

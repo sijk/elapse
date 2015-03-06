@@ -8,6 +8,9 @@ namespace elapse { namespace widgets {
 /*!
  * \brief The DialWithSector class is a QwtDial with a coloured sector between
  * the lowerBound() and the sectorBound.
+ *
+ * \headerfile elapse/widgets/dialwithsector.h
+ * \ingroup widgets
  */
 
 class DialWithSector : public QwtDial

@@ -12,6 +12,7 @@ namespace elapse { namespace widgets {
  * When the Spinner is running() the animation is shown. When it is not
  * running() the animation is stopped and hidden.
  *
+ * \headerfile elapse/widgets/spinner.h
  * \ingroup widgets
  */
 
