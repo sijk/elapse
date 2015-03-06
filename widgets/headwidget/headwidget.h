@@ -27,11 +27,6 @@ public slots:
     void setYRotation(double radians);
     void setZRotation(double radians);
 
-signals:
-    void xRotationChanged(int angle);
-    void yRotationChanged(int angle);
-    void zRotationChanged(int angle);
-
 protected:
     void initializeGL() override;
     void paintGL() override;

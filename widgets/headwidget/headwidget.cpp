@@ -17,7 +17,7 @@ namespace elapse { namespace widgets {
 class HeadWidgetPrivate
 {
 public:
-    QScopedPointer<HeadMesh> head;
+    HeadMesh *head = nullptr;
     int xRot = 0;
     int yRot = 0;
     int zRot = 0;
@@ -59,7 +59,6 @@ void HeadWidget::setXRotation(int angle)
     qNormalizeAngle(angle);
     if (angle != d->xRot) {
         d->xRot = angle;
-        emit xRotationChanged(angle);
         d->update();
     }
 }
@@ -70,7 +69,6 @@ void HeadWidget::setYRotation(int angle)
     qNormalizeAngle(angle);
     if (angle != d->yRot) {
         d->yRot = angle;
-        emit yRotationChanged(angle);
         d->update();
     }
 }
@@ -81,7 +79,6 @@ void HeadWidget::setZRotation(int angle)
     qNormalizeAngle(angle);
     if (angle != d->zRot) {
         d->zRot = angle;
-        emit zRotationChanged(angle);
         d->update();
     }
 }
@@ -106,7 +103,7 @@ void HeadWidget::initializeGL()
     Q_D(HeadWidget);
     qglClearColor(bgndColour);
 
-    d->head.reset(new HeadMesh(this));
+    d->head = new HeadMesh(this);
     d->head->setColor(headColour);
 
     glEnable(GL_DEPTH_TEST);
