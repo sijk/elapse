@@ -2,6 +2,10 @@
 
 namespace elapse { namespace widgets {
 
+/*!
+ * Create a RateLimiter as a child of the given \a parent which will emit
+ * ready() at a maximum rate of \a hz.
+ */
 RateLimiter::RateLimiter(int hz, QObject *parent) :
     QObject(parent),
     hz(hz),
@@ -9,11 +13,22 @@ RateLimiter::RateLimiter(int hz, QObject *parent) :
 {
 }
 
+/*!
+ * \return the maximum rate at which ready() will be emitted in Hz.
+ */
 int RateLimiter::rate() const
 {
     return hz;
 }
 
+/*!
+ * \fn RateLimiter::ready()
+ * Output event.
+ */
+
+/*!
+ * Input event.
+ */
 void RateLimiter::operator()()
 {
     Q_ASSERT(hz != 0);

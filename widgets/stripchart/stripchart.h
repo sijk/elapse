@@ -19,6 +19,7 @@ class StripChartPrivate;
  * is not called, the plot is not redrawn. This approach minimises computation
  * while ensuring display responsiveness.
  *
+ * \see RateLimiter
  * \ingroup widgets
  */
 
