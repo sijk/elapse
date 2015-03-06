@@ -8,6 +8,12 @@ namespace elapse { namespace widgets {
 
 class HeadWidgetPrivate;
 
+/*!
+ * \brief The HeadWidget class displays a 3D head in a configurable orientation.
+ * \headerfile elapse/widgets/headwidget.h
+ * \ingroup widgets
+ */
+
 class HeadWidget : public QGLWidget
 {
     Q_OBJECT

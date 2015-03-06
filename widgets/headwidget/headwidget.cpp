@@ -24,6 +24,9 @@ public:
     RateLimiter update {30};
 };
 
+/*!
+ * Create a new HeadWidget as a child of the given \a parent.
+ */
 HeadWidget::HeadWidget(QWidget *parent) :
     QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
     d_ptr(new HeadWidgetPrivate)
@@ -53,6 +56,9 @@ static void qNormalizeAngle(int &angle)
         angle -= 360 * 16;
 }
 
+/*!
+ * Set the rotation \a angle about the x axis in 1/16ths of a degree.
+ */
 void HeadWidget::setXRotation(int angle)
 {
     Q_D(HeadWidget);
@@ -63,6 +69,9 @@ void HeadWidget::setXRotation(int angle)
     }
 }
 
+/*!
+ * Set the rotation \a angle about the y axis in 1/16ths of a degree.
+ */
 void HeadWidget::setYRotation(int angle)
 {
     Q_D(HeadWidget);
@@ -73,6 +82,9 @@ void HeadWidget::setYRotation(int angle)
     }
 }
 
+/*!
+ * Set the rotation \a angle about the z axis in 1/16ths of a degree.
+ */
 void HeadWidget::setZRotation(int angle)
 {
     Q_D(HeadWidget);
@@ -83,21 +95,33 @@ void HeadWidget::setZRotation(int angle)
     }
 }
 
+/*!
+ * Set the rotation angle about the x axis in \a radians.
+ */
 void HeadWidget::setXRotation(double radians)
 {
     setXRotation(int(radians * 180 / M_PI * 16));
 }
 
+/*!
+ * Set the rotation angle about the y axis in \a radians.
+ */
 void HeadWidget::setYRotation(double radians)
 {
     setYRotation(int(radians * 180 / M_PI * 16));
 }
 
+/*!
+ * Set the rotation angle about the z axis in \a radians.
+ */
 void HeadWidget::setZRotation(double radians)
 {
     setZRotation(int(radians * 180 / M_PI * 16));
 }
 
+/*!
+ * Load the head mesh and initialise OpenGL.
+ */
 void HeadWidget::initializeGL()
 {
     Q_D(HeadWidget);
@@ -115,6 +139,9 @@ void HeadWidget::initializeGL()
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 }
 
+/*!
+ * Render the head mesh with the appropriate rotation.
+ */
 void HeadWidget::paintGL()
 {
     Q_D(HeadWidget);
@@ -133,6 +160,10 @@ void HeadWidget::paintGL()
     d->head->draw();
 }
 
+/*!
+ * Handle widget resizing - center the head within an area of \a width by
+ * \a height.
+ */
 void HeadWidget::resizeGL(int width, int height)
 {
     int side = qMin(width, height);
