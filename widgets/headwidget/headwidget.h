@@ -26,12 +26,9 @@ public:
     QSize sizeHint() const override;
 
 public slots:
-    void setXRotation(int angle);
-    void setYRotation(int angle);
-    void setZRotation(int angle);
-    void setXRotation(double radians);
-    void setYRotation(double radians);
-    void setZRotation(double radians);
+    void setXRotation(float radians);
+    void setYRotation(float radians);
+    void setZRotation(float radians);
 
 protected:
     void initializeGL() override;
