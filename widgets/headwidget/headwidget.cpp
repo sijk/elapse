@@ -131,9 +131,11 @@ void HeadWidget::paintGL()
     glTranslatef(0.0, 0.0, -10.0);
     glTranslatef(x0, y0, z0);
     // Intrinsic rotation about (x0,y0,z0)
-    glRotatef(d->zRot, 0.0, 0.0, 1.0);
-    glRotatef(d->yRot, 0.0, 1.0, 0.0);
-    glRotatef(d->xRot, 1.0, 0.0, 0.0);
+    // The rotation vectors are weird because the OpenGL axes are different to
+    // the axes assigned to the (real) head in the Elapse framework.
+    glRotatef(d->zRot, 0.0, 1.0, 0.0);
+    glRotatef(d->yRot, 0.0, 0.0, 1.0);
+    glRotatef(d->xRot,-1.0, 0.0, 0.0);
     glTranslatef(-x0, -y0, -z0);
     d->head.draw();
 }

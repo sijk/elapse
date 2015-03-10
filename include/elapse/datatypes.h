@@ -249,6 +249,11 @@ protected:
     \brief The ImuSample class holds the data for one 6-axis sample from
     the IMU.
 
+    The axes assigned to the head are:
+         - x: out the right ear,
+         - y: out the nose,
+         - z: out the top of the head.
+
     \var ImuSample::acc
     \brief The linear accelerations in \e g.
 

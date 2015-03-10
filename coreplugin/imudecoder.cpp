@@ -157,16 +157,21 @@ QVector<ImuSample::ptr> ImuDecoderPrivate::interpolateSamples()
     }
 
     // Create ImuSamples from the interpolated data.
+    // Note that the axes assigned to the head by the Elapse framework
+    // are different to those on the hardware:
+    //     [0 0 1] [x]   [z]
+    //     [1 0 0] [y] = [x]
+    //     [0 1 0] [z]   [y]
     for (int i = 0; i < nAcc; i++) {
         auto sample = ImuSample::create();
 
         sample->timestamp = acc[i].time;
-        sample->acc.setX(acc[i].x);
-        sample->acc.setY(acc[i].y);
-        sample->acc.setZ(acc[i].z);
-        sample->gyr.setX(gix[i]);
-        sample->gyr.setY(giy[i]);
-        sample->gyr.setZ(giz[i]);
+        sample->acc.setX(acc[i].z / 1e3);
+        sample->acc.setY(acc[i].x / 1e3);
+        sample->acc.setZ(acc[i].y / 1e3);
+        sample->gyr.setX(giz[i] / 1e3);
+        sample->gyr.setY(gix[i] / 1e3);
+        sample->gyr.setZ(giy[i] / 1e3);
 
         samples.append(sample);
     }
@@ -197,7 +202,6 @@ void ImuDecoder::configure(QMap<QString, QVariantMap> config)
     Q_D(ImuDecoder);
     using namespace time::literals;
     d->samplePeriod = 1_s / config["imu"]["sampleRate"].toUInt();
-    qxtLog->debug("IMU sample period =", d->samplePeriod);
 }
 
 /*!

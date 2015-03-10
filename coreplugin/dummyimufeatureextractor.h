@@ -14,7 +14,8 @@ namespace coreplugin {
  * \brief The DummyImuFeatureExtractor class is a black hole for
  * data::ImuSample%s.
  *
- * It exposes a 3D head model widget which displays the measured orientation.
+ * It exposes a [3D head model widget](\ref widgets::HeadWidget)
+ * which displays the measured orientation.
  *
  * \ingroup core-plugin
  */

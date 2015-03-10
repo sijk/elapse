@@ -51,11 +51,11 @@ void DummyImuFeatureExtractor::updateHeadWidget(const data::ImuSample &sample)
     float ax = sample.acc.x();
     float ay = sample.acc.y();
     float az = sample.acc.z();
-    double theta = atan2(ax, az);
-    double phi = atan2(ay, sqrt(ax*ax + az*az));
+    double xrot = atan2(ay, az);
+    double yrot = atan2(ax, sqrt(ay*ay + az*az));
 
-    headWidget->setXRotation(-theta);
-    headWidget->setZRotation(phi);
+    headWidget->setXRotation(xrot);
+    headWidget->setYRotation(yrot);
 }
 
 }} // namespace elapse::coreplugin
