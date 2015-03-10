@@ -35,7 +35,7 @@ private:
     std::vector<double> features() override;
     void removeDataBefore(time::Point time) override;
 
-    void updateHeadWidget(const data::ImuSample *sample);
+    void updateHeadWidget(const data::ImuSample &sample);
 
     QPointer<widgets::HeadWidget> headWidget;
     time::Series<int> sampleFlags;
