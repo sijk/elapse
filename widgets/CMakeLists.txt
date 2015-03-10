@@ -19,7 +19,6 @@ set(widgets_HDRS
     cvmatwidget/cvmatwidget.h
     dialwithsector/dialwithsector.h
     headwidget/headwidget.h
-    headwidget/headmesh.h
     spinner/spinner.h
     stripchart/stripchart.h
     util/ratelimiter.h

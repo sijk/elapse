@@ -3,11 +3,6 @@
 #include "obj/head.h"
 
 
-HeadMesh::HeadMesh(QObject *parent)
-    : QObject(parent)
-{
-}
-
 void HeadMesh::setColor(QColor c)
 {
     color[0] = c.redF();

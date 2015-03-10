@@ -17,7 +17,7 @@ namespace elapse { namespace widgets {
 class HeadWidgetPrivate
 {
 public:
-    HeadMesh *head = nullptr;
+    HeadMesh head;
     float xRot = 0;
     float yRot = 0;
     float zRot = 0;
@@ -106,9 +106,7 @@ void HeadWidget::initializeGL()
 {
     Q_D(HeadWidget);
     qglClearColor(bgndColour);
-
-    d->head = new HeadMesh(this);
-    d->head->setColor(headColour);
+    d->head.setColor(headColour);
 
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
@@ -137,7 +135,7 @@ void HeadWidget::paintGL()
     glRotatef(d->yRot, 0.0, 1.0, 0.0);
     glRotatef(d->xRot, 1.0, 0.0, 0.0);
     glTranslatef(-x0, -y0, -z0);
-    d->head->draw();
+    d->head.draw();
 }
 
 /*!
