@@ -22,22 +22,46 @@ QWidget *DummyImuFeatureExtractor::getWidget()
     return headWidget;
 }
 
+/*!
+ * Update the head widget and save the IMU readings for later.
+ */
 void DummyImuFeatureExtractor::analyseSample(data::SamplePtr sample)
 {
-    if (headWidget)
-        updateHeadWidget(*ImuSample::staticCastFrom(sample));
+    const auto &imu = *ImuSample::staticCastFrom(sample);
 
-    sampleFlags[sample->timestamp] = 1;
+    if (headWidget)
+        updateHeadWidget(imu);
+
+    samples.emplace(imu.timestamp, std::array<float,6>{
+        imu.acc.x(), imu.acc.y(), imu.acc.z(),
+        imu.gyr.x(), imu.gyr.y(), imu.gyr.z(),
+    });
 }
 
+/*!
+ * \return the mean of each axis of the IMU samples in the current window.
+ */
 std::vector<double> DummyImuFeatureExtractor::features()
 {
-    return { double(sampleFlags.size()) };
+    if (samples.empty())
+        return {};
+
+    std::vector<double> feat;
+    feat.reserve(6);
+
+    for (int i = 0; i < 6; i++) {
+        double sum = 0;
+        for (auto &s : samples)
+            sum += s.second[i];
+        feat.emplace_back(sum / samples.size());
+    }
+
+    return feat;
 }
 
 void DummyImuFeatureExtractor::removeDataBefore(time::Point time)
 {
-    sampleFlags.removeValuesBefore(time);
+    samples.removeValuesBefore(time);
 }
 
 /*!

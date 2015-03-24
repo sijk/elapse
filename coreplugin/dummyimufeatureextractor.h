@@ -2,6 +2,7 @@
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
 #include <QPointer>
+#include <array>
 #include <elapse/elements/featurextractor.h>
 #include <elapse/displayable.h>
 
@@ -39,7 +40,7 @@ private:
     void updateHeadWidget(const data::ImuSample &sample);
 
     QPointer<widgets::HeadWidget> headWidget;
-    time::Series<int> sampleFlags;
+    time::Series<std::array<float, 6>> samples;
 };
 
 }} // namespace elapse::coreplugin
