@@ -19,17 +19,25 @@ class ImuDecoderPrivate
     ImuDecoder * const q_ptr;
     Q_DECLARE_PUBLIC(ImuDecoder)
 
+    template<typename Value>
     struct Sample
     {
         quint64 time;
-        qint16 x, y, z;
+        Value x, y, z;
     };
 
-    boost::circular_buffer<Sample> acc;
-    boost::circular_buffer<Sample> gyr;
+    using AccSample = Sample<qint16>;
+    using GyrSample = Sample<qint32>;
+
+    boost::circular_buffer<AccSample> acc;
+    boost::circular_buffer<GyrSample> gyr;
 
     void extractSamplesFrom(const QByteArray &bytes);
     QVector<ImuSample::ptr> interpolateSamples();
+
+    template<class Value>
+    void extractSamples(const uchar *buff, int size, qint64 time,
+                        boost::circular_buffer<Sample<Value>> &queue);
 
 public:
     uint samplePeriod;
@@ -84,16 +92,25 @@ void ImuDecoderPrivate::extractSamplesFrom(const QByteArray &bytes)
     qint64 blockTime = qFromLittleEndian<qint64>(buff);
     buff += 8;
 
-    int nSamples = (bytes.size() - 9) / (3 * sizeof(qint16));
-    auto &q = (blockType == 'A') ? acc : gyr;
+    if (blockType == 'A')
+        extractSamples(buff, bytes.size(), blockTime, acc);
+    else
+        extractSamples(buff, bytes.size(), blockTime, gyr);
+}
+
+template<typename Value>
+void ImuDecoderPrivate::extractSamples(const uchar *buff, int size, qint64 blockTime,
+                                       boost::circular_buffer<Sample<Value>> &queue)
+{
+    int nSamples = (size - 9) / (3 * sizeof(Value));
 
     for (int i = 0; i < nSamples; i++) {
-        Sample s;
+        Sample<Value> s;
         s.time = blockTime - (nSamples - i - 1) * samplePeriod;
-        s.x = qFromLittleEndian<qint16>(buff); buff += 2;
-        s.y = qFromLittleEndian<qint16>(buff); buff += 2;
-        s.z = qFromLittleEndian<qint16>(buff); buff += 2;
-        q.push_back(std::move(s));
+        s.x = qFromLittleEndian<Value>(buff); buff += sizeof(Value);
+        s.y = qFromLittleEndian<Value>(buff); buff += sizeof(Value);
+        s.z = qFromLittleEndian<Value>(buff); buff += sizeof(Value);
+        queue.push_back(std::move(s));
     }
 }
 
@@ -128,7 +145,7 @@ QVector<ImuSample::ptr> ImuDecoderPrivate::interpolateSamples()
     {
         const auto gyrEnd = gyr.back().time;
         auto lastAcc = std::find_if(acc.rbegin(), acc.rend(),
-            [=](const Sample &a){
+            [=](const AccSample &a){
                 return a.time <= gyrEnd;
             });
         nAcc = std::distance(acc.begin(), lastAcc.base());
@@ -141,7 +158,7 @@ QVector<ImuSample::ptr> ImuDecoderPrivate::interpolateSamples()
         Eigen::ArrayXd ta(nAcc);
 
         for (int i = 0; i < nGyr; i++) {
-            Sample &g = gyr[i];
+            GyrSample &g = gyr[i];
             tg[i] = g.time;
             gx[i] = g.x;
             gy[i] = g.y;
