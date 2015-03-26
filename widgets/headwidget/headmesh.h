@@ -6,11 +6,9 @@
 
 /*! \private */
 
-class HeadMesh : public QObject
+class HeadMesh
 {
 public:
-    explicit HeadMesh(QObject *parent);
-
     void setColor(QColor c);
     void draw() const;
 

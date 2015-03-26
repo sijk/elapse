@@ -17,10 +17,10 @@ namespace elapse { namespace widgets {
 class HeadWidgetPrivate
 {
 public:
-    HeadMesh *head = nullptr;
-    int xRot = 0;
-    int yRot = 0;
-    int zRot = 0;
+    HeadMesh head;
+    float xRot = 0;
+    float yRot = 0;
+    float zRot = 0;
     RateLimiter update {30};
 };
 
@@ -48,21 +48,25 @@ QSize HeadWidget::sizeHint() const
     return QSize(200, 250);
 }
 
-static void qNormalizeAngle(int &angle)
+static float rad2deg(float radians)
 {
-    while (angle < 0)
-        angle += 360 * 16;
-    while (angle > 360 * 16)
-        angle -= 360 * 16;
+    float degrees = radians * 180 / M_PI;
+
+    while (degrees < 0)
+        degrees += 360;
+    while (degrees > 360)
+        degrees -= 360;
+
+    return degrees;
 }
 
 /*!
- * Set the rotation \a angle about the x axis in 1/16ths of a degree.
+ * Set the rotation angle about the x axis in \a radians.
  */
-void HeadWidget::setXRotation(int angle)
+void HeadWidget::setXRotation(float radians)
 {
     Q_D(HeadWidget);
-    qNormalizeAngle(angle);
+    float angle = rad2deg(radians);
     if (angle != d->xRot) {
         d->xRot = angle;
         d->update();
@@ -70,12 +74,12 @@ void HeadWidget::setXRotation(int angle)
 }
 
 /*!
- * Set the rotation \a angle about the y axis in 1/16ths of a degree.
+ * Set the rotation angle about the y axis in \a radians.
  */
-void HeadWidget::setYRotation(int angle)
+void HeadWidget::setYRotation(float radians)
 {
     Q_D(HeadWidget);
-    qNormalizeAngle(angle);
+    float angle = rad2deg(radians);
     if (angle != d->yRot) {
         d->yRot = angle;
         d->update();
@@ -83,40 +87,16 @@ void HeadWidget::setYRotation(int angle)
 }
 
 /*!
- * Set the rotation \a angle about the z axis in 1/16ths of a degree.
+ * Set the rotation angle about the z axis in \a radians.
  */
-void HeadWidget::setZRotation(int angle)
+void HeadWidget::setZRotation(float radians)
 {
     Q_D(HeadWidget);
-    qNormalizeAngle(angle);
+    float angle = rad2deg(radians);
     if (angle != d->zRot) {
         d->zRot = angle;
         d->update();
     }
-}
-
-/*!
- * Set the rotation angle about the x axis in \a radians.
- */
-void HeadWidget::setXRotation(double radians)
-{
-    setXRotation(int(radians * 180 / M_PI * 16));
-}
-
-/*!
- * Set the rotation angle about the y axis in \a radians.
- */
-void HeadWidget::setYRotation(double radians)
-{
-    setYRotation(int(radians * 180 / M_PI * 16));
-}
-
-/*!
- * Set the rotation angle about the z axis in \a radians.
- */
-void HeadWidget::setZRotation(double radians)
-{
-    setZRotation(int(radians * 180 / M_PI * 16));
 }
 
 /*!
@@ -126,9 +106,7 @@ void HeadWidget::initializeGL()
 {
     Q_D(HeadWidget);
     qglClearColor(bgndColour);
-
-    d->head = new HeadMesh(this);
-    d->head->setColor(headColour);
+    d->head.setColor(headColour);
 
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
@@ -153,11 +131,13 @@ void HeadWidget::paintGL()
     glTranslatef(0.0, 0.0, -10.0);
     glTranslatef(x0, y0, z0);
     // Intrinsic rotation about (x0,y0,z0)
-    glRotatef(d->zRot / 16.0, 0.0, 0.0, 1.0);
-    glRotatef(d->yRot / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(d->xRot / 16.0, 1.0, 0.0, 0.0);
+    // The rotation vectors are weird because the OpenGL axes are different to
+    // the axes assigned to the (real) head in the Elapse framework.
+    glRotatef(d->zRot, 0.0, 1.0, 0.0);
+    glRotatef(d->yRot, 0.0, 0.0, 1.0);
+    glRotatef(d->xRot,-1.0, 0.0, 0.0);
     glTranslatef(-x0, -y0, -z0);
-    d->head->draw();
+    d->head.draw();
 }
 
 /*!

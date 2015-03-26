@@ -10,6 +10,12 @@ class HeadWidgetPrivate;
 
 /*!
  * \brief The HeadWidget class displays a 3D head in a configurable orientation.
+ *
+ * The widget uses intrinsic rotations measured in radians. That is, the
+ * rotations are taken about axes that are fixed to the head, not about the
+ * world's axes. The x axis points out the right ear, the y axis out the nose,
+ * and the z axis out the top of the head.
+ *
  * \headerfile elapse/widgets/headwidget.h
  * \ingroup widgets
  */
@@ -26,12 +32,9 @@ public:
     QSize sizeHint() const override;
 
 public slots:
-    void setXRotation(int angle);
-    void setYRotation(int angle);
-    void setZRotation(int angle);
-    void setXRotation(double radians);
-    void setYRotation(double radians);
-    void setZRotation(double radians);
+    void setXRotation(float radians);
+    void setYRotation(float radians);
+    void setZRotation(float radians);
 
 protected:
     void initializeGL() override;

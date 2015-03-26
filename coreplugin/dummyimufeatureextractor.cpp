@@ -12,7 +12,7 @@ DummyImuFeatureExtractor::DummyImuFeatureExtractor() :
 }
 
 /*!
- * \return a 3D head model widget whose orientation matches that
+ * \return a widgets::HeadWidget whose orientation matches that
  * measured by the IMU.
  */
 QWidget *DummyImuFeatureExtractor::getWidget()
@@ -22,40 +22,64 @@ QWidget *DummyImuFeatureExtractor::getWidget()
     return headWidget;
 }
 
+/*!
+ * Update the head widget and save the IMU readings for later.
+ */
 void DummyImuFeatureExtractor::analyseSample(data::SamplePtr sample)
 {
-    if (headWidget)
-        updateHeadWidget(ImuSample::staticCastFrom(sample).get());
+    const auto &imu = *ImuSample::staticCastFrom(sample);
 
-    sampleFlags[sample->timestamp] = 1;
+    if (headWidget)
+        updateHeadWidget(imu);
+
+    samples.emplace(imu.timestamp, std::array<float,6>{
+        imu.acc.x(), imu.acc.y(), imu.acc.z(),
+        imu.gyr.x(), imu.gyr.y(), imu.gyr.z(),
+    });
 }
 
+/*!
+ * \return the mean of each axis of the IMU samples in the current window.
+ */
 std::vector<double> DummyImuFeatureExtractor::features()
 {
-    return { double(sampleFlags.size()) };
+    if (samples.empty())
+        return {};
+
+    std::vector<double> feat;
+    feat.reserve(6);
+
+    for (int i = 0; i < 6; i++) {
+        double sum = 0;
+        for (auto &s : samples)
+            sum += s.second[i];
+        feat.emplace_back(sum / samples.size());
+    }
+
+    return feat;
 }
 
 void DummyImuFeatureExtractor::removeDataBefore(time::Point time)
 {
-    sampleFlags.removeValuesBefore(time);
+    samples.removeValuesBefore(time);
 }
 
 /*!
  * Update the orientation of the head widget with the given \a sample.
  */
-void DummyImuFeatureExtractor::updateHeadWidget(const ImuSample *sample)
+void DummyImuFeatureExtractor::updateHeadWidget(const data::ImuSample &sample)
 {
     // Calculate the direction of the acceleration vector.
     // By assuming this is purely due to gravity, we get an approximation
     // of the head orientation (though with no information about z rotation).
-    float ax = sample->acc.x();
-    float ay = sample->acc.y();
-    float az = sample->acc.z();
-    double theta = atan2(ax, az);
-    double phi = atan2(ay, sqrt(ax*ax + az*az));
+    float ax = sample.acc.x();
+    float ay = sample.acc.y();
+    float az = sample.acc.z();
+    double xrot = atan2(ay, az);
+    double yrot = atan2(ax, sqrt(ay*ay + az*az));
 
-    headWidget->setXRotation(-theta);
-    headWidget->setZRotation(phi);
+    headWidget->setXRotation(xrot);
+    headWidget->setYRotation(yrot);
 }
 
 }} // namespace elapse::coreplugin

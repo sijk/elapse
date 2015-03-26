@@ -2,6 +2,7 @@
 #define DUMMYIMUFEATUREEXTRACTOR_H
 
 #include <QPointer>
+#include <array>
 #include <elapse/elements/featurextractor.h>
 #include <elapse/displayable.h>
 
@@ -14,7 +15,8 @@ namespace coreplugin {
  * \brief The DummyImuFeatureExtractor class is a black hole for
  * data::ImuSample%s.
  *
- * It exposes a 3D head model widget which displays the measured orientation.
+ * It exposes a [3D head model widget](\ref widgets::HeadWidget)
+ * which displays the measured orientation.
  *
  * \ingroup core-plugin
  */
@@ -35,10 +37,10 @@ private:
     std::vector<double> features() override;
     void removeDataBefore(time::Point time) override;
 
-    void updateHeadWidget(const data::ImuSample *sample);
+    void updateHeadWidget(const data::ImuSample &sample);
 
     QPointer<widgets::HeadWidget> headWidget;
-    time::Series<int> sampleFlags;
+    time::Series<std::array<float, 6>> samples;
 };
 
 }} // namespace elapse::coreplugin
