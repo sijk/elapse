@@ -52,4 +52,10 @@ install(
     DIRECTORY ${ELAPSE_ROOT_SOURCE_DIR}/include/elapse
     DESTINATION ${INSTALL_INC_DIR}
 )
+install(
+    FILES ${QxtCore_INCLUDE_DIR}/qxtlogger.h
+          ${QxtCore_INCLUDE_DIR}/qxtlogstream.h
+          ${QxtCore_INCLUDE_DIR}/qxtglobal.h
+    DESTINATION ${INSTALL_INC_DIR}/elapse/logging
+)
 add_library(elapse::elements ALIAS elements)
