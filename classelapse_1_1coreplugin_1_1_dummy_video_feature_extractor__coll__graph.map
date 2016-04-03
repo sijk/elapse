@@ -1,0 +1,4 @@
+<map id="elapse::coreplugin::DummyVideoFeatureExtractor" name="elapse::coreplugin::DummyVideoFeatureExtractor">
+<area shape="rect" id="node2" href="$classelapse_1_1elements_1_1_base_feature_extractor.html" title="The BaseFeatureExtractor class provides a base implementation of a generic feature extractor that han..." alt="" coords="13,331,216,570"/>
+<area shape="rect" id="node3" href="$classelapse_1_1elements_1_1_feature_extractor.html" title="The FeatureExtractor interface is implemented by elements that analyse a time series of Samples to ex..." alt="" coords="28,131,201,282"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title="STL class. " alt="" coords="5,163,128,189"/>
+<area shape="rect" id="node2" href="$classelapse_1_1time_1_1_series.html" title="The time::Series class maps time::Points to arbitrary values. " alt="" coords="195,5,365,32"/>
+<area shape="rect" id="node3" href="$classelapse_1_1time_1_1_series.html" title="elapse::time::Series\l\&lt; data::EegSample::const_ptr \&gt;" alt="" coords="176,57,384,98"/>
+<area shape="rect" id="node4" href="$classelapse_1_1time_1_1_series.html" title="elapse::time::Series\l\&lt; double \&gt;" alt="" coords="211,122,349,163"/>
+<area shape="rect" id="node5" href="$classelapse_1_1time_1_1_series.html" title="elapse::time::Series\l\&lt; FeatureSet \&gt;" alt="" coords="211,187,349,229"/>
+<area shape="rect" id="node6" href="$classelapse_1_1time_1_1_series.html" title="elapse::time::Series\l\&lt; int \&gt;" alt="" coords="211,253,349,294"/>
+<area shape="rect" id="node7" href="$classelapse_1_1time_1_1_series.html" title="elapse::time::Series\l\&lt; std::array\&lt; float, 6 \&gt; \&gt;" alt="" coords="197,318,363,359"/>
+</map>

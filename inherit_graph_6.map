@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$structelapse_1_1data_1_1_sample.html" title="The Sample class is the base class for all samples acquired from sensors on the device. " alt="" coords="6,77,151,104"/>
+<area shape="rect" id="node3" href="$structelapse_1_1data_1_1_eeg_sample.html" title="The EegSample class holds the data for one multi&#45;channel sample of EEG. " alt="" coords="459,12,627,39"/>
+<area shape="rect" id="node5" href="$structelapse_1_1data_1_1_imu_sample.html" title="The ImuSample class holds the data for one 6&#45;axis sample from the IMU. " alt="" coords="459,77,626,104"/>
+<area shape="rect" id="node7" href="$structelapse_1_1data_1_1_video_sample.html" title="The VideoSample class holds the data for one frame of video. " alt="" coords="453,143,632,169"/>
+</map>

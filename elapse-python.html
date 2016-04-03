@@ -1,0 +1,463 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="top" title="None" href="elapse-python.html#document-elapse-python" /> 
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <p>This page documents the Python bindings to the Elapse framework.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#elapse" id="id1"><code class="docutils literal"><span class="pre">elapse</span></code></a><ul>
+<li><a class="reference internal" href="#module-elapse.data" id="id2"><code class="docutils literal"><span class="pre">elapse.data</span></code></a></li>
+<li><a class="reference internal" href="#module-elapse.elements" id="id3"><code class="docutils literal"><span class="pre">elapse.elements</span></code></a></li>
+<li><a class="reference internal" href="#module-elapse.log" id="id4"><code class="docutils literal"><span class="pre">elapse.log</span></code></a></li>
+<li><a class="reference internal" href="#module-elapse.settings" id="id5"><code class="docutils literal"><span class="pre">elapse.settings</span></code></a></li>
+<li><a class="reference internal" href="#module-elapse.gui" id="id6"><code class="docutils literal"><span class="pre">elapse.gui</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="elapse">
+<h1><a class="toc-backref" href="#id1"><code class="docutils literal"><span class="pre">elapse</span></code></a><a class="headerlink" href="#elapse" title="Permalink to this headline">¶</a></h1>
+<p>All of the python bindings to Elapse are contained within the <code class="docutils literal"><span class="pre">elapse</span></code>
+package. All of the sub-modules are directly accessible from this package,
+so you don&#8217;t need to import them separately — a simple <code class="docutils literal"><span class="pre">import</span> <span class="pre">elapse</span></code>
+will suffice.</p>
+<p>The purpose of this page is primarily to show which parts of the Elapse
+API are exposed to Python. For detailed documentation on the classes listed
+here, follow the links to the documentation of the C++ classes.</p>
+<div class="section" id="module-elapse.data">
+<span id="elapse-data"></span><h2><a class="toc-backref" href="#id2"><code class="docutils literal"><span class="pre">elapse.data</span></code></a><a class="headerlink" href="#module-elapse.data" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="././namespaceelapse_1_1data.html">elapse::data</a>.</p>
+<dl class="class">
+<dt id="elapse.data.Signal">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">Signal</code><a class="headerlink" href="#elapse.data.Signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././classelapse_1_1data_1_1_signal.html">elapse::data::Signal</a>.</p>
+<dl class="attribute">
+<dt id="elapse.data.Signal.EEG">
+<code class="descname">EEG</code><a class="headerlink" href="#elapse.data.Signal.EEG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.Signal.VIDEO">
+<code class="descname">VIDEO</code><a class="headerlink" href="#elapse.data.Signal.VIDEO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.Signal.IMU">
+<code class="descname">IMU</code><a class="headerlink" href="#elapse.data.Signal.IMU" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.Signal.INVALID">
+<code class="descname">INVALID</code><a class="headerlink" href="#elapse.data.Signal.INVALID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="elapse.data.Signal.toString">
+<em class="property">static </em><code class="descname">toString</code><span class="sig-paren">(</span><em>signal</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#elapse.data.Signal.toString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="elapse.data.Signal.fromString">
+<em class="property">static </em><code class="descname">fromString</code><span class="sig-paren">(</span><em>signal</em><span class="sig-paren">)</span> &rarr; Signal.Type<a class="headerlink" href="#elapse.data.Signal.fromString" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="elapse.data.Signal.count">
+<em class="property">static </em><code class="descname">count</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#elapse.data.Signal.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.data.Sample">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">Sample</code><a class="headerlink" href="#elapse.data.Sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././structelapse_1_1data_1_1_sample.html">elapse::data::Sample</a>.</p>
+<dl class="attribute">
+<dt id="elapse.data.Sample.timestamp">
+<code class="descname">timestamp</code><a class="headerlink" href="#elapse.data.Sample.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.data.EegSample">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">EegSample</code><a class="headerlink" href="#elapse.data.EegSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././structelapse_1_1data_1_1_eeg_sample.html">elapse::data::EegSample</a>.</p>
+<dl class="attribute">
+<dt id="elapse.data.EegSample.seqnum">
+<code class="descname">seqnum</code><a class="headerlink" href="#elapse.data.EegSample.seqnum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.EegSample.leadOff">
+<code class="descname">leadOff</code><a class="headerlink" href="#elapse.data.EegSample.leadOff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.EegSample.values">
+<code class="descname">values</code><a class="headerlink" href="#elapse.data.EegSample.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.data.VideoSample">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">VideoSample</code><a class="headerlink" href="#elapse.data.VideoSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././structelapse_1_1data_1_1_video_sample.html">elapse::data::VideoSample</a>.</p>
+<dl class="attribute">
+<dt id="elapse.data.VideoSample.w">
+<code class="descname">w</code><a class="headerlink" href="#elapse.data.VideoSample.w" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.VideoSample.h">
+<code class="descname">h</code><a class="headerlink" href="#elapse.data.VideoSample.h" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.VideoSample.data">
+<code class="descname">data</code><a class="headerlink" href="#elapse.data.VideoSample.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.data.ImuSample">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">ImuSample</code><a class="headerlink" href="#elapse.data.ImuSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././structelapse_1_1data_1_1_imu_sample.html">elapse::data::ImuSample</a>. Both <a class="reference internal" href="#elapse.data.ImuSample.acc" title="elapse.data.ImuSample.acc"><code class="xref py py-attr docutils literal"><span class="pre">acc</span></code></a> and <a class="reference internal" href="#elapse.data.ImuSample.gyr" title="elapse.data.ImuSample.gyr"><code class="xref py py-attr docutils literal"><span class="pre">gyr</span></code></a> are
+3-tuples of <code class="docutils literal"><span class="pre">(x,y,z)</span></code> values.</p>
+<dl class="attribute">
+<dt id="elapse.data.ImuSample.acc">
+<code class="descname">acc</code><a class="headerlink" href="#elapse.data.ImuSample.acc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.ImuSample.gyr">
+<code class="descname">gyr</code><a class="headerlink" href="#elapse.data.ImuSample.gyr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.data.FeatureVector">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">FeatureVector</code><a class="headerlink" href="#elapse.data.FeatureVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././structelapse_1_1data_1_1_feature_vector.html">elapse::data::FeatureVector</a>.</p>
+<dl class="attribute">
+<dt id="elapse.data.FeatureVector.signalType">
+<code class="descname">signalType</code><a class="headerlink" href="#elapse.data.FeatureVector.signalType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.FeatureVector.startTime">
+<code class="descname">startTime</code><a class="headerlink" href="#elapse.data.FeatureVector.startTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.FeatureVector.features">
+<code class="descname">features</code><a class="headerlink" href="#elapse.data.FeatureVector.features" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterable sequence of floats.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.data.CognitiveState">
+<em class="property">class </em><code class="descclassname">elapse.data.</code><code class="descname">CognitiveState</code><a class="headerlink" href="#elapse.data.CognitiveState" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././structelapse_1_1data_1_1_cognitive_state.html">elapse::data::CognitiveState</a>.</p>
+<dl class="attribute">
+<dt id="elapse.data.CognitiveState.startTime">
+<code class="descname">startTime</code><a class="headerlink" href="#elapse.data.CognitiveState.startTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="elapse.data.CognitiveState.state">
+<code class="descname">state</code><a class="headerlink" href="#elapse.data.CognitiveState.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elapse.elements">
+<span id="elapse-elements"></span><h2><a class="toc-backref" href="#id3"><code class="docutils literal"><span class="pre">elapse.elements</span></code></a><a class="headerlink" href="#module-elapse.elements" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="././namespaceelapse_1_1elements.html">elapse::elements</a>. When implementing any of these classes you must
+implement all of the listed methods unless otherwise noted (they are pure
+virtual in the C++ base classes).</p>
+<dl class="class">
+<dt id="elapse.elements.BaseFeatureExtractor">
+<em class="property">class </em><code class="descclassname">elapse.elements.</code><code class="descname">BaseFeatureExtractor</code><a class="headerlink" href="#elapse.elements.BaseFeatureExtractor" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././classelapse_1_1elements_1_1_base_feature_extractor.html">elapse::elements::BaseFeatureExtractor</a>.</p>
+<dl class="attribute">
+<dt id="elapse.elements.BaseFeatureExtractor.signalType">
+<code class="descname">signalType</code><a class="headerlink" href="#elapse.elements.BaseFeatureExtractor.signalType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each subclass of <a class="reference internal" href="#elapse.elements.BaseFeatureExtractor" title="elapse.elements.BaseFeatureExtractor"><code class="xref py py-class docutils literal"><span class="pre">BaseFeatureExtractor</span></code></a> must have a class
+attribute called <a class="reference internal" href="#elapse.elements.BaseFeatureExtractor.signalType" title="elapse.elements.BaseFeatureExtractor.signalType"><code class="xref py py-attr docutils literal"><span class="pre">signalType</span></code></a> that indicates what type of signal
+it works with. The value must be one of the <a class="reference internal" href="#elapse.data.Signal" title="elapse.data.Signal"><code class="xref py py-class docutils literal"><span class="pre">elapse.data.Signal</span></code></a>
+tags.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyEegFeatureExtractor</span><span class="p">(</span><span class="n">elapse</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">BaseFeatureExtractor</span><span class="p">):</span>
+    <span class="n">signalType</span> <span class="o">=</span> <span class="n">elapse</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Signal</span><span class="o">.</span><span class="n">EEG</span>
+    <span class="c"># ...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.BaseFeatureExtractor.analyseSample">
+<code class="descname">analyseSample</code><span class="sig-paren">(</span><em>sample</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.BaseFeatureExtractor.analyseSample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.BaseFeatureExtractor.features">
+<code class="descname">features</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; list<a class="headerlink" href="#elapse.elements.BaseFeatureExtractor.features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.BaseFeatureExtractor.removeDataBefore">
+<code class="descname">removeDataBefore</code><span class="sig-paren">(</span><em>time</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.BaseFeatureExtractor.removeDataBefore" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.BaseFeatureExtractor.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.BaseFeatureExtractor.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Optional</em> — defaults to calling <a class="reference internal" href="#elapse.elements.BaseFeatureExtractor.removeDataBefore" title="elapse.elements.BaseFeatureExtractor.removeDataBefore"><code class="xref py py-meth docutils literal"><span class="pre">removeDataBefore()</span></code></a> with the
+maximum possible value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.elements.BaseClassifier">
+<em class="property">class </em><code class="descclassname">elapse.elements.</code><code class="descname">BaseClassifier</code><a class="headerlink" href="#elapse.elements.BaseClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././classelapse_1_1elements_1_1_base_classifier.html">elapse::elements::BaseClassifier</a>.</p>
+<dl class="method">
+<dt id="elapse.elements.BaseClassifier.classify">
+<code class="descname">classify</code><span class="sig-paren">(</span><em>featureVectors</em><span class="sig-paren">)</span> &rarr; CognitiveState<a class="headerlink" href="#elapse.elements.BaseClassifier.classify" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>featureVectors</strong> &#8211; A list of <a class="reference internal" href="#elapse.data.FeatureVector" title="elapse.data.FeatureVector"><code class="xref py py-class docutils literal"><span class="pre">FeatureVectors</span></code></a>
+to classify, one for each signal type.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The classified <a class="reference internal" href="#elapse.data.CognitiveState" title="elapse.data.CognitiveState"><code class="xref py py-class docutils literal"><span class="pre">CognitiveState</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.elements.OutputAction">
+<em class="property">class </em><code class="descclassname">elapse.elements.</code><code class="descname">OutputAction</code><a class="headerlink" href="#elapse.elements.OutputAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././classelapse_1_1elements_1_1_output_action.html">elapse::elements::OutputAction</a>.</p>
+<dl class="method">
+<dt id="elapse.elements.OutputAction.onState">
+<code class="descname">onState</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.OutputAction.onState" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> &#8211; The <a class="reference internal" href="#elapse.data.CognitiveState" title="elapse.data.CognitiveState"><code class="xref py py-class docutils literal"><span class="pre">CognitiveState</span></code></a> to take action on.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="elapse.elements.DataSink">
+<em class="property">class </em><code class="descclassname">elapse.elements.</code><code class="descname">DataSink</code><a class="headerlink" href="#elapse.elements.DataSink" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference external" href="././classelapse_1_1elements_1_1_data_sink.html">elapse::elements::DataSink</a>.</p>
+<dl class="method">
+<dt id="elapse.elements.DataSink.startSaving">
+<code class="descname">startSaving</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#elapse.elements.DataSink.startSaving" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.stopSaving">
+<code class="descname">stopSaving</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.DataSink.stopSaving" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.needsNewCaptureInfo">
+<code class="descname">needsNewCaptureInfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#elapse.elements.DataSink.needsNewCaptureInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.getCaptureInfo">
+<code class="descname">getCaptureInfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#elapse.elements.DataSink.getCaptureInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.saveDeviceConfig">
+<code class="descname">saveDeviceConfig</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.DataSink.saveDeviceConfig" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.saveData">
+<code class="descname">saveData</code><span class="sig-paren">(</span><em>signalType</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.DataSink.saveData" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Optional</em></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.saveSample">
+<code class="descname">saveSample</code><span class="sig-paren">(</span><em>signalType</em>, <em>sample</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.DataSink.saveSample" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Optional</em></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.saveFeatureVector">
+<code class="descname">saveFeatureVector</code><span class="sig-paren">(</span><em>features</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.DataSink.saveFeatureVector" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Optional</em></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="elapse.elements.DataSink.saveCognitiveState">
+<code class="descname">saveCognitiveState</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.elements.DataSink.saveCognitiveState" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Optional</em></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-elapse.log">
+<span id="elapse-log"></span><h2><a class="toc-backref" href="#id4"><code class="docutils literal"><span class="pre">elapse.log</span></code></a><a class="headerlink" href="#module-elapse.log" title="Permalink to this headline">¶</a></h2>
+<p>The functions in this module provide access to the same logger that the C++
+code uses. Use these functions instead of the <code class="docutils literal"><span class="pre">print</span></code> statement so that
+messages appear in the application&#8217;s log window.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">elapse</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Analysing sample with timestamp&#39;</span><span class="p">,</span> <span class="n">sample</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Functions are listed in order of increasing severity.</p>
+<dl class="function">
+<dt id="elapse.log.trace">
+<code class="descclassname">elapse.log.</code><code class="descname">trace</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.log.trace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.log.debug">
+<code class="descclassname">elapse.log.</code><code class="descname">debug</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.log.debug" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.log.info">
+<code class="descclassname">elapse.log.</code><code class="descname">info</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.log.info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.log.warning">
+<code class="descclassname">elapse.log.</code><code class="descname">warning</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.log.warning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.log.error">
+<code class="descclassname">elapse.log.</code><code class="descname">error</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.log.error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-elapse.settings">
+<span id="elapse-settings"></span><h2><a class="toc-backref" href="#id5"><code class="docutils literal"><span class="pre">elapse.settings</span></code></a><a class="headerlink" href="#module-elapse.settings" title="Permalink to this headline">¶</a></h2>
+<p>The functions in this module provide access to the Elapse client application&#8217;s
+settings file. It is strongly recommended that you prefix the names of any
+settings that you store with <code class="docutils literal"><span class="pre">'plugins/myplugin'</span></code>, where <code class="docutils literal"><span class="pre">myplugin</span></code> is the
+name of your plugin, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">dataDir</span> <span class="o">=</span> <span class="n">elapse</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">getStr</span><span class="p">(</span><span class="s">&#39;plugins/mydatasink/datadir&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="elapse.settings.getBool">
+<code class="descclassname">elapse.settings.</code><code class="descname">getBool</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#elapse.settings.getBool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.setBool">
+<code class="descclassname">elapse.settings.</code><code class="descname">setBool</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.settings.setBool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.getInt">
+<code class="descclassname">elapse.settings.</code><code class="descname">getInt</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#elapse.settings.getInt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.setInt">
+<code class="descclassname">elapse.settings.</code><code class="descname">setInt</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.settings.setInt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.getStr">
+<code class="descclassname">elapse.settings.</code><code class="descname">getStr</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#elapse.settings.getStr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.setStr">
+<code class="descclassname">elapse.settings.</code><code class="descname">setStr</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.settings.setStr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.getFloat">
+<code class="descclassname">elapse.settings.</code><code class="descname">getFloat</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span> &rarr; float<a class="headerlink" href="#elapse.settings.getFloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="elapse.settings.setFloat">
+<code class="descclassname">elapse.settings.</code><code class="descname">setFloat</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#elapse.settings.setFloat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-elapse.gui">
+<span id="elapse-gui"></span><h2><a class="toc-backref" href="#id6"><code class="docutils literal"><span class="pre">elapse.gui</span></code></a><a class="headerlink" href="#module-elapse.gui" title="Permalink to this headline">¶</a></h2>
+<p>The functions in this module provide access to miscellaneous GUI dialogs that
+may be useful for, e.g., implementing <a class="reference internal" href="#elapse.elements.DataSink.getCaptureInfo" title="elapse.elements.DataSink.getCaptureInfo"><code class="xref py py-meth docutils literal"><span class="pre">DataSink.getCaptureInfo()</span></code></a>.</p>
+<dl class="function">
+<dt id="elapse.gui.getInt">
+<code class="descclassname">elapse.gui.</code><code class="descname">getInt</code><span class="sig-paren">(</span><em>title</em>, <em>label</em>, <em>value</em>, <em>min</em>, <em>max</em>, <em>step</em><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#elapse.gui.getInt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a dialog box to request an integer from the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>title</strong> (<em>str</em>) &#8211; Text to show in the titlebar of the window</li>
+<li><strong>label</strong> (<em>str</em>) &#8211; Text describing what should be entered</li>
+<li><strong>value</strong> (<em>int</em>) &#8211; Default value in the spin box</li>
+<li><strong>min</strong> (<em>int</em>) &#8211; Minimum valid value</li>
+<li><strong>max</strong> (<em>int</em>) &#8211; Maximum valid value</li>
+<li><strong>step</strong> (<em>int</em>) &#8211; Amount to increment by when pressing the arrow buttons</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The entered value, or <code class="docutils literal"><span class="pre">None</span></code> if cancelled</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classelapse_1_1plugin_1_1_host.html" title="The plugin::Host class is an abstract factory for loading elements from plugins. " alt="" coords="5,56,144,83"/>
+<area shape="rect" id="node2" href="$classelapse_1_1plugin_1_1_native_host.html" title="The NativeHost class loads plugins implemented in C++. " alt="" coords="193,5,369,32"/>
+<area shape="rect" id="node3" href="$classelapse_1_1plugin_1_1_python_host.html" title="The PythonHost class loads plugins implemented in Python. " alt="" coords="192,56,371,83"/>
+<area shape="rect" id="node4" href="$classelapse_1_1plugin_1_1_static_host.html" title="The StaticHost class loads the static Core Plugin. " alt="" coords="195,107,367,133"/>
+</map>

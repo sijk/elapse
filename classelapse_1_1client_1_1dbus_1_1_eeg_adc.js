@@ -1,0 +1,28 @@
+var classelapse_1_1client_1_1dbus_1_1_eeg_adc =
+[
+    [ "EegAdc", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a04bfe55514dbdcaec197615925195d90", null ],
+    [ "bytesPerChunk", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a864bc32e9cd778828aaa7004b5a249e6", null ],
+    [ "channel", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a1c005ac3823c664a5d67f5169f2afc65", null ],
+    [ "enableTestSignal", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a274872172cd44d2bd2f364dd0e30ec7c", null ],
+    [ "leadOffFreq", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a01aca4425eadaa175c6b64dd6217df98", null ],
+    [ "leadOffMag", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#ab40052842f137ff8c1c4b57154b01125", null ],
+    [ "leadOffSenseNeg", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a1183b3e5c9e91d322c029142b79298dd", null ],
+    [ "leadOffSensePos", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a2b1880538cc8fdf528746bf62b3922dc", null ],
+    [ "nChannels", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a084ead707100e15522c05a1f67bebd33", null ],
+    [ "reset", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a859b83800375874afbf4d44bc3d438c3", null ],
+    [ "sampleRate", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a3660b77a4678699f97441a12af391d14", null ],
+    [ "samplesPerChunk", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a4c071d700dd05b154933b6b6e25f90f4", null ],
+    [ "setAllChannels", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a4031bc01c3281a18a7514cd13bd6047a", null ],
+    [ "setEnableTestSignal", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a541be59a5fde55aaf900288fee3ac91d", null ],
+    [ "setLeadOffFreq", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#af43590192df61b23b1695ad4d7e7177b", null ],
+    [ "setLeadOffMag", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#ac872e1fb509f28e2b9c1fbdce94e6c3c", null ],
+    [ "setLeadOffSenseNeg", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a0c6156c1842abb78cb80fb3b3576937e", null ],
+    [ "setLeadOffSensePos", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#ab1726a524fbc0b62fd66e2db22eb762b", null ],
+    [ "setSampleRate", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a9e5a7abad7dc0bb3f6b8bf11987cf285", null ],
+    [ "setSamplesPerChunk", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#af2eb7e378d4b0e8c82b4b3f6de753781", null ],
+    [ "setUseRefElec", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#ad4a4d27ae628ba4d7060b88d0878faf6", null ],
+    [ "start", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#ae8b4841e1a365692d45ddb8fb740bbff", null ],
+    [ "stop", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#ae5635bb7d0a6b7656e44082304974e42", null ],
+    [ "useRefElec", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a07c081efb2d085ac8a074987c2da0b62", null ],
+    [ "vref", "classelapse_1_1client_1_1dbus_1_1_eeg_adc.html#a2f04a6df13173dc73954980c85fab4da", null ]
+];
