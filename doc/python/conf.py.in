@@ -31,7 +31,7 @@ extensions = ['sphinxcontrib.doxylink']
 # the paths to the Doxygen tag file and the generated HTML.
 doxylink = {
     'elapse': ('@CMAKE_CURRENT_BINARY_DIR@/elapse-client.tag',
-               '@CMAKE_CURRENT_BINARY_DIR@/html'),
+               '.'),
 }
 
 # Add any paths that contain templates here, relative to this directory.
