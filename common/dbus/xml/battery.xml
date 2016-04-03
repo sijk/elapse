@@ -1,0 +1,13 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.nzbri.elapse.Battery">
+    <property name="lowThresh" type="d" access="readwrite"/>
+    <property name="criticalThresh" type="d" access="read"/>
+    <property name="isLow" type="b" access="read"/>
+    <property name="voltage" type="d" access="read"/>
+    <signal name="batteryLow"/>
+    <signal name="batteryCritical"/>
+    <signal name="switchedOff"/>
+  </interface>
+</node>

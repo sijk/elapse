@@ -1,0 +1,17 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.nzbri.elapse.Device">
+    <method name="isAccessible">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="setClientAddress">
+      <arg name="address" type="s" direction="in"/>
+    </method>
+    <method name="startStreaming"/>
+    <method name="stopStreaming"/>
+    <signal name="error">
+      <arg name="msg" type="s"/>
+    </signal>
+  </interface>
+</node>

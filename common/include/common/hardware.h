@@ -1,0 +1,5 @@
+#include "hardware/device_iface.h"
+#include "hardware/battery_iface.h"
+#include "hardware/eegadc_iface.h"
+#include "hardware/camera_iface.h"
+#include "hardware/imu_iface.h"

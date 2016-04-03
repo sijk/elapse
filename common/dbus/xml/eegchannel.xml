@@ -1,0 +1,9 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.nzbri.elapse.Eeg.EegChannel">
+    <property name="gain" type="u" access="readwrite"/>
+    <property name="inputMux" type="s" access="readwrite"/>
+    <property name="enabled" type="b" access="readwrite"/>
+  </interface>
+</node>

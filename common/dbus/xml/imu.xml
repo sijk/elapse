@@ -1,0 +1,11 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.nzbri.elapse.Imu">
+    <property name="sampleRate" type="u" access="readwrite"/>
+    <property name="accRange" type="u" access="readwrite"/>
+    <property name="gyrRange" type="u" access="readwrite"/>
+    <method name="start"/>
+    <method name="stop"/>
+  </interface>
+</node>

@@ -1,0 +1,4 @@
+/*!
+    \namespace elapse::common
+    \brief Code shared between the client and server.
+*/
